@@ -37,9 +37,9 @@ import java.util.stream.Stream;
  * A simple DynamicOps implementation for testing purposes.
  * Uses plain Java objects: String, Number, Boolean, Map, List.
  */
-final class TestOps implements DynamicOps<Object> {
+public final class TestOps implements DynamicOps<Object> {
 
-    static final TestOps INSTANCE = new TestOps();
+    public static final TestOps INSTANCE = new TestOps();
 
     private TestOps() {}
 
