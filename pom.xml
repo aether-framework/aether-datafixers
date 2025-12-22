@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.splatgames.aether.datafixers</groupId>
-    <artifactId>aether-datafixers-parent</artifactId>
+    <artifactId>aether-datafixers</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
     <modules>
