@@ -1,5 +1,5 @@
 ![License](https://img.shields.io/badge/license-MIT-red)
-![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether/aether-datafixers-core)
+![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether/aether-datafixers)
 ![Version](https://img.shields.io/badge/version-0.1.0-orange)
 
 # Aether Datafixers 🔧
