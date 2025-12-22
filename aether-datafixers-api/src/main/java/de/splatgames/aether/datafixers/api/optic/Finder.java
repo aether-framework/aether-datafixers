@@ -556,11 +556,42 @@ public interface Finder<A> {
 
             @NotNull
             @Override
+            @SuppressWarnings("unchecked")
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
-                // TODO: Remainder set is complex - merge the remainder back
-                // For simplicity, we don't fully implement this
-                return root;
+                // Validation: root must be a map
+                if (!root.isMap()) {
+                    return root;
+                }
+
+                final var rootMapResult = root.asMapStream();
+                if (rootMapResult.isError()) {
+                    return root;
+                }
+
+                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
+                final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
+
+                // Filter root: keep only the excluded fields
+                final var excludedEntries = rootMapResult.result().orElseThrow()
+                        .filter(pair -> {
+                            final var keyResult = Objects.requireNonNull(pair.first()).asString();
+                            return keyResult.result().map(excluded::contains).orElse(false);
+                        })
+                        .map(pair -> Pair.of(
+                                ((Dynamic<Object>) pair.first()).value(),
+                                ((Dynamic<Object>) Objects.requireNonNull(pair.second())).value()
+                        ));
+
+                // Create map with only the excluded fields
+                final Object excludedMap = typedRoot.ops().createMap(excludedEntries);
+
+                // Merge: excluded fields + newValue (newValue overwrites on conflicts)
+                final var mergedResult = typedRoot.ops().mergeToMap(excludedMap, typedNewValue.value());
+
+                return mergedResult.result()
+                        .<Dynamic<?>>map(merged -> new Dynamic<>(typedRoot.ops(), merged))
+                        .orElse(root);
             }
         };
     }
