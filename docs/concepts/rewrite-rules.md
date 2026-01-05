@@ -399,14 +399,134 @@ private Dynamic<?> mergeNames(Dynamic<?> data) {
 }
 ```
 
+## Extended Rules
+
+The `Rules` class provides additional factory methods for common transformation patterns that reduce boilerplate.
+
+### Dynamic Transform
+
+For custom transformations that need direct access to the Dynamic:
+
+```java
+// Custom transformation with full control
+Rules.dynamicTransform("compute_level", GsonOps.INSTANCE, dynamic -> {
+    int xp = dynamic.get("experience").asInt().result().orElse(0);
+    int level = xp / 100;
+    return dynamic.set("level", dynamic.createInt(level));
+})
+```
+
+### Set Field (Overwrite)
+
+Unlike `addField` which only adds if missing, `setField` always sets the value:
+
+```java
+// Always set field (overwrites existing value)
+Rules.setField(GsonOps.INSTANCE, "version", new Dynamic<>(ops, ops.createInt(2)))
+```
+
+### Batch Operations
+
+Rename or remove multiple fields in a single operation:
+
+```java
+// Batch rename
+Rules.renameFields(GsonOps.INSTANCE, Map.of(
+    "playerName", "name",
+    "xp", "experience",
+    "hp", "health"
+))
+
+// Batch remove
+Rules.removeFields(GsonOps.INSTANCE, "deprecated1", "deprecated2", "legacyField")
+```
+
+### Grouping and Flattening
+
+Group flat fields into a nested object or flatten nested fields:
+
+```java
+// Group x, y, z into a "position" object
+Rules.groupFields(GsonOps.INSTANCE, "position", "x", "y", "z")
+// Input:  {"x": 100, "y": 64, "z": -200, "name": "Steve"}
+// Output: {"position": {"x": 100, "y": 64, "z": -200}, "name": "Steve"}
+
+// Flatten nested object to root level
+Rules.flattenField(GsonOps.INSTANCE, "position")
+// Input:  {"position": {"x": 100, "y": 64, "z": -200}, "name": "Steve"}
+// Output: {"x": 100, "y": 64, "z": -200, "name": "Steve"}
+```
+
+### Move and Copy Fields
+
+Move or copy fields between locations (including nested paths):
+
+```java
+// Move field (removes from source, adds to target)
+Rules.moveField(GsonOps.INSTANCE, "x", "position.x")
+
+// Copy field (keeps original)
+Rules.copyField(GsonOps.INSTANCE, "name", "displayName")
+```
+
+### Path-Based Operations
+
+Transform, rename, remove, or add fields at nested paths using dot notation:
+
+```java
+// Transform nested field
+Rules.transformFieldAt(GsonOps.INSTANCE, "position.x", d ->
+    d.createDouble(d.asDouble().result().orElse(0.0) * 2)
+)
+
+// Rename nested field
+Rules.renameFieldAt(GsonOps.INSTANCE, "position.posX", "x")
+
+// Remove nested field
+Rules.removeFieldAt(GsonOps.INSTANCE, "metadata.deprecated")
+
+// Add nested field (creates parent objects if needed)
+Rules.addFieldAt(GsonOps.INSTANCE, "settings.graphics.quality",
+    new Dynamic<>(ops, ops.createString("high")))
+```
+
+### Conditional Rules
+
+Apply rules only when certain conditions are met:
+
+```java
+// Only apply if field exists
+Rules.ifFieldExists(GsonOps.INSTANCE, "legacyData",
+    Rules.seq(
+        Rules.renameField(TYPE, "legacyData", "data"),
+        Rules.addField(TYPE, "migrated", d -> d.createBoolean(true))
+    )
+)
+
+// Only apply if field is missing
+Rules.ifFieldMissing(GsonOps.INSTANCE, "version",
+    Rules.addField(TYPE, "version", d -> d.createInt(1))
+)
+
+// Only apply if field has specific value
+Rules.ifFieldEquals(GsonOps.INSTANCE, "version", 1,
+    Rules.seq(
+        Rules.renameField(TYPE, "oldField", "newField"),
+        Rules.setField(ops, "version", new Dynamic<>(ops, ops.createInt(2)))
+    )
+)
+```
+
 ## Rules Reference
+
+### Basic Rules
 
 | Rule | Description |
 |------|-------------|
 | `renameField(type, old, new)` | Rename a field |
 | `transformField(type, field, fn)` | Transform a field's value |
 | `transform(type, fn)` | Transform entire structure |
-| `addField(type, name, defaultFn)` | Add a new field |
+| `addField(type, name, defaultFn)` | Add a new field (if missing) |
 | `removeField(type, name)` | Remove a field |
 | `seq(rules...)` | Apply rules in sequence |
 | `all(rules...)` | Apply all rules |
@@ -414,6 +534,26 @@ private Dynamic<?> mergeNames(Dynamic<?> data) {
 | `topDown(rule)` | Traverse top to bottom |
 | `bottomUp(rule)` | Traverse bottom to top |
 | `everywhere(rule)` | Apply at all matching nodes |
+
+### Extended Rules
+
+| Rule | Description |
+|------|-------------|
+| `dynamicTransform(name, ops, fn)` | Custom Dynamic transformation |
+| `setField(ops, field, value)` | Set field (overwrites existing) |
+| `renameFields(ops, map)` | Batch rename multiple fields |
+| `removeFields(ops, fields...)` | Batch remove multiple fields |
+| `groupFields(ops, target, fields...)` | Group fields into nested object |
+| `flattenField(ops, field)` | Flatten nested object to root |
+| `moveField(ops, source, target)` | Move field between paths |
+| `copyField(ops, source, target)` | Copy field (keeps original) |
+| `transformFieldAt(ops, path, fn)` | Transform at nested path |
+| `renameFieldAt(ops, path, newName)` | Rename at nested path |
+| `removeFieldAt(ops, path)` | Remove at nested path |
+| `addFieldAt(ops, path, value)` | Add at nested path |
+| `ifFieldExists(ops, field, rule)` | Conditional on existence |
+| `ifFieldMissing(ops, field, rule)` | Conditional on absence |
+| `ifFieldEquals(ops, field, value, rule)` | Conditional on value |
 
 ## Best Practices
 

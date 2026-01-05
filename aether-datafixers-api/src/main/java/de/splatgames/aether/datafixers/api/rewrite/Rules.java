@@ -1083,6 +1083,949 @@ public final class Rules {
         );
     }
 
+    // ==================== Extended Dynamic Transformation Combinators ====================
+
+    /**
+     * Creates a rule that applies a custom transformation function to the dynamic representation.
+     *
+     * <p>This is the general-purpose combinator for custom transformations. It encodes the
+     * typed value to dynamic form, applies the transformation function, and decodes back.
+     * Use this when the built-in combinators don't cover your use case.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Compute a level field from experience
+     * TypeRewriteRule computeLevel = Rules.dynamicTransform(
+     *     "computeLevel",
+     *     GsonOps.INSTANCE,
+     *     dynamic -> {
+     *         int xp = dynamic.get("experience").asInt().result().orElse(0);
+     *         int level = Math.max(1, (int) Math.sqrt(xp / 100.0));
+     *         return dynamic.set("level", dynamic.createInt(level));
+     *     }
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param name      a descriptive name for debugging and logging, must not be {@code null}
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param transform the transformation function to apply, must not be {@code null}
+     * @return a rule that applies the custom transformation, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule dynamicTransform(@NotNull final String name,
+                                                       @NotNull final DynamicOps<T> ops,
+                                                       @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
+        Preconditions.checkNotNull(name, "String name must not be null");
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(transform, "Function transform must not be null");
+
+        return new TypeRewriteRule() {
+            @Override
+            @NotNull
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                              @NotNull final Typed<?> input) {
+                return input.encode(ops).flatMap(dynamic -> {
+                    final Dynamic<?> transformed = transform.apply(dynamic);
+                    final Type rawType = input.type();
+                    return rawType.read(transformed);
+                }).map(value -> new Typed<>((Type) input.type(), value)).result();
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
+        };
+    }
+
+    /**
+     * Creates a rule that sets a field to a value, regardless of whether it exists.
+     *
+     * <p>Unlike {@link #addField} which only adds the field if it doesn't exist,
+     * this method always sets the field to the specified value, overwriting any
+     * existing value.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Always set version to 2
+     * TypeRewriteRule setVersion = Rules.setField(
+     *     GsonOps.INSTANCE,
+     *     "version",
+     *     new Dynamic<>(GsonOps.INSTANCE, new JsonPrimitive(2))
+     * );
+     *
+     * // Input:  {"name": "Alice", "version": 1}
+     * // Output: {"name": "Alice", "version": 2}
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to set, must not be {@code null}
+     * @param value     the value to set, must not be {@code null}
+     * @return a rule that sets the field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule setField(@NotNull final DynamicOps<T> ops,
+                                               @NotNull final String fieldName,
+                                               @NotNull final Dynamic<T> value) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(value, "Dynamic<T> value must not be null");
+
+        return new TypeRewriteRule() {
+            @Override
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                                       @NotNull final Typed<?> input) {
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                return encodeResult.flatMap(dynamic -> {
+                    final Dynamic<T> updated = dynamic.set(fieldName, value);
+                    final Type rawType = input.type();
+                    return rawType.read(updated);
+                }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
+            }
+
+            @Override
+            public String toString() {
+                return "setField(" + fieldName + ")";
+            }
+        };
+    }
+
+    /**
+     * Creates a rule that renames multiple fields in a single pass.
+     *
+     * <p>This is more efficient than chaining multiple {@link #renameField} calls
+     * as it processes all renames in a single encode/decode cycle.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Rename multiple fields at once
+     * TypeRewriteRule renames = Rules.renameFields(
+     *     GsonOps.INSTANCE,
+     *     Map.of(
+     *         "playerName", "name",
+     *         "xp", "experience",
+     *         "oldHealth", "health"
+     *     )
+     * );
+     *
+     * // Input:  {"playerName": "Steve", "xp": 1500, "oldHealth": 20}
+     * // Output: {"name": "Steve", "experience": 1500, "health": 20}
+     * }</pre>
+     *
+     * @param <T>     the underlying data format type (e.g., JsonElement)
+     * @param ops     the dynamic operations for the data format, must not be {@code null}
+     * @param renames a map from old field names to new field names, must not be {@code null}
+     * @return a rule that renames all specified fields, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule renameFields(@NotNull final DynamicOps<T> ops,
+                                                   @NotNull final java.util.Map<String, String> renames) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(renames, "Map renames must not be null");
+
+        if (renames.isEmpty()) {
+            return TypeRewriteRule.identity();
+        }
+
+        return new TypeRewriteRule() {
+            @Override
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                                       @NotNull final Typed<?> input) {
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                return encodeResult.flatMap(dynamic -> {
+                    Dynamic<T> current = dynamic;
+                    for (final var entry : renames.entrySet()) {
+                        final String oldName = entry.getKey();
+                        final String newName = entry.getValue();
+                        final Dynamic<T> value = current.get(oldName);
+                        if (value != null) {
+                            current = current.remove(oldName).set(newName, value);
+                        }
+                    }
+                    final Type rawType = input.type();
+                    return rawType.read(current);
+                }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
+            }
+
+            @Override
+            public String toString() {
+                return "renameFields(" + renames + ")";
+            }
+        };
+    }
+
+    /**
+     * Creates a rule that removes multiple fields in a single pass.
+     *
+     * <p>This is more efficient than chaining multiple {@link #removeField} calls
+     * as it processes all removals in a single encode/decode cycle.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Remove deprecated fields
+     * TypeRewriteRule cleanup = Rules.removeFields(
+     *     GsonOps.INSTANCE,
+     *     "deprecated1", "deprecated2", "legacyField"
+     * );
+     *
+     * // Input:  {"name": "Alice", "deprecated1": true, "deprecated2": "old", "legacyField": 42}
+     * // Output: {"name": "Alice"}
+     * }</pre>
+     *
+     * @param <T>        the underlying data format type (e.g., JsonElement)
+     * @param ops        the dynamic operations for the data format, must not be {@code null}
+     * @param fieldNames the names of the fields to remove, must not be {@code null}
+     * @return a rule that removes all specified fields, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule removeFields(@NotNull final DynamicOps<T> ops,
+                                                   @NotNull final String... fieldNames) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldNames, "String[] fieldNames must not be null");
+
+        if (fieldNames.length == 0) {
+            return TypeRewriteRule.identity();
+        }
+
+        return new TypeRewriteRule() {
+            @Override
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                                       @NotNull final Typed<?> input) {
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                return encodeResult.flatMap(dynamic -> {
+                    Dynamic<T> current = dynamic;
+                    for (final String fieldName : fieldNames) {
+                        current = current.remove(fieldName);
+                    }
+                    final Type rawType = input.type();
+                    return rawType.read(current);
+                }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
+            }
+
+            @Override
+            public String toString() {
+                return "removeFields(" + Arrays.toString(fieldNames) + ")";
+            }
+        };
+    }
+
+    // ==================== Grouping and Moving Combinators ====================
+
+    /**
+     * Creates a rule that groups multiple fields into a nested object.
+     *
+     * <p>This is useful when restructuring flat data into nested structures.
+     * The source fields are removed from the root and placed into a new
+     * nested object with the specified name.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Group coordinates into a position object
+     * TypeRewriteRule groupPosition = Rules.groupFields(
+     *     GsonOps.INSTANCE,
+     *     "position",
+     *     "x", "y", "z"
+     * );
+     *
+     * // Input:  {"name": "Steve", "x": 100.5, "y": 64.0, "z": -200.25}
+     * // Output: {"name": "Steve", "position": {"x": 100.5, "y": 64.0, "z": -200.25}}
+     * }</pre>
+     *
+     * @param <T>          the underlying data format type (e.g., JsonElement)
+     * @param ops          the dynamic operations for the data format, must not be {@code null}
+     * @param targetField  the name of the new nested object, must not be {@code null}
+     * @param sourceFields the fields to group into the new object, must not be {@code null}
+     * @return a rule that groups the specified fields, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule groupFields(@NotNull final DynamicOps<T> ops,
+                                                  @NotNull final String targetField,
+                                                  @NotNull final String... sourceFields) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(targetField, "String targetField must not be null");
+        Preconditions.checkNotNull(sourceFields, "String[] sourceFields must not be null");
+
+        if (sourceFields.length == 0) {
+            return TypeRewriteRule.identity();
+        }
+
+        return dynamicTransform("groupFields(" + targetField + ")", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+
+            // Create the nested object with the source fields
+            Dynamic<T> nested = typedDynamic.emptyMap();
+            for (final String fieldName : sourceFields) {
+                final Dynamic<T> value = typedDynamic.get(fieldName);
+                if (value != null) {
+                    nested = nested.set(fieldName, value);
+                }
+            }
+
+            // Remove source fields and add the nested object
+            Dynamic<T> result = typedDynamic;
+            for (final String fieldName : sourceFields) {
+                result = result.remove(fieldName);
+            }
+            return result.set(targetField, nested);
+        });
+    }
+
+    /**
+     * Creates a rule that flattens a nested object's fields to the root level.
+     *
+     * <p>This is the inverse of {@link #groupFields}. All fields from the nested
+     * object are moved to the root level, and the nested object itself is removed.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Flatten position object to root
+     * TypeRewriteRule flattenPosition = Rules.flattenField(
+     *     GsonOps.INSTANCE,
+     *     "position"
+     * );
+     *
+     * // Input:  {"name": "Steve", "position": {"x": 100.5, "y": 64.0, "z": -200.25}}
+     * // Output: {"name": "Steve", "x": 100.5, "y": 64.0, "z": -200.25}
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the nested object to flatten, must not be {@code null}
+     * @return a rule that flattens the nested object, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule flattenField(@NotNull final DynamicOps<T> ops,
+                                                   @NotNull final String fieldName) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+
+        return dynamicTransform("flattenField(" + fieldName + ")", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+
+            final Dynamic<T> nested = typedDynamic.get(fieldName);
+            if (nested == null || !nested.isMap()) {
+                return dynamic; // No nested object to flatten
+            }
+
+            // Get all entries from the nested object
+            final var entriesResult = nested.asMapStream();
+            if (entriesResult.isError()) {
+                return dynamic;
+            }
+
+            // Remove the nested object and add its fields to root
+            Dynamic<T> result = typedDynamic.remove(fieldName);
+            final var entries = entriesResult.result().orElse(java.util.stream.Stream.empty()).toList();
+            for (final var entry : entries) {
+                final String key = entry.first().asString().result().orElse(null);
+                if (key != null) {
+                    @SuppressWarnings("unchecked")
+                    final Dynamic<T> value = (Dynamic<T>) entry.second();
+                    result = result.set(key, value);
+                }
+            }
+            return result;
+        });
+    }
+
+    /**
+     * Creates a rule that moves a field from one location to another.
+     *
+     * <p>The source field is removed and its value is placed at the target location.
+     * Both source and target support dot-notation for nested paths.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Move flat field into nested object
+     * TypeRewriteRule moveX = Rules.moveField(
+     *     GsonOps.INSTANCE,
+     *     "x",
+     *     "position.x"
+     * );
+     *
+     * // Input:  {"name": "Steve", "x": 100.5, "position": {"y": 64.0}}
+     * // Output: {"name": "Steve", "position": {"x": 100.5, "y": 64.0}}
+     * }</pre>
+     *
+     * @param <T>        the underlying data format type (e.g., JsonElement)
+     * @param ops        the dynamic operations for the data format, must not be {@code null}
+     * @param sourcePath the path to the source field (dot-notation), must not be {@code null}
+     * @param targetPath the path to the target field (dot-notation), must not be {@code null}
+     * @return a rule that moves the field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule moveField(@NotNull final DynamicOps<T> ops,
+                                                @NotNull final String sourcePath,
+                                                @NotNull final String targetPath) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(sourcePath, "String sourcePath must not be null");
+        Preconditions.checkNotNull(targetPath, "String targetPath must not be null");
+
+        final Finder<?> sourceFinder = parsePath(sourcePath);
+        final Finder<?> targetFinder = parsePath(targetPath);
+
+        return dynamicTransform("moveField(" + sourcePath + " -> " + targetPath + ")", ops, dynamic -> {
+            final Dynamic<?> value = sourceFinder.get(dynamic);
+            if (value == null) {
+                return dynamic; // Source doesn't exist, nothing to move
+            }
+
+            // Remove source and set target
+            Dynamic<?> result = removeAtPath(dynamic, sourcePath);
+            return setAtPath(result, targetPath, value);
+        });
+    }
+
+    /**
+     * Creates a rule that copies a field from one location to another.
+     *
+     * <p>Unlike {@link #moveField}, this preserves the original field.
+     * Both source and target support dot-notation for nested paths.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Copy name to displayName
+     * TypeRewriteRule copyName = Rules.copyField(
+     *     GsonOps.INSTANCE,
+     *     "name",
+     *     "displayName"
+     * );
+     *
+     * // Input:  {"name": "Steve", "level": 10}
+     * // Output: {"name": "Steve", "displayName": "Steve", "level": 10}
+     * }</pre>
+     *
+     * @param <T>        the underlying data format type (e.g., JsonElement)
+     * @param ops        the dynamic operations for the data format, must not be {@code null}
+     * @param sourcePath the path to the source field (dot-notation), must not be {@code null}
+     * @param targetPath the path to the target field (dot-notation), must not be {@code null}
+     * @return a rule that copies the field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule copyField(@NotNull final DynamicOps<T> ops,
+                                                @NotNull final String sourcePath,
+                                                @NotNull final String targetPath) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(sourcePath, "String sourcePath must not be null");
+        Preconditions.checkNotNull(targetPath, "String targetPath must not be null");
+
+        final Finder<?> sourceFinder = parsePath(sourcePath);
+
+        return dynamicTransform("copyField(" + sourcePath + " -> " + targetPath + ")", ops, dynamic -> {
+            final Dynamic<?> value = sourceFinder.get(dynamic);
+            if (value == null) {
+                return dynamic; // Source doesn't exist, nothing to copy
+            }
+
+            return setAtPath(dynamic, targetPath, value);
+        });
+    }
+
+    // ==================== Path-Based Combinators ====================
+
+    /**
+     * Creates a rule that transforms a field at a nested path.
+     *
+     * <p>This combines {@link Finder} composition with {@link #transformField} for
+     * convenient nested field transformation using dot-notation.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Double the x coordinate in position
+     * TypeRewriteRule doubleX = Rules.transformFieldAt(
+     *     GsonOps.INSTANCE,
+     *     "position.x",
+     *     d -> d.createDouble(d.asDouble().result().orElse(0.0) * 2)
+     * );
+     *
+     * // Input:  {"position": {"x": 100.0, "y": 64.0}}
+     * // Output: {"position": {"x": 200.0, "y": 64.0}}
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param path      the dot-notation path to the field, must not be {@code null}
+     * @param transform the transformation function, must not be {@code null}
+     * @return a rule that transforms the nested field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule transformFieldAt(@NotNull final DynamicOps<T> ops,
+                                                       @NotNull final String path,
+                                                       @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(path, "String path must not be null");
+        Preconditions.checkNotNull(transform, "Function transform must not be null");
+
+        final Finder<?> finder = parsePath(path);
+        return updateAt("transformFieldAt(" + path + ")", ops, finder, transform);
+    }
+
+    /**
+     * Creates a rule that renames a field at a nested path.
+     *
+     * <p>Only the last segment of the path is renamed. The parent path remains unchanged.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Rename position.posX to position.x
+     * TypeRewriteRule renameX = Rules.renameFieldAt(
+     *     GsonOps.INSTANCE,
+     *     "position.posX",
+     *     "x"
+     * );
+     *
+     * // Input:  {"position": {"posX": 100.0, "y": 64.0}}
+     * // Output: {"position": {"x": 100.0, "y": 64.0}}
+     * }</pre>
+     *
+     * @param <T>     the underlying data format type (e.g., JsonElement)
+     * @param ops     the dynamic operations for the data format, must not be {@code null}
+     * @param path    the dot-notation path to the field to rename, must not be {@code null}
+     * @param newName the new name for the field (just the name, not a path), must not be {@code null}
+     * @return a rule that renames the nested field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule renameFieldAt(@NotNull final DynamicOps<T> ops,
+                                                    @NotNull final String path,
+                                                    @NotNull final String newName) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(path, "String path must not be null");
+        Preconditions.checkNotNull(newName, "String newName must not be null");
+
+        final String[] parts = path.split("\\.");
+        if (parts.length == 1) {
+            // Simple case: no nesting
+            return renameField(ops, path, newName);
+        }
+
+        // Build parent path
+        final String parentPath = String.join(".", Arrays.copyOf(parts, parts.length - 1));
+        final String oldName = parts[parts.length - 1];
+        final Finder<?> parentFinder = parsePath(parentPath);
+
+        return dynamicTransform("renameFieldAt(" + path + " -> " + newName + ")", ops, dynamic -> {
+            final Dynamic<?> parent = parentFinder.get(dynamic);
+            if (parent == null) {
+                return dynamic;
+            }
+
+            final Dynamic<?> value = parent.get(oldName);
+            if (value == null) {
+                return dynamic;
+            }
+
+            @SuppressWarnings("unchecked")
+            final Dynamic<Object> typedParent = (Dynamic<Object>) parent;
+            @SuppressWarnings("unchecked")
+            final Dynamic<Object> typedValue = (Dynamic<Object>) value;
+
+            final Dynamic<?> updatedParent = typedParent.remove(oldName).set(newName, typedValue);
+            return parentFinder.set(dynamic, updatedParent);
+        });
+    }
+
+    /**
+     * Creates a rule that removes a field at a nested path.
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Remove deprecated nested field
+     * TypeRewriteRule removeDeprecated = Rules.removeFieldAt(
+     *     GsonOps.INSTANCE,
+     *     "metadata.deprecated"
+     * );
+     *
+     * // Input:  {"data": "value", "metadata": {"deprecated": true, "version": 1}}
+     * // Output: {"data": "value", "metadata": {"version": 1}}
+     * }</pre>
+     *
+     * @param <T>  the underlying data format type (e.g., JsonElement)
+     * @param ops  the dynamic operations for the data format, must not be {@code null}
+     * @param path the dot-notation path to the field to remove, must not be {@code null}
+     * @return a rule that removes the nested field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule removeFieldAt(@NotNull final DynamicOps<T> ops,
+                                                    @NotNull final String path) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(path, "String path must not be null");
+
+        return dynamicTransform("removeFieldAt(" + path + ")", ops,
+                dynamic -> removeAtPath(dynamic, path));
+    }
+
+    /**
+     * Creates a rule that adds a field at a nested path if it doesn't exist.
+     *
+     * <p>Parent objects are created automatically if they don't exist.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Add a new nested field
+     * TypeRewriteRule addW = Rules.addFieldAt(
+     *     GsonOps.INSTANCE,
+     *     "position.w",
+     *     new Dynamic<>(GsonOps.INSTANCE, new JsonPrimitive(0.0))
+     * );
+     *
+     * // Input:  {"position": {"x": 100.0, "y": 64.0}}
+     * // Output: {"position": {"x": 100.0, "y": 64.0, "w": 0.0}}
+     * }</pre>
+     *
+     * @param <T>          the underlying data format type (e.g., JsonElement)
+     * @param ops          the dynamic operations for the data format, must not be {@code null}
+     * @param path         the dot-notation path to the field, must not be {@code null}
+     * @param defaultValue the default value if the field doesn't exist, must not be {@code null}
+     * @return a rule that adds the nested field, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule addFieldAt(@NotNull final DynamicOps<T> ops,
+                                                 @NotNull final String path,
+                                                 @NotNull final Dynamic<T> defaultValue) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(path, "String path must not be null");
+        Preconditions.checkNotNull(defaultValue, "Dynamic<T> defaultValue must not be null");
+
+        final Finder<?> finder = parsePath(path);
+
+        return dynamicTransform("addFieldAt(" + path + ")", ops, dynamic -> {
+            // Only add if field doesn't exist
+            if (finder.get(dynamic) != null) {
+                return dynamic;
+            }
+            return setAtPath(dynamic, path, defaultValue);
+        });
+    }
+
+    // ==================== Conditional Combinators ====================
+
+    /**
+     * Creates a rule that only executes if a field exists.
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Only migrate if legacy field exists
+     * TypeRewriteRule conditionalMigrate = Rules.ifFieldExists(
+     *     GsonOps.INSTANCE,
+     *     "legacyField",
+     *     Rules.seq(
+     *         Rules.renameField(ops, "legacyField", "newField"),
+     *         Rules.removeField(ops, "oldFlag")
+     *     )
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to check, must not be {@code null}
+     * @param rule      the rule to execute if the field exists, must not be {@code null}
+     * @return a conditional rule, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule ifFieldExists(@NotNull final DynamicOps<T> ops,
+                                                    @NotNull final String fieldName,
+                                                    @NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+
+        return new TypeRewriteRule() {
+            @Override
+            @NotNull
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                              @NotNull final Typed<?> input) {
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                final boolean fieldExists = encodeResult.result()
+                        .map(dynamic -> dynamic.get(fieldName) != null)
+                        .orElse(false);
+
+                if (fieldExists) {
+                    return rule.rewrite(type, input);
+                } else {
+                    return Optional.of(input);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "ifFieldExists(" + fieldName + ", " + rule + ")";
+            }
+        };
+    }
+
+    /**
+     * Creates a rule that only executes if a field is missing.
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Add default value if field is missing
+     * TypeRewriteRule addDefault = Rules.ifFieldMissing(
+     *     GsonOps.INSTANCE,
+     *     "version",
+     *     Rules.addField(ops, "version", defaultVersion)
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to check, must not be {@code null}
+     * @param rule      the rule to execute if the field is missing, must not be {@code null}
+     * @return a conditional rule, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule ifFieldMissing(@NotNull final DynamicOps<T> ops,
+                                                     @NotNull final String fieldName,
+                                                     @NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+
+        return new TypeRewriteRule() {
+            @Override
+            @NotNull
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                              @NotNull final Typed<?> input) {
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                final boolean fieldMissing = encodeResult.result()
+                        .map(dynamic -> dynamic.get(fieldName) == null)
+                        .orElse(true);
+
+                if (fieldMissing) {
+                    return rule.rewrite(type, input);
+                } else {
+                    return Optional.of(input);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "ifFieldMissing(" + fieldName + ", " + rule + ")";
+            }
+        };
+    }
+
+    /**
+     * Creates a rule that only executes if a field equals a specific value.
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Only migrate version 1 data
+     * TypeRewriteRule migrateV1 = Rules.ifFieldEquals(
+     *     GsonOps.INSTANCE,
+     *     "version",
+     *     1,
+     *     migrateFromV1Rule
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param <V>       the type of the value to compare
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to check, must not be {@code null}
+     * @param value     the value to compare against, must not be {@code null}
+     * @param rule      the rule to execute if the field equals the value, must not be {@code null}
+     * @return a conditional rule, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.2.0
+     */
+    @NotNull
+    public static <T, V> TypeRewriteRule ifFieldEquals(@NotNull final DynamicOps<T> ops,
+                                                       @NotNull final String fieldName,
+                                                       @NotNull final V value,
+                                                       @NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(value, "V value must not be null");
+        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+
+        return new TypeRewriteRule() {
+            @Override
+            @NotNull
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                              @NotNull final Typed<?> input) {
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                final boolean matches = encodeResult.result()
+                        .map(dynamic -> {
+                            final Dynamic<T> field = dynamic.get(fieldName);
+                            if (field == null) {
+                                return false;
+                            }
+                            // Try different type comparisons
+                            if (value instanceof Integer) {
+                                return field.asInt().result().map(v -> v.equals(value)).orElse(false);
+                            } else if (value instanceof Long) {
+                                return field.asLong().result().map(v -> v.equals(value)).orElse(false);
+                            } else if (value instanceof Double) {
+                                return field.asDouble().result().map(v -> v.equals(value)).orElse(false);
+                            } else if (value instanceof Float) {
+                                return field.asFloat().result().map(v -> v.equals(value)).orElse(false);
+                            } else if (value instanceof Boolean) {
+                                return field.asBoolean().result().map(v -> v.equals(value)).orElse(false);
+                            } else if (value instanceof String) {
+                                return field.asString().result().map(v -> v.equals(value)).orElse(false);
+                            }
+                            return false;
+                        })
+                        .orElse(false);
+
+                if (matches) {
+                    return rule.rewrite(type, input);
+                } else {
+                    return Optional.of(input);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "ifFieldEquals(" + fieldName + " == " + value + ", " + rule + ")";
+            }
+        };
+    }
+
+    // ==================== Private Helpers ====================
+
+    /**
+     * Parses a dot-notation path into a composed Finder.
+     *
+     * <p>Supports field names and numeric indices. For example:
+     * <ul>
+     *   <li>{@code "name"} → {@code Finder.field("name")}</li>
+     *   <li>{@code "position.x"} → {@code Finder.field("position").then(Finder.field("x"))}</li>
+     *   <li>{@code "items.0.id"} → {@code Finder.field("items").then(Finder.index(0)).then(Finder.field("id"))}</li>
+     * </ul>
+     *
+     * @param path the dot-notation path, must not be {@code null}
+     * @return a composed Finder for the path, never {@code null}
+     */
+    @NotNull
+    private static Finder<?> parsePath(@NotNull final String path) {
+        final String[] parts = path.split("\\.");
+        Finder<?> finder = Finder.identity();
+        for (final String part : parts) {
+            if (part.matches("\\d+")) {
+                finder = finder.then(Finder.index(Integer.parseInt(part)));
+            } else {
+                finder = finder.then(Finder.field(part));
+            }
+        }
+        return finder;
+    }
+
+    /**
+     * Removes a value at a nested path.
+     *
+     * @param dynamic the root dynamic, must not be {@code null}
+     * @param path    the dot-notation path, must not be {@code null}
+     * @return the dynamic with the value removed
+     */
+    @NotNull
+    private static Dynamic<?> removeAtPath(@NotNull final Dynamic<?> dynamic,
+                                           @NotNull final String path) {
+        final String[] parts = path.split("\\.");
+        if (parts.length == 1) {
+            return dynamic.remove(parts[0]);
+        }
+
+        // Build parent path
+        final String parentPath = String.join(".", Arrays.copyOf(parts, parts.length - 1));
+        final String fieldName = parts[parts.length - 1];
+        final Finder<?> parentFinder = parsePath(parentPath);
+
+        final Dynamic<?> parent = parentFinder.get(dynamic);
+        if (parent == null) {
+            return dynamic;
+        }
+
+        final Dynamic<?> updatedParent = parent.remove(fieldName);
+        return parentFinder.set(dynamic, updatedParent);
+    }
+
+    /**
+     * Sets a value at a nested path, creating parent objects as needed.
+     *
+     * @param dynamic the root dynamic, must not be {@code null}
+     * @param path    the dot-notation path, must not be {@code null}
+     * @param value   the value to set, must not be {@code null}
+     * @return the dynamic with the value set
+     */
+    @NotNull
+    @SuppressWarnings("unchecked")
+    private static Dynamic<?> setAtPath(@NotNull final Dynamic<?> dynamic,
+                                        @NotNull final String path,
+                                        @NotNull final Dynamic<?> value) {
+        final String[] parts = path.split("\\.");
+        if (parts.length == 1) {
+            return ((Dynamic<Object>) dynamic).set(parts[0], (Dynamic<Object>) value);
+        }
+
+        // Navigate and create parent objects as needed
+        return setAtPathRecursive((Dynamic<Object>) dynamic, parts, 0, (Dynamic<Object>) value);
+    }
+
+    /**
+     * Recursively sets a value at a path, creating intermediate objects.
+     */
+    @NotNull
+    private static Dynamic<Object> setAtPathRecursive(@NotNull final Dynamic<Object> dynamic,
+                                                      @NotNull final String[] parts,
+                                                      final int index,
+                                                      @NotNull final Dynamic<Object> value) {
+        if (index == parts.length - 1) {
+            // Last part - set the value
+            return dynamic.set(parts[index], value);
+        }
+
+        // Get or create intermediate object
+        final String part = parts[index];
+        Dynamic<Object> child = dynamic.get(part);
+        if (child == null) {
+            child = dynamic.emptyMap();
+        }
+
+        // Recursively set in child
+        final Dynamic<Object> updatedChild = setAtPathRecursive(child, parts, index + 1, value);
+        return dynamic.set(part, updatedChild);
+    }
+
     // ==================== Noop and Debug ====================
 
     /**
