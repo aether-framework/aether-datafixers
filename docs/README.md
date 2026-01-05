@@ -71,6 +71,17 @@ Working code examples:
 - [User Profile Example](examples/user-profile-example.md) — User data migration
 - [Configuration Example](examples/configuration-example.md) — Config file versioning
 
+### Testing
+
+Test your DataFixes and migrations with the Testkit module:
+
+- [Testkit Overview](testkit/index.md) — Introduction to the testing utilities
+- [Test Data Builders](testkit/test-data-builders.md) — Fluent API for creating test data
+- [Custom Assertions](testkit/assertions.md) — AssertJ assertions for Dynamic, DataResult, Typed
+- [DataFixTester](testkit/datafix-tester.md) — Test harness for isolated DataFix testing
+- [QuickFix Factories](testkit/quick-fix.md) — Factory methods for common fix patterns
+- [Mock Schemas](testkit/mock-schemas.md) — Mock schema utilities
+
 ### Advanced Topics
 
 For experienced users:
@@ -96,6 +107,7 @@ For experienced users:
 | `aether-datafixers-api` | Core interfaces and API contracts |
 | `aether-datafixers-core` | Default implementations |
 | `aether-datafixers-codec` | GsonOps, JacksonOps implementations |
+| `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |
 | `aether-datafixers-examples` | Practical usage examples |
 | `aether-datafixers-bom` | Bill of Materials for version management |
 
