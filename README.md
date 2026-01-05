@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-red)
 ![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether/aether-datafixers)
-![Version](https://img.shields.io/badge/version-0.1.0-orange)
+![Version](https://img.shields.io/badge/version-0.2.0-orange)
 
 # Aether Datafixers 🔧
 
@@ -10,13 +10,14 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.1.0)
+## ✨ Features (v0.2.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
 - ✅ **Format-Agnostic** — Work with any serialization format via `Dynamic<T>` and `DynamicOps<T>`
 - ✅ **Codec System** — Bidirectional transformation between typed Java objects and dynamic representations
 - ✅ **Type Safety** — Strong typing with `TypeReference` identifiers for data routing
+- ✅ **Testkit** — Fluent test data builders, custom assertions, and test harnesses for DataFix testing
 - ✅ **JDK 17+** — Built and tested on modern LTS JVMs
 
 ---
@@ -26,6 +27,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - **aether-datafixers-api** — Core interfaces and API contracts (no implementation logic)
 - **aether-datafixers-core** — Default implementations of the API interfaces
 - **aether-datafixers-codec** — Codec implementations for serialization formats
+- **aether-datafixers-testkit** — Testing utilities for DataFix, Schema, and migration testing
 - **aether-datafixers-examples** — Practical examples demonstrating real-world usage
 - **aether-datafixers-bom** — Bill of Materials for coordinated dependency management
 
@@ -282,6 +284,66 @@ public class MyFix extends SchemaDataFix {
 
 ---
 
+## 🧪 Testing with Testkit
+
+The `aether-datafixers-testkit` module provides utilities for testing your migrations:
+
+```java
+import de.splatgames.aether.datafixers.testkit.TestData;
+import de.splatgames.aether.datafixers.testkit.factory.QuickFix;
+import de.splatgames.aether.datafixers.testkit.harness.DataFixTester;
+import static de.splatgames.aether.datafixers.testkit.assertion.AetherAssertions.assertThat;
+
+@Test
+void testFieldRename() {
+    // Create a quick fix for testing
+    var fix = QuickFix.renameField(
+        GsonOps.INSTANCE, "rename_player_name", 1, 2,
+        "playerName", "name"
+    );
+
+    // Create test data fluently
+    Dynamic<JsonElement> input = TestData.gson().object()
+        .put("playerName", "Alice")
+        .put("level", 10)
+        .build();
+
+    // Apply and verify
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .apply();
+
+    // Use custom assertions
+    assertThat(result)
+        .hasStringField("name", "Alice")
+        .hasIntField("level", 10)
+        .doesNotHaveField("playerName");
+}
+```
+
+### Testkit Features
+
+| Component | Description |
+|-----------|-------------|
+| **TestData** | Fluent builders for creating test data (`TestData.gson().object()...`) |
+| **AetherAssertions** | Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed` |
+| **DataFixTester** | Test harness for isolated DataFix testing |
+| **QuickFix** | Factory methods for common fix patterns (rename, add, remove, transform) |
+| **MockSchemas** | Mock schema utilities for testing |
+
+Add to your project:
+
+```xml
+<dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-testkit</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+---
+
 ## 📖 Examples
 
 The `aether-datafixers-examples` module provides a complete, runnable example demonstrating real-world usage patterns.
@@ -345,7 +407,8 @@ mvn test
     - Dynamic/DynamicOps format abstraction
     - Basic codec infrastructure
 
-- **v0.2.0**
+- **v0.2.0** (current)
+    - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
     - Additional codec implementations
     - Extended type rewrite rules
     - Performance optimizations
