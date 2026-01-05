@@ -401,22 +401,38 @@ mvn test
 ## 🗺️ Roadmap
 
 - **v0.1.0** (current)
-    - Core API and default implementations
-    - Schema-based versioning with TypeRegistry
-    - DataFix forward patching system
-    - Dynamic/DynamicOps format abstraction
-    - Basic codec infrastructure
+  - Core API and default implementations
+  - Schema-based versioning with TypeRegistry
+  - DataFix forward patching system
+  - Dynamic/DynamicOps format abstraction
+  - Basic codec infrastructure
 
-- **v0.2.0** (current)
-    - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
-    - Additional codec implementations
-    - Extended type rewrite rules
-    - Performance optimizations
+- **v0.2.0** (next)
+  - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
+  - **Migration diagnostics** — Optional structured report (applied fixes, touched types, timing)
+  - **Policy system** — Configurable handling for warnings/logs/unknown fields/types during migration
+  - **Codec improvements** — Better error reporting, parity improvements for GsonOps/JacksonOps
+  - **Extended rewrite rules** — Common operations like nested rename/move/copy helpers
+  - Performance optimizations
+
+- **v0.3.0**
+  - **CLI module** — Migrate files and print/export a migration report (batch-friendly)
+  - **Schema tooling** — Runtime schema validation + diff utilities between versions
+
+- **v0.4.0**
+  - **Extra ops modules** — Optional YAML/TOML support (format adapters)
+  - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
+
+- **v0.5.0** (API freeze candidate)
+  - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
+  - **Compatibility checks in CI** — Binary/source compatibility guardrails for public API
+  - **Hardened error model** — Consistent exception types + structured error details
+  - **Release readiness** — Final review of docs/examples against frozen API
 
 - **v1.0.0**
-    - Stable API surface
-    - Comprehensive documentation
-    - Production-ready release
+  - Stable API surface
+  - Comprehensive documentation
+  - Production-ready release
 
 ---
 
