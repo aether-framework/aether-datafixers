@@ -11,6 +11,7 @@ Aether Datafixers is modular. Choose the modules you need:
 | `aether-datafixers-api` | Core interfaces | Always (transitive dependency) |
 | `aether-datafixers-core` | Default implementations | Always needed for runtime |
 | `aether-datafixers-codec` | GsonOps, JacksonOps | When working with JSON |
+| `aether-datafixers-testkit` | Testing utilities | For unit/integration testing |
 | `aether-datafixers-bom` | Version management | Recommended for multi-module projects |
 
 ## Maven
@@ -50,6 +51,32 @@ Add the core dependency to your `pom.xml`:
 </dependencies>
 ```
 
+### With Testing Support
+
+Add the testkit module for unit testing your migrations:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>de.splatgames.aether.datafixers</groupId>
+        <artifactId>aether-datafixers-core</artifactId>
+        <version>0.2.0</version>
+    </dependency>
+    <dependency>
+        <groupId>de.splatgames.aether.datafixers</groupId>
+        <artifactId>aether-datafixers-codec</artifactId>
+        <version>0.2.0</version>
+    </dependency>
+    <!-- Testkit for unit testing -->
+    <dependency>
+        <groupId>de.splatgames.aether.datafixers</groupId>
+        <artifactId>aether-datafixers-testkit</artifactId>
+        <version>0.2.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
 ### Using the BOM (Recommended)
 
 The Bill of Materials (BOM) ensures consistent versions across all modules:
@@ -58,9 +85,9 @@ The Bill of Materials (BOM) ensures consistent versions across all modules:
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>de.splatgames.aether</groupId>
+            <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -70,12 +97,18 @@ The Bill of Materials (BOM) ensures consistent versions across all modules:
 <dependencies>
     <!-- No version needed when using BOM -->
     <dependency>
-        <groupId>de.splatgames.aether</groupId>
+        <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-core</artifactId>
     </dependency>
     <dependency>
-        <groupId>de.splatgames.aether</groupId>
+        <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-codec</artifactId>
+    </dependency>
+    <!-- Testkit for testing -->
+    <dependency>
+        <groupId>de.splatgames.aether.datafixers</groupId>
+        <artifactId>aether-datafixers-testkit</artifactId>
+        <scope>test</scope>
     </dependency>
 </dependencies>
 ```
@@ -120,17 +153,28 @@ dependencies {
 }
 ```
 
+### With Testing Support
+
+```groovy
+dependencies {
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec:0.2.0'
+    testImplementation 'de.splatgames.aether.datafixers:aether-datafixers-testkit:0.2.0'
+}
+```
+
 ### Using the BOM
 
 **Groovy DSL:**
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether:aether-datafixers-bom:0.1.0')
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0')
 
     // No version needed
-    implementation 'de.splatgames.aether:aether-datafixers-core'
-    implementation 'de.splatgames.aether:aether-datafixers-codec'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec'
+    testImplementation 'de.splatgames.aether.datafixers:aether-datafixers-testkit'
 }
 ```
 
@@ -138,11 +182,12 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether:aether-datafixers-bom:0.1.0"))
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0"))
 
     // No version needed
-    implementation("de.splatgames.aether:aether-datafixers-core")
-    implementation("de.splatgames.aether:aether-datafixers-codec")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-codec")
+    testImplementation("de.splatgames.aether.datafixers:aether-datafixers-testkit")
 }
 ```
 

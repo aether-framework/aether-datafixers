@@ -1,97 +1,131 @@
 # How to Test Migrations
 
-This guide shows how to write unit tests for your data migrations.
+This guide shows how to write unit tests for your data migrations using the **Aether Datafixers Testkit** module.
 
-## Basic Test Structure
+## Setup
+
+Add the testkit dependency to your project:
+
+**Maven:**
+```xml
+<dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-testkit</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+**Gradle:**
+```groovy
+testImplementation 'de.splatgames.aether.datafixers:aether-datafixers-testkit'
+```
+
+## Basic Test with Testkit
 
 ```java
-import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
-import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
-import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
-import de.splatgames.aether.datafixers.core.AetherDataFixer;
-import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
-import org.junit.jupiter.api.*;
+import de.splatgames.aether.datafixers.testkit.TestData;
+import de.splatgames.aether.datafixers.testkit.factory.QuickFix;
+import de.splatgames.aether.datafixers.testkit.harness.DataFixTester;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static de.splatgames.aether.datafixers.testkit.assertion.AetherAssertions.assertThat;
 
 class PlayerMigrationTest {
 
-    private static AetherDataFixer fixer;
-
-    @BeforeAll
-    static void setup() {
-        fixer = new DataFixerRuntimeFactory()
-            .create(GameDataBootstrap.CURRENT_VERSION, new GameDataBootstrap());
-    }
-
     @Test
-    void testV1ToV2Migration() {
-        // Given: V1 data
-        JsonObject v1 = new JsonObject();
-        v1.addProperty("playerName", "Steve");
-        v1.addProperty("xp", 1500);
-
-        // When: Migrate
-        Dynamic<JsonElement> result = migrate(v1, 1, 2);
-
-        // Then: V2 structure
-        assertEquals("Steve", result.get("name").asString().orElse(""));
-        assertEquals(1500, result.get("experience").asInt().orElse(0));
-        assertTrue(result.get("playerName").result().isEmpty());
-    }
-
-    private Dynamic<JsonElement> migrate(JsonObject data, int from, int to) {
-        Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, data);
-        TaggedDynamic tagged = new TaggedDynamic(TypeReferences.PLAYER, dynamic);
-
-        TaggedDynamic migrated = fixer.update(
-            tagged,
-            new DataVersion(from),
-            new DataVersion(to)
+    void testFieldRename() {
+        // Create a fix
+        var fix = QuickFix.renameField(
+            GsonOps.INSTANCE, "rename_player_name", 1, 2,
+            "playerName", "name"
         );
 
-        return (Dynamic<JsonElement>) migrated.value();
+        // Create input data
+        Dynamic<JsonElement> input = TestData.gson().object()
+            .put("playerName", "Steve")
+            .put("level", 10)
+            .build();
+
+        // Apply and verify
+        Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+            .withInput(input)
+            .forType("player")
+            .apply();
+
+        assertThat(result)
+            .hasStringField("name", "Steve")
+            .hasIntField("level", 10)
+            .doesNotHaveField("playerName");
     }
 }
 ```
 
-## Test Rename Fields
+## Test with Expected Output
 
 ```java
 @Test
-void testFieldRename() {
-    JsonObject input = new JsonObject();
-    input.addProperty("oldName", "value");
+void testWithExpectedOutput() {
+    var fix = QuickFix.addIntField(
+        GsonOps.INSTANCE, "add_score", 1, 2, "score", 0
+    );
 
-    Dynamic<JsonElement> result = migrate(input, 1, 2);
+    Dynamic<JsonElement> input = TestData.gson().object()
+        .put("name", "Steve")
+        .build();
 
-    assertTrue(result.get("oldName").result().isEmpty(), "Old field should be gone");
-    assertEquals("value", result.get("newName").asString().orElse(""), "New field should exist");
+    Dynamic<JsonElement> expected = TestData.gson().object()
+        .put("name", "Steve")
+        .put("score", 0)
+        .build();
+
+    // Throws AssertionError if output doesn't match
+    DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .expectOutput(expected)
+        .verify();
 }
 ```
 
-## Test Type Conversion
+## Test Type Conversions
 
 ```java
 @Test
 void testGameModeConversion() {
-    // Test each case
-    assertGameMode(0, "survival");
-    assertGameMode(1, "creative");
-    assertGameMode(2, "adventure");
-    assertGameMode(3, "spectator");
+    var fix = QuickFix.transformField(
+        GsonOps.INSTANCE, "convert_gamemode", 1, 2, "gameMode",
+        d -> {
+            int mode = d.asInt().result().orElse(0);
+            String name = switch (mode) {
+                case 0 -> "survival";
+                case 1 -> "creative";
+                case 2 -> "adventure";
+                case 3 -> "spectator";
+                default -> "survival";
+            };
+            return d.createString(name);
+        }
+    );
+
+    assertGameModeConversion(fix, 0, "survival");
+    assertGameModeConversion(fix, 1, "creative");
+    assertGameModeConversion(fix, 2, "adventure");
+    assertGameModeConversion(fix, 3, "spectator");
 }
 
-private void assertGameMode(int input, String expected) {
-    JsonObject data = new JsonObject();
-    data.addProperty("gameMode", input);
+private void assertGameModeConversion(DataFix<JsonElement> fix, int input, String expected) {
+    Dynamic<JsonElement> data = TestData.gson().object()
+        .put("gameMode", input)
+        .build();
 
-    Dynamic<JsonElement> result = migrate(data, 1, 2);
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(data)
+        .forType("player")
+        .apply();
 
-    assertEquals(expected, result.get("gameMode").asString().orElse(""));
+    assertThat(result).hasStringField("gameMode", expected);
 }
 ```
 
@@ -100,13 +134,22 @@ private void assertGameMode(int input, String expected) {
 ```java
 @Test
 void testMissingFieldGetsDefault() {
-    JsonObject input = new JsonObject();
-    input.addProperty("name", "Steve");
-    // level is missing
+    var fix = QuickFix.addIntField(
+        GsonOps.INSTANCE, "add_level", 1, 2, "level", 1
+    );
 
-    Dynamic<JsonElement> result = migrate(input, 1, 2);
+    Dynamic<JsonElement> input = TestData.gson().object()
+        .put("name", "Steve")
+        // level is missing
+        .build();
 
-    assertEquals(1, result.get("level").asInt().orElse(-1), "Default level should be 1");
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .apply();
+
+    assertThat(result)
+        .hasIntField("level", 1);  // Default applied
 }
 ```
 
@@ -115,23 +158,39 @@ void testMissingFieldGetsDefault() {
 ```java
 @Test
 void testPositionNesting() {
-    JsonObject input = new JsonObject();
-    input.addProperty("x", 100.5);
-    input.addProperty("y", 64.0);
-    input.addProperty("z", -200.0);
+    var fix = QuickFix.simple("nest_position", 1, 2, input -> {
+        var x = input.get("x").asDouble().result().orElse(0.0);
+        var y = input.get("y").asDouble().result().orElse(0.0);
+        var z = input.get("z").asDouble().result().orElse(0.0);
 
-    Dynamic<JsonElement> result = migrate(input, 1, 2);
+        return input
+            .remove("x").remove("y").remove("z")
+            .set("position", input.emptyMap()
+                .set("x", input.createDouble(x))
+                .set("y", input.createDouble(y))
+                .set("z", input.createDouble(z)));
+    });
 
-    // Old fields gone
-    assertTrue(result.get("x").result().isEmpty());
-    assertTrue(result.get("y").result().isEmpty());
-    assertTrue(result.get("z").result().isEmpty());
+    Dynamic<JsonElement> input = TestData.gson().object()
+        .put("name", "Steve")
+        .put("x", 100.5)
+        .put("y", 64.0)
+        .put("z", -200.0)
+        .build();
 
-    // New nested structure
-    Dynamic<?> position = result.get("position").orElseEmptyMap();
-    assertEquals(100.5, position.get("x").asDouble().orElse(0.0), 0.001);
-    assertEquals(64.0, position.get("y").asDouble().orElse(0.0), 0.001);
-    assertEquals(-200.0, position.get("z").asDouble().orElse(0.0), 0.001);
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .apply();
+
+    assertThat(result)
+        .doesNotHaveField("x")
+        .doesNotHaveField("y")
+        .doesNotHaveField("z")
+        .field("position")
+            .hasDoubleField("x", 100.5)
+            .hasDoubleField("y", 64.0)
+            .hasDoubleField("z", -200.0);
 }
 ```
 
@@ -140,87 +199,25 @@ void testPositionNesting() {
 ```java
 @Test
 void testUnknownFieldsPreserved() {
-    JsonObject input = new JsonObject();
-    input.addProperty("name", "Steve");
-    input.addProperty("customPlugin_data", "important");
-    input.add("modSettings", new JsonObject());
+    var fix = QuickFix.renameField(
+        GsonOps.INSTANCE, "rename", 1, 2, "oldName", "newName"
+    );
 
-    Dynamic<JsonElement> result = migrate(input, 1, 2);
+    Dynamic<JsonElement> input = TestData.gson().object()
+        .put("oldName", "value")
+        .put("customPlugin_data", "important")
+        .putObject("modSettings", obj -> obj.put("enabled", true))
+        .build();
 
-    assertEquals("important", result.get("customPlugin_data").asString().orElse(""));
-    assertTrue(result.get("modSettings").result().isPresent());
-}
-```
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("config")
+        .apply();
 
-## Test Multi-Version Chain
-
-```java
-@Test
-void testV1ToV3Chain() {
-    JsonObject v1 = new JsonObject();
-    v1.addProperty("playerName", "Steve");
-    v1.addProperty("xp", 1500);
-
-    Dynamic<JsonElement> result = migrate(v1, 1, 3);
-
-    // V2 changes applied
-    assertEquals("Steve", result.get("name").asString().orElse(""));
-    assertEquals(1500, result.get("experience").asInt().orElse(0));
-
-    // V3 changes applied
-    assertEquals(15, result.get("level").asInt().orElse(0));
-}
-```
-
-## Test No-Op for Current Version
-
-```java
-@Test
-void testNoMigrationNeeded() {
-    JsonObject current = new JsonObject();
-    current.addProperty("name", "Steve");
-    current.addProperty("level", 10);
-
-    Dynamic<JsonElement> result = migrate(current, 3, 3);
-
-    assertEquals("Steve", result.get("name").asString().orElse(""));
-    assertEquals(10, result.get("level").asInt().orElse(0));
-}
-```
-
-## Test Edge Cases
-
-```java
-@Test
-void testEmptyData() {
-    JsonObject empty = new JsonObject();
-
-    Dynamic<JsonElement> result = migrate(empty, 1, 2);
-
-    // Should not throw, should use defaults
-    assertEquals("Unknown", result.get("name").asString().orElse("Unknown"));
-}
-
-@Test
-void testNullValues() {
-    JsonObject withNull = new JsonObject();
-    withNull.add("name", JsonNull.INSTANCE);
-
-    Dynamic<JsonElement> result = migrate(withNull, 1, 2);
-
-    // Should handle gracefully
-    assertNotNull(result.value());
-}
-
-@Test
-void testWrongType() {
-    JsonObject wrongType = new JsonObject();
-    wrongType.addProperty("level", "not a number");
-
-    Dynamic<JsonElement> result = migrate(wrongType, 1, 2);
-
-    // Should use default
-    assertEquals(1, result.get("level").asInt().orElse(1));
+    assertThat(result)
+        .hasStringField("newName", "value")
+        .hasStringField("customPlugin_data", "important")
+        .hasField("modSettings");
 }
 ```
 
@@ -229,19 +226,56 @@ void testWrongType() {
 ```java
 @Test
 void testListItemMigration() {
-    JsonObject input = new JsonObject();
-    JsonArray items = new JsonArray();
-    JsonObject item1 = new JsonObject();
-    item1.addProperty("id", "sword");
-    item1.addProperty("damage", 10);
-    items.add(item1);
-    input.add("inventory", items);
+    var fix = QuickFix.simple("migrate_inventory", 1, 2, input -> {
+        var inventory = input.get("inventory");
+        var migratedItems = inventory.asListStream().result()
+            .orElse(java.util.stream.Stream.empty())
+            .map(item -> item
+                .set("itemId", item.get("id"))
+                .remove("id")
+                .set("amount", item.get("count"))
+                .remove("count"))
+            .toList();
 
-    Dynamic<JsonElement> result = migrate(input, 1, 2);
+        return input.set("inventory",
+            input.createList(migratedItems.stream().map(Dynamic::value)));
+    });
 
-    List<Dynamic<?>> migratedItems = result.get("inventory").asList().orElse(List.of());
-    assertEquals(1, migratedItems.size());
-    assertEquals("sword", migratedItems.get(0).get("itemId").asString().orElse(""));
+    Dynamic<JsonElement> input = TestData.gson().object()
+        .putList("inventory", list -> list
+            .addObject(item -> item.put("id", "sword").put("count", 1))
+            .addObject(item -> item.put("id", "apple").put("count", 64)))
+        .build();
+
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .apply();
+
+    assertThat(result)
+        .field("inventory")
+        .hasSize(2);
+}
+```
+
+## Test with Recording Context
+
+```java
+@Test
+void testNoWarningsDuringMigration() {
+    var fix = QuickFix.identity("noop", 1, 2);
+    Dynamic<JsonElement> input = TestData.gson().object().build();
+
+    var verification = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .recordingContext()
+        .verify();
+
+    verification.assertNoWarnings();
+    verification.assertNoLogs();
+
+    assertThat(verification.passed()).isTrue();
 }
 ```
 
@@ -257,42 +291,103 @@ void testListItemMigration() {
     "99, survival"  // Unknown defaults to survival
 })
 void testGameModeConversions(int input, String expected) {
-    JsonObject data = new JsonObject();
-    data.addProperty("gameMode", input);
+    var fix = createGameModeConversionFix();
 
-    Dynamic<JsonElement> result = migrate(data, 1, 2);
+    Dynamic<JsonElement> data = TestData.gson().object()
+        .put("gameMode", input)
+        .build();
 
-    assertEquals(expected, result.get("gameMode").asString().orElse(""));
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(data)
+        .forType("player")
+        .apply();
+
+    assertThat(result).hasStringField("gameMode", expected);
 }
 ```
 
-## Test Helper Methods
+## Test Edge Cases
 
 ```java
-private void assertFieldExists(Dynamic<?> data, String field) {
-    assertTrue(data.get(field).result().isPresent(),
-        "Field '" + field + "' should exist");
+@Test
+void testEmptyData() {
+    var fix = QuickFix.addStringField(
+        GsonOps.INSTANCE, "add_name", 1, 2, "name", "Unknown"
+    );
+
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(TestData.gson().object().build())
+        .forType("player")
+        .apply();
+
+    assertThat(result).hasStringField("name", "Unknown");
 }
 
-private void assertFieldMissing(Dynamic<?> data, String field) {
-    assertTrue(data.get(field).result().isEmpty(),
-        "Field '" + field + "' should not exist");
-}
+@Test
+void testNullSafety() {
+    var fix = QuickFix.simple("safe_transform", 1, 2, input -> {
+        var name = input.get("name").asString().result().orElse("default");
+        return input.set("name", input.createString(name));
+    });
 
-private void assertStringField(Dynamic<?> data, String field, String expected) {
-    assertEquals(expected, data.get(field).asString().orElse(null),
-        "Field '" + field + "' should be '" + expected + "'");
-}
+    Dynamic<JsonElement> input = TestData.gson().object()
+        // name field is missing
+        .put("level", 10)
+        .build();
 
-private void assertIntField(Dynamic<?> data, String field, int expected) {
-    assertEquals(expected, data.get(field).asInt().orElse(null),
-        "Field '" + field + "' should be " + expected);
+    Dynamic<JsonElement> result = DataFixTester.forFix(fix)
+        .withInput(input)
+        .forType("player")
+        .apply();
+
+    assertThat(result).hasStringField("name", "default");
+}
+```
+
+## Full Migration Chain Test
+
+For testing complete migration chains, use the full DataFixer:
+
+```java
+class FullMigrationTest {
+
+    private static AetherDataFixer fixer;
+
+    @BeforeAll
+    static void setup() {
+        fixer = new DataFixerRuntimeFactory()
+            .create(GameDataBootstrap.CURRENT_VERSION, new GameDataBootstrap());
+    }
+
+    @Test
+    void testV1ToV3Chain() {
+        Dynamic<JsonElement> v1 = TestData.gson().object()
+            .put("playerName", "Steve")
+            .put("xp", 1500)
+            .build();
+
+        TaggedDynamic tagged = new TaggedDynamic(PLAYER, v1);
+        TaggedDynamic migrated = fixer.update(
+            tagged,
+            new DataVersion(1),
+            new DataVersion(3)
+        );
+
+        Dynamic<JsonElement> result = (Dynamic<JsonElement>) migrated.value();
+
+        assertThat(result)
+            .hasStringField("name", "Steve")         // V2 rename
+            .hasIntField("experience", 1500)         // V2 rename
+            .hasIntField("level", 15);               // V3 computed
+    }
 }
 ```
 
 ## Related
 
+- [Testkit Overview](../testkit/index.md) — Complete testkit documentation
+- [Test Data Builders](../testkit/test-data-builders.md) — Creating test data
+- [Custom Assertions](../testkit/assertions.md) — Available assertions
+- [QuickFix Factories](../testkit/quick-fix.md) — Factory methods
 - [Debug Migrations](debug-migrations.md)
-- [Log Migrations](log-migrations.md)
 - [DataFix System](../concepts/datafix-system.md)
-

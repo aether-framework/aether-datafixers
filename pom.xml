@@ -12,6 +12,7 @@
         <module>aether-datafixers-api</module>
         <module>aether-datafixers-codec</module>
         <module>aether-datafixers-core</module>
+        <module>aether-datafixers-testkit</module>
         <module>aether-datafixers-examples</module>
         <module>aether-datafixers-bom</module>
     </modules>
@@ -127,6 +128,11 @@
             <dependency>
                 <groupId>de.splatgames.aether.datafixers</groupId>
                 <artifactId>aether-datafixers-codec</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.splatgames.aether.datafixers</groupId>
+                <artifactId>aether-datafixers-testkit</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

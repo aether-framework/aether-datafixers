@@ -104,3 +104,50 @@ Terminology used in Aether Datafixers.
 **TaggedDynamic**
 : Dynamic data associated with a TypeReference.
 
+## Testkit
+
+**AetherAssertions**
+: Entry point for custom AssertJ assertions for Dynamic, DataResult, and Typed.
+
+**AssertingContext**
+: A DataFix context that fails tests when warnings or errors are logged.
+
+**DataFixTester**
+: Test harness for isolated testing of individual DataFix implementations.
+
+**DataFixVerification**
+: Result of a DataFixTester verification, including result, context, and pass/fail status.
+
+**DynamicAssert**
+: Custom AssertJ assertions for Dynamic objects (field checks, navigation, value assertions).
+
+**DataResultAssert**
+: Custom AssertJ assertions for DataResult (success/error checking).
+
+**MigrationTester**
+: Test harness for testing complete migration chains through multiple versions.
+
+**MockSchemas**
+: Factory for creating mock Schema and SchemaRegistry instances for testing.
+
+**QuickFix**
+: Factory methods for creating common DataFix implementations without boilerplate.
+
+**RecordingContext**
+: A DataFix context that records all log and warning calls during execution.
+
+**SchemaTester**
+: Test harness for validating Schema configurations.
+
+**TestData**
+: Entry point for fluent test data builders (TestData.gson(), TestData.jackson()).
+
+**TestDataBuilder**
+: Fluent builder for creating Dynamic objects with fields.
+
+**TestDataListBuilder**
+: Fluent builder for creating Dynamic lists.
+
+**TypedAssert**
+: Custom AssertJ assertions for Typed objects (type and value checks).
+

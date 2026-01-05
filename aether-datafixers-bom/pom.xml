@@ -32,6 +32,11 @@
                 <artifactId>aether-datafixers-codec</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>de.splatgames.aether.datafixers</groupId>
+                <artifactId>aether-datafixers-testkit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
