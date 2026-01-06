@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -982,6 +983,289 @@ class RulesTest {
             assertThat(directResult).isPresent();
             assertThat(rulesResult).isPresent();
             assertThat(directResult.get().value()).isEqualTo(rulesResult.get().value());
+        }
+    }
+
+    @Nested
+    @DisplayName("batch()")
+    class BatchMethod {
+
+        @Test
+        @DisplayName("applies multiple operations in single pass")
+        void appliesMultipleOperationsInSinglePass() {
+            final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("oldName", "Alice", "toRemove", "deprecated"));
+            final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+            final TypeRewriteRule rule = Rules.batch(OPS, b -> b
+                    .rename("oldName", "name")
+                    .remove("toRemove")
+                    .set("version", d -> d.createInt(2))
+            );
+
+            final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+            assertThat(result).isPresent();
+            @SuppressWarnings("unchecked")
+            final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+            assertThat(resultDynamic.get("name")).isNotNull();
+            assertThat(resultDynamic.get("oldName")).isNull();
+            assertThat(resultDynamic.get("toRemove")).isNull();
+            assertThat(resultDynamic.get("version")).isNotNull();
+        }
+
+        @Test
+        @DisplayName("returns identity for empty batch")
+        void returnsIdentityForEmptyBatch() {
+            final TypeRewriteRule rule = Rules.batch(OPS, b -> {});
+
+            final Typed<String> input = new Typed<>(Type.STRING, "test");
+            final Optional<Typed<?>> result = rule.rewrite(Type.STRING, input);
+
+            assertThat(result).isPresent();
+            assertThat(result.get().value()).isEqualTo("test");
+        }
+
+        @Test
+        @DisplayName("has descriptive toString")
+        void hasDescriptiveToString() {
+            final TypeRewriteRule rule = Rules.batch(OPS, b -> b
+                    .rename("a", "b")
+                    .remove("c")
+            );
+
+            assertThat(rule.toString()).contains("batch");
+            assertThat(rule.toString()).contains("2 ops");
+        }
+    }
+
+    @Nested
+    @DisplayName("conditionalTransform()")
+    class ConditionalTransformMethod {
+
+        @Test
+        @DisplayName("applies transform when condition is true")
+        void appliesTransformWhenConditionIsTrue() {
+            final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("type", "player", "value", 10));
+            final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+            final TypeRewriteRule rule = Rules.conditionalTransform(
+                    OPS,
+                    d -> "player".equals(d.get("type").asString().result().orElse("")),
+                    d -> d.set("migrated", d.createBoolean(true))
+            );
+
+            final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+            assertThat(result).isPresent();
+            @SuppressWarnings("unchecked")
+            final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+            assertThat(resultDynamic.get("migrated")).isNotNull();
+        }
+
+        @Test
+        @DisplayName("does not apply transform when condition is false")
+        void doesNotApplyTransformWhenConditionIsFalse() {
+            final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("type", "world", "value", 10));
+            final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+            final TypeRewriteRule rule = Rules.conditionalTransform(
+                    OPS,
+                    d -> "player".equals(d.get("type").asString().result().orElse("")),
+                    d -> d.set("migrated", d.createBoolean(true))
+            );
+
+            final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+            assertThat(result).isPresent();
+            @SuppressWarnings("unchecked")
+            final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+            assertThat(resultDynamic.get("migrated")).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Single-Pass Conditional Rules")
+    class SinglePassConditionalRules {
+
+        @Nested
+        @DisplayName("ifFieldExists with Function")
+        class IfFieldExistsFunction {
+
+            @Test
+            @DisplayName("applies transform when field exists")
+            void appliesTransformWhenFieldExists() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("legacyField", "value"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldExists(
+                        OPS,
+                        "legacyField",
+                        d -> d.remove("legacyField").set("newField", d.get("legacyField"))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("legacyField")).isNull();
+                assertThat(resultDynamic.get("newField")).isNotNull();
+            }
+
+            @Test
+            @DisplayName("does nothing when field is missing")
+            void doesNothingWhenFieldIsMissing() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("other", "value"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldExists(
+                        OPS,
+                        "legacyField",
+                        d -> d.set("transformed", d.createBoolean(true))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("transformed")).isNull();
+            }
+        }
+
+        @Nested
+        @DisplayName("ifFieldMissing with Function")
+        class IfFieldMissingFunction {
+
+            @Test
+            @DisplayName("applies transform when field is missing")
+            void appliesTransformWhenFieldIsMissing() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("name", "Alice"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldMissing(
+                        OPS,
+                        "version",
+                        d -> d.set("version", d.createInt(1))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("version")).isNotNull();
+            }
+
+            @Test
+            @DisplayName("does nothing when field exists")
+            void doesNothingWhenFieldExists() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("name", "Alice", "version", 5));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldMissing(
+                        OPS,
+                        "version",
+                        d -> d.set("version", d.createInt(1))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                // Should not be overwritten - original value should still be 5
+                assertThat(resultDynamic.get("version").asInt().result()).contains(5);
+            }
+        }
+
+        @Nested
+        @DisplayName("ifFieldEquals with Function")
+        class IfFieldEqualsFunction {
+
+            @Test
+            @DisplayName("applies transform when field equals integer value")
+            void appliesTransformWhenFieldEqualsIntegerValue() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("version", 1, "name", "Alice"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldEquals(
+                        OPS,
+                        "version",
+                        1,
+                        d -> d.set("version", d.createInt(2)).set("migrated", d.createBoolean(true))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("migrated")).isNotNull();
+            }
+
+            @Test
+            @DisplayName("applies transform when field equals string value")
+            void appliesTransformWhenFieldEqualsStringValue() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("type", "legacy", "data", "test"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldEquals(
+                        OPS,
+                        "type",
+                        "legacy",
+                        d -> d.set("type", d.createString("modern"))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("type").asString().result()).contains("modern");
+            }
+
+            @Test
+            @DisplayName("does nothing when field does not equal value")
+            void doesNothingWhenFieldDoesNotEqualValue() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("version", 5, "name", "Alice"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldEquals(
+                        OPS,
+                        "version",
+                        1,
+                        d -> d.set("migrated", d.createBoolean(true))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("migrated")).isNull();
+            }
+
+            @Test
+            @DisplayName("does nothing when field is missing")
+            void doesNothingWhenFieldIsMissing() {
+                final Dynamic<Object> inputDynamic = new Dynamic<>(OPS, Map.of("name", "Alice"));
+                final Typed<Dynamic<?>> input = new Typed<>(Type.PASSTHROUGH, inputDynamic);
+
+                final TypeRewriteRule rule = Rules.ifFieldEquals(
+                        OPS,
+                        "version",
+                        1,
+                        d -> d.set("migrated", d.createBoolean(true))
+                );
+
+                final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
+
+                assertThat(result).isPresent();
+                @SuppressWarnings("unchecked")
+                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                assertThat(resultDynamic.get("migrated")).isNull();
+            }
         }
     }
 }

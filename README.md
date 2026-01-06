@@ -411,6 +411,7 @@ mvn test
   - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
   - **Migration diagnostics** — Optional structured report (applied fixes, touched types, timing)
   - **Extended rewrite rules** — Common operations like nested rename/move/copy helpers
+  - **Performance optimizations** — Caching, lazy evaluation improvements (doesn't change API or determinism)
 
 - **v0.3.0**
   - **CLI module** — Migrate files and print/export a migration report (batch-friendly)

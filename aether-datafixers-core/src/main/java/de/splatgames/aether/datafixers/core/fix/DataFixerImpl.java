@@ -150,16 +150,9 @@ public final class DataFixerImpl implements DataFixer {
         Dynamic<Object> current = (Dynamic<Object>) input;
 
         for (final DataFix<?> fix : fixes) {
-            Preconditions.checkNotNull(fix, "DataFix<?> fix must not be null");
-
-            Preconditions.checkArgument(
-                    fix.fromVersion().compareTo(fix.toVersion()) <= 0,
-                    "fix.fromVersion must be <= fix.toVersion"
-            );
-
-            if (fix.fromVersion().compareTo(fromVersion) < 0) {
-                continue;
-            }
+            // Note: Null check and version ordering are validated at registration time.
+            // The fromVersion range check is handled by DataFixRegistry.getFixes().
+            // Only toVersion check is needed here to avoid applying fixes past target.
             if (fix.toVersion().compareTo(toVersion) > 0) {
                 continue;
             }

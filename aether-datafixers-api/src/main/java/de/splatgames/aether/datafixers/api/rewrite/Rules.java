@@ -34,9 +34,12 @@ import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Factory class providing common combinators for building {@link TypeRewriteRule} instances.
@@ -103,6 +106,14 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public final class Rules {
+
+    /**
+     * Cache for parsed path finders to avoid repeated regex parsing.
+     * Thread-safe via ConcurrentHashMap.
+     *
+     * @since 0.2.0
+     */
+    private static final Map<String, Finder<?>> PATH_CACHE = new ConcurrentHashMap<>();
 
     private Rules() {
         // private constructor to prevent instantiation
@@ -1083,6 +1094,62 @@ public final class Rules {
         );
     }
 
+    // ==================== Batch Operations ====================
+
+    /**
+     * Creates a rule that applies multiple field operations in a single pass.
+     *
+     * <p>This is significantly more efficient than chaining multiple individual rules
+     * (e.g., via {@link #seq}) because it performs all operations in a single
+     * encode/decode cycle instead of one cycle per operation.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Instead of 4 encode/decode cycles:
+     * // Rules.seq(
+     * //     Rules.renameField(ops, "playerName", "name"),
+     * //     Rules.renameField(ops, "xp", "experience"),
+     * //     Rules.removeField(ops, "deprecated"),
+     * //     Rules.addField(ops, "version", defaultVersion)
+     * // )
+     *
+     * // Use batch for just 1 encode/decode cycle:
+     * TypeRewriteRule batchRule = Rules.batch(GsonOps.INSTANCE, b -> b
+     *     .rename("playerName", "name")
+     *     .rename("xp", "experience")
+     *     .remove("deprecated")
+     *     .set("version", d -> d.createInt(2))
+     * );
+     * }</pre>
+     *
+     * @param <T>     the underlying data format type (e.g., JsonElement)
+     * @param ops     the dynamic operations for the data format, must not be {@code null}
+     * @param builder a consumer that configures the batch operations, must not be {@code null}
+     * @return a rule that applies all operations in a single pass, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @see BatchTransform
+     * @since 0.3.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule batch(@NotNull final DynamicOps<T> ops,
+                                            @NotNull final Consumer<BatchTransform<T>> builder) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(builder, "Consumer builder must not be null");
+
+        final BatchTransform<T> batch = new BatchTransform<>(ops);
+        builder.accept(batch);
+
+        if (batch.isEmpty()) {
+            return TypeRewriteRule.identity();
+        }
+
+        return dynamicTransform("batch[" + batch.size() + " ops]", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            return batch.apply(typedDynamic);
+        });
+    }
+
     // ==================== Extended Dynamic Transformation Combinators ====================
 
     /**
@@ -1620,15 +1687,15 @@ public final class Rules {
         Preconditions.checkNotNull(path, "String path must not be null");
         Preconditions.checkNotNull(newName, "String newName must not be null");
 
-        final String[] parts = path.split("\\.");
-        if (parts.length == 1) {
+        final int lastDot = path.lastIndexOf('.');
+        if (lastDot == -1) {
             // Simple case: no nesting
             return renameField(ops, path, newName);
         }
 
-        // Build parent path
-        final String parentPath = String.join(".", Arrays.copyOf(parts, parts.length - 1));
-        final String oldName = parts[parts.length - 1];
+        // Build parent path using substring (faster than split + join)
+        final String parentPath = path.substring(0, lastDot);
+        final String oldName = path.substring(lastDot + 1);
         final Finder<?> parentFinder = parsePath(parentPath);
 
         return dynamicTransform("renameFieldAt(" + path + " -> " + newName + ")", ops, dynamic -> {
@@ -1921,10 +1988,236 @@ public final class Rules {
         };
     }
 
+    // ==================== Single-Pass Conditional Combinators ====================
+
+    /**
+     * Creates a rule that conditionally applies a transformation based on a predicate.
+     *
+     * <p>This is the most efficient conditional combinator as it performs the condition check
+     * and transformation in a single encode/decode cycle. Use this when you need custom
+     * condition logic.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Only migrate if specific conditions are met
+     * TypeRewriteRule conditionalFix = Rules.conditionalTransform(
+     *     GsonOps.INSTANCE,
+     *     dynamic -> dynamic.get("type").asString().result().orElse("").equals("player"),
+     *     dynamic -> dynamic.set("migrated", dynamic.createBoolean(true))
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param condition the predicate to test, must not be {@code null}
+     * @param transform the transformation to apply if condition is true, must not be {@code null}
+     * @return a conditional rule that operates in a single pass, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule conditionalTransform(
+            @NotNull final DynamicOps<T> ops,
+            @NotNull final Predicate<Dynamic<T>> condition,
+            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(condition, "Predicate condition must not be null");
+        Preconditions.checkNotNull(transform, "Function transform must not be null");
+
+        return dynamicTransform("conditionalTransform", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            if (condition.test(typedDynamic)) {
+                return transform.apply(typedDynamic);
+            }
+            return dynamic;
+        });
+    }
+
+    /**
+     * Creates a rule that applies a transformation if a field exists (single-pass version).
+     *
+     * <p>This is more efficient than {@link #ifFieldExists(DynamicOps, String, TypeRewriteRule)}
+     * when the nested rule would perform another encode/decode cycle. This version performs
+     * the condition check and transformation in a single encode/decode cycle.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Migrate legacy field in single pass
+     * TypeRewriteRule migrateLegacy = Rules.ifFieldExists(
+     *     GsonOps.INSTANCE,
+     *     "legacyField",
+     *     dynamic -> dynamic
+     *         .remove("legacyField")
+     *         .set("newField", dynamic.get("legacyField"))
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to check, must not be {@code null}
+     * @param transform the transformation to apply if field exists, must not be {@code null}
+     * @return a conditional rule that operates in a single pass, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule ifFieldExists(
+            @NotNull final DynamicOps<T> ops,
+            @NotNull final String fieldName,
+            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(transform, "Function transform must not be null");
+
+        return dynamicTransform("ifFieldExists(" + fieldName + ")", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            if (typedDynamic.get(fieldName) != null) {
+                return transform.apply(typedDynamic);
+            }
+            return dynamic;
+        });
+    }
+
+    /**
+     * Creates a rule that applies a transformation if a field is missing (single-pass version).
+     *
+     * <p>This is more efficient than {@link #ifFieldMissing(DynamicOps, String, TypeRewriteRule)}
+     * when the nested rule would perform another encode/decode cycle. This version performs
+     * the condition check and transformation in a single encode/decode cycle.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Add default values in single pass
+     * TypeRewriteRule addDefaults = Rules.ifFieldMissing(
+     *     GsonOps.INSTANCE,
+     *     "version",
+     *     dynamic -> dynamic
+     *         .set("version", dynamic.createInt(1))
+     *         .set("migrated", dynamic.createBoolean(true))
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to check, must not be {@code null}
+     * @param transform the transformation to apply if field is missing, must not be {@code null}
+     * @return a conditional rule that operates in a single pass, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    public static <T> TypeRewriteRule ifFieldMissing(
+            @NotNull final DynamicOps<T> ops,
+            @NotNull final String fieldName,
+            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(transform, "Function transform must not be null");
+
+        return dynamicTransform("ifFieldMissing(" + fieldName + ")", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            if (typedDynamic.get(fieldName) == null) {
+                return transform.apply(typedDynamic);
+            }
+            return dynamic;
+        });
+    }
+
+    /**
+     * Creates a rule that applies a transformation if a field equals a specific value (single-pass version).
+     *
+     * <p>This is more efficient than {@link #ifFieldEquals(DynamicOps, String, Object, TypeRewriteRule)}
+     * when the nested rule would perform another encode/decode cycle. This version performs
+     * the condition check and transformation in a single encode/decode cycle.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Migrate version 1 data in single pass
+     * TypeRewriteRule migrateV1 = Rules.ifFieldEquals(
+     *     GsonOps.INSTANCE,
+     *     "version",
+     *     1,
+     *     dynamic -> dynamic
+     *         .set("version", dynamic.createInt(2))
+     *         .set("migrated", dynamic.createBoolean(true))
+     * );
+     * }</pre>
+     *
+     * @param <T>       the underlying data format type (e.g., JsonElement)
+     * @param <V>       the type of the value to compare
+     * @param ops       the dynamic operations for the data format, must not be {@code null}
+     * @param fieldName the name of the field to check, must not be {@code null}
+     * @param value     the value to compare against, must not be {@code null}
+     * @param transform the transformation to apply if field equals value, must not be {@code null}
+     * @return a conditional rule that operates in a single pass, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    public static <T, V> TypeRewriteRule ifFieldEquals(
+            @NotNull final DynamicOps<T> ops,
+            @NotNull final String fieldName,
+            @NotNull final V value,
+            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(value, "V value must not be null");
+        Preconditions.checkNotNull(transform, "Function transform must not be null");
+
+        return dynamicTransform("ifFieldEquals(" + fieldName + " == " + value + ")", ops, dynamic -> {
+            @SuppressWarnings("unchecked")
+            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            final Dynamic<T> field = typedDynamic.get(fieldName);
+
+            if (field == null) {
+                return dynamic;
+            }
+
+            // Check if field value matches
+            final boolean matches = matchesValue(field, value);
+            if (matches) {
+                return transform.apply(typedDynamic);
+            }
+            return dynamic;
+        });
+    }
+
+    /**
+     * Checks if a Dynamic field value matches the expected value.
+     * Supports Integer, Long, Double, Float, Boolean, and String comparisons.
+     *
+     * @param field the dynamic field to check
+     * @param value the expected value
+     * @param <T>   the dynamic type
+     * @param <V>   the value type
+     * @return true if the field value matches
+     */
+    private static <T, V> boolean matchesValue(@NotNull final Dynamic<T> field, @NotNull final V value) {
+        if (value instanceof Integer) {
+            return field.asInt().result().map(v -> v.equals(value)).orElse(false);
+        } else if (value instanceof Long) {
+            return field.asLong().result().map(v -> v.equals(value)).orElse(false);
+        } else if (value instanceof Double) {
+            return field.asDouble().result().map(v -> v.equals(value)).orElse(false);
+        } else if (value instanceof Float) {
+            return field.asFloat().result().map(v -> v.equals(value)).orElse(false);
+        } else if (value instanceof Boolean) {
+            return field.asBoolean().result().map(v -> v.equals(value)).orElse(false);
+        } else if (value instanceof String) {
+            return field.asString().result().map(v -> v.equals(value)).orElse(false);
+        }
+        return false;
+    }
+
     // ==================== Private Helpers ====================
 
     /**
      * Parses a dot-notation path into a composed Finder.
+     *
+     * <p>Results are cached for performance. Uses character-based parsing instead of regex.</p>
      *
      * <p>Supports field names and numeric indices. For example:
      * <ul>
@@ -1935,19 +2228,57 @@ public final class Rules {
      *
      * @param path the dot-notation path, must not be {@code null}
      * @return a composed Finder for the path, never {@code null}
+     * @since 0.2.0 - Added caching and optimized parsing
      */
     @NotNull
     private static Finder<?> parsePath(@NotNull final String path) {
-        final String[] parts = path.split("\\.");
+        return PATH_CACHE.computeIfAbsent(path, Rules::parsePathInternal);
+    }
+
+    /**
+     * Internal method that parses a path without caching.
+     * Uses character-based parsing for better performance than regex.
+     *
+     * @param path the dot-notation path, must not be {@code null}
+     * @return a composed Finder for the path, never {@code null}
+     */
+    @NotNull
+    private static Finder<?> parsePathInternal(@NotNull final String path) {
         Finder<?> finder = Finder.identity();
-        for (final String part : parts) {
-            if (part.matches("\\d+")) {
-                finder = finder.then(Finder.index(Integer.parseInt(part)));
-            } else {
-                finder = finder.then(Finder.field(part));
+        int start = 0;
+        final int length = path.length();
+
+        for (int i = 0; i <= length; i++) {
+            if (i == length || path.charAt(i) == '.') {
+                if (i > start) {
+                    final String part = path.substring(start, i);
+                    finder = isNumeric(part)
+                            ? finder.then(Finder.index(Integer.parseInt(part)))
+                            : finder.then(Finder.field(part));
+                }
+                start = i + 1;
             }
         }
         return finder;
+    }
+
+    /**
+     * Checks if a string contains only digit characters.
+     * More efficient than regex for simple numeric checks.
+     *
+     * @param s the string to check, must not be {@code null}
+     * @return {@code true} if the string is non-empty and all characters are digits
+     */
+    private static boolean isNumeric(@NotNull final String s) {
+        if (s.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -1960,14 +2291,15 @@ public final class Rules {
     @NotNull
     private static Dynamic<?> removeAtPath(@NotNull final Dynamic<?> dynamic,
                                            @NotNull final String path) {
-        final String[] parts = path.split("\\.");
-        if (parts.length == 1) {
-            return dynamic.remove(parts[0]);
+        final int lastDot = path.lastIndexOf('.');
+        if (lastDot == -1) {
+            // Simple case: no nesting
+            return dynamic.remove(path);
         }
 
-        // Build parent path
-        final String parentPath = String.join(".", Arrays.copyOf(parts, parts.length - 1));
-        final String fieldName = parts[parts.length - 1];
+        // Build parent path using substring (faster than split + join)
+        final String parentPath = path.substring(0, lastDot);
+        final String fieldName = path.substring(lastDot + 1);
         final Finder<?> parentFinder = parsePath(parentPath);
 
         final Dynamic<?> parent = parentFinder.get(dynamic);
@@ -1992,13 +2324,45 @@ public final class Rules {
     private static Dynamic<?> setAtPath(@NotNull final Dynamic<?> dynamic,
                                         @NotNull final String path,
                                         @NotNull final Dynamic<?> value) {
-        final String[] parts = path.split("\\.");
-        if (parts.length == 1) {
-            return ((Dynamic<Object>) dynamic).set(parts[0], (Dynamic<Object>) value);
+        final int firstDot = path.indexOf('.');
+        if (firstDot == -1) {
+            // Simple case: no nesting
+            return ((Dynamic<Object>) dynamic).set(path, (Dynamic<Object>) value);
         }
 
-        // Navigate and create parent objects as needed
+        // Navigate and create parent objects as needed - use split only when needed
+        final String[] parts = splitPath(path);
         return setAtPathRecursive((Dynamic<Object>) dynamic, parts, 0, (Dynamic<Object>) value);
+    }
+
+    /**
+     * Splits a path by dots without using regex.
+     * More efficient than String.split("\\\\.")
+     *
+     * @param path the dot-notation path, must not be {@code null}
+     * @return an array of path segments
+     */
+    @NotNull
+    private static String[] splitPath(@NotNull final String path) {
+        // Count dots to pre-size array
+        int dotCount = 0;
+        for (int i = 0; i < path.length(); i++) {
+            if (path.charAt(i) == '.') {
+                dotCount++;
+            }
+        }
+
+        final String[] parts = new String[dotCount + 1];
+        int partIndex = 0;
+        int start = 0;
+
+        for (int i = 0; i <= path.length(); i++) {
+            if (i == path.length() || path.charAt(i) == '.') {
+                parts[partIndex++] = path.substring(start, i);
+                start = i + 1;
+            }
+        }
+        return parts;
     }
 
     /**

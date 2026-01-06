@@ -67,15 +67,24 @@ public final class DataFixRegistry {
     /**
      * Registers a fix for a type at its from-version.
      *
+     * <p>Validates fix invariants at registration time to avoid repeated checks during migration.</p>
+     *
      * @param type the type reference this fix applies to, must not be {@code null}
      * @param fix  the data fix to register, must not be {@code null}
-     * @throws NullPointerException  if type or fix is {@code null}
-     * @throws IllegalStateException if this registry is frozen
+     * @throws NullPointerException     if type or fix is {@code null}
+     * @throws IllegalStateException    if this registry is frozen
+     * @throws IllegalArgumentException if fix.fromVersion &gt; fix.toVersion
      */
     public void register(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
         Preconditions.checkNotNull(type, "TypeReference type cannot be null");
         Preconditions.checkNotNull(fix, "DataFix<?> fix cannot be null");
         Preconditions.checkState(!this.frozen, "Registry is frozen and cannot be modified");
+        // Validate fix version ordering once at registration (avoids repeated checks during migration)
+        Preconditions.checkArgument(
+                fix.fromVersion().compareTo(fix.toVersion()) <= 0,
+                "fix.fromVersion must be <= fix.toVersion for fix '%s'",
+                fix.name()
+        );
 
         this.fixesByType
                 .computeIfAbsent(type, k -> new TreeMap<>())
@@ -138,11 +147,29 @@ public final class DataFixRegistry {
             return List.of();
         }
 
-        final List<DataFix<?>> result = new ArrayList<>();
-        for (List<DataFix<?>> fixes : fixesByVersion.subMap(fromInclusive, true, toInclusive, true).values()) {
+        final var rangeValues = fixesByVersion.subMap(fromInclusive, true, toInclusive, true).values();
+        if (rangeValues.isEmpty()) {
+            return List.of();
+        }
+
+        // Pre-calculate total size to avoid ArrayList resizing
+        int totalSize = 0;
+        for (List<DataFix<?>> fixes : rangeValues) {
+            totalSize += fixes.size();
+        }
+
+        if (totalSize == 0) {
+            return List.of();
+        }
+
+        // Pre-allocate list with exact capacity
+        final List<DataFix<?>> result = new ArrayList<>(totalSize);
+        for (List<DataFix<?>> fixes : rangeValues) {
             result.addAll(fixes);
         }
-        return List.copyOf(result);
+
+        // Use unmodifiableList instead of copyOf to avoid second copy
+        return Collections.unmodifiableList(result);
     }
 
     /**
