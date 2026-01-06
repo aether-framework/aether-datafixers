@@ -2,7 +2,70 @@
 
 History of documentation updates.
 
-## Version 1.0.0
+## Version 0.2.0
+
+Extended rules and testkit module release.
+
+### Extended Rewrite Rules
+
+New convenience methods in `Rules` class for common transformation patterns:
+
+**Core Rules:**
+- `dynamicTransform(name, ops, fn)` — Custom Dynamic transformation
+- `setField(ops, field, value)` — Set field (overwrites existing)
+
+**Batch Operations:**
+- `renameFields(ops, map)` — Batch rename multiple fields
+- `removeFields(ops, fields...)` — Batch remove multiple fields
+
+**Grouping and Moving:**
+- `groupFields(ops, target, fields...)` — Group fields into nested object
+- `flattenField(ops, field)` — Flatten nested object to root
+- `moveField(ops, source, target)` — Move field between paths
+- `copyField(ops, source, target)` — Copy field (keeps original)
+
+**Path-Based Operations:**
+- `transformFieldAt(ops, path, fn)` — Transform at nested path
+- `renameFieldAt(ops, path, newName)` — Rename at nested path
+- `removeFieldAt(ops, path)` — Remove at nested path
+- `addFieldAt(ops, path, value)` — Add at nested path
+
+**Conditional Rules:**
+- `ifFieldExists(ops, field, rule)` — Apply rule if field exists
+- `ifFieldMissing(ops, field, rule)` — Apply rule if field missing
+- `ifFieldEquals(ops, field, value, rule)` — Apply rule if field equals value
+
+### New How-To Guides
+
+- [Batch Operations](../how-to/batch-operations.md) — Rename/remove multiple fields
+- [Group Fields](../how-to/group-fields.md) — Grouping and flattening structures
+- [Conditional Rules](../how-to/conditional-rules.md) — Conditional rule application
+
+### Testkit Module
+
+New module `aether-datafixers-testkit` for testing migrations:
+
+- `TestData` — Fluent test data builders
+- `AetherAssertions` — Custom AssertJ assertions for Dynamic, DataResult, Typed
+- `DataFixTester` — Test harness for individual DataFix implementations
+- `MigrationTester` — Test harness for complete migration chains
+- `SchemaTester` — Test harness for Schema validation
+- `QuickFix` — Factory methods for common fix patterns
+- `MockSchemas` — Factory for mock Schema instances
+- `RecordingContext` / `AssertingContext` — Test contexts
+
+### Documentation Updates
+
+- Updated [Rewrite Rules](../concepts/rewrite-rules.md) with extended rules section
+- Updated [Concepts Index](../concepts/index.md) with extended rules examples
+- Updated [How-To Index](../how-to/index.md) with new guides
+- Added [Test Migrations](../how-to/test-migrations.md) guide
+- Added [Testkit documentation](../testkit/index.md) section
+- Updated [Glossary](glossary.md) with testkit terms
+
+---
+
+## Version 0.1.0
 
 Initial documentation release covering:
 

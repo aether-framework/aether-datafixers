@@ -212,10 +212,15 @@ DSL.optional("nickname", DSL.string())
 DSL.list(DSL.string())
 DSL.taggedChoice("type", entityTypes)
 
-// Rewrite rules
+// Rewrite rules (basic)
 Rules.renameField(TYPE, "old", "new")
 Rules.transformField(TYPE, "field", transformer)
 Rules.seq(rule1, rule2, rule3)
+
+// Extended rules (batch, grouping, conditional)
+Rules.renameFields(ops, Map.of("old1", "new1", "old2", "new2"))
+Rules.groupFields(ops, "position", "x", "y", "z")
+Rules.ifFieldExists(ops, "legacy", migrationRule)
 ```
 
 ---
