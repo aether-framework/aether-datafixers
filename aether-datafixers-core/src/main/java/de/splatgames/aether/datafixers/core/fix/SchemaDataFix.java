@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.core.fix;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
@@ -33,6 +34,7 @@ import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
+import de.splatgames.aether.datafixers.core.diagnostic.DiagnosticRuleWrapper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -157,7 +159,12 @@ public abstract class SchemaDataFix implements DataFix<Object> {
 
         final Type<?> logical = in.require(type);
 
-        final TypeRewriteRule rule = this.makeRule(in, out);
+        TypeRewriteRule rule = this.makeRule(in, out);
+
+        // Wrap rule with diagnostics if enabled
+        if (context instanceof DiagnosticContext dc && dc.isDiagnosticEnabled()) {
+            rule = DiagnosticRuleWrapper.wrap(rule, dc);
+        }
 
         @SuppressWarnings("unchecked")
         final Typed<?> typedIn = new Typed<>((Type<Object>) logical, input);

@@ -10,7 +10,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.2.0)
+## ✨ Features (v0.1.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
@@ -62,7 +62,7 @@ AetherDataFixer fixer = new DataFixerRuntimeFactory()
 
 ```java
 Dynamic<?> updated = fixer.update(
-    TypeReference.of("player"),
+    new TypeReference("player"),
     inputDynamic,
     fromVersion,
     toVersion
