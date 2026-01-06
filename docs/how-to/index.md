@@ -37,6 +37,7 @@ This section contains task-oriented guides that show you how to accomplish speci
 | [Debug Migrations](debug-migrations.md) | Troubleshoot migration issues |
 | [Test Migrations](test-migrations.md) | Write unit tests for your fixes |
 | [Log Migrations](log-migrations.md) | Add logging to track migration progress |
+| [Use Diagnostics](use-diagnostics.md) | Capture structured migration reports |
 
 ## Advanced Usage
 

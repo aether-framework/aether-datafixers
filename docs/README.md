@@ -14,6 +14,7 @@ Aether Datafixers is a framework for migrating serialized data through schema ve
 - **Codec System** — Bidirectional transformation between typed Java objects and dynamic representations
 - **Profunctor Optics** — Composable, type-safe accessors for nested data (`Lens`, `Prism`, `Finder`)
 - **Type Safety** — Strong typing with `TypeReference` identifiers for data routing
+- **Migration Diagnostics** — Opt-in structured reports with timing, rules, and snapshots
 - **JDK 17+** — Built and tested on modern LTS JVMs
 
 ---
@@ -61,6 +62,7 @@ Practical task-oriented guides:
 - [Transform Field Values](how-to/transform-field.md)
 - [Restructure Data](how-to/restructure-data.md)
 - [Debug Migrations](how-to/debug-migrations.md)
+- [Use Diagnostics](how-to/use-diagnostics.md)
 - [View all How-To Guides](how-to/index.md)
 
 ### Examples
