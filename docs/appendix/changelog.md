@@ -62,6 +62,33 @@ New convenience methods in `Rules` class for common transformation patterns:
 - `ifFieldMissing(ops, field, rule)` — Apply rule if field missing
 - `ifFieldEquals(ops, field, value, rule)` — Apply rule if field equals value
 
+### High-Performance APIs
+
+New APIs for optimized transformations:
+
+**BatchTransform:**
+- `Rules.batch(ops, builder)` — Apply multiple operations in single encode/decode cycle
+- `BatchTransform.rename(from, to)` — Rename field in batch
+- `BatchTransform.remove(field)` — Remove field in batch
+- `BatchTransform.set(field, valueSupplier)` — Set field in batch
+- `BatchTransform.transform(field, fn)` — Transform field in batch
+- `BatchTransform.addIfMissing(field, valueSupplier)` — Add if missing in batch
+
+**Single-Pass Conditionals:**
+- `Rules.conditionalTransform(ops, predicate, transform)` — General conditional
+- `Rules.ifFieldExists(ops, field, transform)` — Function overload (single-pass)
+- `Rules.ifFieldMissing(ops, field, transform)` — Function overload (single-pass)
+- `Rules.ifFieldEquals(ops, field, value, transform)` — Function overload (single-pass)
+
+### Performance Optimizations
+
+Internal optimizations with no API changes:
+
+- Path parsing uses character-based parsing with memoization cache
+- `DataFixRegistry.getFixes()` pre-allocates result list
+- `DataFixerImpl` moves validation to registration time
+- Reduced allocations in hot paths
+
 ### New How-To Guides
 
 - [Batch Operations](../how-to/batch-operations.md) — Rename/remove multiple fields
