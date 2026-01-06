@@ -75,9 +75,17 @@ Rules.seq(rule1, rule2, rule3)
 ### Extended Rules
 
 ```java
-// Batch operations
+// Batch operations (multiple rules)
 Rules.renameFields(ops, Map.of("old1", "new1", "old2", "new2"))
 Rules.removeFields(ops, "field1", "field2", "field3")
+
+// High-performance batch (single encode/decode cycle)
+Rules.batch(ops, b -> b
+    .rename("playerName", "name")
+    .rename("xp", "experience")
+    .remove("deprecated")
+    .set("version", d -> d.createInt(2))
+)
 
 // Grouping and flattening
 Rules.groupFields(ops, "position", "x", "y", "z")
@@ -91,10 +99,16 @@ Rules.copyField(ops, "name", "displayName")
 Rules.transformFieldAt(ops, "position.x", d -> d.createDouble(d.asDouble().orElse(0.0) * 2))
 Rules.addFieldAt(ops, "settings.graphics.quality", defaultValue)
 
-// Conditional rules
+// Conditional rules (with TypeRewriteRule)
 Rules.ifFieldExists(ops, "legacyField", migrationRule)
 Rules.ifFieldMissing(ops, "version", addVersionRule)
 Rules.ifFieldEquals(ops, "version", 1, migrateV1Rule)
+
+// Single-pass conditional rules (with Function - more efficient)
+Rules.ifFieldExists(ops, "legacy", d -> d.remove("legacy").set("new", d.get("legacy")))
+Rules.ifFieldMissing(ops, "version", d -> d.set("version", d.createInt(1)))
+Rules.ifFieldEquals(ops, "version", 1, d -> d.set("version", d.createInt(2)))
+Rules.conditionalTransform(ops, d -> d.get("type").asString()..., transform)
 ```
 
 ### Common Dynamic Operations
