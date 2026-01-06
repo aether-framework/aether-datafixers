@@ -10,12 +10,14 @@ This section contains task-oriented guides that show you how to accomplish speci
 | [Add a New Field](add-field.md) | Add fields with default or computed values |
 | [Remove a Field](remove-field.md) | Safely remove obsolete fields |
 | [Transform Field Values](transform-field.md) | Convert field values (types, formats, etc.) |
+| [Batch Operations](batch-operations.md) | Rename or remove multiple fields at once |
 
 ## Structural Changes
 
 | Guide | Description |
 |-------|-------------|
 | [Restructure Data](restructure-data.md) | Nest, flatten, merge, and split structures |
+| [Group Fields](group-fields.md) | Group flat fields into nested objects |
 | [Convert Types](convert-types.md) | Change field types (int→string, etc.) |
 | [Handle Optional Fields](handle-optional-fields.md) | Work with fields that may be missing |
 | [Preserve Unknown Fields](preserve-unknown-fields.md) | Keep fields you don't know about |
@@ -25,6 +27,7 @@ This section contains task-oriented guides that show you how to accomplish speci
 | Guide | Description |
 |-------|-------------|
 | [Compose Fixes](compose-fixes.md) | Combine multiple transformation rules |
+| [Conditional Rules](conditional-rules.md) | Apply rules based on field conditions |
 | [Create a Bootstrap](create-bootstrap.md) | Wire schemas and fixes together |
 
 ## Development & Testing
@@ -66,6 +69,31 @@ Rules.transform(TYPE, obj -> transform(obj))
 
 // Combine rules
 Rules.seq(rule1, rule2, rule3)
+```
+
+### Extended Rules
+
+```java
+// Batch operations
+Rules.renameFields(ops, Map.of("old1", "new1", "old2", "new2"))
+Rules.removeFields(ops, "field1", "field2", "field3")
+
+// Grouping and flattening
+Rules.groupFields(ops, "position", "x", "y", "z")
+Rules.flattenField(ops, "position")
+
+// Move and copy
+Rules.moveField(ops, "x", "position.x")
+Rules.copyField(ops, "name", "displayName")
+
+// Path-based operations
+Rules.transformFieldAt(ops, "position.x", d -> d.createDouble(d.asDouble().orElse(0.0) * 2))
+Rules.addFieldAt(ops, "settings.graphics.quality", defaultValue)
+
+// Conditional rules
+Rules.ifFieldExists(ops, "legacyField", migrationRule)
+Rules.ifFieldMissing(ops, "version", addVersionRule)
+Rules.ifFieldEquals(ops, "version", 1, migrateV1Rule)
 ```
 
 ### Common Dynamic Operations

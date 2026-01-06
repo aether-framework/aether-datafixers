@@ -420,6 +420,7 @@ mvn test
   - **Schema tooling** — Runtime schema validation + diff utilities between versions
 
 - **v0.4.0**
+- - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
   - **Extra ops modules** — Optional YAML/TOML support (format adapters)
   - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
 
