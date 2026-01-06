@@ -410,17 +410,14 @@ mvn test
 - **v0.2.0** (next)
   - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
   - **Migration diagnostics** — Optional structured report (applied fixes, touched types, timing)
-  - **Policy system** — Configurable handling for warnings/logs/unknown fields/types during migration
-  - **Codec improvements** — Better error reporting, parity improvements for GsonOps/JacksonOps
   - **Extended rewrite rules** — Common operations like nested rename/move/copy helpers
-  - Performance optimizations
 
 - **v0.3.0**
   - **CLI module** — Migrate files and print/export a migration report (batch-friendly)
   - **Schema tooling** — Runtime schema validation + diff utilities between versions
 
 - **v0.4.0**
-- - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
+  - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
   - **Extra ops modules** — Optional YAML/TOML support (format adapters)
   - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
 
