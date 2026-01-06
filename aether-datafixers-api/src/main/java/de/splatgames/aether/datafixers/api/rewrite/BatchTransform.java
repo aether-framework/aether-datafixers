@@ -75,7 +75,7 @@ import java.util.function.Function;
  * @param <T> the underlying data format type (e.g., JsonElement)
  * @author Erik Pförtner
  * @see Rules#batch(DynamicOps, java.util.function.Consumer)
- * @since 0.3.0
+ * @since 0.2.0
  */
 public final class BatchTransform<T> {
 
