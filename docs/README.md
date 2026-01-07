@@ -84,6 +84,16 @@ Test your DataFixes and migrations with the Testkit module:
 - [QuickFix Factories](testkit/quick-fix.md) — Factory methods for common fix patterns
 - [Mock Schemas](testkit/mock-schemas.md) — Mock schema utilities
 
+### Command-Line Interface
+
+Migrate and validate data files from the command line:
+
+- [CLI Overview](cli/index.md) — Introduction to the CLI tool
+- [Installation](cli/installation.md) — Building and running the CLI
+- [Command Reference](cli/commands.md) — Detailed command documentation
+- [Format Handlers](cli/format-handlers.md) — Custom format handler development
+- [Examples](cli/examples.md) — Practical usage examples
+
 ### Advanced Topics
 
 For experienced users:
@@ -109,6 +119,7 @@ For experienced users:
 | `aether-datafixers-api` | Core interfaces and API contracts |
 | `aether-datafixers-core` | Default implementations |
 | `aether-datafixers-codec` | GsonOps, JacksonOps implementations |
+| `aether-datafixers-cli` | Command-line interface for data migration |
 | `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |
 | `aether-datafixers-examples` | Practical usage examples |
 | `aether-datafixers-bom` | Bill of Materials for version management |
