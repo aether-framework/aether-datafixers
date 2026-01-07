@@ -6,6 +6,49 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.0] - 2026-01-07
+
+### Added
+
+#### CLI Module (`aether-datafixers-cli`)
+
+New command-line interface for data migration without writing Java code.
+
+**Commands:**
+- `migrate` — Migrate data files from one schema version to another
+- `validate` — Check if files need migration without modifying them
+- `info` — Display version info, available formats, and bootstrap details
+
+**Core Features:**
+- Batch processing of multiple files with shell glob expansion
+- Auto-detection of source version from configurable data field path
+- In-place file modification with automatic `.bak` backup
+- Output to stdout, file, or directory
+- Pretty-printed or compact JSON output
+- Migration reports in text or JSON format
+- Verbose mode with detailed progress and stack traces
+- Fail-fast or continue-on-error modes
+- CI/CD friendly exit codes (0=success, 1=error, 2=migration needed)
+
+**Format Handler System:**
+- `FormatHandler<T>` — SPI for pluggable serialization formats
+- `FormatRegistry` — ServiceLoader-based handler discovery
+- `json-gson` — JSON format using Google Gson (default)
+- `json-jackson` — JSON format using Jackson Databind
+
+**Utilities:**
+- `BootstrapLoader` — Reflective loading of DataFixerBootstrap implementations
+- `VersionExtractor` — Extract version from nested JSON paths (dot notation)
+- `ReportFormatter` — Text and JSON migration report formatting
+- `TextReportFormatter` — Human-readable single-line reports
+- `JsonReportFormatter` — Machine-readable JSON reports
+
+**Exceptions:**
+- `BootstrapLoadException` — Bootstrap class loading failures
+- `FormatParseException` — Input parsing failures
+
+---
+
 ## [0.2.0] - 2026-01-07
 
 ### Added

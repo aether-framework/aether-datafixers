@@ -11,6 +11,7 @@ Aether Datafixers is modular. Choose the modules you need:
 | `aether-datafixers-api` | Core interfaces | Always (transitive dependency) |
 | `aether-datafixers-core` | Default implementations | Always needed for runtime |
 | `aether-datafixers-codec` | GsonOps, JacksonOps | When working with JSON |
+| `aether-datafixers-cli` | Command-line interface | For CLI-based data migration |
 | `aether-datafixers-testkit` | Testing utilities | For unit/integration testing |
 | `aether-datafixers-bom` | Version management | Recommended for multi-module projects |
 
@@ -233,6 +234,14 @@ Aether Datafixers has minimal dependencies:
 | SLF4J API | Compile | Logging interface |
 | Gson | Optional | JSON support (codec module) |
 | Jackson | Optional | JSON support (codec module) |
+
+---
+
+## CLI Installation
+
+For command-line usage without writing Java code, see the dedicated CLI documentation:
+
+→ [CLI Installation](../cli/installation.md) — Build and run the CLI tool
 
 ---
 

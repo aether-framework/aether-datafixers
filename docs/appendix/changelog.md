@@ -1,135 +1,70 @@
 # Documentation Changelog
 
-History of documentation updates.
+History of documentation updates. For code changes, see the main [CHANGELOG.md](../../CHANGELOG.md).
+
+---
+
+## Version 0.3.0
+
+### New Section: CLI Module
+
+Added complete documentation for the new CLI module:
+
+- [CLI Overview](../cli/index.md) — Introduction, quick start, and workflow diagram
+- [Installation](../cli/installation.md) — Build instructions, aliases, classpath setup
+- [Command Reference](../cli/commands.md) — Detailed options for migrate, validate, info
+- [Format Handlers](../cli/format-handlers.md) — Custom format handler development guide
+- [Examples](../cli/examples.md) — 11 practical usage scenarios (CI/CD, Docker, scripting)
+
+### Updated Pages
+
+- [Main README](../README.md) — Added CLI module to navigation and module table
+- [Installation Guide](../getting-started/installation.md) — Added CLI module to overview table
+
+---
 
 ## Version 0.2.0
 
-Extended rules, testkit module, and migration diagnostics release.
+### New Section: Testkit Module
 
-### Migration Diagnostics
+Added complete documentation for the testkit module:
 
-New opt-in diagnostic system for capturing structured reports during migrations:
-
-**Core API (`aether-datafixers-api`):**
-- `DiagnosticOptions` — Configuration for diagnostic capture (snapshots, rule details, limits)
-- `DiagnosticContext` — Context interface extending `DataFixerContext` for diagnostic migrations
-- `MigrationReport` — Immutable report with timing, fixes, rules, warnings, and snapshots
-- `FixExecution` — Record of individual fix executions with timing and rule applications
-- `RuleApplication` — Record of individual rule applications within a fix
-
-**Implementation (`aether-datafixers-core`):**
-- `DiagnosticContextImpl` — Full implementation with logging and message formatting
-- `MigrationReportImpl` — Immutable report implementation with builder
-- `DiagnosticRuleWrapper` — Rule wrapper for capturing rule-level timing
-
-**Features:**
-- Zero overhead when diagnostics are not enabled (opt-in via `DiagnosticContext`)
-- Configurable snapshot capture with truncation limits
-- Per-fix and per-rule timing measurements
-- Warning emission from DataFix implementations
-- Summary generation for quick overview
-
-**Presets:**
-- `DiagnosticOptions.defaults()` — Full diagnostics with snapshots and rule details
-- `DiagnosticOptions.minimal()` — Timing only, minimal overhead
-
-### Extended Rewrite Rules
-
-New convenience methods in `Rules` class for common transformation patterns:
-
-**Core Rules:**
-- `dynamicTransform(name, ops, fn)` — Custom Dynamic transformation
-- `setField(ops, field, value)` — Set field (overwrites existing)
-
-**Batch Operations:**
-- `renameFields(ops, map)` — Batch rename multiple fields
-- `removeFields(ops, fields...)` — Batch remove multiple fields
-
-**Grouping and Moving:**
-- `groupFields(ops, target, fields...)` — Group fields into nested object
-- `flattenField(ops, field)` — Flatten nested object to root
-- `moveField(ops, source, target)` — Move field between paths
-- `copyField(ops, source, target)` — Copy field (keeps original)
-
-**Path-Based Operations:**
-- `transformFieldAt(ops, path, fn)` — Transform at nested path
-- `renameFieldAt(ops, path, newName)` — Rename at nested path
-- `removeFieldAt(ops, path)` — Remove at nested path
-- `addFieldAt(ops, path, value)` — Add at nested path
-
-**Conditional Rules:**
-- `ifFieldExists(ops, field, rule)` — Apply rule if field exists
-- `ifFieldMissing(ops, field, rule)` — Apply rule if field missing
-- `ifFieldEquals(ops, field, value, rule)` — Apply rule if field equals value
-
-### High-Performance APIs
-
-New APIs for optimized transformations:
-
-**BatchTransform:**
-- `Rules.batch(ops, builder)` — Apply multiple operations in single encode/decode cycle
-- `BatchTransform.rename(from, to)` — Rename field in batch
-- `BatchTransform.remove(field)` — Remove field in batch
-- `BatchTransform.set(field, valueSupplier)` — Set field in batch
-- `BatchTransform.transform(field, fn)` — Transform field in batch
-- `BatchTransform.addIfMissing(field, valueSupplier)` — Add if missing in batch
-
-**Single-Pass Conditionals:**
-- `Rules.conditionalTransform(ops, predicate, transform)` — General conditional
-- `Rules.ifFieldExists(ops, field, transform)` — Function overload (single-pass)
-- `Rules.ifFieldMissing(ops, field, transform)` — Function overload (single-pass)
-- `Rules.ifFieldEquals(ops, field, value, transform)` — Function overload (single-pass)
-
-### Performance Optimizations
-
-Internal optimizations with no API changes:
-
-- Path parsing uses character-based parsing with memoization cache
-- `DataFixRegistry.getFixes()` pre-allocates result list
-- `DataFixerImpl` moves validation to registration time
-- Reduced allocations in hot paths
+- [Testkit Overview](../testkit/index.md) — Introduction to testing utilities
+- [Test Data Builders](../testkit/test-data-builders.md) — Fluent API for test data
+- [Custom Assertions](../testkit/assertions.md) — AssertJ assertions for Dynamic, DataResult, Typed
+- [DataFixTester](../testkit/datafix-tester.md) — Test harness for isolated DataFix testing
+- [QuickFix Factories](../testkit/quick-fix.md) — Factory methods for common fix patterns
+- [Mock Schemas](../testkit/mock-schemas.md) — Mock schema utilities
 
 ### New How-To Guides
 
 - [Batch Operations](../how-to/batch-operations.md) — Rename/remove multiple fields
 - [Group Fields](../how-to/group-fields.md) — Grouping and flattening structures
 - [Conditional Rules](../how-to/conditional-rules.md) — Conditional rule application
+- [Use Diagnostics](../how-to/use-diagnostics.md) — Migration diagnostics guide
+- [Test Migrations](../how-to/test-migrations.md) — Testing migrations with testkit
 
-### Testkit Module
+### Updated Pages
 
-New module `aether-datafixers-testkit` for testing migrations:
-
-- `TestData` — Fluent test data builders
-- `AetherAssertions` — Custom AssertJ assertions for Dynamic, DataResult, Typed
-- `DataFixTester` — Test harness for individual DataFix implementations
-- `MigrationTester` — Test harness for complete migration chains
-- `SchemaTester` — Test harness for Schema validation
-- `QuickFix` — Factory methods for common fix patterns
-- `MockSchemas` — Factory for mock Schema instances
-- `RecordingContext` / `AssertingContext` — Test contexts
-
-### Documentation Updates
-
-- Added [Use Diagnostics](../how-to/use-diagnostics.md) guide for migration diagnostics
-- Updated [Rewrite Rules](../concepts/rewrite-rules.md) with extended rules section
-- Updated [Concepts Index](../concepts/index.md) with extended rules examples
-- Updated [How-To Index](../how-to/index.md) with new guides
-- Added [Test Migrations](../how-to/test-migrations.md) guide
-- Added [Testkit documentation](../testkit/index.md) section
-- Updated [Glossary](glossary.md) with testkit terms
+- [Rewrite Rules](../concepts/rewrite-rules.md) — Extended rules section
+- [Concepts Index](../concepts/index.md) — Extended rules examples
+- [How-To Index](../how-to/index.md) — Links to new guides
+- [Glossary](glossary.md) — Testkit terminology
 
 ---
 
 ## Version 0.1.0
 
-Initial documentation release covering:
+### Initial Documentation
 
-### Getting Started
-- Installation guide with Maven, Gradle, BOM
+Complete documentation covering all modules and concepts:
+
+**Getting Started:**
+- Installation (Maven, Gradle, BOM)
 - Quick start tutorial
 - First migration walkthrough
 
-### Core Concepts
+**Core Concepts:**
 - Architecture overview
 - DataVersion and TypeReference
 - Schema and Type systems
@@ -139,64 +74,42 @@ Initial documentation release covering:
 - DSL reference
 - Rewrite rules
 - DataResult error handling
-- Thread safety guarantees
+- Thread safety
 
-### Optics
+**Optics:**
 - Lens, Prism, Iso
 - Affine, Traversal, Getter
 - Finder for Dynamic navigation
 
-### Tutorials
-- Basic migration
-- Multi-version migration chains
+**Tutorials:**
+- Basic and multi-version migrations
 - Schema inheritance
-- Codec usage
-- RecordCodecBuilder
+- Codec usage and RecordCodecBuilder
 - Polymorphic data
 - Nested transformations
 - Custom DynamicOps
 
-### How-To Guides
+**How-To Guides:**
 - Field operations (rename, add, remove, transform)
-- Restructuring data
-- Type conversion
+- Restructuring, type conversion
 - Optional and unknown fields
-- Composing fixes
-- Debugging and testing
-- Logging migrations
-- Finder usage
-- Bootstrap creation
+- Composing fixes, debugging, logging
+- Finder usage, bootstrap creation
 - Gson integration
 
-### Examples
-- Complete game data example
-- User profile migration
-- Configuration migration
+**Examples:**
+- Game data, user profile, configuration
 - Entity polymorphism
 
-### API Reference
-- Complete API documentation
-- All packages covered
-- Method signatures and examples
-
-### Advanced Topics
-- Traversal strategies
-- Custom optics
-- Recursive types
-- Performance optimization
-- Concurrent migrations
-- Format conversion
+**Advanced Topics:**
+- Traversal strategies, custom optics
+- Recursive types, performance
+- Concurrent migrations, format conversion
 - Framework extension
 
-### Troubleshooting
-- Common errors
-- Debugging tips
-- FAQ
-
-### Appendix
-- Glossary
-- Type theory primer
-- DFU comparison
+**Reference:**
+- Troubleshooting, common errors, FAQ
+- Glossary, type theory primer, DFU comparison
 
 ---
 
@@ -206,4 +119,3 @@ To suggest documentation improvements:
 1. Open an issue on GitHub
 2. Describe the improvement
 3. Provide examples if applicable
-

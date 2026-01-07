@@ -13,6 +13,7 @@
         <module>aether-datafixers-codec</module>
         <module>aether-datafixers-core</module>
         <module>aether-datafixers-testkit</module>
+        <module>aether-datafixers-cli</module>
         <module>aether-datafixers-examples</module>
         <module>aether-datafixers-bom</module>
     </modules>
@@ -39,6 +40,10 @@
         <plugin.site.version>3.20.0</plugin.site.version>
         <plugin.gpg.version>3.2.6</plugin.gpg.version>
         <plugin.surefire.version>3.1.2</plugin.surefire.version>
+        <plugin.shade.version>3.5.1</plugin.shade.version>
+
+        <!-- CLI dependencies -->
+        <picocli.version>4.7.6</picocli.version>
     </properties>
 
     <name>Aether Datafixers :: Parent</name>
@@ -135,6 +140,17 @@
                 <artifactId>aether-datafixers-testkit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>de.splatgames.aether.datafixers</groupId>
+                <artifactId>aether-datafixers-cli</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Picocli -->
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>${picocli.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -166,7 +182,7 @@
                                         <version>[17,)</version>
                                     </requireJavaVersion>
                                     <requireMavenVersion>
-                                        <version>[3.9.6,)</version>
+                                        <version>[3.9.5,)</version>
                                     </requireMavenVersion>
                                 </rules>
                             </configuration>
