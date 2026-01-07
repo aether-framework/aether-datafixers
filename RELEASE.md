@@ -1,20 +1,20 @@
-# Aether Datafixers v0.2.0 — Testkit, Extended Rules, Diagnostics, and Performance
+# 🚀 **Aether Datafixers v0.2.0 — Testkit, Extended Rules, Diagnostics, and Performance**
 
 Extended rules, testkit module, migration diagnostics, and high-performance APIs.
 
 ---
 
-## Highlights in v0.2.0
+## 🎯 Highlights in v0.2.0
 
-- **Testkit Module** — New `aether-datafixers-testkit` module with fluent test data builders, custom AssertJ assertions, and test harnesses for DataFix, Schema, and migration testing.
-- **Extended Rewrite Rules** — Convenience methods for batch operations, field grouping/flattening, path-based operations, and conditional rules.
-- **Migration Diagnostics** — Opt-in diagnostic system for structured reports with timing, snapshots, and warnings.
-- **High-Performance APIs** — Batch transformations and single-pass conditionals for optimized migrations.
-- **Performance Optimizations** — Internal improvements with memoized path parsing, pre-allocated lists, and reduced allocations.
+- ✅ **Testkit Module** — New `aether-datafixers-testkit` module with fluent test data builders, custom AssertJ assertions, and test harnesses for DataFix, Schema, and migration testing.
+- ✅ **Extended Rewrite Rules** — Convenience methods for batch operations, field grouping/flattening, path-based operations, and conditional rules.
+- ✅ **Migration Diagnostics** — Opt-in diagnostic system for structured reports with timing, snapshots, and warnings.
+- ✅ **High-Performance APIs** — Batch transformations and single-pass conditionals for optimized migrations.
+- ✅ **Performance Optimizations** — Internal improvements with memoized path parsing, pre-allocated lists, and reduced allocations.
 
 ---
 
-## Installation
+## 📦 Installation
 
 > [!TIP]
 > All Aether artifacts are available on **Maven Central** — no extra repository required.
@@ -23,9 +23,9 @@ Extended rules, testkit module, migration diagnostics, and high-performance APIs
 
 ```xml
 <dependency>
-    <groupId>de.splatgames.aether.datafixers</groupId>
-    <artifactId>aether-datafixers-core</artifactId>
-    <version>0.2.0</version>
+  <groupId>de.splatgames.aether.datafixers</groupId>
+  <artifactId>aether-datafixers-core</artifactId>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -33,23 +33,23 @@ Extended rules, testkit module, migration diagnostics, and high-performance APIs
 
 ```xml
 <dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>de.splatgames.aether.datafixers</groupId>
-            <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.2.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>de.splatgames.aether.datafixers</groupId>
+      <artifactId>aether-datafixers-bom</artifactId>
+      <version>0.2.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
 </dependencyManagement>
 
 <dependencies>
-    <!-- No version needed -->
-    <dependency>
-        <groupId>de.splatgames.aether.datafixers</groupId>
-        <artifactId>aether-datafixers-core</artifactId>
-    </dependency>
+<!-- No version needed -->
+<dependency>
+  <groupId>de.splatgames.aether.datafixers</groupId>
+  <artifactId>aether-datafixers-core</artifactId>
+</dependency>
 </dependencies>
 ```
 
@@ -57,10 +57,10 @@ Extended rules, testkit module, migration diagnostics, and high-performance APIs
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0'
-    // Or with BOM:
-    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0')
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
+  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0'
+  // Or with BOM:
+  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0')
+  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
 }
 ```
 
@@ -68,27 +68,27 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0")
-    // Or with BOM:
-    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0"))
-    implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
+  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0")
+  // Or with BOM:
+  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0"))
+  implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
 }
 ```
 
 ---
 
-## What's New
+## 🆕 What's New
 
-### Testkit Module
+### 🧪 Testkit Module
 
 New module `aether-datafixers-testkit` for testing migrations:
 
 ```xml
 <dependency>
-    <groupId>de.splatgames.aether.datafixers</groupId>
-    <artifactId>aether-datafixers-testkit</artifactId>
-    <version>0.2.0</version>
-    <scope>test</scope>
+  <groupId>de.splatgames.aether.datafixers</groupId>
+  <artifactId>aether-datafixers-testkit</artifactId>
+  <version>0.2.0</version>
+  <scope>test</scope>
 </dependency>
 ```
 
@@ -106,9 +106,9 @@ New module `aether-datafixers-testkit` for testing migrations:
 ```java
 // Create test data fluently
 Dynamic<JsonElement> input = TestData.gson().object()
-    .put("name", "Alice")
-    .put("level", 10)
-    .build();
+                .put("name", "Alice")
+                .put("level", 10)
+                .build();
 
 // Test a DataFix
 DataFixTester.forFix(myFix)
@@ -126,7 +126,7 @@ MigrationTester.forFixer(myFixer)
     .verify();
 ```
 
-### Extended Rewrite Rules
+### 📐 Extended Rewrite Rules
 
 New convenience methods in `Rules` class:
 
@@ -151,13 +151,13 @@ New convenience methods in `Rules` class:
 **Example:**
 ```java
 Rules.seq(
-    Rules.renameFields(ops, Map.of("playerName", "name", "xp", "experience")),
-    Rules.groupFields(ops, "position", "x", "y", "z"),
+        Rules.renameFields(ops, Map.of("playerName", "name", "xp", "experience")),
+        Rules.groupFields(ops, "position", "x", "y", "z"),
     Rules.ifFieldMissing(ops, "version", Rules.setField(ops, "version", d -> d.createInt(1)))
-)
+        )
 ```
 
-### Migration Diagnostics
+### 📊 Migration Diagnostics
 
 New opt-in diagnostic system for capturing structured reports:
 
@@ -176,28 +176,28 @@ New opt-in diagnostic system for capturing structured reports:
 - `DiagnosticOptions.defaults()` — Full diagnostics with snapshots and rule details
 - `DiagnosticOptions.minimal()` — Timing only, minimal overhead
 
-### High-Performance APIs
+### ⚡ High-Performance APIs
 
 **BatchTransform:**
 ```java
 Rules.batch(ops, batch -> batch
-    .rename("oldName", "newName")
+        .rename("oldName", "newName")
     .remove("deprecated")
     .set("version", d -> d.createInt(2))
-    .transform("count", d -> d.createInt(d.asInt(0) + 1))
-    .addIfMissing("created", d -> d.createLong(System.currentTimeMillis()))
-)
+        .transform("count", d -> d.createInt(d.asInt(0) + 1))
+        .addIfMissing("created", d -> d.createLong(System.currentTimeMillis()))
+        )
 ```
 
 **Single-Pass Conditionals:**
 ```java
 Rules.conditionalTransform(ops,
-    d -> d.get("type").asString("").equals("legacy"),
-    d -> d.set("migrated", d.createBoolean(true))
-)
+                           d -> d.get("type").asString("").equals("legacy"),
+d -> d.set("migrated", d.createBoolean(true))
+        )
 ```
 
-### Performance Optimizations
+### 🚀 Performance Optimizations
 
 Internal optimizations with no API changes:
 - Path parsing uses character-based parsing with memoization cache
@@ -207,7 +207,7 @@ Internal optimizations with no API changes:
 
 ---
 
-## Changelog
+## 📝 Changelog
 
 **New in 0.2.0**
 
@@ -223,20 +223,25 @@ Internal optimizations with no API changes:
 
 ---
 
-## Roadmap (next)
+## 🗺️ Roadmap (next)
 
-- **0.3.x**
-    - Additional codec implementations
-    - Schema validation enhancements
-    - Migration dry-run mode
+- **v0.3.0**
+  - **CLI module** — Migrate files and print/export a migration report (batch-friendly)
+  - **Schema tooling** — Runtime schema validation + diff utilities between versions
 
-- **1.0.x**
-    - Stable API surface
-    - Comprehensive documentation
-    - Production-ready release
+- **v0.4.0**
+  - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
+  - **Extra ops modules** — Optional YAML/TOML support (format adapters)
+  - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
+
+- **v0.5.0** (API freeze candidate)
+  - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
+  - **Compatibility checks in CI** — Binary/source compatibility guardrails for public API
+  - **Hardened error model** — Consistent exception types + structured error details
+  - **Release readiness** — Final review of docs/examples against frozen API
 
 ---
 
-## License
+## 📜 License
 
 **MIT** — see `LICENSE`.
