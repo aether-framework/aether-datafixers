@@ -1128,7 +1128,7 @@ public final class Rules {
      * @return a rule that applies all operations in a single pass, never {@code null}
      * @throws NullPointerException if any argument is {@code null}
      * @see BatchTransform
-     * @since 0.3.0
+     * @since 0.2.0
      */
     @NotNull
     public static <T> TypeRewriteRule batch(@NotNull final DynamicOps<T> ops,
@@ -2013,7 +2013,7 @@ public final class Rules {
      * @param transform the transformation to apply if condition is true, must not be {@code null}
      * @return a conditional rule that operates in a single pass, never {@code null}
      * @throws NullPointerException if any argument is {@code null}
-     * @since 0.3.0
+     * @since 0.2.0
      */
     @NotNull
     public static <T> TypeRewriteRule conditionalTransform(
@@ -2059,7 +2059,7 @@ public final class Rules {
      * @param transform the transformation to apply if field exists, must not be {@code null}
      * @return a conditional rule that operates in a single pass, never {@code null}
      * @throws NullPointerException if any argument is {@code null}
-     * @since 0.3.0
+     * @since 0.2.0
      */
     @NotNull
     public static <T> TypeRewriteRule ifFieldExists(
@@ -2105,7 +2105,7 @@ public final class Rules {
      * @param transform the transformation to apply if field is missing, must not be {@code null}
      * @return a conditional rule that operates in a single pass, never {@code null}
      * @throws NullPointerException if any argument is {@code null}
-     * @since 0.3.0
+     * @since 0.2.0
      */
     @NotNull
     public static <T> TypeRewriteRule ifFieldMissing(
@@ -2154,7 +2154,7 @@ public final class Rules {
      * @param transform the transformation to apply if field equals value, must not be {@code null}
      * @return a conditional rule that operates in a single pass, never {@code null}
      * @throws NullPointerException if any argument is {@code null}
-     * @since 0.3.0
+     * @since 0.2.0
      */
     @NotNull
     public static <T, V> TypeRewriteRule ifFieldEquals(

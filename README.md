@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-red)
 ![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether/aether-datafixers)
-![Version](https://img.shields.io/badge/version-0.1.0-orange)
+![Version](https://img.shields.io/badge/version-0.2.0-orange)
 
 # Aether Datafixers 🔧
 
@@ -10,7 +10,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.1.0)
+## ✨ Features (v0.2.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
@@ -18,6 +18,9 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - ✅ **Codec System** — Bidirectional transformation between typed Java objects and dynamic representations
 - ✅ **Type Safety** — Strong typing with `TypeReference` identifiers for data routing
 - ✅ **Testkit** — Fluent test data builders, custom assertions, and test harnesses for DataFix testing
+- ✅ **Migration Diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
+- ✅ **Extended Rewrite Rules** — Batch operations, path-based transforms, conditional rules
+- ✅ **High-Performance APIs** — `Rules.batch()` for single-pass multi-operation transforms
 - ✅ **JDK 17+** — Built and tested on modern LTS JVMs
 
 ---
@@ -79,7 +82,7 @@ Dynamic<?> updated = fixer.update(
 <dependency>
     <groupId>de.splatgames.aether</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -87,7 +90,7 @@ Dynamic<?> updated = fixer.update(
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.1.0'
+    implementation 'de.splatgames.aether:aether-datafixers-core:0.2.0'
 }
 ```
 
@@ -95,7 +98,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.1.0")
+    implementation("de.splatgames.aether:aether-datafixers-core:0.2.0")
 }
 ```
 
@@ -115,7 +118,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
         <dependency>
             <groupId>de.splatgames.aether</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -139,7 +142,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether:aether-datafixers-bom:0.1.0')
+    implementation platform('de.splatgames.aether:aether-datafixers-bom:0.2.0')
 
     // No version needed
     implementation 'de.splatgames.aether:aether-datafixers-core'
@@ -151,7 +154,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether:aether-datafixers-bom:0.1.0"))
+    implementation(platform("de.splatgames.aether:aether-datafixers-bom:0.2.0"))
 
     // No version needed
     implementation("de.splatgames.aether:aether-datafixers-core")
@@ -400,20 +403,21 @@ mvn test
 
 ## 🗺️ Roadmap
 
-- **v0.1.0** (current)
+- **v0.1.0**
   - Core API and default implementations
   - Schema-based versioning with TypeRegistry
   - DataFix forward patching system
   - Dynamic/DynamicOps format abstraction
   - Basic codec infrastructure
 
-- **v0.2.0** (next)
+- **v0.2.0** (current)
   - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
-  - **Migration diagnostics** — Optional structured report (applied fixes, touched types, timing)
-  - **Extended rewrite rules** — Common operations like nested rename/move/copy helpers
-  - **Performance optimizations** — Caching, lazy evaluation improvements (doesn't change API or determinism)
+  - **Migration diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
+  - **Extended rewrite rules** — Batch operations, path-based transforms, conditional rules
+  - **High-performance APIs** — `Rules.batch()` and single-pass conditional transforms
+  - **Performance optimizations** — Path caching, optimized fix registry, reduced allocations
 
-- **v0.3.0**
+- **v0.3.0** (next)
   - **CLI module** — Migrate files and print/export a migration report (batch-friendly)
   - **Schema tooling** — Runtime schema validation + diff utilities between versions
 

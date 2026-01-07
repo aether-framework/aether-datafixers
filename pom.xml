@@ -24,12 +24,12 @@
 
         <!-- definition of versions for dependencies -->
         <jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
-        <gson.version>2.11.0</gson.version>
-        <jackson.version>2.18.3</jackson.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <junit.jupiter.version>5.12.0</junit.jupiter.version>
-        <assertj.version>3.25.1</assertj.version>
-        <slf4j.version>2.0.16</slf4j.version>
+        <gson.version>2.13.2</gson.version>
+        <jackson.version>2.19.0</jackson.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <junit.jupiter.version>5.13.4</junit.jupiter.version>
+        <assertj.version>3.27.6</assertj.version>
+        <slf4j.version>2.0.17</slf4j.version>
 
         <!-- definition of versions for plugins -->
         <plugin.compiler.version>3.11.0</plugin.compiler.version>

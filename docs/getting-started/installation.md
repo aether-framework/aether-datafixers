@@ -24,7 +24,7 @@ Add the core dependency to your `pom.xml`:
 <dependency>
     <groupId>de.splatgames.aether</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -35,12 +35,12 @@ Add the core dependency to your `pom.xml`:
     <dependency>
         <groupId>de.splatgames.aether</groupId>
         <artifactId>aether-datafixers-core</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </dependency>
     <dependency>
         <groupId>de.splatgames.aether</groupId>
         <artifactId>aether-datafixers-codec</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </dependency>
     <!-- Gson is optional in codec module, add explicitly -->
     <dependency>
@@ -121,7 +121,7 @@ The Bill of Materials (BOM) ensures consistent versions across all modules:
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.1.0'
+    implementation 'de.splatgames.aether:aether-datafixers-core:0.2.0'
 }
 ```
 
@@ -129,8 +129,8 @@ With JSON support:
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.1.0'
-    implementation 'de.splatgames.aether:aether-datafixers-codec:0.1.0'
+    implementation 'de.splatgames.aether:aether-datafixers-core:0.2.0'
+    implementation 'de.splatgames.aether:aether-datafixers-codec:0.2.0'
     implementation 'com.google.code.gson:gson:2.11.0'
 }
 ```
@@ -139,7 +139,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.1.0")
+    implementation("de.splatgames.aether:aether-datafixers-core:0.2.0")
 }
 ```
 
@@ -147,8 +147,8 @@ With JSON support:
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.1.0")
-    implementation("de.splatgames.aether:aether-datafixers-codec:0.1.0")
+    implementation("de.splatgames.aether:aether-datafixers-core:0.2.0")
+    implementation("de.splatgames.aether:aether-datafixers-codec:0.2.0")
     implementation("com.google.code.gson:gson:2.11.0")
 }
 ```
