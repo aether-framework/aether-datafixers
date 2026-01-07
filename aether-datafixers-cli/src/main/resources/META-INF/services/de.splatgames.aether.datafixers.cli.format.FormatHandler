@@ -1,0 +1,4 @@
+# Built-in format handlers for Aether Datafixers CLI
+# Additional handlers can be added by third-party JARs via ServiceLoader
+de.splatgames.aether.datafixers.cli.format.JsonGsonFormatHandler
+de.splatgames.aether.datafixers.cli.format.JsonJacksonFormatHandler
