@@ -76,9 +76,28 @@ import java.util.concurrent.Callable;
 public class AetherCli implements Callable<Integer> {
 
     /**
-     * Main entry point for the CLI.
+     * Main entry point for the Aether Datafixers CLI application.
      *
-     * @param args command-line arguments
+     * <p>This method initializes the picocli {@link CommandLine} parser with the
+     * root {@link AetherCli} command and executes it with the provided arguments.
+     * The process exit code is set based on the command execution result.</p>
+     *
+     * <h3>Exit Codes</h3>
+     * <ul>
+     *   <li>{@code 0} - Success (or help displayed)</li>
+     *   <li>{@code 1} - Error occurred during command execution</li>
+     *   <li>{@code 2} - Validation found files needing migration (validate command only)</li>
+     * </ul>
+     *
+     * <h3>Configuration</h3>
+     * <p>The CommandLine instance is configured with:</p>
+     * <ul>
+     *   <li>Case-insensitive enum value parsing enabled</li>
+     * </ul>
+     *
+     * @param args command-line arguments passed from the shell; may be empty
+     *             but should not be {@code null}
+     * @see CommandLine#execute(String...)
      */
     public static void main(final String[] args) {
         final int exitCode = new CommandLine(new AetherCli())
@@ -87,6 +106,20 @@ public class AetherCli implements Callable<Integer> {
         System.exit(exitCode);
     }
 
+    /**
+     * Executes the root command when invoked without a subcommand.
+     *
+     * <p>When the CLI is invoked without specifying a subcommand (e.g., just
+     * {@code aether-cli}), this method is called. It displays the help message
+     * showing available commands and options.</p>
+     *
+     * <p>This behavior provides a user-friendly experience where running the
+     * CLI without arguments shows how to use it, rather than doing nothing
+     * or showing an error.</p>
+     *
+     * @return {@code 0} indicating successful execution (help was displayed)
+     * @see CommandLine#usage(Object, java.io.PrintStream)
+     */
     @Override
     public Integer call() {
         // Print help when no subcommand is specified

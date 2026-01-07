@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.cli.bootstrap;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,38 +30,87 @@ import java.lang.reflect.Constructor;
 import java.util.ServiceLoader;
 
 /**
- * Loads {@link DataFixerBootstrap} implementations.
+ * Utility class for loading {@link DataFixerBootstrap} implementations at runtime.
+ *
+ * <p>This class provides multiple methods for discovering and instantiating
+ * bootstrap implementations:</p>
  *
  * <h2>Discovery Methods</h2>
  * <ol>
- *   <li>Explicit class name via {@code --bootstrap} option</li>
- *   <li>ServiceLoader discovery via {@code META-INF/services}</li>
+ *   <li><b>Explicit class name</b> via {@link #load(String)} - Used when the CLI
+ *       receives the {@code --bootstrap} option with a fully qualified class name</li>
+ *   <li><b>ServiceLoader discovery</b> via {@link #discover()} or {@link #loadFirst()} -
+ *       Automatically discovers implementations registered in
+ *       {@code META-INF/services/de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap}</li>
  * </ol>
  *
+ * <h2>Thread Safety</h2>
+ * <p>All methods are thread-safe as they do not maintain any mutable state.</p>
+ *
+ * <h2>Example Usage</h2>
+ * <pre>{@code
+ * // Load by explicit class name
+ * DataFixerBootstrap bootstrap = BootstrapLoader.load("com.example.MyBootstrap");
+ *
+ * // Auto-discover via ServiceLoader
+ * DataFixerBootstrap bootstrap = BootstrapLoader.loadFirst();
+ *
+ * // Iterate over all discovered bootstraps
+ * for (DataFixerBootstrap bootstrap : BootstrapLoader.discover()) {
+ *     System.out.println("Found: " + bootstrap.getClass().getName());
+ * }
+ * }</pre>
+ *
  * @author Erik Pfoertner
+ * @see DataFixerBootstrap
+ * @see BootstrapLoadException
+ * @see java.util.ServiceLoader
  * @since 0.3.0
  */
 public final class BootstrapLoader {
 
+    /**
+     * Private constructor to prevent instantiation.
+     *
+     * <p>This is a utility class with only static methods and should not be instantiated.</p>
+     */
     private BootstrapLoader() {
         // Utility class
     }
 
     /**
-     * Loads a bootstrap by its fully qualified class name.
+     * Loads a bootstrap implementation by its fully qualified class name.
      *
-     * <p>The class must:</p>
+     * <p>This method uses reflection to load and instantiate the specified class.
+     * The class must satisfy the following requirements:</p>
      * <ul>
-     *   <li>Implement {@link DataFixerBootstrap}</li>
-     *   <li>Have a public no-argument constructor</li>
+     *   <li>Must implement {@link DataFixerBootstrap}</li>
+     *   <li>Must have a public no-argument constructor</li>
+     *   <li>Must be accessible on the current thread's context class loader</li>
      * </ul>
      *
-     * @param className the fully qualified class name
-     * @return the bootstrap instance
-     * @throws BootstrapLoadException if loading fails
+     * <h3>Error Handling</h3>
+     * <p>All reflection-related exceptions are wrapped in {@link BootstrapLoadException}
+     * with descriptive error messages to aid debugging:</p>
+     * <ul>
+     *   <li>{@code ClassNotFoundException} - Class not found on classpath</li>
+     *   <li>{@code NoSuchMethodException} - Missing public no-arg constructor</li>
+     *   <li>{@code ReflectiveOperationException} - Instantiation failure</li>
+     * </ul>
+     *
+     * @param className the fully qualified class name (e.g., "com.example.MyBootstrap"),
+     *                  must not be {@code null}
+     * @return the instantiated bootstrap instance, never {@code null}
+     * @throws BootstrapLoadException if the class cannot be found, does not implement
+     *                                DataFixerBootstrap, lacks a no-arg constructor,
+     *                                or instantiation fails
+     * @see #discover()
+     * @see #loadFirst()
      */
     @NotNull
     public static DataFixerBootstrap load(@NotNull final String className) {
+        Preconditions.checkNotNull(className, "className must not be null");
+
         try {
             final Class<?> clazz = Class.forName(className);
 
@@ -87,9 +137,29 @@ public final class BootstrapLoader {
     }
 
     /**
-     * Discovers bootstraps via ServiceLoader.
+     * Discovers all bootstrap implementations via Java's {@link ServiceLoader} mechanism.
      *
-     * @return iterable of discovered bootstraps
+     * <p>This method searches for implementations registered in:</p>
+     * <pre>
+     * META-INF/services/de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap
+     * </pre>
+     *
+     * <p>The returned iterable is lazy - implementations are instantiated on demand
+     * as the iterator is consumed. Each call to this method creates a fresh
+     * ServiceLoader instance.</p>
+     *
+     * <h3>Registration</h3>
+     * <p>To register a bootstrap for discovery, create a file at:</p>
+     * <pre>
+     * src/main/resources/META-INF/services/de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap
+     * </pre>
+     * <p>containing the fully qualified class name of your implementation.</p>
+     *
+     * @return an iterable over all discovered bootstrap implementations;
+     *         may be empty if none are registered
+     * @see ServiceLoader#load(Class)
+     * @see #loadFirst()
+     * @see #load(String)
      */
     @NotNull
     public static Iterable<DataFixerBootstrap> discover() {
@@ -97,10 +167,22 @@ public final class BootstrapLoader {
     }
 
     /**
-     * Loads the first available bootstrap from ServiceLoader.
+     * Loads the first available bootstrap from the ServiceLoader.
      *
-     * @return the first bootstrap found
-     * @throws BootstrapLoadException if no bootstrap is found
+     * <p>This is a convenience method that returns the first bootstrap found
+     * via {@link #discover()}. Useful when only one bootstrap is expected to
+     * be registered in the application.</p>
+     *
+     * <p>The order in which bootstraps are discovered is not guaranteed and
+     * depends on the classpath order. If multiple bootstraps are registered,
+     * consider using {@link #discover()} to iterate over all of them or
+     * {@link #load(String)} to specify an exact implementation.</p>
+     *
+     * @return the first discovered bootstrap implementation, never {@code null}
+     * @throws BootstrapLoadException if no bootstrap implementations are found
+     *                                via ServiceLoader
+     * @see #discover()
+     * @see #load(String)
      */
     @NotNull
     public static DataFixerBootstrap loadFirst() {

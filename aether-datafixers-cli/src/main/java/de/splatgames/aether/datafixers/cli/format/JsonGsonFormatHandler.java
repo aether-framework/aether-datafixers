@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.cli.format;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -32,41 +33,116 @@ import de.splatgames.aether.datafixers.codec.gson.GsonOps;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Format handler for JSON using Google Gson.
+ * Format handler for JSON using the Google Gson library.
  *
- * <p>This handler uses {@link GsonOps} for dynamic operations and provides
- * both compact and pretty-printed serialization.</p>
+ * <p>This handler provides JSON parsing and serialization capabilities using
+ * {@link Gson} and integrates with Aether Datafixers via {@link GsonOps}.</p>
+ *
+ * <h2>Format Details</h2>
+ * <ul>
+ *   <li><b>Format ID:</b> {@code json-gson}</li>
+ *   <li><b>File Extensions:</b> {@code .json}</li>
+ *   <li><b>Data Type:</b> {@link JsonElement}</li>
+ * </ul>
+ *
+ * <h2>Features</h2>
+ * <ul>
+ *   <li>Compact serialization via {@link #serialize(JsonElement)}</li>
+ *   <li>Pretty-printed serialization via {@link #serializePretty(JsonElement)}</li>
+ *   <li>Robust error handling with descriptive messages</li>
+ * </ul>
+ *
+ * <h2>Thread Safety</h2>
+ * <p>This handler is thread-safe. The internal {@link Gson} instances are
+ * immutable and can be safely shared across threads.</p>
  *
  * @author Erik Pfoertner
+ * @see FormatHandler
+ * @see GsonOps
+ * @see JsonJacksonFormatHandler
  * @since 0.3.0
  */
 public class JsonGsonFormatHandler implements FormatHandler<JsonElement> {
 
+    /**
+     * Gson instance for compact JSON serialization.
+     *
+     * <p>Uses default Gson configuration without pretty printing.</p>
+     */
     private static final Gson GSON = new Gson();
+
+    /**
+     * Gson instance for pretty-printed JSON serialization.
+     *
+     * <p>Configured with {@link GsonBuilder#setPrettyPrinting()} to produce
+     * human-readable output with indentation.</p>
+     */
     private static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code "json-gson"}
+     */
     @Override
-    public @NotNull String formatId() {
+    @NotNull
+    public String formatId() {
         return "json-gson";
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code "JSON format using Gson"}
+     */
     @Override
-    public @NotNull String description() {
+    @NotNull
+    public String description() {
         return "JSON format using Gson";
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return an array containing {@code "json"}
+     */
     @Override
-    public @NotNull String[] fileExtensions() {
+    @NotNull
+    public String[] fileExtensions() {
         return new String[]{"json"};
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link GsonOps#INSTANCE}
+     */
     @Override
-    public @NotNull DynamicOps<JsonElement> ops() {
+    @NotNull
+    public DynamicOps<JsonElement> ops() {
         return GsonOps.INSTANCE;
     }
 
+    /**
+     * Parses a JSON string into a {@link JsonElement}.
+     *
+     * <p>This method validates the input and provides descriptive error messages:</p>
+     * <ul>
+     *   <li>Empty or whitespace-only content throws {@link FormatParseException}</li>
+     *   <li>JSON that parses to null throws {@link FormatParseException}</li>
+     *   <li>Invalid JSON syntax is wrapped in {@link FormatParseException}</li>
+     * </ul>
+     *
+     * @param content the JSON string to parse, must not be {@code null}
+     * @return the parsed {@link JsonElement}, never {@code null}
+     * @throws FormatParseException if the content is empty, parses to null,
+     *                              or contains invalid JSON syntax
+     */
     @Override
-    public @NotNull JsonElement parse(@NotNull final String content) {
+    @NotNull
+    public JsonElement parse(@NotNull final String content) {
+        Preconditions.checkNotNull(content, "content must not be null");
+
         if (content.isBlank()) {
             throw new FormatParseException("Cannot parse empty or whitespace-only content");
         }
@@ -81,13 +157,37 @@ public class JsonGsonFormatHandler implements FormatHandler<JsonElement> {
         }
     }
 
+    /**
+     * Serializes a {@link JsonElement} to a compact JSON string.
+     *
+     * <p>The output contains no unnecessary whitespace, making it suitable
+     * for storage and transmission where size matters.</p>
+     *
+     * @param data the JSON element to serialize, must not be {@code null}
+     * @return the compact JSON string representation
+     */
     @Override
-    public @NotNull String serialize(@NotNull final JsonElement data) {
+    @NotNull
+    public String serialize(@NotNull final JsonElement data) {
+        Preconditions.checkNotNull(data, "data must not be null");
+
         return GSON.toJson(data);
     }
 
+    /**
+     * Serializes a {@link JsonElement} to a pretty-printed JSON string.
+     *
+     * <p>The output is formatted with indentation and line breaks for
+     * human readability.</p>
+     *
+     * @param data the JSON element to serialize, must not be {@code null}
+     * @return the formatted JSON string representation
+     */
     @Override
-    public @NotNull String serializePretty(@NotNull final JsonElement data) {
+    @NotNull
+    public String serializePretty(@NotNull final JsonElement data) {
+        Preconditions.checkNotNull(data, "data must not be null");
+
         return GSON_PRETTY.toJson(data);
     }
 }

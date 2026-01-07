@@ -22,34 +22,105 @@
 
 package de.splatgames.aether.datafixers.cli.util;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Extracts data version from a Dynamic value.
+ * Utility class for extracting data version numbers from Dynamic values.
  *
- * <p>Supports nested field paths using dot notation (e.g., "meta.version").</p>
+ * <p>This class provides functionality to locate and extract version information
+ * from data structures using configurable field paths. It supports nested fields
+ * via dot notation.</p>
+ *
+ * <h2>Field Path Syntax</h2>
+ * <ul>
+ *   <li>{@code dataVersion} - Access a top-level field</li>
+ *   <li>{@code meta.version} - Access a nested field</li>
+ *   <li>{@code data.metadata.schema_version} - Access deeply nested fields</li>
+ * </ul>
+ *
+ * <h2>Example Usage</h2>
+ * <pre>{@code
+ * // JSON: {"dataVersion": 100}
+ * DataVersion version = VersionExtractor.extract(jsonElement, GsonOps.INSTANCE, "dataVersion");
+ * // version.getVersion() == 100
+ *
+ * // JSON: {"meta": {"version": 200}}
+ * DataVersion version = VersionExtractor.extract(jsonElement, GsonOps.INSTANCE, "meta.version");
+ * // version.getVersion() == 200
+ * }</pre>
+ *
+ * <h2>Error Handling</h2>
+ * <p>The extractor throws {@link IllegalArgumentException} for:</p>
+ * <ul>
+ *   <li>Empty field paths</li>
+ *   <li>Invalid field path syntax (leading/trailing dots, consecutive dots)</li>
+ *   <li>Missing fields in the data structure</li>
+ *   <li>Non-integer values in the version field</li>
+ * </ul>
+ *
+ * <h2>Thread Safety</h2>
+ * <p>This class is stateless and thread-safe.</p>
  *
  * @author Erik Pfoertner
+ * @see DataVersion
+ * @see Dynamic
  * @since 0.3.0
  */
 public final class VersionExtractor {
 
+    /**
+     * Private constructor to prevent instantiation.
+     *
+     * <p>This is a utility class with only static methods and should not be instantiated.</p>
+     */
     private VersionExtractor() {
         // Utility class
     }
 
     /**
-     * Extracts the data version from the specified field path.
+     * Extracts the data version from a specified field path within data.
      *
-     * @param data      the data to extract from
-     * @param ops       the DynamicOps for the data format
-     * @param fieldPath the field path (supports dot notation for nested fields)
-     * @param <T>       the data type
-     * @return the extracted DataVersion
-     * @throws IllegalArgumentException if the version field is missing or invalid
+     * <p>This method navigates through the data structure following the field path
+     * and extracts the integer version value. The field path supports dot notation
+     * for accessing nested fields.</p>
+     *
+     * <h3>Algorithm</h3>
+     * <ol>
+     *   <li>Validates the field path syntax</li>
+     *   <li>Wraps the raw data in a {@link Dynamic}</li>
+     *   <li>Splits the field path by dots and traverses each segment</li>
+     *   <li>Extracts the final value as an integer</li>
+     *   <li>Wraps the integer in a {@link DataVersion}</li>
+     * </ol>
+     *
+     * <h3>Valid Field Paths</h3>
+     * <ul>
+     *   <li>{@code "version"} - Single field</li>
+     *   <li>{@code "meta.version"} - Nested field</li>
+     *   <li>{@code "a.b.c.version"} - Deeply nested field</li>
+     * </ul>
+     *
+     * <h3>Invalid Field Paths</h3>
+     * <ul>
+     *   <li>{@code ""} - Empty</li>
+     *   <li>{@code ".version"} - Leading dot</li>
+     *   <li>{@code "version."} - Trailing dot</li>
+     *   <li>{@code "meta..version"} - Consecutive dots</li>
+     * </ul>
+     *
+     * @param <T>       the underlying data representation type (e.g., JsonElement, JsonNode)
+     * @param data      the data to extract the version from, must not be {@code null}
+     * @param ops       the {@link DynamicOps} implementation for the data format,
+     *                  must not be {@code null}
+     * @param fieldPath the dot-separated field path to the version field,
+     *                  must not be {@code null} or empty
+     * @return the extracted {@link DataVersion}, never {@code null}
+     * @throws IllegalArgumentException if the field path is invalid, the field is
+     *                                  not found, or the value is not a valid integer
      */
     @NotNull
     public static <T> DataVersion extract(
@@ -57,6 +128,10 @@ public final class VersionExtractor {
             @NotNull final DynamicOps<T> ops,
             @NotNull final String fieldPath
     ) {
+        Preconditions.checkNotNull(data, "data must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldPath, "fieldPath must not be null");
+
         // Validate field path
         if (fieldPath.isEmpty()) {
             throw new IllegalArgumentException("Field path cannot be empty");

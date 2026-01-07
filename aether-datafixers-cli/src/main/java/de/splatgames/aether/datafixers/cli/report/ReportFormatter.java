@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.cli.report;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -29,7 +30,25 @@ import java.time.Duration;
 /**
  * Formats migration reports for output.
  *
+ * <p>Report formatters transform migration metadata into human-readable
+ * or machine-readable output formats. The CLI uses these formatters to
+ * generate reports when the {@code --report} option is specified.</p>
+ *
+ * <h2>Built-in Formatters</h2>
+ * <ul>
+ *   <li>{@link TextReportFormatter} - Plain text format for human consumption</li>
+ *   <li>{@link JsonReportFormatter} - JSON format for machine processing</li>
+ * </ul>
+ *
+ * <h2>Usage</h2>
+ * <pre>{@code
+ * ReportFormatter formatter = ReportFormatter.forFormat("json");
+ * String report = formatter.formatSimple("player.json", "player", 100, 200, duration);
+ * }</pre>
+ *
  * @author Erik Pfoertner
+ * @see TextReportFormatter
+ * @see JsonReportFormatter
  * @since 0.3.0
  */
 public interface ReportFormatter {
@@ -61,6 +80,8 @@ public interface ReportFormatter {
      */
     @NotNull
     static ReportFormatter forFormat(@NotNull final String format) {
+        Preconditions.checkNotNull(format, "format must not be null");
+
         return switch (format.toLowerCase()) {
             case "json" -> new JsonReportFormatter();
             default -> new TextReportFormatter();

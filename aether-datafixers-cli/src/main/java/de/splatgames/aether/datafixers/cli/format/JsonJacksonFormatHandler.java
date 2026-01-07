@@ -26,47 +26,133 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Format handler for JSON using Jackson Databind.
+ * Format handler for JSON using the Jackson Databind library.
  *
- * <p>This handler uses {@link JacksonOps} for dynamic operations and provides
- * both compact and pretty-printed serialization.</p>
+ * <p>This handler provides JSON parsing and serialization capabilities using
+ * {@link ObjectMapper} and integrates with Aether Datafixers via {@link JacksonOps}.</p>
+ *
+ * <h2>Format Details</h2>
+ * <ul>
+ *   <li><b>Format ID:</b> {@code json-jackson}</li>
+ *   <li><b>File Extensions:</b> {@code .json}</li>
+ *   <li><b>Data Type:</b> {@link JsonNode}</li>
+ * </ul>
+ *
+ * <h2>Features</h2>
+ * <ul>
+ *   <li>Compact serialization via {@link #serialize(JsonNode)}</li>
+ *   <li>Pretty-printed serialization via {@link #serializePretty(JsonNode)}</li>
+ *   <li>Robust error handling with descriptive messages</li>
+ *   <li>Full Jackson feature set available for customization</li>
+ * </ul>
+ *
+ * <h2>Thread Safety</h2>
+ * <p>This handler is thread-safe. The internal {@link ObjectMapper} instances are
+ * configured once and can be safely shared across threads (ObjectMapper is thread-safe
+ * after configuration).</p>
+ *
+ * <h2>When to Use</h2>
+ * <p>Prefer this handler over {@link JsonGsonFormatHandler} when:</p>
+ * <ul>
+ *   <li>Your project already uses Jackson extensively</li>
+ *   <li>You need advanced Jackson features (streaming, annotations, etc.)</li>
+ *   <li>Performance is critical (Jackson is generally faster for large documents)</li>
+ * </ul>
  *
  * @author Erik Pfoertner
+ * @see FormatHandler
+ * @see JacksonOps
+ * @see JsonGsonFormatHandler
  * @since 0.3.0
  */
 public class JsonJacksonFormatHandler implements FormatHandler<JsonNode> {
 
+    /**
+     * ObjectMapper instance for compact JSON serialization.
+     *
+     * <p>Uses default Jackson configuration without indentation.</p>
+     */
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    /**
+     * ObjectMapper instance for pretty-printed JSON serialization.
+     *
+     * <p>Configured with {@link SerializationFeature#INDENT_OUTPUT} to produce
+     * human-readable output with indentation.</p>
+     */
     private static final ObjectMapper MAPPER_PRETTY = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT);
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code "json-jackson"}
+     */
     @Override
-    public @NotNull String formatId() {
+    @NotNull
+    public String formatId() {
         return "json-jackson";
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code "JSON format using Jackson"}
+     */
     @Override
-    public @NotNull String description() {
+    @NotNull
+    public String description() {
         return "JSON format using Jackson";
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return an array containing {@code "json"}
+     */
     @Override
-    public @NotNull String[] fileExtensions() {
+    @NotNull
+    public String[] fileExtensions() {
         return new String[]{"json"};
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link JacksonOps#INSTANCE}
+     */
     @Override
-    public @NotNull DynamicOps<JsonNode> ops() {
+    @NotNull
+    public DynamicOps<JsonNode> ops() {
         return JacksonOps.INSTANCE;
     }
 
+    /**
+     * Parses a JSON string into a {@link JsonNode}.
+     *
+     * <p>This method validates the input and provides descriptive error messages:</p>
+     * <ul>
+     *   <li>Empty or whitespace-only content throws {@link FormatParseException}</li>
+     *   <li>JSON that parses to null throws {@link FormatParseException}</li>
+     *   <li>Invalid JSON syntax is wrapped in {@link FormatParseException}</li>
+     * </ul>
+     *
+     * @param content the JSON string to parse, must not be {@code null}
+     * @return the parsed {@link JsonNode}, never {@code null}
+     * @throws FormatParseException if the content is empty, parses to null,
+     *                              or contains invalid JSON syntax
+     */
     @Override
-    public @NotNull JsonNode parse(@NotNull final String content) {
+    @NotNull
+    public JsonNode parse(@NotNull final String content) {
+        Preconditions.checkNotNull(content, "content must not be null");
+
         if (content.isBlank()) {
             throw new FormatParseException("Cannot parse empty or whitespace-only content");
         }
@@ -81,8 +167,21 @@ public class JsonJacksonFormatHandler implements FormatHandler<JsonNode> {
         }
     }
 
+    /**
+     * Serializes a {@link JsonNode} to a compact JSON string.
+     *
+     * <p>The output contains no unnecessary whitespace, making it suitable
+     * for storage and transmission where size matters.</p>
+     *
+     * @param data the JSON node to serialize, must not be {@code null}
+     * @return the compact JSON string representation
+     * @throws RuntimeException if serialization fails (should not happen with valid JsonNode)
+     */
     @Override
-    public @NotNull String serialize(@NotNull final JsonNode data) {
+    @NotNull
+    public String serialize(@NotNull final JsonNode data) {
+        Preconditions.checkNotNull(data, "data must not be null");
+
         try {
             return MAPPER.writeValueAsString(data);
         } catch (final JsonProcessingException e) {
@@ -90,8 +189,21 @@ public class JsonJacksonFormatHandler implements FormatHandler<JsonNode> {
         }
     }
 
+    /**
+     * Serializes a {@link JsonNode} to a pretty-printed JSON string.
+     *
+     * <p>The output is formatted with indentation and line breaks for
+     * human readability.</p>
+     *
+     * @param data the JSON node to serialize, must not be {@code null}
+     * @return the formatted JSON string representation
+     * @throws RuntimeException if serialization fails (should not happen with valid JsonNode)
+     */
     @Override
-    public @NotNull String serializePretty(@NotNull final JsonNode data) {
+    @NotNull
+    public String serializePretty(@NotNull final JsonNode data) {
+        Preconditions.checkNotNull(data, "data must not be null");
+
         try {
             return MAPPER_PRETTY.writeValueAsString(data);
         } catch (final JsonProcessingException e) {
