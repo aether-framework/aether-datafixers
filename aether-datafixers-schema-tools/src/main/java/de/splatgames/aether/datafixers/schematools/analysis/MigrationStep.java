@@ -321,7 +321,7 @@ public final class MigrationStep {
      * properties. Required properties (source and target versions) are provided
      * via {@link MigrationStep#builder(DataVersion, DataVersion)}.</p>
      *
-     * <h3>Usage Example</h3>
+     * <p><b>Usage Example:</b></p>
      * <pre>{@code
      * MigrationStep step = MigrationStep.builder(v1, v2)
      *     .fix(myFix)

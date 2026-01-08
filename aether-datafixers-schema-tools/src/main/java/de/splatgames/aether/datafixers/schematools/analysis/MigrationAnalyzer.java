@@ -87,12 +87,42 @@ import java.util.Set;
  */
 public final class MigrationAnalyzer {
 
+    /**
+     * The registry containing all schema definitions.
+     */
     private final SchemaRegistry schemaRegistry;
+
+    /**
+     * The registry containing all DataFix registrations.
+     */
     private final DataFixRegistry fixRegistry;
+
+    /**
+     * The source version for analysis. Set via {@link #from(DataVersion)}.
+     */
     private DataVersion fromVersion;
+
+    /**
+     * The target version for analysis. Set via {@link #to(DataVersion)}.
+     */
     private DataVersion toVersion;
+
+    /**
+     * Flag controlling whether field-level analysis is included.
+     * Defaults to {@code false} for performance.
+     */
     private boolean includeFieldLevel = false;
 
+    /**
+     * Creates a new MigrationAnalyzer with the given registries.
+     *
+     * <p>This constructor is private; use {@link #forBootstrap} or
+     * {@link #forRegistries} to create instances.</p>
+     *
+     * @param schemaRegistry the schema registry, must not be {@code null}
+     * @param fixRegistry    the fix registry, must not be {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     */
     private MigrationAnalyzer(
             @NotNull final SchemaRegistry schemaRegistry,
             @NotNull final DataFixRegistry fixRegistry
@@ -251,7 +281,14 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Validates that version range is properly configured.
+     * Validates that the version range is properly configured.
+     *
+     * <p>This method ensures both {@code fromVersion} and {@code toVersion}
+     * have been set, and that {@code fromVersion} does not exceed
+     * {@code toVersion}.</p>
+     *
+     * @throws IllegalStateException if from/to versions are not set
+     *                               or if fromVersion > toVersion
      */
     private void validateVersionRange() {
         Preconditions.checkState(this.fromVersion != null, "fromVersion must be set. Use from().");
@@ -263,7 +300,14 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Gets all schemas in the version range, sorted by version.
+     * Retrieves all schemas within the configured version range.
+     *
+     * <p>Iterates through all schemas in the registry and filters those
+     * with versions between {@code fromVersion} and {@code toVersion}
+     * (inclusive). The resulting list is sorted by version number
+     * in ascending order.</p>
+     *
+     * @return a mutable list of schemas sorted by version, never {@code null}
      */
     @NotNull
     private List<Schema> getSchemasInRange() {
@@ -281,7 +325,19 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Analyzes a single migration step between two schemas.
+     * Analyzes a single migration step between two consecutive schemas.
+     *
+     * <p>This method performs the following analysis:</p>
+     * <ol>
+     *   <li>Computes the schema diff between source and target</li>
+     *   <li>Identifies all affected types (added, removed, or modified)</li>
+     *   <li>Looks up registered DataFixes for the version transition</li>
+     *   <li>Constructs a MigrationStep with the collected information</li>
+     * </ol>
+     *
+     * @param sourceSchema the source schema, must not be {@code null}
+     * @param targetSchema the target schema, must not be {@code null}
+     * @return the analyzed migration step, never {@code null}
      */
     @NotNull
     private MigrationStep analyzeStep(
@@ -329,7 +385,15 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Analyzes coverage for a single step and adds gaps to the builder.
+     * Analyzes fix coverage for a single migration step.
+     *
+     * <p>Examines the schema diff between versions and checks if each
+     * change (added/removed/modified types) has a corresponding DataFix.
+     * Missing fixes are recorded as coverage gaps in the builder.</p>
+     *
+     * @param sourceSchema    the source schema, must not be {@code null}
+     * @param targetSchema    the target schema, must not be {@code null}
+     * @param coverageBuilder the builder to accumulate gaps, must not be {@code null}
      */
     private void analyzeStepCoverage(
             @NotNull final Schema sourceSchema,
@@ -376,7 +440,21 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Checks coverage for field-level changes in a type.
+     * Checks fix coverage for field-level changes within a type.
+     *
+     * <p>If the type has field-level changes (added, removed, or modified fields)
+     * but no DataFix is registered to handle the type at this version,
+     * a coverage gap is recorded.</p>
+     *
+     * <p><b>Note:</b> This implementation checks for the presence of any fix
+     * for the type. A more sophisticated implementation could verify that
+     * the fix actually handles all specific field changes.</p>
+     *
+     * @param type            the type being analyzed, must not be {@code null}
+     * @param sourceSchema    the source schema, must not be {@code null}
+     * @param targetSchema    the target schema, must not be {@code null}
+     * @param typeDiff        the detailed type diff, must not be {@code null}
+     * @param coverageBuilder the builder to accumulate gaps, must not be {@code null}
      */
     private void checkTypeDiffCoverage(
             @NotNull final TypeReference type,

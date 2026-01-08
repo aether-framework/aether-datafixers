@@ -121,13 +121,49 @@ public final class CoverageGap {
         }
     }
 
+    /**
+     * The type reference for which this coverage gap was detected.
+     */
     private final TypeReference type;
+
+    /**
+     * The source version where the type change originated.
+     */
     private final DataVersion sourceVersion;
+
+    /**
+     * The target version where the type change applies.
+     */
     private final DataVersion targetVersion;
+
+    /**
+     * The reason why this gap exists (what kind of change has no fix).
+     */
     private final Reason reason;
+
+    /**
+     * The specific field name involved, or {@code null} for type-level gaps.
+     */
     private final String fieldName;
+
+    /**
+     * The detailed type diff showing what changed, or {@code null} if not available.
+     */
     private final TypeDiff typeDiff;
 
+    /**
+     * Creates a new CoverageGap instance.
+     *
+     * <p>This constructor is private; use the factory methods
+     * {@link #typeLevel} or {@link #fieldLevel} to create instances.</p>
+     *
+     * @param type          the affected type, must not be {@code null}
+     * @param sourceVersion the source version, must not be {@code null}
+     * @param targetVersion the target version, must not be {@code null}
+     * @param reason        the gap reason, must not be {@code null}
+     * @param fieldName     the field name for field-level gaps, or {@code null}
+     * @param typeDiff      the type diff for context, or {@code null}
+     */
     private CoverageGap(
             @NotNull final TypeReference type,
             @NotNull final DataVersion sourceVersion,
@@ -284,6 +320,16 @@ public final class CoverageGap {
         return this.fieldName == null;
     }
 
+    /**
+     * Compares this coverage gap to another object for equality.
+     *
+     * <p>Two {@code CoverageGap} instances are equal if they have the same
+     * type, source version, target version, reason, and field name. The
+     * type diff is not included in the comparison since it is contextual.</p>
+     *
+     * @param obj the object to compare with, may be {@code null}
+     * @return {@code true} if the objects are equal, {@code false} otherwise
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -299,11 +345,28 @@ public final class CoverageGap {
                 && Objects.equals(this.fieldName, other.fieldName);
     }
 
+    /**
+     * Returns a hash code value for this coverage gap.
+     *
+     * <p>The hash code is computed from the type, source version, target version,
+     * reason, and field name to ensure consistency with {@link #equals(Object)}.</p>
+     *
+     * @return the hash code value for this coverage gap
+     */
     @Override
     public int hashCode() {
         return Objects.hash(this.type, this.sourceVersion, this.targetVersion, this.reason, this.fieldName);
     }
 
+    /**
+     * Returns a human-readable string representation of this coverage gap.
+     *
+     * <p>The format includes the type name, optional field name, reason,
+     * and version range. For example:</p>
+     * <pre>{@code CoverageGap[player.health: FIELD_ADDED (v100 -> v110)]}</pre>
+     *
+     * @return a formatted string representation, never {@code null}
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

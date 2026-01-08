@@ -367,7 +367,7 @@ public final class TypeStructure {
      *   <li>{@code children}: empty list</li>
      * </ul>
      *
-     * <h3>Usage Example</h3>
+     * <p><b>Usage Example:</b></p>
      * <pre>{@code
      * TypeStructure structure = TypeStructure.builder(TypeReference.of("player"))
      *     .description("Player entity data")
@@ -376,8 +376,8 @@ public final class TypeStructure {
      *     .build();
      * }</pre>
      *
-     * <h3>Thread Safety</h3>
-     * <p>Builders are not thread-safe and should not be shared between threads.</p>
+     * <p><b>Thread Safety:</b>
+     * Builders are not thread-safe and should not be shared between threads.</p>
      *
      * @author Erik Pfoertner
      * @since 0.3.0
@@ -423,7 +423,7 @@ public final class TypeStructure {
          * Sets the human-readable description for the type structure.
          *
          * <p>The description typically contains information about the type's
-         * structure and purpose, such as the output of {@link Type#describe()}.</p>
+         * structure and purpose, such as the output of the type's {@code describe()} method.</p>
          *
          * @param description the description text, must not be {@code null}
          * @return this builder for method chaining, never {@code null}

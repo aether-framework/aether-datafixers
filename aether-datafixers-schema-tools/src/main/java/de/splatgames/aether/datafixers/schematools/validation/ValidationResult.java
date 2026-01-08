@@ -347,7 +347,7 @@ public final class ValidationResult {
      * a validation operation. Issues can be added individually or in batches,
      * and convenience methods are provided for creating common issue types.</p>
      *
-     * <h3>Usage Example</h3>
+     * <p><b>Usage Example:</b></p>
      * <pre>{@code
      * ValidationResult result = ValidationResult.builder()
      *     .error("STRUCT_001", "Missing required field")
@@ -356,8 +356,8 @@ public final class ValidationResult {
      *     .build();
      * }</pre>
      *
-     * <h3>Thread Safety</h3>
-     * <p>Builders are not thread-safe and should not be shared between threads.</p>
+     * <p><b>Thread Safety:</b>
+     * Builders are not thread-safe and should not be shared between threads.</p>
      *
      * @author Erik Pfoertner
      * @since 0.3.0

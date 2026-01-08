@@ -158,7 +158,21 @@ public final class StructureValidator {
     }
 
     /**
-     * Validates parent chain for cycles and version ordering.
+     * Validates the parent chain for cycles and version ordering.
+     *
+     * <p>Traverses the parent chain starting from the given schema and checks:</p>
+     * <ol>
+     *   <li>No cycles exist (a schema is not its own ancestor)</li>
+     *   <li>Parent versions are always less than child versions</li>
+     * </ol>
+     *
+     * <p>Issues are added to the result builder with appropriate context
+     * for debugging.</p>
+     *
+     * @param schema   the schema whose parent chain to validate
+     * @param registry the registry for parent lookup (may be {@code null})
+     * @param result   the builder to accumulate issues
+     * @param location the location string for issue reporting
      */
     private static void validateParentChain(
             @NotNull final Schema schema,
