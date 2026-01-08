@@ -12,6 +12,7 @@ Aether Datafixers is modular. Choose the modules you need:
 | `aether-datafixers-core` | Default implementations | Always needed for runtime |
 | `aether-datafixers-codec` | GsonOps, JacksonOps | When working with JSON |
 | `aether-datafixers-cli` | Command-line interface | For CLI-based data migration |
+| `aether-datafixers-schema-tools` | Schema analysis and validation | For CI/CD validation, diffing, coverage |
 | `aether-datafixers-testkit` | Testing utilities | For unit/integration testing |
 | `aether-datafixers-bom` | Version management | Recommended for multi-module projects |
 
@@ -242,6 +243,21 @@ Aether Datafixers has minimal dependencies:
 For command-line usage without writing Java code, see the dedicated CLI documentation:
 
 → [CLI Installation](../cli/installation.md) — Build and run the CLI tool
+
+---
+
+## Schema Tools Installation
+
+For schema analysis, validation, and migration coverage checking:
+
+```xml
+<dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-schema-tools</artifactId>
+</dependency>
+```
+
+→ [Schema Tools Overview](../schema-tools/index.md) — Learn about schema diffing, validation, and analysis
 
 ---
 

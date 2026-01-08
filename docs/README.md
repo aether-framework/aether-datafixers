@@ -94,6 +94,16 @@ Migrate and validate data files from the command line:
 - [Format Handlers](cli/format-handlers.md) — Custom format handler development
 - [Examples](cli/examples.md) — Practical usage examples
 
+### Schema Tools
+
+Analyze, compare, and validate your schemas:
+
+- [Schema Tools Overview](schema-tools/index.md) — Introduction to schema tooling
+- [Schema Diffing](schema-tools/schema-diffing.md) — Compare schemas and detect changes
+- [Migration Analysis](schema-tools/migration-analysis.md) — Analyze migration paths and fix coverage
+- [Schema Validation](schema-tools/schema-validation.md) — Validate structure and conventions
+- [Type Introspection](schema-tools/type-introspection.md) — Inspect type structures
+
 ### Advanced Topics
 
 For experienced users:
@@ -121,6 +131,7 @@ For experienced users:
 | `aether-datafixers-codec` | GsonOps, JacksonOps implementations |
 | `aether-datafixers-cli` | Command-line interface for data migration |
 | `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |
+| `aether-datafixers-schema-tools` | Schema analysis, validation, and diffing utilities |
 | `aether-datafixers-examples` | Practical usage examples |
 | `aether-datafixers-bom` | Bill of Materials for version management |
 

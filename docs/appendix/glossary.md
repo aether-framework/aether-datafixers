@@ -151,3 +151,68 @@ Terminology used in Aether Datafixers.
 **TypedAssert**
 : Custom AssertJ assertions for Typed objects (type and value checks).
 
+## Schema Tools
+
+**ConventionChecker**
+: Validates naming conventions for types, fields, and class names.
+
+**ConventionRules**
+: Configurable naming rules for convention validation (STRICT, RELAXED, NONE, or custom).
+
+**CoverageGap**
+: Represents a schema change without a corresponding DataFix.
+
+**DiffKind**
+: Enumeration of change types: ADDED, REMOVED, MODIFIED, UNCHANGED.
+
+**FieldDiff**
+: Represents a change to a single field between schema versions.
+
+**FieldInfo**
+: Metadata about a field including name, path, optionality, and type.
+
+**FixCoverage**
+: Analysis result showing which schema changes have corresponding DataFixes.
+
+**IssueSeverity**
+: Validation issue severity levels: ERROR, WARNING, INFO.
+
+**MigrationAnalyzer**
+: Entry point for analyzing migration paths and fix coverage between versions.
+
+**MigrationPath**
+: Complete migration sequence containing all steps from source to target version.
+
+**MigrationStep**
+: Single version transition in a migration path, with optional DataFix and SchemaDiff.
+
+**SchemaDiff**
+: Result of comparing two schemas, containing added/removed types and field changes.
+
+**SchemaDiffer**
+: Fluent API for comparing schemas and generating SchemaDiff results.
+
+**SchemaValidator**
+: Fluent API for validating schema structure, conventions, and fix coverage.
+
+**StructureValidator**
+: Validates schema structural integrity (cycles, version ordering, parent chains).
+
+**TypeDiff**
+: Field-level changes for a specific type present in both compared schemas.
+
+**TypeIntrospector**
+: Utility for analyzing type structure and extracting field information.
+
+**TypeKind**
+: Classification of types: PRIMITIVE, LIST, OPTIONAL, PRODUCT, SUM, FIELD, etc.
+
+**TypeStructure**
+: Normalized, comparable representation of a Type for analysis.
+
+**ValidationIssue**
+: Single validation issue with severity, code, message, location, and context.
+
+**ValidationResult**
+: Immutable collection of validation issues with filtering and status methods.
+

@@ -6,6 +6,16 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ## Version 0.3.0
 
+### New Section: Schema Tools Module
+
+Added complete documentation for the new schema tools module:
+
+- [Schema Tools Overview](../schema-tools/index.md) — Introduction, use cases, and quick start
+- [Schema Diffing](../schema-tools/schema-diffing.md) — Compare schemas and detect type/field changes
+- [Migration Analysis](../schema-tools/migration-analysis.md) — Analyze migration paths and fix coverage
+- [Schema Validation](../schema-tools/schema-validation.md) — Validate structure and naming conventions
+- [Type Introspection](../schema-tools/type-introspection.md) — Inspect type structures and extract field metadata
+
 ### New Section: CLI Module
 
 Added complete documentation for the new CLI module:
@@ -18,7 +28,7 @@ Added complete documentation for the new CLI module:
 
 ### Updated Pages
 
-- [Main README](../README.md) — Added CLI module to navigation and module table
+- [Main README](../README.md) — Added CLI and Schema Tools to navigation and module table
 - [Installation Guide](../getting-started/installation.md) — Added CLI module to overview table
 
 ---
