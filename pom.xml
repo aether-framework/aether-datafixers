@@ -14,6 +14,7 @@
         <module>aether-datafixers-core</module>
         <module>aether-datafixers-testkit</module>
         <module>aether-datafixers-cli</module>
+        <module>aether-datafixers-schema-tools</module>
         <module>aether-datafixers-examples</module>
         <module>aether-datafixers-bom</module>
     </modules>
@@ -143,6 +144,11 @@
             <dependency>
                 <groupId>de.splatgames.aether.datafixers</groupId>
                 <artifactId>aether-datafixers-cli</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.splatgames.aether.datafixers</groupId>
+                <artifactId>aether-datafixers-schema-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Picocli -->

@@ -6,9 +6,52 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [0.3.0] - 2026-01-07
+## [0.3.0] - 2026-01-08
 
 ### Added
+
+#### Schema Tools Module (`aether-datafixers-schema-tools`)
+
+New module for schema analysis, validation, and migration coverage checking.
+
+**Schema Diffing (`schematools.diff`):**
+- `SchemaDiffer` — Fluent API for comparing two schemas
+- `SchemaDiff` — Immutable result with added/removed/common types
+- `TypeDiff` — Field-level changes for types present in both schemas
+- `FieldDiff` — Individual field change (ADDED, REMOVED, MODIFIED, UNCHANGED)
+- `DiffKind` — Enumeration of change types
+- Optional field-level diffing via `includeFieldLevel(true)`
+- Type filtering via `ignoreTypes(...)`
+
+**Migration Analysis (`schematools.analysis`):**
+- `MigrationAnalyzer` — Fluent API for analyzing migration paths
+- `MigrationPath` — Complete migration sequence with all steps
+- `MigrationStep` — Single version transition with optional DataFix and SchemaDiff
+- `FixCoverage` — Analysis result showing fix coverage for schema changes
+- `CoverageGap` — Represents a schema change without corresponding DataFix
+- Coverage gap reasons: TYPE_ADDED, TYPE_REMOVED, TYPE_MODIFIED, FIELD_ADDED, FIELD_REMOVED, FIELD_TYPE_CHANGED
+- Orphan fix detection (fixes without schema changes)
+
+**Schema Validation (`schematools.validation`):**
+- `SchemaValidator` — Fluent API for validating schemas
+- `ValidationResult` — Immutable collection of validation issues
+- `ValidationIssue` — Single issue with severity, code, message, location, context
+- `IssueSeverity` — ERROR, WARNING, INFO levels
+- `StructureValidator` — Validates schema structure (cycles, version ordering, parent chains)
+- `ConventionChecker` — Validates naming conventions for types, fields, classes
+- `ConventionRules` — Configurable naming rules (STRICT, RELAXED, NONE, or custom)
+- Schema class prefix/suffix validation (e.g., "Schema" prefix for Schema100, Schema200)
+- Fix class prefix/suffix validation (e.g., "Fix" suffix for PlayerNameFix)
+- Predefined patterns for snake_case, camelCase
+- Custom validators via `customTypeValidator()` and `customFieldValidator()`
+
+**Type Introspection (`schematools.introspection`):**
+- `TypeIntrospector` — Utility for analyzing type structures
+- `TypeStructure` — Normalized, comparable representation of a Type
+- `FieldInfo` — Field metadata (name, path, optionality, type)
+- `TypeKind` — Classification (PRIMITIVE, LIST, OPTIONAL, PRODUCT, SUM, FIELD, etc.)
+- Recursive field extraction with hierarchical paths
+- Structural equality comparison
 
 #### CLI Module (`aether-datafixers-cli`)
 
@@ -46,6 +89,13 @@ New command-line interface for data migration without writing Java code.
 **Exceptions:**
 - `BootstrapLoadException` — Bootstrap class loading failures
 - `FormatParseException` — Input parsing failures
+
+### Documentation
+
+- Added comprehensive Schema Tools documentation (diffing, analysis, validation, introspection)
+- Added CLI module documentation (commands, format handlers, examples)
+- Updated glossary with Schema Tools terminology
+- Updated installation guide with new modules
 
 ---
 

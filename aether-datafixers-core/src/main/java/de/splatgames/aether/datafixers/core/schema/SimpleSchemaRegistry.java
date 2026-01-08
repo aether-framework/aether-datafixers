@@ -32,7 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 /**
  * A simple {@link TreeMap}-based implementation of {@link SchemaRegistry}.
@@ -135,5 +137,17 @@ public final class SimpleSchemaRegistry implements SchemaRegistry {
     @Override
     public boolean isFrozen() {
         return this.frozen;
+    }
+
+    @Override
+    @NotNull
+    public Stream<Schema> stream() {
+        return this.schemas.values().stream();
+    }
+
+    @Override
+    @NotNull
+    public Set<DataVersion> versions() {
+        return this.frozen ? this.schemas.keySet() : Set.copyOf(this.schemas.keySet());
     }
 }

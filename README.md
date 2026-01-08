@@ -18,6 +18,8 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - ✅ **Codec System** — Bidirectional transformation between typed Java objects and dynamic representations
 - ✅ **Type Safety** — Strong typing with `TypeReference` identifiers for data routing
 - ✅ **Testkit** — Fluent test data builders, custom assertions, and test harnesses for DataFix testing
+- ✅ **CLI Tool** — Migrate and validate data files from the command line with batch processing
+- ✅ **Schema Tools** — Schema diffing, validation, migration analysis, and type introspection
 - ✅ **Migration Diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
 - ✅ **Extended Rewrite Rules** — Batch operations, path-based transforms, conditional rules
 - ✅ **High-Performance APIs** — `Rules.batch()` for single-pass multi-operation transforms
@@ -31,6 +33,8 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - **aether-datafixers-core** — Default implementations of the API interfaces
 - **aether-datafixers-codec** — Codec implementations for serialization formats
 - **aether-datafixers-testkit** — Testing utilities for DataFix, Schema, and migration testing
+- **aether-datafixers-cli** — Command-line interface for data migration and validation
+- **aether-datafixers-schema-tools** — Schema analysis, validation, diffing, and introspection
 - **aether-datafixers-examples** — Practical examples demonstrating real-world usage
 - **aether-datafixers-bom** — Bill of Materials for coordinated dependency management
 
@@ -418,8 +422,10 @@ mvn test
   - **Performance optimizations** — Path caching, optimized fix registry, reduced allocations
 
 - **v0.3.0** (next)
-  - **CLI module** — Migrate files and print/export a migration report (batch-friendly)
-  - **Schema tooling** — Runtime schema validation + diff utilities between versions
+  - **CLI module** — Migrate files from the command line with batch processing and reports
+  - **Schema Tools module** — Schema diffing, migration analysis, validation, and introspection
+  - **Fix coverage analysis** — Detect schema changes without corresponding DataFixes
+  - **Convention checking** — Enforce naming conventions for types, fields, and classes
 
 - **v0.4.0**
   - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
