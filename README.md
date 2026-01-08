@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-red)
 ![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether/aether-datafixers)
-![Version](https://img.shields.io/badge/version-0.2.0-orange)
+![Version](https://img.shields.io/badge/version-0.3.0-orange)
 
 # Aether Datafixers 🔧
 
@@ -10,7 +10,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.2.0)
+## ✨ Features (v0.3.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
@@ -86,7 +86,7 @@ Dynamic<?> updated = fixer.update(
 <dependency>
     <groupId>de.splatgames.aether</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
@@ -94,7 +94,7 @@ Dynamic<?> updated = fixer.update(
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.2.0'
+    implementation 'de.splatgames.aether:aether-datafixers-core:0.3.0'
 }
 ```
 
@@ -102,7 +102,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.2.0")
+    implementation("de.splatgames.aether:aether-datafixers-core:0.3.0")
 }
 ```
 
@@ -122,7 +122,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
         <dependency>
             <groupId>de.splatgames.aether</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.2.0</version>
+            <version>0.3.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -146,7 +146,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether:aether-datafixers-bom:0.2.0')
+    implementation platform('de.splatgames.aether:aether-datafixers-bom:0.3.0')
 
     // No version needed
     implementation 'de.splatgames.aether:aether-datafixers-core'
@@ -158,7 +158,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether:aether-datafixers-bom:0.2.0"))
+    implementation(platform("de.splatgames.aether:aether-datafixers-bom:0.3.0"))
 
     // No version needed
     implementation("de.splatgames.aether:aether-datafixers-core")
@@ -414,20 +414,20 @@ mvn test
   - Dynamic/DynamicOps format abstraction
   - Basic codec infrastructure
 
-- **v0.2.0** (current)
+- **v0.2.0**
   - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
   - **Migration diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
   - **Extended rewrite rules** — Batch operations, path-based transforms, conditional rules
   - **High-performance APIs** — `Rules.batch()` and single-pass conditional transforms
   - **Performance optimizations** — Path caching, optimized fix registry, reduced allocations
 
-- **v0.3.0** (next)
+- **v0.3.0** (current)
   - **CLI module** — Migrate files from the command line with batch processing and reports
   - **Schema Tools module** — Schema diffing, migration analysis, validation, and introspection
   - **Fix coverage analysis** — Detect schema changes without corresponding DataFixes
   - **Convention checking** — Enforce naming conventions for types, fields, and classes
 
-- **v0.4.0**
+- **v0.4.0** (next)
   - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
   - **Extra ops modules** — Optional YAML/TOML support (format adapters)
   - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)

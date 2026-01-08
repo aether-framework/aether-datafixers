@@ -1,16 +1,15 @@
-# 🚀 **Aether Datafixers v0.2.0 — Testkit, Extended Rules, Diagnostics, and Performance**
+# 🚀 **Aether Datafixers v0.3.0 — CLI, Schema Tools, and Convention Validation**
 
-Extended rules, testkit module, migration diagnostics, and high-performance APIs.
+Command-line interface for batch migrations, schema analysis tools, and naming convention validation.
 
 ---
 
-## 🎯 Highlights in v0.2.0
+## 🎯 Highlights in v0.3.0
 
-- ✅ **Testkit Module** — New `aether-datafixers-testkit` module with fluent test data builders, custom AssertJ assertions, and test harnesses for DataFix, Schema, and migration testing.
-- ✅ **Extended Rewrite Rules** — Convenience methods for batch operations, field grouping/flattening, path-based operations, and conditional rules.
-- ✅ **Migration Diagnostics** — Opt-in diagnostic system for structured reports with timing, snapshots, and warnings.
-- ✅ **High-Performance APIs** — Batch transformations and single-pass conditionals for optimized migrations.
-- ✅ **Performance Optimizations** — Internal improvements with memoized path parsing, pre-allocated lists, and reduced allocations.
+- ✅ **CLI Module** — New `aether-datafixers-cli` module for migrating and validating data files from the command line with batch processing and reports.
+- ✅ **Schema Tools Module** — New `aether-datafixers-schema-tools` module for schema diffing, migration analysis, validation, and type introspection.
+- ✅ **Fix Coverage Analysis** — Detect schema changes without corresponding DataFixes to ensure complete migration coverage.
+- ✅ **Convention Checking** — Enforce naming conventions for types, fields, schema classes, and fix classes.
 
 ---
 
@@ -25,7 +24,7 @@ Extended rules, testkit module, migration diagnostics, and high-performance APIs
 <dependency>
   <groupId>de.splatgames.aether.datafixers</groupId>
   <artifactId>aether-datafixers-core</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -37,7 +36,7 @@ Extended rules, testkit module, migration diagnostics, and high-performance APIs
     <dependency>
       <groupId>de.splatgames.aether.datafixers</groupId>
       <artifactId>aether-datafixers-bom</artifactId>
-      <version>0.2.0</version>
+      <version>0.3.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -57,9 +56,9 @@ Extended rules, testkit module, migration diagnostics, and high-performance APIs
 
 ```groovy
 dependencies {
-  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0'
+  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0'
   // Or with BOM:
-  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0')
+  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0')
   implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
 }
 ```
@@ -68,9 +67,9 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.2.0")
+  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0")
   // Or with BOM:
-  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.2.0"))
+  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0"))
   implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
 }
 ```
@@ -79,155 +78,163 @@ dependencies {
 
 ## 🆕 What's New
 
-### 🧪 Testkit Module
+### 🖥️ CLI Module
 
-New module `aether-datafixers-testkit` for testing migrations:
+New module `aether-datafixers-cli` for command-line data migration:
 
 ```xml
 <dependency>
   <groupId>de.splatgames.aether.datafixers</groupId>
-  <artifactId>aether-datafixers-testkit</artifactId>
-  <version>0.2.0</version>
-  <scope>test</scope>
+  <artifactId>aether-datafixers-cli</artifactId>
+  <version>0.3.0</version>
 </dependency>
 ```
 
-**Features:**
-- `TestData` — Fluent test data builders for Gson and Jackson
-- `AetherAssertions` — Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed`
-- `DataFixTester` — Test harness for individual DataFix implementations
-- `MigrationTester` — Test harness for complete migration chains
-- `SchemaTester` — Test harness for Schema validation
-- `QuickFix` — Factory methods for common fix patterns
-- `MockSchemas` — Factory for mock Schema instances
-- `RecordingContext` / `AssertingContext` — Test contexts
+**Commands:**
 
-**Example:**
-```java
-// Create test data fluently
-Dynamic<JsonElement> input = TestData.gson().object()
-                .put("name", "Alice")
-                .put("level", 10)
-                .build();
-
-// Test a DataFix
-DataFixTester.forFix(myFix)
-    .withInput(input)
-    .forType("player")
-    .expectOutput(expected)
-    .verify();
-
-// Test a full migration chain
-MigrationTester.forFixer(myFixer)
-    .forType(PLAYER)
-    .withInput(v1Data)
-    .from(1).to(5)
-    .expectOutput(v5Data)
-    .verify();
-```
-
-### 📐 Extended Rewrite Rules
-
-New convenience methods in `Rules` class:
-
-| Rule | Purpose |
-|------|---------|
-| `dynamicTransform(name, ops, fn)` | Custom Dynamic transformation |
-| `setField(ops, field, value)` | Set field (overwrites existing) |
-| `renameFields(ops, map)` | Batch rename multiple fields |
-| `removeFields(ops, fields...)` | Batch remove multiple fields |
-| `groupFields(ops, target, fields...)` | Group fields into nested object |
-| `flattenField(ops, field)` | Flatten nested object to root |
-| `moveField(ops, source, target)` | Move field between paths |
-| `copyField(ops, source, target)` | Copy field (keeps original) |
-| `transformFieldAt(ops, path, fn)` | Transform at nested path |
-| `renameFieldAt(ops, path, newName)` | Rename at nested path |
-| `removeFieldAt(ops, path)` | Remove at nested path |
-| `addFieldAt(ops, path, value)` | Add at nested path |
-| `ifFieldExists(ops, field, rule)` | Conditional on existence |
-| `ifFieldMissing(ops, field, rule)` | Conditional on absence |
-| `ifFieldEquals(ops, field, value, rule)` | Conditional on value |
-
-**Example:**
-```java
-Rules.seq(
-        Rules.renameFields(ops, Map.of("playerName", "name", "xp", "experience")),
-        Rules.groupFields(ops, "position", "x", "y", "z"),
-    Rules.ifFieldMissing(ops, "version", Rules.setField(ops, "version", d -> d.createInt(1)))
-        )
-```
-
-### 📊 Migration Diagnostics
-
-New opt-in diagnostic system for capturing structured reports:
-
-**API:**
-- `DiagnosticOptions` — Configuration for diagnostic capture
-- `DiagnosticContext` — Context interface for diagnostic migrations
-- `MigrationReport` — Immutable report with timing, fixes, rules, warnings, and snapshots
+| Command | Description |
+|---------|-------------|
+| `migrate` | Migrate data files from one schema version to another |
+| `validate` | Check if files need migration without modifying them |
+| `info` | Display version info, available formats, and bootstrap details |
 
 **Features:**
-- Zero overhead when diagnostics are not enabled
-- Configurable snapshot capture with truncation limits
-- Per-fix and per-rule timing measurements
-- Warning emission from DataFix implementations
+- Batch processing of multiple files with shell glob expansion
+- Auto-detection of source version from configurable data field path
+- In-place file modification with automatic `.bak` backup
+- Output to stdout, file, or directory
+- Pretty-printed or compact JSON output
+- Migration reports in text or JSON format
+- Verbose mode with detailed progress and stack traces
+- CI/CD friendly exit codes (0=success, 1=error, 2=migration needed)
 
-**Presets:**
-- `DiagnosticOptions.defaults()` — Full diagnostics with snapshots and rule details
-- `DiagnosticOptions.minimal()` — Timing only, minimal overhead
+**Example:**
+```bash
+# Migrate a single file
+aether-cli migrate --from 100 --to 200 --type player --bootstrap com.example.MyBootstrap input.json
 
-### ⚡ High-Performance APIs
+# Migrate with auto-detected version
+aether-cli migrate --to 200 --type player --version-field dataVersion --bootstrap com.example.MyBootstrap input.json
 
-**BatchTransform:**
-```java
-Rules.batch(ops, batch -> batch
-        .rename("oldName", "newName")
-    .remove("deprecated")
-    .set("version", d -> d.createInt(2))
-        .transform("count", d -> d.createInt(d.asInt(0) + 1))
-        .addIfMissing("created", d -> d.createLong(System.currentTimeMillis()))
-        )
+# Validate files (check without modifying)
+aether-cli validate --to 200 --type player --bootstrap com.example.MyBootstrap *.json
+
+# Show available formats and bootstrap info
+aether-cli info --formats
+aether-cli info --bootstrap com.example.MyBootstrap
 ```
 
-**Single-Pass Conditionals:**
-```java
-Rules.conditionalTransform(ops,
-                           d -> d.get("type").asString("").equals("legacy"),
-d -> d.set("migrated", d.createBoolean(true))
-        )
+### 🔧 Schema Tools Module
+
+New module `aether-datafixers-schema-tools` for schema analysis and validation:
+
+```xml
+<dependency>
+  <groupId>de.splatgames.aether.datafixers</groupId>
+  <artifactId>aether-datafixers-schema-tools</artifactId>
+  <version>0.3.0</version>
+</dependency>
 ```
 
-### 🚀 Performance Optimizations
+#### Schema Diffing
 
-Internal optimizations with no API changes:
-- Path parsing uses character-based parsing with memoization cache
-- `DataFixRegistry.getFixes()` pre-allocates result list
-- `DataFixerImpl` moves validation to registration time
-- Reduced allocations in hot paths
+Compare schemas between versions to see what changed:
+
+```java
+SchemaDiff diff = SchemaDiffer.compare(schemaV1, schemaV2)
+    .includeFieldLevel(true)
+    .diff();
+
+// Check results
+diff.addedTypes();    // Types new in schemaV2
+diff.removedTypes();  // Types removed from schemaV1
+diff.commonTypes();   // Types in both schemas
+diff.typeDiffs();     // Field-level changes for common types
+```
+
+#### Migration Analysis
+
+Analyze migration paths and detect coverage gaps:
+
+```java
+FixCoverage coverage = MigrationAnalyzer.forBootstrap(bootstrap)
+    .from(100).to(200)
+    .analyzeCoverage();
+
+// Find schema changes without DataFixes
+for (CoverageGap gap : coverage.gaps()) {
+    System.out.println("Missing fix for: " + gap.type() + " (" + gap.reason() + ")");
+}
+
+// Detect orphan fixes (fixes without schema changes)
+coverage.orphanFixes();
+```
+
+#### Schema Validation
+
+Validate schema structure and naming conventions:
+
+```java
+ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
+    .validateStructure()
+    .validateConventions(ConventionRules.STRICT)
+    .validate();
+
+// Check for issues
+for (ValidationIssue issue : result.issues()) {
+    System.out.println(issue.severity() + ": " + issue.message());
+}
+```
+
+#### Convention Checking
+
+Enforce naming conventions:
+
+```java
+ConventionChecker checker = ConventionChecker.withRules(ConventionRules.builder()
+    .typeNamePattern(Pattern.compile("[a-z][a-z0-9_]*"))  // snake_case types
+    .fieldNamePattern(Pattern.compile("[a-z][a-zA-Z0-9]*")) // camelCase fields
+    .schemaClassPrefix("Schema")  // Schema100, Schema200
+    .fixClassSuffix("Fix")        // PlayerNameFix, PositionFix
+    .build());
+
+List<ValidationIssue> issues = checker.check(bootstrap);
+```
+
+#### Type Introspection
+
+Inspect type structures programmatically:
+
+```java
+TypeStructure structure = TypeIntrospector.introspect(type);
+
+// Get all fields with their paths
+for (FieldInfo field : structure.fields()) {
+    System.out.println(field.path() + " : " + field.typeKind());
+}
+
+// Compare structures
+boolean equal = TypeIntrospector.structurallyEqual(type1, type2);
+```
 
 ---
 
 ## 📝 Changelog
 
-**New in 0.2.0**
+**New in 0.3.0**
 
-- Testkit module with fluent builders, assertions, and test harnesses
-- Extended rewrite rules for batch, grouping, path, and conditional operations
-- Migration diagnostics system with timing and snapshots
-- High-performance batch transformations
-- Single-pass conditional APIs
-- Performance optimizations (memoization, pre-allocation)
+- CLI module with migrate, validate, and info commands
+- Schema Tools module with diffing, analysis, validation, and introspection
+- Fix coverage analysis to detect missing DataFixes
+- Convention checking for type, field, and class names
+- Format handler SPI with Gson and Jackson implementations
 - Comprehensive documentation updates
 
-**Full Changelog:** [v0.1.0...v0.2.0](https://github.com/aether-framework/aether-datafixers/compare/v0.1.0...v0.2.0)
+**Full Changelog:** [v0.2.0...v0.3.0](https://github.com/aether-framework/aether-datafixers/compare/v0.2.0...v0.3.0)
 
 ---
 
 ## 🗺️ Roadmap (next)
-
-- **v0.3.0**
-  - **CLI module** — Migrate files and print/export a migration report (batch-friendly)
-  - **Schema tooling** — Runtime schema validation + diff utilities between versions
 
 - **v0.4.0**
   - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
