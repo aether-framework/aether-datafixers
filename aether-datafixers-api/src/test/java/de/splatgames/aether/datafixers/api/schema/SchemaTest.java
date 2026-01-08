@@ -345,6 +345,12 @@ class SchemaTest {
         public boolean has(@NotNull TypeReference ref) {
             return types.containsKey(ref);
         }
+
+        @NotNull
+        @Override
+        public java.util.Set<TypeReference> references() {
+            return java.util.Set.copyOf(types.keySet());
+        }
     }
 
     private static class TestSchema extends Schema {

@@ -202,4 +202,22 @@ public final class DataFixerBuilder implements FixRegistrar {
         this.registry.freeze();
         return new DataFixerImpl(this.currentVersion, this.registry, this.defaultContext);
     }
+
+    /**
+     * Returns the internal fix registry.
+     *
+     * <p>This method provides access to the underlying {@link DataFixRegistry}
+     * for analysis and introspection purposes. The registry may be mutable
+     * if {@link #build()} has not been called yet.</p>
+     *
+     * <p><b>Warning:</b> Modifying the returned registry after build() has been
+     * called will have no effect, as build() creates an immutable copy.</p>
+     *
+     * @return the fix registry, never {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    public DataFixRegistry getFixRegistry() {
+        return this.registry;
+    }
 }

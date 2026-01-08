@@ -90,6 +90,19 @@ public interface TypeRegistry {
     boolean has(@NotNull final TypeReference ref);
 
     /**
+     * Returns all registered type references.
+     *
+     * <p>The returned set is a snapshot of the registered references at the time
+     * of the call. Modifications to the registry after this call will not be
+     * reflected in the returned set.</p>
+     *
+     * @return an unmodifiable set of all registered type references, never {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    java.util.Set<TypeReference> references();
+
+    /**
      * Retrieves a type by its reference, throwing if not found.
      *
      * @param ref the type reference to look up, must not be {@code null}

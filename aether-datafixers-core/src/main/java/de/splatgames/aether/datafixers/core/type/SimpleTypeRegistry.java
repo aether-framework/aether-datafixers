@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A simple {@link HashMap}-based implementation of {@link TypeRegistry}.
@@ -83,6 +84,12 @@ public final class SimpleTypeRegistry implements TypeRegistry {
         Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
 
         return this.types.containsKey(ref);
+    }
+
+    @NotNull
+    @Override
+    public Set<TypeReference> references() {
+        return this.frozen ? this.types.keySet() : Set.copyOf(this.types.keySet());
     }
 
     @Override

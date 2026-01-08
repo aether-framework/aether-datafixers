@@ -28,6 +28,9 @@ import de.splatgames.aether.datafixers.api.fix.DataFixer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+import java.util.stream.Stream;
+
 /**
  * A registry for managing {@link Schema} instances across data versions.
  *
@@ -152,4 +155,29 @@ public interface SchemaRegistry {
     default boolean isFrozen() {
         return false;
     }
+
+    /**
+     * Returns a stream of all registered schemas.
+     *
+     * <p>The returned stream provides access to all schemas in this registry.
+     * The order of schemas in the stream is implementation-dependent.</p>
+     *
+     * @return a stream of all schemas, never {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    Stream<Schema> stream();
+
+    /**
+     * Returns the set of all registered versions.
+     *
+     * <p>The returned set is a snapshot of the registered versions at the time
+     * of the call. Modifications to the registry after this call will not be
+     * reflected in the returned set.</p>
+     *
+     * @return an unmodifiable set of all registered versions, never {@code null}
+     * @since 0.3.0
+     */
+    @NotNull
+    Set<DataVersion> versions();
 }
