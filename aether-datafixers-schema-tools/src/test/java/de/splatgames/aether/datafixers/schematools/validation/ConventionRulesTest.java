@@ -70,9 +70,11 @@ class ConventionRulesTest {
         }
 
         @Test
-        @DisplayName("STRICT requires Schema suffix")
-        void strictRequiresSchemaSuffix() {
-            assertThat(ConventionRules.STRICT.isValidSchemaClassName("PlayerSchema")).isTrue();
+        @DisplayName("STRICT requires Schema prefix")
+        void strictRequiresSchemaPrefix() {
+            assertThat(ConventionRules.STRICT.isValidSchemaClassName("Schema100")).isTrue();
+            assertThat(ConventionRules.STRICT.isValidSchemaClassName("SchemaV1")).isTrue();
+            assertThat(ConventionRules.STRICT.isValidSchemaClassName("PlayerSchema")).isFalse();
             assertThat(ConventionRules.STRICT.isValidSchemaClassName("PlayerData")).isFalse();
         }
 
@@ -180,6 +182,18 @@ class ConventionRulesTest {
         }
 
         @Test
+        @DisplayName("schemaClassPrefix() sets prefix")
+        void schemaClassPrefixSetsPrefix() {
+            final ConventionRules rules = ConventionRules.builder()
+                    .schemaClassPrefix("Version")
+                    .build();
+
+            assertThat(rules.schemaClassPrefix()).isEqualTo("Version");
+            assertThat(rules.isValidSchemaClassName("Version100")).isTrue();
+            assertThat(rules.isValidSchemaClassName("Schema100")).isFalse();
+        }
+
+        @Test
         @DisplayName("schemaClassSuffix() sets suffix")
         void schemaClassSuffixSetsSuffix() {
             final ConventionRules rules = ConventionRules.builder()
@@ -192,6 +206,31 @@ class ConventionRulesTest {
         }
 
         @Test
+        @DisplayName("schemaClassPrefix() and schemaClassSuffix() can be combined")
+        void schemaClassPrefixAndSuffixCanBeCombined() {
+            final ConventionRules rules = ConventionRules.builder()
+                    .schemaClassPrefix("V")
+                    .schemaClassSuffix("Schema")
+                    .build();
+
+            assertThat(rules.isValidSchemaClassName("V100Schema")).isTrue();
+            assertThat(rules.isValidSchemaClassName("V100")).isFalse();      // Missing suffix
+            assertThat(rules.isValidSchemaClassName("100Schema")).isFalse(); // Missing prefix
+        }
+
+        @Test
+        @DisplayName("fixClassPrefix() sets prefix")
+        void fixClassPrefixSetsPrefix() {
+            final ConventionRules rules = ConventionRules.builder()
+                    .fixClassPrefix("Migrate")
+                    .build();
+
+            assertThat(rules.fixClassPrefix()).isEqualTo("Migrate");
+            assertThat(rules.isValidFixClassName("MigratePlayer")).isTrue();
+            assertThat(rules.isValidFixClassName("PlayerFix")).isFalse();
+        }
+
+        @Test
         @DisplayName("fixClassSuffix() sets suffix")
         void fixClassSuffixSetsSuffix() {
             final ConventionRules rules = ConventionRules.builder()
@@ -201,6 +240,19 @@ class ConventionRulesTest {
             assertThat(rules.fixClassSuffix()).isEqualTo("Migration");
             assertThat(rules.isValidFixClassName("PlayerMigration")).isTrue();
             assertThat(rules.isValidFixClassName("PlayerFix")).isFalse();
+        }
+
+        @Test
+        @DisplayName("fixClassPrefix() and fixClassSuffix() can be combined")
+        void fixClassPrefixAndSuffixCanBeCombined() {
+            final ConventionRules rules = ConventionRules.builder()
+                    .fixClassPrefix("Apply")
+                    .fixClassSuffix("Fix")
+                    .build();
+
+            assertThat(rules.isValidFixClassName("ApplyPlayerFix")).isTrue();
+            assertThat(rules.isValidFixClassName("ApplyPlayer")).isFalse();  // Missing suffix
+            assertThat(rules.isValidFixClassName("PlayerFix")).isFalse();    // Missing prefix
         }
 
         @Test

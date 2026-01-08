@@ -155,9 +155,10 @@ class ConventionCheckerTest {
 
             final ValidationResult result = ConventionChecker.checkSchema(schema, ConventionRules.STRICT);
 
-            assertThat(result.issues()).isNotEmpty();
-            assertThat(result.issues().get(0).location()).isPresent();
-            assertThat(result.issues().get(0).location().orElseThrow()).contains("BadName");
+            final var typeNameIssues = result.byCode(ConventionChecker.CONVENTION_TYPE_NAME);
+            assertThat(typeNameIssues).isNotEmpty();
+            assertThat(typeNameIssues.get(0).location()).isPresent();
+            assertThat(typeNameIssues.get(0).location().orElseThrow()).contains("BadName");
         }
 
         @Test
@@ -169,8 +170,9 @@ class ConventionCheckerTest {
 
             final ValidationResult result = ConventionChecker.checkSchema(schema, ConventionRules.STRICT);
 
-            assertThat(result.issues()).isNotEmpty();
-            assertThat(result.issues().get(0).context()).containsKey("typeName");
+            final var typeNameIssues = result.byCode(ConventionChecker.CONVENTION_TYPE_NAME);
+            assertThat(typeNameIssues).isNotEmpty();
+            assertThat(typeNameIssues.get(0).context()).containsKey("typeName");
         }
 
         @Test
@@ -199,8 +201,9 @@ class ConventionCheckerTest {
 
             final ValidationResult result = ConventionChecker.checkSchema(schema, ConventionRules.STRICT);
 
-            assertThat(result.issues()).isNotEmpty();
-            assertThat(result.issues().get(0).message()).contains("pattern");
+            final var typeNameIssues = result.byCode(ConventionChecker.CONVENTION_TYPE_NAME);
+            assertThat(typeNameIssues).isNotEmpty();
+            assertThat(typeNameIssues.get(0).message()).contains("pattern");
         }
     }
 
@@ -295,7 +298,15 @@ class ConventionCheckerTest {
         void handlesEmptySchema() {
             final Schema schema = MockSchemas.minimal(100);
 
-            final ValidationResult result = ConventionChecker.checkSchema(schema, ConventionRules.STRICT);
+            // Use custom rules that only check type/field names, not schema class names
+            // (MockSchemas generates class names like "MinimalSchema" that don't match prefix rules)
+            final ConventionRules rules = ConventionRules.builder()
+                    .typeNamePattern(ConventionRules.STRICT.typeNamePattern())
+                    .fieldNamePattern(ConventionRules.STRICT.fieldNamePattern())
+                    .treatViolationsAsErrors(true)
+                    .build();
+
+            final ValidationResult result = ConventionChecker.checkSchema(schema, rules);
 
             assertThat(result.issues()).isEmpty();
         }

@@ -40,7 +40,9 @@ New module for schema analysis, validation, and migration coverage checking.
 - `StructureValidator` — Validates schema structure (cycles, version ordering, parent chains)
 - `ConventionChecker` — Validates naming conventions for types, fields, classes
 - `ConventionRules` — Configurable naming rules (STRICT, RELAXED, NONE, or custom)
-- Predefined patterns for snake_case, camelCase, class suffixes
+- Schema class prefix/suffix validation (e.g., "Schema" prefix for Schema100, Schema200)
+- Fix class prefix/suffix validation (e.g., "Fix" suffix for PlayerNameFix)
+- Predefined patterns for snake_case, camelCase
 - Custom validators via `customTypeValidator()` and `customFieldValidator()`
 
 **Type Introspection (`schematools.introspection`):**

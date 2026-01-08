@@ -114,8 +114,8 @@ public final class ConventionChecker {
         if (!rules.isValidSchemaClassName(schemaClassName)) {
             result.add(createIssue(
                     CONVENTION_SCHEMA_CLASS,
-                    "Schema class name '" + schemaClassName + "' should end with '"
-                            + rules.schemaClassSuffix() + "'",
+                    buildClassNameViolationMessage(schemaClassName, "Schema",
+                            rules.schemaClassPrefix(), rules.schemaClassSuffix()),
                     schemaLocation,
                     rules
             ));
@@ -174,8 +174,8 @@ public final class ConventionChecker {
         if (!rules.isValidFixClassName(fixClassName)) {
             result.add(createIssue(
                     CONVENTION_FIX_CLASS,
-                    "Fix class name '" + fixClassName + "' should end with '"
-                            + rules.fixClassSuffix() + "'",
+                    buildClassNameViolationMessage(fixClassName, "Fix",
+                            rules.fixClassPrefix(), rules.fixClassSuffix()),
                     "Fix@" + fix.toVersion().getVersion(),
                     rules
             ));
@@ -213,6 +213,39 @@ public final class ConventionChecker {
                         .withContext("typeName", typeName));
             }
         }
+    }
+
+    /**
+     * Builds a descriptive message for class name convention violations.
+     *
+     * @param className the actual class name
+     * @param type      the type of class (e.g., "Schema", "Fix")
+     * @param prefix    the expected prefix, or {@code null}
+     * @param suffix    the expected suffix, or {@code null}
+     * @return the violation message
+     */
+    @NotNull
+    private static String buildClassNameViolationMessage(
+            @NotNull final String className,
+            @NotNull final String type,
+            final String prefix,
+            final String suffix
+    ) {
+        final StringBuilder message = new StringBuilder();
+        message.append(type).append(" class name '").append(className).append("' should ");
+
+        if (prefix != null && suffix != null) {
+            message.append("start with '").append(prefix)
+                    .append("' and end with '").append(suffix).append("'");
+        } else if (prefix != null) {
+            message.append("start with '").append(prefix).append("'");
+        } else if (suffix != null) {
+            message.append("end with '").append(suffix).append("'");
+        } else {
+            message.append("follow naming conventions");
+        }
+
+        return message.toString();
     }
 
     /**

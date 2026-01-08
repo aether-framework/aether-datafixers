@@ -142,8 +142,10 @@ Configure naming conventions with `ConventionRules`:
 ### Predefined Rule Sets
 
 ```java
-// Strict: snake_case, required suffixes, violations are errors
+// Strict: snake_case, Schema prefix, Fix suffix, violations are errors
 ConventionRules.STRICT
+// - Schema classes: Schema100, Schema200, SchemaV1 (prefix "Schema")
+// - Fix classes: PlayerNameFix, SwordRenameFix (suffix "Fix")
 
 // Relaxed: Flexible naming, violations are warnings (default)
 ConventionRules.RELAXED
@@ -159,9 +161,9 @@ ConventionRules rules = ConventionRules.builder()
     .enabled(true)
     .typeNamePattern(Pattern.compile("[a-z][a-z0-9_]*"))  // snake_case
     .fieldNamePattern(Pattern.compile("[a-z][a-zA-Z0-9]*"))  // camelCase
-    .schemaClassSuffix("Schema")
-    .fixClassSuffix("Fix")
-    .requireTypePrefix("game_")  // All types must start with "game_"
+    .schemaClassPrefix("Schema")  // Schema100, Schema200
+    .fixClassSuffix("Fix")        // PlayerNameFix, SwordRenameFix
+    .requireTypePrefix("game_")   // All types must start with "game_"
     .treatViolationsAsErrors(true)  // Violations are ERROR, not WARNING
     .build();
 
@@ -169,6 +171,17 @@ ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
     .validateConventions()
     .withConventions(rules)
     .validate();
+```
+
+You can also combine prefix and suffix:
+
+```java
+ConventionRules rules = ConventionRules.builder()
+    .schemaClassPrefix("V")       // V100Schema, V200Schema
+    .schemaClassSuffix("Schema")
+    .fixClassPrefix("Migrate")    // MigratePlayerFix
+    .fixClassSuffix("Fix")
+    .build();
 ```
 
 ### Custom Validators

@@ -75,14 +75,14 @@ public final class ConventionRules {
      * <ul>
      *   <li>Type names must be snake_case</li>
      *   <li>Field names must be snake_case</li>
-     *   <li>Schema class names must end with "Schema"</li>
-     *   <li>DataFix class names must end with "Fix"</li>
+     *   <li>Schema class names must start with "Schema" (e.g., Schema100, Schema200)</li>
+     *   <li>DataFix class names must end with "Fix" (e.g., PlayerNameFix)</li>
      * </ul>
      */
     public static final ConventionRules STRICT = builder()
             .typeNamePattern(Pattern.compile("^[a-z][a-z0-9_]*$"))
             .fieldNamePattern(Pattern.compile("^[a-z][a-z0-9_]*$"))
-            .schemaClassSuffix("Schema")
+            .schemaClassPrefix("Schema")
             .fixClassSuffix("Fix")
             .treatViolationsAsErrors(true)
             .build();
@@ -129,9 +129,19 @@ public final class ConventionRules {
     private final String typeNamePrefix;
 
     /**
+     * Expected prefix for schema class names (e.g., "Schema"), or {@code null} to skip.
+     */
+    private final String schemaClassPrefix;
+
+    /**
      * Expected suffix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
     private final String schemaClassSuffix;
+
+    /**
+     * Expected prefix for fix class names, or {@code null} to skip.
+     */
+    private final String fixClassPrefix;
 
     /**
      * Expected suffix for fix class names (e.g., "Fix"), or {@code null} to skip.
@@ -162,7 +172,9 @@ public final class ConventionRules {
      * @param typeNamePattern         pattern for type names
      * @param fieldNamePattern        pattern for field names
      * @param typeNamePrefix          required prefix for type names
+     * @param schemaClassPrefix       expected prefix for schema classes
      * @param schemaClassSuffix       expected suffix for schema classes
+     * @param fixClassPrefix          expected prefix for fix classes
      * @param fixClassSuffix          expected suffix for fix classes
      * @param treatViolationsAsErrors whether violations are errors
      * @param customTypeValidator     custom type name validator
@@ -173,7 +185,9 @@ public final class ConventionRules {
             final Pattern typeNamePattern,
             final Pattern fieldNamePattern,
             final String typeNamePrefix,
+            final String schemaClassPrefix,
             final String schemaClassSuffix,
+            final String fixClassPrefix,
             final String fixClassSuffix,
             final boolean treatViolationsAsErrors,
             final Predicate<String> customTypeValidator,
@@ -183,7 +197,9 @@ public final class ConventionRules {
         this.typeNamePattern = typeNamePattern;
         this.fieldNamePattern = fieldNamePattern;
         this.typeNamePrefix = typeNamePrefix;
+        this.schemaClassPrefix = schemaClassPrefix;
         this.schemaClassSuffix = schemaClassSuffix;
+        this.fixClassPrefix = fixClassPrefix;
         this.fixClassSuffix = fixClassSuffix;
         this.treatViolationsAsErrors = treatViolationsAsErrors;
         this.customTypeValidator = customTypeValidator;
@@ -269,21 +285,37 @@ public final class ConventionRules {
     /**
      * Validates a schema class name against conventions.
      *
+     * <p>Checks both prefix and suffix if configured. For example, with prefix "Schema",
+     * valid names include: Schema100, Schema200, SchemaV1.</p>
+     *
      * @param className the class name to validate, must not be {@code null}
      * @return {@code true} if the name follows conventions
      */
     public boolean isValidSchemaClassName(@NotNull final String className) {
         Preconditions.checkNotNull(className, "className must not be null");
 
-        if (!this.enabled || this.schemaClassSuffix == null) {
+        if (!this.enabled) {
             return true;
         }
 
-        return className.endsWith(this.schemaClassSuffix);
+        // Check prefix
+        if (this.schemaClassPrefix != null && !className.startsWith(this.schemaClassPrefix)) {
+            return false;
+        }
+
+        // Check suffix
+        if (this.schemaClassSuffix != null && !className.endsWith(this.schemaClassSuffix)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Validates a fix class name against conventions.
+     *
+     * <p>Checks both prefix and suffix if configured. For example, with suffix "Fix",
+     * valid names include: PlayerNameFix, SwordRenameFix.</p>
      *
      * @param className the class name to validate, must not be {@code null}
      * @return {@code true} if the name follows conventions
@@ -291,11 +323,21 @@ public final class ConventionRules {
     public boolean isValidFixClassName(@NotNull final String className) {
         Preconditions.checkNotNull(className, "className must not be null");
 
-        if (!this.enabled || this.fixClassSuffix == null) {
+        if (!this.enabled) {
             return true;
         }
 
-        return className.endsWith(this.fixClassSuffix);
+        // Check prefix
+        if (this.fixClassPrefix != null && !className.startsWith(this.fixClassPrefix)) {
+            return false;
+        }
+
+        // Check suffix
+        if (this.fixClassSuffix != null && !className.endsWith(this.fixClassSuffix)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -326,12 +368,30 @@ public final class ConventionRules {
     }
 
     /**
+     * Returns the expected schema class prefix.
+     *
+     * @return the prefix, or {@code null} if not required
+     */
+    public String schemaClassPrefix() {
+        return this.schemaClassPrefix;
+    }
+
+    /**
      * Returns the expected schema class suffix.
      *
      * @return the suffix, or {@code null} if not required
      */
     public String schemaClassSuffix() {
         return this.schemaClassSuffix;
+    }
+
+    /**
+     * Returns the expected fix class prefix.
+     *
+     * @return the prefix, or {@code null} if not required
+     */
+    public String fixClassPrefix() {
+        return this.fixClassPrefix;
     }
 
     /**
@@ -361,7 +421,9 @@ public final class ConventionRules {
         private Pattern typeNamePattern;
         private Pattern fieldNamePattern;
         private String typeNamePrefix;
+        private String schemaClassPrefix;
         private String schemaClassSuffix;
+        private String fixClassPrefix;
         private String fixClassSuffix;
         private boolean treatViolationsAsErrors = false;
         private Predicate<String> customTypeValidator;
@@ -419,6 +481,21 @@ public final class ConventionRules {
         }
 
         /**
+         * Sets the expected prefix for schema class names.
+         *
+         * <p>For example, with prefix "Schema", valid class names include:
+         * Schema100, Schema200, SchemaV1.</p>
+         *
+         * @param prefix the expected prefix (e.g., "Schema"), or {@code null} to skip
+         * @return this builder for chaining
+         */
+        @NotNull
+        public Builder schemaClassPrefix(final String prefix) {
+            this.schemaClassPrefix = prefix;
+            return this;
+        }
+
+        /**
          * Sets the expected suffix for schema class names.
          *
          * @param suffix the expected suffix (e.g., "Schema"), or {@code null} to skip
@@ -431,7 +508,22 @@ public final class ConventionRules {
         }
 
         /**
+         * Sets the expected prefix for fix class names.
+         *
+         * @param prefix the expected prefix, or {@code null} to skip
+         * @return this builder for chaining
+         */
+        @NotNull
+        public Builder fixClassPrefix(final String prefix) {
+            this.fixClassPrefix = prefix;
+            return this;
+        }
+
+        /**
          * Sets the expected suffix for fix class names.
+         *
+         * <p>For example, with suffix "Fix", valid class names include:
+         * PlayerNameFix, SwordRenameFix.</p>
          *
          * @param suffix the expected suffix (e.g., "Fix"), or {@code null} to skip
          * @return this builder for chaining
@@ -490,7 +582,9 @@ public final class ConventionRules {
                     this.typeNamePattern,
                     this.fieldNamePattern,
                     this.typeNamePrefix,
+                    this.schemaClassPrefix,
                     this.schemaClassSuffix,
+                    this.fixClassPrefix,
                     this.fixClassSuffix,
                     this.treatViolationsAsErrors,
                     this.customTypeValidator,
