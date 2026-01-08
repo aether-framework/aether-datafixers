@@ -30,12 +30,12 @@ Add the dependencies to your project:
 <dependency>
     <groupId>de.splatgames.aether</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 </dependency>
 <dependency>
     <groupId>de.splatgames.aether</groupId>
     <artifactId>aether-datafixers-codec</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 </dependency>
 <dependency>
     <groupId>com.google.code.gson</groupId>
