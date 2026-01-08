@@ -88,7 +88,7 @@ public final class VersionExtractor {
      * and extracts the integer version value. The field path supports dot notation
      * for accessing nested fields.</p>
      *
-     * <h3>Algorithm</h3>
+     * <h4>Algorithm</h4>
      * <ol>
      *   <li>Validates the field path syntax</li>
      *   <li>Wraps the raw data in a {@link Dynamic}</li>
@@ -97,14 +97,14 @@ public final class VersionExtractor {
      *   <li>Wraps the integer in a {@link DataVersion}</li>
      * </ol>
      *
-     * <h3>Valid Field Paths</h3>
+     * <h4>Valid Field Paths</h4>
      * <ul>
      *   <li>{@code "version"} - Single field</li>
      *   <li>{@code "meta.version"} - Nested field</li>
      *   <li>{@code "a.b.c.version"} - Deeply nested field</li>
      * </ul>
      *
-     * <h3>Invalid Field Paths</h3>
+     * <h4>Invalid Field Paths</h4>
      * <ul>
      *   <li>{@code ""} - Empty</li>
      *   <li>{@code ".version"} - Leading dot</li>
