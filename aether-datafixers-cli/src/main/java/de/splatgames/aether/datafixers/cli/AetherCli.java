@@ -82,14 +82,14 @@ public class AetherCli implements Callable<Integer> {
      * root {@link AetherCli} command and executes it with the provided arguments.
      * The process exit code is set based on the command execution result.</p>
      *
-     * <h3>Exit Codes</h3>
+     * <h4>Exit Codes</h4>
      * <ul>
      *   <li>{@code 0} - Success (or help displayed)</li>
      *   <li>{@code 1} - Error occurred during command execution</li>
      *   <li>{@code 2} - Validation found files needing migration (validate command only)</li>
      * </ul>
      *
-     * <h3>Configuration</h3>
+     * <h4>Configuration</h4>
      * <p>The CommandLine instance is configured with:</p>
      * <ul>
      *   <li>Case-insensitive enum value parsing enabled</li>

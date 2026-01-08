@@ -89,7 +89,7 @@ public final class BootstrapLoader {
      *   <li>Must be accessible on the current thread's context class loader</li>
      * </ul>
      *
-     * <h3>Error Handling</h3>
+     * <h4>Error Handling</h4>
      * <p>All reflection-related exceptions are wrapped in {@link BootstrapLoadException}
      * with descriptive error messages to aid debugging:</p>
      * <ul>
@@ -148,7 +148,7 @@ public final class BootstrapLoader {
      * as the iterator is consumed. Each call to this method creates a fresh
      * ServiceLoader instance.</p>
      *
-     * <h3>Registration</h3>
+     * <h4>Registration</h4>
      * <p>To register a bootstrap for discovery, create a file at:</p>
      * <pre>
      * src/main/resources/META-INF/services/de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap
