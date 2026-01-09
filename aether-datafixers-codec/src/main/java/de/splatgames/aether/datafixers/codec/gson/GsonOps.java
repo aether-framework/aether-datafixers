@@ -131,7 +131,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      * @deprecated Use {@link de.splatgames.aether.datafixers.codec.json.gson.GsonOps} directly instead.
      */
     @Deprecated(forRemoval = true, since = "0.4.0")
-    public GsonOps(final de.splatgames.aether.datafixers.codec.json.gson.GsonOps baseOps) {
+    private GsonOps(final de.splatgames.aether.datafixers.codec.json.gson.GsonOps baseOps) {
         this.baseOps = baseOps;
     }
 

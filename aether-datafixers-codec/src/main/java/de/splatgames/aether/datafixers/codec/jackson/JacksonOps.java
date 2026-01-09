@@ -140,7 +140,7 @@ public class JacksonOps implements DynamicOps<JsonNode> {
      * @deprecated Use {@link JacksonJsonOps} directly instead.
      */
     @Deprecated(forRemoval = true, since = "0.4.0")
-    public JacksonOps(final JacksonJsonOps baseOps) {
+    private JacksonOps(final JacksonJsonOps baseOps) {
         this.baseOps = baseOps;
     }
 
