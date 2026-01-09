@@ -22,15 +22,14 @@
 
 package de.splatgames.aether.datafixers.spring.metrics;
 
+import com.google.common.base.Preconditions;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -223,7 +222,7 @@ public class MigrationMetrics {
      * @throws NullPointerException if registry is {@code null}
      */
     public MigrationMetrics(@NotNull final MeterRegistry registry) {
-        this.registry = Objects.requireNonNull(registry, "registry must not be null");
+        this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
     }
 
     /**
@@ -258,8 +257,8 @@ public class MigrationMetrics {
             final int toVersion,
             @NotNull final Duration duration
     ) {
-        Objects.requireNonNull(domain, "domain must not be null");
-        Objects.requireNonNull(duration, "duration must not be null");
+        Preconditions.checkNotNull(domain, "domain must not be null");
+        Preconditions.checkNotNull(duration, "duration must not be null");
 
         // Record timing
         getOrCreateTimer(domain).record(duration);
@@ -314,9 +313,9 @@ public class MigrationMetrics {
             @NotNull final Duration duration,
             @NotNull final Throwable error
     ) {
-        Objects.requireNonNull(domain, "domain must not be null");
-        Objects.requireNonNull(duration, "duration must not be null");
-        Objects.requireNonNull(error, "error must not be null");
+        Preconditions.checkNotNull(domain, "domain must not be null");
+        Preconditions.checkNotNull(duration, "duration must not be null");
+        Preconditions.checkNotNull(error, "error must not be null");
 
         // Record timing (even for failures)
         getOrCreateTimer(domain).record(duration);
@@ -336,11 +335,11 @@ public class MigrationMetrics {
      * @return the Timer instance for the domain, never {@code null}
      */
     private Timer getOrCreateTimer(@NotNull final String domain) {
-        return domainTimers.computeIfAbsent(domain, d ->
+        return this.domainTimers.computeIfAbsent(domain, d ->
                 Timer.builder(METRIC_PREFIX + ".duration")
                         .tag(TAG_DOMAIN, d)
                         .description("Duration of data migrations")
-                        .register(registry)
+                        .register(this.registry)
         );
     }
 
@@ -355,11 +354,11 @@ public class MigrationMetrics {
      * @return the Counter instance for the domain, never {@code null}
      */
     private Counter getOrCreateSuccessCounter(@NotNull final String domain) {
-        return domainSuccessCounters.computeIfAbsent(domain, d ->
+        return this.domainSuccessCounters.computeIfAbsent(domain, d ->
                 Counter.builder(METRIC_PREFIX + ".success")
                         .tag(TAG_DOMAIN, d)
                         .description("Number of successful migrations")
-                        .register(registry)
+                        .register(this.registry)
         );
     }
 
@@ -379,12 +378,12 @@ public class MigrationMetrics {
             @NotNull final String errorType
     ) {
         final String key = domain + ":" + errorType;
-        return domainFailureCounters.computeIfAbsent(key, k ->
+        return this.domainFailureCounters.computeIfAbsent(key, k ->
                 Counter.builder(METRIC_PREFIX + ".failure")
                         .tag(TAG_DOMAIN, domain)
                         .tag(TAG_ERROR_TYPE, errorType)
                         .description("Number of failed migrations")
-                        .register(registry)
+                        .register(this.registry)
         );
     }
 
@@ -403,11 +402,11 @@ public class MigrationMetrics {
      * @return the DistributionSummary instance for the domain, never {@code null}
      */
     private DistributionSummary getOrCreateVersionSpan(@NotNull final String domain) {
-        return domainVersionSpans.computeIfAbsent(domain, d ->
+        return this.domainVersionSpans.computeIfAbsent(domain, d ->
                 DistributionSummary.builder(METRIC_PREFIX + ".version.span")
                         .tag(TAG_DOMAIN, d)
                         .description("Distribution of version spans in migrations")
-                        .register(registry)
+                        .register(this.registry)
         );
     }
 }

@@ -165,7 +165,7 @@ public class AetherDataFixersProperties {
      * @return {@code true} if auto-configuration is enabled, {@code false} otherwise
      */
     public boolean isEnabled() {
-        return enabled;
+        return this.enabled;
     }
 
     /**
@@ -187,7 +187,7 @@ public class AetherDataFixersProperties {
      */
     @NotNull
     public DynamicOpsFormat getDefaultFormat() {
-        return defaultFormat;
+        return this.defaultFormat;
     }
 
     /**
@@ -210,7 +210,7 @@ public class AetherDataFixersProperties {
      */
     @Nullable
     public Integer getDefaultCurrentVersion() {
-        return defaultCurrentVersion;
+        return this.defaultCurrentVersion;
     }
 
     /**
@@ -236,7 +236,7 @@ public class AetherDataFixersProperties {
      */
     @NotNull
     public Map<String, DataFixerDomainProperties> getDomains() {
-        return domains;
+        return this.domains;
     }
 
     /**
@@ -259,7 +259,7 @@ public class AetherDataFixersProperties {
      */
     @NotNull
     public ActuatorProperties getActuator() {
-        return actuator;
+        return this.actuator;
     }
 
     /**
@@ -282,7 +282,7 @@ public class AetherDataFixersProperties {
      */
     @NotNull
     public MetricsProperties getMetrics() {
-        return metrics;
+        return this.metrics;
     }
 
     /**
@@ -347,7 +347,7 @@ public class AetherDataFixersProperties {
          * @return {@code true} if schema details are included, {@code false} otherwise
          */
         public boolean isIncludeSchemaDetails() {
-            return includeSchemaDetails;
+            return this.includeSchemaDetails;
         }
 
         /**
@@ -369,7 +369,7 @@ public class AetherDataFixersProperties {
          * @return {@code true} if fix details are included, {@code false} otherwise
          */
         public boolean isIncludeFixDetails() {
-            return includeFixDetails;
+            return this.includeFixDetails;
         }
 
         /**
@@ -454,7 +454,7 @@ public class AetherDataFixersProperties {
          * @return {@code true} if timing metrics are enabled, {@code false} otherwise
          */
         public boolean isTiming() {
-            return timing;
+            return this.timing;
         }
 
         /**
@@ -475,7 +475,7 @@ public class AetherDataFixersProperties {
          * @return {@code true} if counting metrics are enabled, {@code false} otherwise
          */
         public boolean isCounting() {
-            return counting;
+            return this.counting;
         }
 
         /**
@@ -498,7 +498,7 @@ public class AetherDataFixersProperties {
          */
         @NotNull
         public String getDomainTag() {
-            return domainTag;
+            return this.domainTag;
         }
 
         /**

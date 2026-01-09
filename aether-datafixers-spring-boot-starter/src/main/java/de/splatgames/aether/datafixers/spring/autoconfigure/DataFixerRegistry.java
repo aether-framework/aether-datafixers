@@ -148,12 +148,12 @@ public class DataFixerRegistry {
      * @throws NullPointerException     if domain or fixer is {@code null}
      */
     public void register(@NotNull final String domain, @NotNull final AetherDataFixer fixer) {
-        if (fixers.containsKey(domain)) {
+        if (this.fixers.containsKey(domain)) {
             throw new IllegalArgumentException(
                     "DataFixer already registered for domain: " + domain
             );
         }
-        fixers.put(domain, fixer);
+        this.fixers.put(domain, fixer);
     }
 
     /**
@@ -170,7 +170,7 @@ public class DataFixerRegistry {
      */
     @Nullable
     public AetherDataFixer get(@NotNull final String domain) {
-        return fixers.get(domain);
+        return this.fixers.get(domain);
     }
 
     /**
@@ -191,11 +191,11 @@ public class DataFixerRegistry {
      */
     @NotNull
     public AetherDataFixer require(@NotNull final String domain) {
-        final AetherDataFixer fixer = fixers.get(domain);
+        final AetherDataFixer fixer = this.fixers.get(domain);
         if (fixer == null) {
             throw new IllegalArgumentException(
                     "No DataFixer registered for domain: " + domain +
-                    ". Available domains: " + fixers.keySet()
+                    ". Available domains: " + this.fixers.keySet()
             );
         }
         return fixer;
@@ -213,7 +213,7 @@ public class DataFixerRegistry {
      */
     @Nullable
     public AetherDataFixer getDefault() {
-        return fixers.get(DEFAULT_DOMAIN);
+        return this.fixers.get(DEFAULT_DOMAIN);
     }
 
     /**
@@ -226,7 +226,7 @@ public class DataFixerRegistry {
      */
     @NotNull
     public Map<String, AetherDataFixer> getAll() {
-        return Map.copyOf(fixers);
+        return Map.copyOf(this.fixers);
     }
 
     /**
@@ -240,7 +240,7 @@ public class DataFixerRegistry {
      */
     @NotNull
     public Set<String> getDomains() {
-        return Set.copyOf(fixers.keySet());
+        return Set.copyOf(this.fixers.keySet());
     }
 
     /**
@@ -254,7 +254,7 @@ public class DataFixerRegistry {
      * @throws NullPointerException if domain is {@code null}
      */
     public boolean contains(@NotNull final String domain) {
-        return fixers.containsKey(domain);
+        return this.fixers.containsKey(domain);
     }
 
     /**
@@ -265,7 +265,7 @@ public class DataFixerRegistry {
      * @return the number of registered fixers, always non-negative
      */
     public int size() {
-        return fixers.size();
+        return this.fixers.size();
     }
 
     /**
@@ -278,6 +278,6 @@ public class DataFixerRegistry {
      * @return {@code true} if no DataFixers are registered, {@code false} otherwise
      */
     public boolean isEmpty() {
-        return fixers.isEmpty();
+        return this.fixers.isEmpty();
     }
 }

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring.service;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
@@ -35,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -166,9 +166,9 @@ public class DefaultMigrationService implements MigrationService {
             @Nullable final MigrationMetrics metrics,
             @NotNull final Executor asyncExecutor
     ) {
-        this.registry = Objects.requireNonNull(registry, "registry must not be null");
+        this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
         this.metrics = metrics;
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor, "asyncExecutor must not be null");
+        this.asyncExecutor = Preconditions.checkNotNull(asyncExecutor, "asyncExecutor must not be null");
     }
 
     /**
@@ -176,16 +176,23 @@ public class DefaultMigrationService implements MigrationService {
      *
      * <p>Creates a new {@link DefaultMigrationRequestBuilder} for configuring
      * and executing the migration.</p>
+     *
+     * @param data the tagged dynamic data to migrate, must not be {@code null}
+     * @return a builder for configuring the migration request
+     * @throws NullPointerException if data is {@code null}
      */
     @Override
     @NotNull
     public MigrationRequestBuilder migrate(@NotNull final TaggedDynamic data) {
-        Objects.requireNonNull(data, "data must not be null");
+        Preconditions.checkNotNull(data, "data must not be null");
         return new DefaultMigrationRequestBuilder(data);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @return the current data version for the default domain, never {@code null}
+     * @throws IllegalArgumentException if no default domain is configured
      */
     @Override
     @NotNull
@@ -195,30 +202,42 @@ public class DefaultMigrationService implements MigrationService {
 
     /**
      * {@inheritDoc}
+     *
+     * @param domain the domain name to query, must not be {@code null}
+     * @return the current data version for the specified domain, never {@code null}
+     * @throws IllegalArgumentException if the domain does not exist
+     * @throws NullPointerException     if domain is {@code null}
      */
     @Override
     @NotNull
     public DataVersion getCurrentVersion(@NotNull final String domain) {
-        Objects.requireNonNull(domain, "domain must not be null");
-        return registry.require(domain).currentVersion();
+        Preconditions.checkNotNull(domain, "domain must not be null");
+        return this.registry.require(domain).currentVersion();
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param domain the domain name to check, must not be {@code null}
+     * @return {@code true} if the domain exists and can be used for migrations,
+     *         {@code false} otherwise
+     * @throws NullPointerException if domain is {@code null}
      */
     @Override
     public boolean hasDomain(@NotNull final String domain) {
-        Objects.requireNonNull(domain, "domain must not be null");
-        return registry.contains(domain);
+        Preconditions.checkNotNull(domain, "domain must not be null");
+        return this.registry.contains(domain);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @return an unmodifiable set of domain names, never {@code null}
      */
     @Override
     @NotNull
     public Set<String> getAvailableDomains() {
-        return registry.getDomains();
+        return this.registry.getDomains();
     }
 
     /**
@@ -292,27 +311,37 @@ public class DefaultMigrationService implements MigrationService {
 
         /**
          * {@inheritDoc}
+         *
+         * @param version the source data version, must not be {@code null}
+         * @return this builder for method chaining
+         * @throws NullPointerException if version is {@code null}
          */
         @Override
         @NotNull
         public MigrationRequestBuilder from(@NotNull final DataVersion version) {
-            this.fromVersion = Objects.requireNonNull(version, "version must not be null");
+            this.fromVersion = Preconditions.checkNotNull(version, "version must not be null");
             return this;
         }
 
         /**
          * {@inheritDoc}
+         *
+         * @param version the target data version, must not be {@code null}
+         * @return this builder for method chaining
+         * @throws NullPointerException if version is {@code null}
          */
         @Override
         @NotNull
         public MigrationRequestBuilder to(@NotNull final DataVersion version) {
-            this.toVersion = Objects.requireNonNull(version, "version must not be null");
+            this.toVersion = Preconditions.checkNotNull(version, "version must not be null");
             this.toLatest = false;
             return this;
         }
 
         /**
          * {@inheritDoc}
+         *
+         * @return this builder for method chaining
          */
         @Override
         @NotNull
@@ -324,21 +353,30 @@ public class DefaultMigrationService implements MigrationService {
 
         /**
          * {@inheritDoc}
+         *
+         * @param domain the domain name, must not be {@code null}
+         * @return this builder for method chaining
+         * @throws NullPointerException if domain is {@code null}
          */
         @Override
         @NotNull
         public MigrationRequestBuilder usingDomain(@NotNull final String domain) {
-            this.domain = Objects.requireNonNull(domain, "domain must not be null");
+            this.domain = Preconditions.checkNotNull(domain, "domain must not be null");
             return this;
         }
 
         /**
          * {@inheritDoc}
+         *
+         * @param ops the dynamic ops implementation, must not be {@code null}
+         * @param <T> the underlying data type of the DynamicOps
+         * @return this builder for method chaining
+         * @throws NullPointerException if ops is {@code null}
          */
         @Override
         @NotNull
         public <T> MigrationRequestBuilder withOps(@NotNull final DynamicOps<T> ops) {
-            this.ops = Objects.requireNonNull(ops, "ops must not be null");
+            this.ops = Preconditions.checkNotNull(ops, "ops must not be null");
             return this;
         }
 
@@ -354,49 +392,55 @@ public class DefaultMigrationService implements MigrationService {
          *   <li>Records metrics if available</li>
          *   <li>Returns a success or failure result</li>
          * </ol>
+         *
+         * @return the migration result, never {@code null}
+         * @throws IllegalStateException    if required configuration is missing
+         * @throws IllegalArgumentException if the specified domain does not exist
          */
         @Override
         @NotNull
         public MigrationResult execute() {
             validate();
 
-            final AetherDataFixer fixer = registry.require(domain);
-            final DataVersion from = fromVersion;
-            final DataVersion to = toLatest ? fixer.currentVersion() : toVersion;
+            final AetherDataFixer fixer = DefaultMigrationService.this.registry.require(this.domain);
+            final DataVersion from = this.fromVersion;
+            final DataVersion to = this.toLatest ? fixer.currentVersion() : this.toVersion;
 
             assert from != null : "fromVersion must be set";
             assert to != null : "toVersion must be set";
 
             LOG.debug("Starting migration from v{} to v{} in domain '{}'",
-                    from.getVersion(), to.getVersion(), domain);
+                    from.getVersion(), to.getVersion(), this.domain);
 
             final Instant start = Instant.now();
 
             try {
-                final TaggedDynamic result = fixer.update(data, from, to);
+                final TaggedDynamic result = fixer.update(this.data, from, to);
                 final Duration duration = Duration.between(start, Instant.now());
 
                 LOG.debug("Migration completed successfully in {}ms", duration.toMillis());
 
                 // Record metrics
-                if (metrics != null) {
-                    metrics.recordSuccess(domain, from.getVersion(), to.getVersion(), duration);
+                if (DefaultMigrationService.this.metrics != null) {
+                    DefaultMigrationService.this.metrics.recordSuccess(
+                            this.domain, from.getVersion(), to.getVersion(), duration);
                 }
 
-                return MigrationResult.success(result, from, to, domain, duration);
+                return MigrationResult.success(result, from, to, this.domain, duration);
 
             } catch (final Exception e) {
                 final Duration duration = Duration.between(start, Instant.now());
 
                 LOG.error("Migration failed from v{} to v{} in domain '{}': {}",
-                        from.getVersion(), to.getVersion(), domain, e.getMessage(), e);
+                        from.getVersion(), to.getVersion(), this.domain, e.getMessage(), e);
 
                 // Record metrics
-                if (metrics != null) {
-                    metrics.recordFailure(domain, from.getVersion(), to.getVersion(), duration, e);
+                if (DefaultMigrationService.this.metrics != null) {
+                    DefaultMigrationService.this.metrics.recordFailure(
+                            this.domain, from.getVersion(), to.getVersion(), duration, e);
                 }
 
-                return MigrationResult.failure(from, to, domain, duration, e);
+                return MigrationResult.failure(from, to, this.domain, duration, e);
             }
         }
 
@@ -405,11 +449,15 @@ public class DefaultMigrationService implements MigrationService {
          *
          * <p>Executes the migration asynchronously using the service's configured executor.
          * The returned future will complete with the migration result.</p>
+         *
+         * @return a future containing the migration result, never {@code null}
+         * @throws IllegalStateException    if required configuration is missing
+         * @throws IllegalArgumentException if the specified domain does not exist
          */
         @Override
         @NotNull
         public CompletableFuture<MigrationResult> executeAsync() {
-            return CompletableFuture.supplyAsync(this::execute, asyncExecutor);
+            return CompletableFuture.supplyAsync(this::execute, DefaultMigrationService.this.asyncExecutor);
         }
 
         /**
@@ -419,19 +467,20 @@ public class DefaultMigrationService implements MigrationService {
          * @throws IllegalArgumentException if the specified domain does not exist
          */
         private void validate() {
-            if (fromVersion == null) {
+            if (this.fromVersion == null) {
                 throw new IllegalStateException(
                         "Source version not specified. Call .from(version) before execute()."
                 );
             }
-            if (toVersion == null && !toLatest) {
+            if (this.toVersion == null && !this.toLatest) {
                 throw new IllegalStateException(
                         "Target version not specified. Call .to(version) or .toLatest() before execute()."
                 );
             }
-            if (!registry.contains(domain)) {
+            if (!DefaultMigrationService.this.registry.contains(this.domain)) {
                 throw new IllegalArgumentException(
-                        "Unknown domain: '" + domain + "'. Available domains: " + registry.getDomains()
+                        "Unknown domain: '" + this.domain + "'. Available domains: "
+                                + DefaultMigrationService.this.registry.getDomains()
                 );
             }
         }

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring.actuator;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,6 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Spring Boot Actuator health indicator for monitoring DataFixer operational status.
@@ -146,7 +146,7 @@ public class DataFixerHealthIndicator implements HealthIndicator {
      * @throws NullPointerException if registry is {@code null}
      */
     public DataFixerHealthIndicator(@NotNull final DataFixerRegistry registry) {
-        this.registry = Objects.requireNonNull(registry, "registry must not be null");
+        this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
     }
 
     /**
@@ -167,7 +167,7 @@ public class DataFixerHealthIndicator implements HealthIndicator {
      */
     @Override
     public Health health() {
-        final Map<String, AetherDataFixer> fixers = registry.getAll();
+        final Map<String, AetherDataFixer> fixers = this.registry.getAll();
 
         if (fixers.isEmpty()) {
             return Health.unknown()

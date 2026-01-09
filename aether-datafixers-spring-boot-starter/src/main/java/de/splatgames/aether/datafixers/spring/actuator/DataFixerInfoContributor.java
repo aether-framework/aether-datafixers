@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring.actuator;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,6 @@ import org.springframework.boot.actuate.info.InfoContributor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Spring Boot Actuator info contributor that adds DataFixer metadata to the info endpoint.
@@ -135,7 +135,7 @@ public class DataFixerInfoContributor implements InfoContributor {
      * @throws NullPointerException if registry is {@code null}
      */
     public DataFixerInfoContributor(@NotNull final DataFixerRegistry registry) {
-        this.registry = Objects.requireNonNull(registry, "registry must not be null");
+        this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
     }
 
     /**
@@ -157,7 +157,7 @@ public class DataFixerInfoContributor implements InfoContributor {
     @Override
     public void contribute(final Info.Builder builder) {
         final Map<String, Object> datafixersInfo = new LinkedHashMap<>();
-        final Map<String, AetherDataFixer> fixers = registry.getAll();
+        final Map<String, AetherDataFixer> fixers = this.registry.getAll();
 
         datafixersInfo.put("domains", fixers.size());
 

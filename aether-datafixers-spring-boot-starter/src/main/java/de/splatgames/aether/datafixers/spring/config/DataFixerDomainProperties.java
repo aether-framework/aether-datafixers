@@ -122,7 +122,7 @@ public class DataFixerDomainProperties {
      */
     @Nullable
     public Integer getCurrentVersion() {
-        return currentVersion;
+        return this.currentVersion;
     }
 
     /**
@@ -149,7 +149,7 @@ public class DataFixerDomainProperties {
      * @return {@code true} if this domain is the primary bean, {@code false} otherwise
      */
     public boolean isPrimary() {
-        return primary;
+        return this.primary;
     }
 
     /**
@@ -177,7 +177,7 @@ public class DataFixerDomainProperties {
      */
     @Nullable
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     /**

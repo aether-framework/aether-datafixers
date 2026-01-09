@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring.actuator;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Custom Spring Boot Actuator endpoint for comprehensive DataFixer management and monitoring.
@@ -170,7 +170,7 @@ public class DataFixerEndpoint {
      * @throws NullPointerException if registry is {@code null}
      */
     public DataFixerEndpoint(@NotNull final DataFixerRegistry registry) {
-        this.registry = Objects.requireNonNull(registry, "registry must not be null");
+        this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
     }
 
     /**
@@ -194,7 +194,7 @@ public class DataFixerEndpoint {
     public DataFixersSummary summary() {
         final Map<String, DomainSummary> domains = new LinkedHashMap<>();
 
-        for (final Map.Entry<String, AetherDataFixer> entry : registry.getAll().entrySet()) {
+        for (final Map.Entry<String, AetherDataFixer> entry : this.registry.getAll().entrySet()) {
             final String domain = entry.getKey();
             final AetherDataFixer fixer = entry.getValue();
 
@@ -240,7 +240,7 @@ public class DataFixerEndpoint {
     @ReadOperation
     @Nullable
     public DomainDetails domainDetails(@Selector final String domain) {
-        final AetherDataFixer fixer = registry.get(domain);
+        final AetherDataFixer fixer = this.registry.get(domain);
         if (fixer == null) {
             return null; // Spring will return 404
         }

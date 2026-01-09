@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring.service;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.jetbrains.annotations.NotNull;
@@ -193,10 +194,10 @@ public final class MigrationResult {
     ) {
         this.success = success;
         this.data = data;
-        this.fromVersion = fromVersion;
-        this.toVersion = toVersion;
-        this.domain = domain;
-        this.duration = duration;
+        this.fromVersion = Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        this.toVersion = Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        this.domain = Preconditions.checkNotNull(domain, "domain must not be null");
+        this.duration = Preconditions.checkNotNull(duration, "duration must not be null");
         this.error = error;
     }
 
@@ -222,6 +223,7 @@ public final class MigrationResult {
             @NotNull final String domain,
             @NotNull final Duration duration
     ) {
+        Preconditions.checkNotNull(data, "data must not be null");
         return new MigrationResult(true, data, fromVersion, toVersion, domain, duration, null);
     }
 
@@ -248,6 +250,7 @@ public final class MigrationResult {
             @NotNull final Duration duration,
             @NotNull final Throwable error
     ) {
+        Preconditions.checkNotNull(error, "error must not be null");
         return new MigrationResult(false, null, fromVersion, toVersion, domain, duration, error);
     }
 
@@ -264,7 +267,7 @@ public final class MigrationResult {
      * @return {@code true} if the migration was successful, {@code false} otherwise
      */
     public boolean isSuccess() {
-        return success;
+        return this.success;
     }
 
     /**
@@ -280,7 +283,7 @@ public final class MigrationResult {
      * @return {@code true} if the migration failed, {@code false} otherwise
      */
     public boolean isFailure() {
-        return !success;
+        return !this.success;
     }
 
     /**
@@ -299,13 +302,13 @@ public final class MigrationResult {
      */
     @NotNull
     public TaggedDynamic getData() {
-        if (!success || data == null) {
+        if (!this.success || this.data == null) {
             throw new IllegalStateException(
                     "Cannot get data from failed migration. Error: " +
-                    (error != null ? error.getMessage() : "unknown")
+                    (this.error != null ? this.error.getMessage() : "unknown")
             );
         }
-        return data;
+        return this.data;
     }
 
     /**
@@ -328,7 +331,7 @@ public final class MigrationResult {
      */
     @NotNull
     public Optional<TaggedDynamic> getDataOptional() {
-        return Optional.ofNullable(data);
+        return Optional.ofNullable(this.data);
     }
 
     /**
@@ -341,7 +344,7 @@ public final class MigrationResult {
      */
     @NotNull
     public DataVersion getFromVersion() {
-        return fromVersion;
+        return this.fromVersion;
     }
 
     /**
@@ -356,7 +359,7 @@ public final class MigrationResult {
      */
     @NotNull
     public DataVersion getToVersion() {
-        return toVersion;
+        return this.toVersion;
     }
 
     /**
@@ -369,7 +372,7 @@ public final class MigrationResult {
      */
     @NotNull
     public String getDomain() {
-        return domain;
+        return this.domain;
     }
 
     /**
@@ -383,7 +386,7 @@ public final class MigrationResult {
      */
     @NotNull
     public Duration getDuration() {
-        return duration;
+        return this.duration;
     }
 
     /**
@@ -405,7 +408,7 @@ public final class MigrationResult {
      */
     @NotNull
     public Optional<Throwable> getError() {
-        return Optional.ofNullable(error);
+        return Optional.ofNullable(this.error);
     }
 
     /**
@@ -423,7 +426,7 @@ public final class MigrationResult {
      * @return the absolute version span, always non-negative
      */
     public int getVersionSpan() {
-        return Math.abs(toVersion.getVersion() - fromVersion.getVersion());
+        return Math.abs(this.toVersion.getVersion() - this.fromVersion.getVersion());
     }
 
     /**
@@ -438,12 +441,12 @@ public final class MigrationResult {
     @Override
     public String toString() {
         return "MigrationResult{" +
-                "success=" + success +
-                ", fromVersion=" + fromVersion.getVersion() +
-                ", toVersion=" + toVersion.getVersion() +
-                ", domain='" + domain + '\'' +
-                ", duration=" + duration.toMillis() + "ms" +
-                (error != null ? ", error=" + error.getMessage() : "") +
+                "success=" + this.success +
+                ", fromVersion=" + this.fromVersion.getVersion() +
+                ", toVersion=" + this.toVersion.getVersion() +
+                ", domain='" + this.domain + '\'' +
+                ", duration=" + this.duration.toMillis() + "ms" +
+                (this.error != null ? ", error=" + this.error.getMessage() : "") +
                 '}';
     }
 }
