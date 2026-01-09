@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit tests for {@link SnakeYamlOps}.
@@ -111,7 +112,14 @@ class SnakeYamlOpsTest {
         void isMapReturnsFalseForNonMap() {
             assertThat(ops.isMap(new ArrayList<>())).isFalse();
             assertThat(ops.isMap("test")).isFalse();
-            assertThat(ops.isMap(null)).isFalse();
+        }
+
+        @Test
+        @DisplayName("isMap() throws NullPointerException for null")
+        void isMapThrowsNullPointerExceptionForNull() {
+            assertThatThrownBy(() -> ops.isMap(null))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessageContaining("must not be null");
         }
 
         @Test
@@ -125,7 +133,14 @@ class SnakeYamlOpsTest {
         void isListReturnsFalseForNonList() {
             assertThat(ops.isList(new LinkedHashMap<>())).isFalse();
             assertThat(ops.isList("test")).isFalse();
-            assertThat(ops.isList(null)).isFalse();
+        }
+
+        @Test
+        @DisplayName("isList() throws NullPointerException for null")
+        void isListThrowsNullPointerExceptionForNull() {
+            assertThatThrownBy(() -> ops.isList(null))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessageContaining("must not be null");
         }
 
         @Test
@@ -371,15 +386,11 @@ class SnakeYamlOpsTest {
         }
 
         @Test
-        @DisplayName("mergeToList() creates new list from null")
-        void mergeToListCreatesNewListFromNull() {
-            final DataResult<Object> result = ops.mergeToList(null, ops.createInt(1));
-
-            assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final List<Object> list = (List<Object>) result.result().orElseThrow();
-            assertThat(list).hasSize(1);
-            assertThat(list.get(0)).isEqualTo(1);
+        @DisplayName("mergeToList() throws NullPointerException for null list")
+        void mergeToListThrowsNullPointerExceptionForNullList() {
+            assertThatThrownBy(() -> ops.mergeToList(null, ops.createInt(1)))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessageContaining("must not be null");
         }
 
         @Test
@@ -461,18 +472,15 @@ class SnakeYamlOpsTest {
         }
 
         @Test
-        @DisplayName("mergeToMap() creates new map from null")
-        void mergeToMapCreatesNewMapFromNull() {
-            final DataResult<Object> result = ops.mergeToMap(
+        @DisplayName("mergeToMap() throws NullPointerException for null map")
+        void mergeToMapThrowsNullPointerExceptionForNullMap() {
+            assertThatThrownBy(() -> ops.mergeToMap(
                     null,
                     ops.createString("key"),
                     ops.createString("value")
-            );
-
-            assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> map = (Map<String, Object>) result.result().orElseThrow();
-            assertThat(map.get("key")).isEqualTo("value");
+            ))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessageContaining("must not be null");
         }
 
         @Test
@@ -709,11 +717,11 @@ class SnakeYamlOpsTest {
         }
 
         @Test
-        @DisplayName("convertTo() returns null for null input")
-        void convertToReturnsNullForNullInput() {
-            final Object result = ops.convertTo(ops, null);
-
-            assertThat(result).isNull();
+        @DisplayName("convertTo() throws NullPointerException for null input")
+        void convertToThrowsNullPointerExceptionForNullInput() {
+            assertThatThrownBy(() -> ops.convertTo(ops, null))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessageContaining("must not be null");
         }
     }
 
