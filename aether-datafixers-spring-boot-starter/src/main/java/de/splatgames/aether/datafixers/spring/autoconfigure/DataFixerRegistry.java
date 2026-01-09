@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring.autoconfigure;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -148,6 +149,8 @@ public class DataFixerRegistry {
      * @throws NullPointerException     if domain or fixer is {@code null}
      */
     public void register(@NotNull final String domain, @NotNull final AetherDataFixer fixer) {
+        Preconditions.checkNotNull(domain, "domain must not be null");
+        Preconditions.checkNotNull(fixer, "fixer must not be null");
         if (this.fixers.containsKey(domain)) {
             throw new IllegalArgumentException(
                     "DataFixer already registered for domain: " + domain
@@ -170,6 +173,7 @@ public class DataFixerRegistry {
      */
     @Nullable
     public AetherDataFixer get(@NotNull final String domain) {
+        Preconditions.checkNotNull(domain, "domain must not be null");
         return this.fixers.get(domain);
     }
 
@@ -191,6 +195,7 @@ public class DataFixerRegistry {
      */
     @NotNull
     public AetherDataFixer require(@NotNull final String domain) {
+        Preconditions.checkNotNull(domain, "domain must not be null");
         final AetherDataFixer fixer = this.fixers.get(domain);
         if (fixer == null) {
             throw new IllegalArgumentException(
@@ -254,6 +259,7 @@ public class DataFixerRegistry {
      * @throws NullPointerException if domain is {@code null}
      */
     public boolean contains(@NotNull final String domain) {
+        Preconditions.checkNotNull(domain, "domain must not be null");
         return this.fixers.containsKey(domain);
     }
 

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.spring;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.spring.config.DataFixerDomainProperties;
 import de.splatgames.aether.datafixers.spring.config.DynamicOpsFormat;
 import org.jetbrains.annotations.NotNull;
@@ -197,7 +198,7 @@ public class AetherDataFixersProperties {
      * @throws NullPointerException if defaultFormat is {@code null}
      */
     public void setDefaultFormat(@NotNull final DynamicOpsFormat defaultFormat) {
-        this.defaultFormat = defaultFormat;
+        this.defaultFormat = Preconditions.checkNotNull(defaultFormat, "defaultFormat must not be null");
     }
 
     /**
@@ -246,7 +247,7 @@ public class AetherDataFixersProperties {
      * @throws NullPointerException if domains is {@code null}
      */
     public void setDomains(@NotNull final Map<String, DataFixerDomainProperties> domains) {
-        this.domains = domains;
+        this.domains = Preconditions.checkNotNull(domains, "domains must not be null");
     }
 
     /**
@@ -269,7 +270,7 @@ public class AetherDataFixersProperties {
      * @throws NullPointerException if actuator is {@code null}
      */
     public void setActuator(@NotNull final ActuatorProperties actuator) {
-        this.actuator = actuator;
+        this.actuator = Preconditions.checkNotNull(actuator, "actuator must not be null");
     }
 
     /**
@@ -292,7 +293,7 @@ public class AetherDataFixersProperties {
      * @throws NullPointerException if metrics is {@code null}
      */
     public void setMetrics(@NotNull final MetricsProperties metrics) {
-        this.metrics = metrics;
+        this.metrics = Preconditions.checkNotNull(metrics, "metrics must not be null");
     }
 
     /**
