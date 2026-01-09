@@ -4,6 +4,36 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ---
 
+## Version 0.4.0
+
+### New Section: Spring Boot Integration
+
+Added comprehensive documentation for the Spring Boot Starter module:
+
+- [Spring Boot Overview](../spring-boot/index.md) — Introduction, architecture diagram, auto-configuration classes
+- [Quick Start Guide](../spring-boot/getting-started.md) — Step-by-step tutorial with complete code examples
+- [Configuration Reference](../spring-boot/configuration.md) — Complete property reference (YAML and properties format)
+- [MigrationService API](../spring-boot/migration-service.md) — Fluent API documentation, sync/async patterns, error handling
+- [Multi-Domain Setup](../spring-boot/multi-domain.md) — Managing multiple DataFixer instances with `@Qualifier`
+- [Actuator Integration](../spring-boot/actuator.md) — Health indicators, info contributors, custom endpoints, security
+- [Metrics Integration](../spring-boot/metrics.md) — Micrometer metrics, PromQL queries, Grafana dashboard, alerting rules
+
+### Key Features Documented
+
+- **Auto-Configuration**: Automatic DataFixer bean creation from `DataFixerBootstrap` beans
+- **Fluent Migration API**: `MigrationService` with builder pattern for migrations
+- **Multi-Domain Support**: `DataFixerRegistry` for managing independent DataFixer instances
+- **Actuator Endpoints**: `/actuator/health`, `/actuator/info`, `/actuator/datafixers`
+- **Micrometer Metrics**: Success/failure counters, duration timers, version span tracking
+- **Async Execution**: `CompletableFuture` support with configurable executors
+
+### Updated Pages
+
+- [Main README](../README.md) — Added Spring Boot Integration section and module to table
+- [Installation Guide](../getting-started/installation.md) — Added Spring Boot module to overview and installation section
+
+---
+
 ## Version 0.3.0
 
 ### New Section: Schema Tools Module
