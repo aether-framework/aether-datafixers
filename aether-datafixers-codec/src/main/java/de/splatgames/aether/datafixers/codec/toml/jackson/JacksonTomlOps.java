@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.codec.toml.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Preconditions;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -287,6 +288,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *               serialization; must not be {@code null}
      */
     public JacksonTomlOps(@NotNull final TomlMapper mapper) {
+        Preconditions.checkNotNull(mapper, "mapper must not be null");
         this.mapper = mapper;
         this.nodeFactory = mapper.getNodeFactory();
     }
@@ -371,6 +373,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      */
     @Override
     public boolean isMap(@NotNull final JsonNode value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value.isObject();
     }
 
@@ -395,6 +398,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      */
     @Override
     public boolean isList(@NotNull final JsonNode value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value.isArray();
     }
 
@@ -421,6 +425,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      */
     @Override
     public boolean isString(@NotNull final JsonNode value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value.isTextual();
     }
 
@@ -446,6 +451,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      */
     @Override
     public boolean isNumber(@NotNull final JsonNode value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value.isNumber();
     }
 
@@ -466,6 +472,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      */
     @Override
     public boolean isBoolean(@NotNull final JsonNode value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value.isBoolean();
     }
 
@@ -488,6 +495,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public JsonNode createString(@NotNull final String value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return TextNode.valueOf(value);
     }
 
@@ -668,6 +676,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public JsonNode createNumeric(@NotNull final Number value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         if (value instanceof Integer) {
             return IntNode.valueOf(value.intValue());
         }
@@ -716,6 +725,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public DataResult<String> getStringValue(@NotNull final JsonNode input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!input.isTextual()) {
             return DataResult.error("Not a string: " + input);
         }
@@ -750,6 +760,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public DataResult<Number> getNumberValue(@NotNull final JsonNode input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!input.isNumber()) {
             return DataResult.error("Not a number: " + input);
         }
@@ -782,6 +793,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public DataResult<Boolean> getBooleanValue(@NotNull final JsonNode input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!input.isBoolean()) {
             return DataResult.error("Not a boolean: " + input);
         }
@@ -830,6 +842,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public JsonNode createList(@NotNull final Stream<JsonNode> values) {
+        Preconditions.checkNotNull(values, "values must not be null");
         final ArrayNode array = this.nodeFactory.arrayNode();
         values.forEach(array::add);
         return array;
@@ -861,6 +874,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public DataResult<Stream<JsonNode>> getList(@NotNull final JsonNode input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!input.isArray()) {
             return DataResult.error("Not an array: " + input);
         }
@@ -906,6 +920,8 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @Override
     public DataResult<JsonNode> mergeToList(@NotNull final JsonNode list,
                                             @NotNull final JsonNode value) {
+        Preconditions.checkNotNull(list, "list must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         if (!list.isArray() && !list.isNull()) {
             return DataResult.error("Not an array: " + list);
         }
@@ -965,6 +981,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public JsonNode createMap(@NotNull final Stream<Pair<JsonNode, JsonNode>> entries) {
+        Preconditions.checkNotNull(entries, "entries must not be null");
         final ObjectNode object = this.nodeFactory.objectNode();
         entries.forEach(pair -> {
             final JsonNode keyNode = pair.first();
@@ -1007,6 +1024,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @NotNull
     @Override
     public DataResult<Stream<Pair<JsonNode, JsonNode>>> getMapEntries(@NotNull final JsonNode input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!input.isObject()) {
             return DataResult.error("Not an object: " + input);
         }
@@ -1053,6 +1071,9 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     public DataResult<JsonNode> mergeToMap(@NotNull final JsonNode map,
                                            @NotNull final JsonNode key,
                                            @NotNull final JsonNode value) {
+        Preconditions.checkNotNull(map, "map must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         if (!map.isObject() && !map.isNull()) {
             return DataResult.error("Not an object: " + map);
         }
@@ -1103,6 +1124,8 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @Override
     public DataResult<JsonNode> mergeToMap(@NotNull final JsonNode map,
                                            @NotNull final JsonNode other) {
+        Preconditions.checkNotNull(map, "map must not be null");
+        Preconditions.checkNotNull(other, "other must not be null");
         if (!map.isObject() && !map.isNull()) {
             return DataResult.error("First argument is not an object: " + map);
         }
@@ -1149,6 +1172,8 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @Override
     public @Nullable JsonNode get(@NotNull final JsonNode input,
                                   @NotNull final String key) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         if (!input.isObject()) {
             return null;
         }
@@ -1183,6 +1208,9 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     public JsonNode set(@NotNull final JsonNode input,
                         @NotNull final String key,
                         @NotNull final JsonNode newValue) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
+        Preconditions.checkNotNull(newValue, "newValue must not be null");
         if (!input.isObject()) {
             final ObjectNode result = nodeFactory.objectNode();
             result.set(key, newValue);
@@ -1218,6 +1246,8 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @Override
     public JsonNode remove(@NotNull final JsonNode input,
                            @NotNull final String key) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         if (!input.isObject()) {
             return input;
         }
@@ -1248,6 +1278,8 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @Override
     public boolean has(@NotNull final JsonNode input,
                        @NotNull final String key) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         if (!input.isObject()) {
             return false;
         }
@@ -1302,6 +1334,8 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     @Override
     public <U> JsonNode convertTo(@NotNull final DynamicOps<U> sourceOps,
                                   @NotNull final U input) {
+        Preconditions.checkNotNull(sourceOps, "sourceOps must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         final DataResult<Boolean> boolResult = sourceOps.getBooleanValue(input);
         if (boolResult.isSuccess()) {
             return createBoolean(boolResult.result().orElseThrow());

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.codec.gson;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -131,7 +132,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
      * @deprecated Use {@link de.splatgames.aether.datafixers.codec.json.gson.GsonOps} directly instead.
      */
     @Deprecated(forRemoval = true, since = "0.4.0")
-    private GsonOps(final de.splatgames.aether.datafixers.codec.json.gson.GsonOps baseOps) {
+    private GsonOps(@NotNull final de.splatgames.aether.datafixers.codec.json.gson.GsonOps baseOps) {
+        Preconditions.checkNotNull(baseOps, "baseOps must not be null");
         this.baseOps = baseOps;
     }
 
@@ -194,6 +196,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public boolean isMap(@NotNull final JsonElement value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.isMap(value);
     }
 
@@ -209,6 +212,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public boolean isList(@NotNull final JsonElement value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.isList(value);
     }
 
@@ -225,6 +229,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public boolean isString(@NotNull final JsonElement value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.isString(value);
     }
 
@@ -241,6 +246,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public boolean isNumber(@NotNull final JsonElement value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.isNumber(value);
     }
 
@@ -257,6 +263,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public boolean isBoolean(@NotNull final JsonElement value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.isBoolean(value);
     }
 
@@ -275,6 +282,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public JsonElement createString(@NotNull final String value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.createString(value);
     }
 
@@ -405,6 +413,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public JsonElement createNumeric(@NotNull final Number value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.createNumeric(value);
     }
 
@@ -425,6 +434,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<String> getStringValue(@NotNull final JsonElement input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.baseOps.getStringValue(input);
     }
 
@@ -443,6 +453,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<Number> getNumberValue(@NotNull final JsonElement input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.baseOps.getNumberValue(input);
     }
 
@@ -461,6 +472,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<Boolean> getBooleanValue(@NotNull final JsonElement input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.baseOps.getBooleanValue(input);
     }
 
@@ -479,6 +491,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public JsonElement createList(@NotNull final Stream<JsonElement> values) {
+        Preconditions.checkNotNull(values, "values must not be null");
         return this.baseOps.createList(values);
     }
 
@@ -497,6 +510,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<Stream<JsonElement>> getList(@NotNull final JsonElement input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.baseOps.getList(input);
     }
 
@@ -516,6 +530,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<JsonElement> mergeToList(@NotNull final JsonElement list, @NotNull final JsonElement value) {
+        Preconditions.checkNotNull(list, "list must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.mergeToList(list, value);
     }
 
@@ -535,6 +551,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public @Nullable JsonElement get(@NotNull final JsonElement value, @NotNull final String key) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         return this.baseOps.get(value, key);
     }
 
@@ -555,6 +573,9 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public JsonElement set(@NotNull final JsonElement value, @NotNull final String key, @NotNull final JsonElement newValue) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
+        Preconditions.checkNotNull(newValue, "newValue must not be null");
         return this.baseOps.set(value, key, newValue);
     }
 
@@ -573,6 +594,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public JsonElement remove(@NotNull final JsonElement value, @NotNull final String key) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         return this.baseOps.remove(value, key);
     }
 
@@ -590,6 +613,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
      */
     @Override
     public boolean has(@NotNull final JsonElement value, @NotNull final String key) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         return this.baseOps.has(value, key);
     }
 
@@ -607,6 +632,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public JsonElement createMap(@NotNull final Stream<Pair<JsonElement, JsonElement>> entries) {
+        Preconditions.checkNotNull(entries, "entries must not be null");
         return this.baseOps.createMap(entries);
     }
 
@@ -624,6 +650,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<Stream<Pair<JsonElement, JsonElement>>> getMapEntries(@NotNull final JsonElement input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.baseOps.getMapEntries(input);
     }
 
@@ -644,6 +671,9 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<JsonElement> mergeToMap(@NotNull final JsonElement map, @NotNull final JsonElement key, @NotNull final JsonElement value) {
+        Preconditions.checkNotNull(map, "map must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         return this.baseOps.mergeToMap(map, key, value);
     }
 
@@ -664,6 +694,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public DataResult<JsonElement> mergeToMap(@NotNull final JsonElement map, @NotNull final JsonElement other) {
+        Preconditions.checkNotNull(map, "map must not be null");
+        Preconditions.checkNotNull(other, "other must not be null");
         return this.baseOps.mergeToMap(map, other);
     }
 
@@ -685,6 +717,8 @@ public class GsonOps implements DynamicOps<JsonElement> {
     @NotNull
     @Override
     public <U> JsonElement convertTo(@NotNull final DynamicOps<U> ops, @NotNull final U input) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.baseOps.convertTo(ops, input);
     }
 

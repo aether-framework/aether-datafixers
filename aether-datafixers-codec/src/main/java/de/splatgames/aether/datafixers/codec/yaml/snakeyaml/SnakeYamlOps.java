@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.codec.yaml.snakeyaml;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
@@ -281,6 +282,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      */
     @Override
     public boolean isMap(@NotNull final Object value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof Map;
     }
 
@@ -297,6 +299,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      */
     @Override
     public boolean isList(@NotNull final Object value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof List;
     }
 
@@ -312,6 +315,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      */
     @Override
     public boolean isString(@NotNull final Object value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof String;
     }
 
@@ -329,6 +333,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      */
     @Override
     public boolean isNumber(@NotNull final Object value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof Number;
     }
 
@@ -346,6 +351,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      */
     @Override
     public boolean isBoolean(@NotNull final Object value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof Boolean;
     }
 
@@ -363,6 +369,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public Object createString(@NotNull final String value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value;
     }
 
@@ -508,6 +515,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public Object createNumeric(@NotNull final Number value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return value;
     }
 
@@ -536,6 +544,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public DataResult<String> getStringValue(@NotNull final Object input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!(input instanceof String)) {
             return DataResult.error("Not a string: " + input);
         }
@@ -570,6 +579,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public DataResult<Number> getNumberValue(@NotNull final Object input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!(input instanceof Number)) {
             return DataResult.error("Not a number: " + input);
         }
@@ -599,6 +609,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public DataResult<Boolean> getBooleanValue(@NotNull final Object input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!(input instanceof Boolean)) {
             return DataResult.error("Not a boolean: " + input);
         }
@@ -642,6 +653,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public Object createList(@NotNull final Stream<Object> values) {
+        Preconditions.checkNotNull(values, "values must not be null");
         final List<Object> list = new ArrayList<>();
         values.forEach(list::add);
         return list;
@@ -674,6 +686,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public DataResult<Stream<Object>> getList(@NotNull final Object input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!(input instanceof List)) {
             return DataResult.error("Not a list: " + input);
         }
@@ -712,6 +725,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @SuppressWarnings("unchecked")
     public DataResult<Object> mergeToList(@NotNull final Object list,
                                           @NotNull final Object value) {
+        Preconditions.checkNotNull(list, "list must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         if (list != null && !(list instanceof List)) {
             return DataResult.error("Not a list: " + list);
         }
@@ -768,6 +783,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @NotNull
     @Override
     public Object createMap(@NotNull final Stream<Pair<Object, Object>> entries) {
+        Preconditions.checkNotNull(entries, "entries must not be null");
         final Map<String, Object> map = new LinkedHashMap<>();
         entries.forEach(pair -> {
             final Object keyObj = pair.first();
@@ -811,6 +827,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public DataResult<Stream<Pair<Object, Object>>> getMapEntries(@NotNull final Object input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         if (!(input instanceof Map)) {
             return DataResult.error("Not a map: " + input);
         }
@@ -858,6 +875,9 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     public DataResult<Object> mergeToMap(@NotNull final Object map,
                                          @NotNull final Object key,
                                          @NotNull final Object value) {
+        Preconditions.checkNotNull(map, "map must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         if (map != null && !(map instanceof Map)) {
             return DataResult.error("Not a map: " + map);
         }
@@ -912,6 +932,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @SuppressWarnings("unchecked")
     public DataResult<Object> mergeToMap(@NotNull final Object map,
                                          @NotNull final Object other) {
+        Preconditions.checkNotNull(map, "map must not be null");
+        Preconditions.checkNotNull(other, "other must not be null");
         if (map != null && !(map instanceof Map)) {
             return DataResult.error("First argument is not a map: " + map);
         }
@@ -956,6 +978,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @SuppressWarnings("unchecked")
     public Object get(@NotNull final Object input,
                       @NotNull final String key) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         if (!(input instanceof Map)) {
             return null;
         }
@@ -992,6 +1016,9 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     public Object set(@NotNull final Object input,
                       @NotNull final String key,
                       @NotNull final Object newValue) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
+        Preconditions.checkNotNull(newValue, "newValue must not be null");
         final Map<String, Object> result;
         if (input instanceof Map) {
             result = new LinkedHashMap<>((Map<String, Object>) input);
@@ -1029,6 +1056,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @SuppressWarnings("unchecked")
     public Object remove(@NotNull final Object input,
                          @NotNull final String key) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         if (!(input instanceof Map)) {
             return input;
         }
@@ -1062,6 +1091,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @SuppressWarnings("unchecked")
     public boolean has(@NotNull final Object input,
                        @NotNull final String key) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(key, "key must not be null");
         if (!(input instanceof Map)) {
             return false;
         }
@@ -1118,6 +1149,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @Override
     public <U> Object convertTo(@NotNull final DynamicOps<U> sourceOps,
                                 @NotNull final U input) {
+        Preconditions.checkNotNull(sourceOps, "sourceOps must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         // Check primitives via the source ops
         // Boolean first to avoid integer 0/1 being interpreted as boolean
         final DataResult<Boolean> boolResult = sourceOps.getBooleanValue(input);
@@ -1195,6 +1228,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * @return a deep copy of the value, or the value itself if it is immutable;
      *         {@code null} if the input is {@code null}
      */
+    @Nullable
     @SuppressWarnings("unchecked")
     private Object deepCopy(@Nullable final Object value) {
         if (value == null) {
