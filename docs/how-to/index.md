@@ -44,7 +44,16 @@ This section contains task-oriented guides that show you how to accomplish speci
 | Guide | Description |
 |-------|-------------|
 | [Use Finders](use-finders.md) | Navigate Dynamic data with Finder optics |
+
+## Format Integration
+
+| Guide | Description |
+|-------|-------------|
 | [Integrate with Gson](integrate-with-gson.md) | Use GsonOps for JSON processing |
+| [JSON Formats](../codec/json.md) | GsonOps and JacksonJsonOps |
+| [YAML Formats](../codec/yaml.md) | SnakeYamlOps and JacksonYamlOps |
+| [TOML Format](../codec/toml.md) | JacksonTomlOps for configuration files |
+| [XML Format](../codec/xml.md) | JacksonXmlOps for XML data |
 
 ---
 

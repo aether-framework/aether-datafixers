@@ -53,7 +53,7 @@
  *   <caption>Deprecation and Removal Schedule</caption>
  *   <tr><th>Version</th><th>Status</th><th>Action Required</th></tr>
  *   <tr><td>0.4.0</td><td>Deprecated</td><td>Update imports to new package; old code continues to work</td></tr>
- *   <tr><td>0.5.0 - 0.9.x</td><td>Deprecated</td><td>Warnings during compilation; functionality unchanged</td></tr>
+ *   <tr><td>0.5.0</td><td>Deprecated</td><td>Warnings during compilation; functionality unchanged</td></tr>
  *   <tr><td>1.0.0</td><td><strong>Removed</strong></td><td>Package deleted; migration required before upgrade</td></tr>
  * </table>
  *

@@ -141,6 +141,19 @@ New module providing seamless Spring Boot integration with auto-configuration, f
 
 ### Documentation
 
+#### Codec Formats Documentation
+- Added new `docs/codec/` section with comprehensive format documentation
+- [Codec Overview](docs/codec/index.md) — Format comparison, package structure, dependency guide
+- [JSON Support](docs/codec/json.md) — GsonOps and JacksonJsonOps usage, examples, comparison
+- [YAML Support](docs/codec/yaml.md) — SnakeYamlOps and JacksonYamlOps usage, examples, comparison
+- [TOML Support](docs/codec/toml.md) — JacksonTomlOps usage, configuration file examples
+- [XML Support](docs/codec/xml.md) — JacksonXmlOps usage, XML-to-JsonNode mapping
+- Updated [Dynamic System](docs/concepts/dynamic-system.md) with all DynamicOps implementations table
+- Updated [Codec System](docs/concepts/codec-system.md) with links to format-specific docs
+- Updated [How-To Index](docs/how-to/index.md) with Format Integration section
+- Updated [Custom DynamicOps Tutorial](docs/tutorials/custom-dynamicops.md) with built-in implementations reference
+
+#### Spring Boot Integration Documentation
 - Added comprehensive Spring Boot Integration documentation
 - Quick Start Guide with complete code examples
 - Configuration Reference for all `aether.datafixers.*` properties

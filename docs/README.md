@@ -65,6 +65,16 @@ Practical task-oriented guides:
 - [Use Diagnostics](how-to/use-diagnostics.md)
 - [View all How-To Guides](how-to/index.md)
 
+### Codec Formats
+
+DynamicOps implementations for various data formats:
+
+- [Codec Overview](codec/index.md) — Introduction to DynamicOps implementations
+- [JSON Support](codec/json.md) — GsonOps and JacksonJsonOps
+- [YAML Support](codec/yaml.md) — SnakeYamlOps and JacksonYamlOps
+- [TOML Support](codec/toml.md) — JacksonTomlOps
+- [XML Support](codec/xml.md) — JacksonXmlOps
+
 ### Examples
 
 Working code examples:
@@ -140,7 +150,7 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 |--------|-------------|
 | `aether-datafixers-api` | Core interfaces and API contracts |
 | `aether-datafixers-core` | Default implementations |
-| `aether-datafixers-codec` | GsonOps, JacksonJsonOps implementations |
+| `aether-datafixers-codec` | DynamicOps for JSON, YAML, TOML, XML (Gson, Jackson, SnakeYAML) |
 | `aether-datafixers-spring-boot-starter` | Spring Boot auto-configuration, MigrationService, Actuator, Metrics |
 | `aether-datafixers-cli` | Command-line interface for data migration |
 | `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |

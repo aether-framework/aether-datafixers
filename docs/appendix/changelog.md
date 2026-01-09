@@ -6,6 +6,37 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ## Version 0.4.0
 
+### New Section: Codec Formats
+
+Added comprehensive documentation for all DynamicOps implementations in the codec module:
+
+- [Codec Overview](../codec/index.md) — Introduction, format comparison, package structure
+- [JSON Support](../codec/json.md) — GsonOps and JacksonJsonOps documentation
+- [YAML Support](../codec/yaml.md) — SnakeYamlOps and JacksonYamlOps documentation
+- [TOML Support](../codec/toml.md) — JacksonTomlOps documentation
+- [XML Support](../codec/xml.md) — JacksonXmlOps documentation
+
+### Key Codec Features Documented
+
+- **Format-Based Package Structure**: New `codec.json`, `codec.yaml`, `codec.toml`, `codec.xml` packages
+- **Multiple Implementations per Format**: JSON (Gson, Jackson), YAML (SnakeYAML, Jackson)
+- **Consistent API**: All implementations follow the same `DynamicOps<T>` interface
+- **Thread-Safe Singletons**: `INSTANCE` constants for all implementations
+- **Custom Mapper Support**: Jackson-based implementations support custom mapper configuration
+- **Migration Examples**: Complete examples for each format
+- **Format Conversion**: Cross-format data conversion examples
+
+### New DynamicOps Implementations
+
+| Format | Implementation   | Data Type     | Library      |
+|--------|------------------|---------------|--------------|
+| JSON   | `GsonOps`        | `JsonElement` | Gson         |
+| JSON   | `JacksonJsonOps` | `JsonNode`    | Jackson      |
+| YAML   | `SnakeYamlOps`   | `Object`      | SnakeYAML    |
+| YAML   | `JacksonYamlOps` | `JsonNode`    | Jackson YAML |
+| TOML   | `JacksonTomlOps` | `JsonNode`    | Jackson TOML |
+| XML    | `JacksonXmlOps`  | `JsonNode`    | Jackson XML  |
+
 ### New Section: Spring Boot Integration
 
 Added comprehensive documentation for the Spring Boot Starter module:
@@ -29,7 +60,11 @@ Added comprehensive documentation for the Spring Boot Starter module:
 
 ### Updated Pages
 
-- [Main README](../README.md) — Added Spring Boot Integration section and module to table
+- [Main README](../README.md) — Added Codec Formats and Spring Boot Integration sections, updated module table
+- [Codec System](../concepts/codec-system.md) — Added links to format-specific documentation
+- [Dynamic System](../concepts/dynamic-system.md) — Added table of all DynamicOps implementations
+- [How-To Index](../how-to/index.md) — Added Format Integration section
+- [Custom DynamicOps Tutorial](../tutorials/custom-dynamicops.md) — Added reference to built-in implementations
 - [Installation Guide](../getting-started/installation.md) — Added Spring Boot module to overview and installation section
 
 ---
