@@ -94,7 +94,7 @@ import java.util.Map;
  * <p>This class is mutable and not thread-safe. It is designed to be configured
  * during application startup and should not be modified at runtime.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see AetherDataFixersAutoConfiguration
  * @see DataFixerDomainProperties
  * @see DynamicOpsFormat
@@ -317,7 +317,7 @@ public class AetherDataFixersProperties {
      * Consider disabling these in production environments if this information
      * should not be exposed.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @see de.splatgames.aether.datafixers.spring.actuator.DataFixerEndpoint
      * @see de.splatgames.aether.datafixers.spring.actuator.DataFixerInfoContributor
      * @since 0.4.0
@@ -415,7 +415,7 @@ public class AetherDataFixersProperties {
      * configured in {@link #domainTag}. This allows filtering and grouping
      * metrics by domain in monitoring dashboards.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @see de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics
      * @since 0.4.0
      */

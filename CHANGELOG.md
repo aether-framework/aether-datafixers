@@ -8,7 +8,75 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [0.4.0] - 2026-01-09
 
+### Breaking Changes
+
+#### Package Restructuring in `aether-datafixers-codec`
+
+The codec module has been restructured to use a format-first package organization. This is a **breaking change** that requires updating import statements.
+
+**Old Package Structure:**
+```
+de.splatgames.aether.datafixers.codec.gson.GsonOps
+de.splatgames.aether.datafixers.codec.jackson.JacksonOps
+```
+
+**New Package Structure:**
+```
+de.splatgames.aether.datafixers.codec.json.gson.GsonOps
+de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps
+de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps
+de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps
+de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps
+de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps
+```
+
+**Migration Steps:**
+1. Update imports from `codec.gson.GsonOps` to `codec.json.gson.GsonOps`
+2. Update imports from `codec.jackson.JacksonOps` to `codec.json.jackson.JacksonJsonOps`
+3. Rename `JacksonOps` references to `JacksonJsonOps`
+
 ### Added
+
+#### Multi-Format DynamicOps Implementations (`aether-datafixers-codec`)
+
+New DynamicOps implementations for YAML, TOML, and XML formats:
+
+**YAML Support:**
+- `SnakeYamlOps` — Uses native Java types (`Map`, `List`, primitives) via SnakeYAML 2.x
+- `JacksonYamlOps` — Uses `JsonNode` via Jackson YAML dataformat module
+
+**TOML Support:**
+- `JacksonTomlOps` — Uses `JsonNode` via Jackson TOML dataformat module
+- Note: TOML requires top-level tables and doesn't support null values
+
+**XML Support:**
+- `JacksonXmlOps` — Uses `JsonNode` via Jackson XML dataformat module
+- Note: XML requires a root element and has different structural semantics
+
+**New Dependencies (all optional):**
+```xml
+<dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId>
+    <version>2.2</version>
+    <optional>true</optional>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-yaml</artifactId>
+    <optional>true</optional>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-toml</artifactId>
+    <optional>true</optional>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-xml</artifactId>
+    <optional>true</optional>
+</dependency>
+```
 
 #### Spring Boot Starter Module (`aether-datafixers-spring-boot-starter`)
 
@@ -26,7 +94,13 @@ New module providing seamless Spring Boot integration with auto-configuration, f
 **Configuration Properties (`spring.config`):**
 - `AetherDataFixersProperties` — Root configuration with `aether.datafixers.*` prefix
 - `DataFixerDomainProperties` — Per-domain configuration (version, primary, description)
-- `DynamicOpsFormat` — Enum for selecting default serialization format (GSON, JACKSON)
+- `DynamicOpsFormat` — Enum for selecting default serialization format:
+  - `GSON` — JSON via Google Gson
+  - `JACKSON` — JSON via Jackson Databind
+  - `JACKSON_YAML` — YAML via Jackson dataformat
+  - `SNAKEYAML` — YAML via SnakeYAML (native Java types)
+  - `JACKSON_TOML` — TOML via Jackson dataformat
+  - `JACKSON_XML` — XML via Jackson dataformat
 - `ActuatorProperties` — Control schema/fix detail exposure in actuator responses
 - `MetricsProperties` — Configure timing, counting, and domain tag name
 
@@ -67,6 +141,19 @@ New module providing seamless Spring Boot integration with auto-configuration, f
 
 ### Documentation
 
+#### Codec Formats Documentation
+- Added new `docs/codec/` section with comprehensive format documentation
+- [Codec Overview](docs/codec/index.md) — Format comparison, package structure, dependency guide
+- [JSON Support](docs/codec/json.md) — GsonOps and JacksonJsonOps usage, examples, comparison
+- [YAML Support](docs/codec/yaml.md) — SnakeYamlOps and JacksonYamlOps usage, examples, comparison
+- [TOML Support](docs/codec/toml.md) — JacksonTomlOps usage, configuration file examples
+- [XML Support](docs/codec/xml.md) — JacksonXmlOps usage, XML-to-JsonNode mapping
+- Updated [Dynamic System](docs/concepts/dynamic-system.md) with all DynamicOps implementations table
+- Updated [Codec System](docs/concepts/codec-system.md) with links to format-specific docs
+- Updated [How-To Index](docs/how-to/index.md) with Format Integration section
+- Updated [Custom DynamicOps Tutorial](docs/tutorials/custom-dynamicops.md) with built-in implementations reference
+
+#### Spring Boot Integration Documentation
 - Added comprehensive Spring Boot Integration documentation
 - Quick Start Guide with complete code examples
 - Configuration Reference for all `aether.datafixers.*` properties

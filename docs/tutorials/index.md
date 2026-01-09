@@ -95,7 +95,7 @@ import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 
 // Codec
 import de.splatgames.aether.datafixers.api.codec.Codec;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 
 // Bootstrap
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;

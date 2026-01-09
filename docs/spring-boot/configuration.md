@@ -55,7 +55,7 @@ aether:
 
 **Values**:
 - `GSON` — Use `GsonOps` for JSON serialization
-- `JACKSON` — Use `JacksonOps` for JSON serialization
+- `JACKSON` — Use `JacksonJsonOps` for JSON serialization
 
 **Note**: The corresponding library must be on the classpath. If only one is present, it is used automatically regardless of this setting.
 

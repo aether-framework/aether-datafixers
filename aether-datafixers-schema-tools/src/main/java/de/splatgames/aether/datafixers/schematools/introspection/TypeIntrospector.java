@@ -74,7 +74,7 @@ import java.util.Set;
  * <h2>Thread Safety</h2>
  * <p>This class is stateless and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see TypeStructure
  * @see FieldInfo
  * @since 0.3.0

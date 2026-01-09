@@ -92,7 +92,7 @@ builder.usingDomain("user");
 ```java
 // Override the auto-configured DynamicOps
 builder.withOps(GsonOps.INSTANCE);
-builder.withOps(JacksonOps.INSTANCE);
+builder.withOps(JacksonJsonOps.INSTANCE);
 ```
 
 **Optional**: If not specified, uses the auto-configured ops.

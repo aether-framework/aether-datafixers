@@ -141,7 +141,7 @@ The Spring Boot starter organizes components into the following layers:
 | Configuration Class                 | Purpose                                                     |
 |-------------------------------------|-------------------------------------------------------------|
 | `AetherDataFixersAutoConfiguration` | Main entry point, imports all sub-configurations            |
-| `DynamicOpsAutoConfiguration`       | Creates `GsonOps` and `JacksonOps` beans                    |
+| `DynamicOpsAutoConfiguration`       | Creates `GsonOps` and `JacksonJsonOps` beans                |
 | `DataFixerAutoConfiguration`        | Creates `AetherDataFixer` beans from bootstraps             |
 | `MigrationServiceAutoConfiguration` | Creates the `MigrationService` bean                         |
 | `ActuatorAutoConfiguration`         | Creates health indicators, info contributors, and endpoints |
@@ -180,7 +180,7 @@ aether:
 | `spring-boot-starter-actuator` | Health indicators, info contributors, custom endpoints |
 | `micrometer-core`              | Migration metrics recording                            |
 | `gson`                         | JSON support via `GsonOps`                             |
-| `jackson-databind`             | JSON support via `JacksonOps`                          |
+| `jackson-databind`             | JSON support via `JacksonJsonOps`                      |
 
 ---
 

@@ -52,7 +52,7 @@ package de.splatgames.aether.datafixers.schematools.diff;
  * });
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see SchemaDiff
  * @see TypeDiff
  * @see FieldDiff

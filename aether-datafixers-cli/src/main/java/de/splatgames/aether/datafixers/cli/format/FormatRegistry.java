@@ -73,7 +73,7 @@ import java.util.ServiceLoader;
  * // Returns: ["json-gson", "json-jackson", ...]
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see FormatHandler
  * @see ServiceLoader
  * @since 0.3.0

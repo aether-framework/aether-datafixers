@@ -73,7 +73,7 @@ import java.util.concurrent.Callable;
  *   <li>{@code ERROR: filename - message} - File could not be validated</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.cli.AetherCli
  * @see MigrateCommand
  * @since 0.3.0

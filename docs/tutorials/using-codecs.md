@@ -42,7 +42,7 @@ import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 
 public class PrimitiveCodecExample {
 
@@ -293,7 +293,7 @@ import de.splatgames.aether.datafixers.api.codec.*;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 
 import java.util.List;
 

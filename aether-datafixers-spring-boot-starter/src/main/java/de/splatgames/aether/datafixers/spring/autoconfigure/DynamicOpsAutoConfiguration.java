@@ -23,9 +23,16 @@
 package de.splatgames.aether.datafixers.spring.autoconfigure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.toml.TomlMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
-import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
+import de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps;
+import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
+import de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps;
+import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,7 +72,7 @@ import org.springframework.context.annotation.Primary;
  *   <tr>
  *     <td>Jackson</td>
  *     <td>{@code com.fasterxml.jackson.databind.ObjectMapper}</td>
- *     <td>{@link JacksonOps}</td>
+ *     <td>{@link JacksonJsonOps}</td>
  *   </tr>
  * </table>
  *
@@ -74,7 +81,7 @@ import org.springframework.context.annotation.Primary;
  * {@code aether.datafixers.default-format} property:</p>
  * <ul>
  *   <li>{@code gson} (default) - Uses {@link GsonOps#INSTANCE} as the primary DynamicOps</li>
- *   <li>{@code jackson} - Uses {@link JacksonOps} as the primary DynamicOps</li>
+ *   <li>{@code jackson} - Uses {@link JacksonJsonOps} as the primary DynamicOps</li>
  * </ul>
  *
  * <h2>Configuration Properties</h2>
@@ -129,10 +136,10 @@ import org.springframework.context.annotation.Primary;
  * }</pre>
  * <p>This will prevent the auto-configured default from being created.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see GsonOps
- * @see JacksonOps
+ * @see JacksonJsonOps
  * @see de.splatgames.aether.datafixers.spring.config.DynamicOpsFormat
  * @since 0.4.0
  */
@@ -152,7 +159,7 @@ public class DynamicOpsAutoConfiguration {
      * It provides both the specific {@link GsonOps} bean and conditionally sets it
      * as the primary {@link DynamicOps} based on the default-format configuration.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -204,10 +211,10 @@ public class DynamicOpsAutoConfiguration {
      * Nested configuration for Jackson-based {@link DynamicOps} beans.
      *
      * <p>This configuration is activated only when Jackson is available on the classpath.
-     * It provides both the specific {@link JacksonOps} bean (with Spring ObjectMapper
+     * It provides both the specific {@link JacksonJsonOps} bean (with Spring ObjectMapper
      * integration) and conditionally sets it as the primary {@link DynamicOps}.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -215,7 +222,7 @@ public class DynamicOpsAutoConfiguration {
     static class JacksonOpsConfiguration {
 
         /**
-         * Provides the {@link JacksonOps} instance with Spring ObjectMapper integration.
+         * Provides the {@link JacksonJsonOps} instance with Spring ObjectMapper integration.
          *
          * <p>If a Spring-managed {@link ObjectMapper} bean exists, it will be used to
          * ensure consistent JSON configuration. This means features like:</p>
@@ -225,26 +232,26 @@ public class DynamicOpsAutoConfiguration {
          *   <li>Registered modules (JavaTimeModule, etc.)</li>
          *   <li>Serialization/deserialization features</li>
          * </ul>
-         * <p>are shared between JacksonOps and other Jackson-based components.</p>
+         * <p>are shared between JacksonJsonOps and other Jackson-based components.</p>
          *
-         * <p>If no ObjectMapper bean exists, falls back to {@link JacksonOps#INSTANCE}.</p>
+         * <p>If no ObjectMapper bean exists, falls back to {@link JacksonJsonOps#INSTANCE}.</p>
          *
          * @param objectMapper Spring's configured ObjectMapper, may be {@code null}
-         * @return the JacksonOps instance configured with the appropriate ObjectMapper
+         * @return the JacksonJsonOps instance configured with the appropriate ObjectMapper
          */
         @Bean
         @ConditionalOnMissingBean(name = "jacksonOps")
-        public JacksonOps jacksonOps(
+        public JacksonJsonOps jacksonOps(
                 @Autowired(required = false) final ObjectMapper objectMapper
         ) {
             // Use Spring's ObjectMapper if available for consistent configuration
             return objectMapper != null
-                    ? new JacksonOps(objectMapper)
-                    : JacksonOps.INSTANCE;
+                    ? new JacksonJsonOps(objectMapper)
+                    : JacksonJsonOps.INSTANCE;
         }
 
         /**
-         * Registers {@link JacksonOps} as the primary (default) {@link DynamicOps} bean.
+         * Registers {@link JacksonJsonOps} as the primary (default) {@link DynamicOps} bean.
          *
          * <p>This bean is created when:</p>
          * <ul>
@@ -252,7 +259,7 @@ public class DynamicOpsAutoConfiguration {
          *   <li>{@code aether.datafixers.default-format} is explicitly set to {@code jackson}</li>
          * </ul>
          *
-         * @param jacksonOps the JacksonOps instance to register as primary
+         * @param jacksonOps the JacksonJsonOps instance to register as primary
          * @return the primary DynamicOps instance
          */
         @Bean
@@ -263,8 +270,144 @@ public class DynamicOpsAutoConfiguration {
                 name = "default-format",
                 havingValue = "jackson"
         )
-        public DynamicOps<?> defaultJacksonOps(final JacksonOps jacksonOps) {
+        public DynamicOps<?> defaultJacksonOps(final JacksonJsonOps jacksonOps) {
             return jacksonOps;
+        }
+    }
+
+    /**
+     * Nested configuration for Jackson YAML-based {@link DynamicOps} beans.
+     *
+     * <p>This configuration is activated only when Jackson YAML is available on the classpath.</p>
+     *
+     * @author Erik Pförtner
+     * @since 0.4.0
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
+    static class JacksonYamlOpsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "jacksonYamlOps")
+        public JacksonYamlOps jacksonYamlOps(
+                @Autowired(required = false) final YAMLMapper yamlMapper
+        ) {
+            return yamlMapper != null
+                    ? new JacksonYamlOps(yamlMapper)
+                    : JacksonYamlOps.INSTANCE;
+        }
+
+        @Bean
+        @Primary
+        @ConditionalOnMissingBean(DynamicOps.class)
+        @ConditionalOnProperty(
+                prefix = "aether.datafixers",
+                name = "default-format",
+                havingValue = "jackson_yaml"
+        )
+        public DynamicOps<?> defaultJacksonYamlOps(final JacksonYamlOps jacksonYamlOps) {
+            return jacksonYamlOps;
+        }
+    }
+
+    /**
+     * Nested configuration for SnakeYAML-based {@link DynamicOps} beans.
+     *
+     * <p>This configuration is activated only when SnakeYAML is available on the classpath.</p>
+     *
+     * @author Erik Pförtner
+     * @since 0.4.0
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "org.yaml.snakeyaml.Yaml")
+    static class SnakeYamlOpsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "snakeYamlOps")
+        public SnakeYamlOps snakeYamlOps() {
+            return SnakeYamlOps.INSTANCE;
+        }
+
+        @Bean
+        @Primary
+        @ConditionalOnMissingBean(DynamicOps.class)
+        @ConditionalOnProperty(
+                prefix = "aether.datafixers",
+                name = "default-format",
+                havingValue = "snakeyaml"
+        )
+        public DynamicOps<?> defaultSnakeYamlOps(final SnakeYamlOps snakeYamlOps) {
+            return snakeYamlOps;
+        }
+    }
+
+    /**
+     * Nested configuration for Jackson TOML-based {@link DynamicOps} beans.
+     *
+     * <p>This configuration is activated only when Jackson TOML is available on the classpath.</p>
+     *
+     * @author Erik Pförtner
+     * @since 0.4.0
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "com.fasterxml.jackson.dataformat.toml.TomlMapper")
+    static class JacksonTomlOpsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "jacksonTomlOps")
+        public JacksonTomlOps jacksonTomlOps(
+                @Autowired(required = false) final TomlMapper tomlMapper
+        ) {
+            return tomlMapper != null
+                    ? new JacksonTomlOps(tomlMapper)
+                    : JacksonTomlOps.INSTANCE;
+        }
+
+        @Bean
+        @Primary
+        @ConditionalOnMissingBean(DynamicOps.class)
+        @ConditionalOnProperty(
+                prefix = "aether.datafixers",
+                name = "default-format",
+                havingValue = "jackson_toml"
+        )
+        public DynamicOps<?> defaultJacksonTomlOps(final JacksonTomlOps jacksonTomlOps) {
+            return jacksonTomlOps;
+        }
+    }
+
+    /**
+     * Nested configuration for Jackson XML-based {@link DynamicOps} beans.
+     *
+     * <p>This configuration is activated only when Jackson XML is available on the classpath.</p>
+     *
+     * @author Erik Pförtner
+     * @since 0.4.0
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "com.fasterxml.jackson.dataformat.xml.XmlMapper")
+    static class JacksonXmlOpsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "jacksonXmlOps")
+        public JacksonXmlOps jacksonXmlOps(
+                @Autowired(required = false) final XmlMapper xmlMapper
+        ) {
+            return xmlMapper != null
+                    ? new JacksonXmlOps(xmlMapper)
+                    : JacksonXmlOps.INSTANCE;
+        }
+
+        @Bean
+        @Primary
+        @ConditionalOnMissingBean(DynamicOps.class)
+        @ConditionalOnProperty(
+                prefix = "aether.datafixers",
+                name = "default-format",
+                havingValue = "jackson_xml"
+        )
+        public DynamicOps<?> defaultJacksonXmlOps(final JacksonXmlOps jacksonXmlOps) {
+            return jacksonXmlOps;
         }
     }
 }

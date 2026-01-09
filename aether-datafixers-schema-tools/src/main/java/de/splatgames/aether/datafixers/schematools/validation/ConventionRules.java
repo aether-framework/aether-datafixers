@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
  * <h2>Thread Safety</h2>
  * <p>This class is immutable and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ConventionChecker
  * @see SchemaValidator
  * @since 0.3.0

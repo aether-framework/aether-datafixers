@@ -55,7 +55,7 @@ import java.util.Set;
  * <p>This class is used internally by {@link SchemaValidator}. Direct usage
  * is not recommended.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see SchemaValidator
  * @since 0.3.0
  */

@@ -78,7 +78,7 @@ import java.util.Optional;
  * <h2>Thread Safety</h2>
  * <p>This class is immutable and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ValidationResult
  * @see IssueSeverity
  * @since 0.3.0

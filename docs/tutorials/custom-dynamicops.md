@@ -585,3 +585,18 @@ public static final SimpleMapOps INSTANCE = new SimpleMapOps();
 - **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** — Full interface
 - **[Dynamic System](../concepts/dynamic-system.md)** — How it all fits together
 
+## Built-in Implementations
+
+Before creating a custom implementation, check if one of the built-in implementations fits your needs:
+
+| Format | Implementation | Package |
+|--------|----------------|---------|
+| JSON | `GsonOps` | `codec.json.gson` |
+| JSON | `JacksonJsonOps` | `codec.json.jackson` |
+| YAML | `SnakeYamlOps` | `codec.yaml.snakeyaml` |
+| YAML | `JacksonYamlOps` | `codec.yaml.jackson` |
+| TOML | `JacksonTomlOps` | `codec.toml.jackson` |
+| XML | `JacksonXmlOps` | `codec.xml.jackson` |
+
+See [Codec Module Documentation](../codec/index.md) for details.
+

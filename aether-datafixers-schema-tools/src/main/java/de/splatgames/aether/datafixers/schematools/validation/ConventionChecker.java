@@ -56,7 +56,7 @@ import java.util.List;
  * <p>This class is used internally by {@link SchemaValidator}. Direct usage
  * is not recommended.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ConventionRules
  * @see SchemaValidator
  * @since 0.3.0

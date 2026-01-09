@@ -34,7 +34,7 @@ import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.api.rewrite.Rules;
 import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 import de.splatgames.aether.datafixers.api.type.Type;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import de.splatgames.aether.datafixers.core.fix.SimpleSystemDataFixerContext;
 import org.jetbrains.annotations.NotNull;

@@ -27,8 +27,8 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
-import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -124,7 +124,7 @@ public final class TestData {
     }
 
     /**
-     * Creates a builder using {@link JacksonOps}.
+     * Creates a builder using {@link JacksonJsonOps}.
      *
      * <p>Use this when testing with Jackson's JSON representation.</p>
      *
@@ -132,7 +132,7 @@ public final class TestData {
      */
     @NotNull
     public static TestDataBuilder<JsonNode> jackson() {
-        return new TestDataBuilder<>(JacksonOps.INSTANCE);
+        return new TestDataBuilder<>(JacksonJsonOps.INSTANCE);
     }
 
     // ==================== Quick Primitive Helpers ====================

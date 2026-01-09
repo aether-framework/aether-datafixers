@@ -103,7 +103,7 @@
  * <p>The {@link de.splatgames.aether.datafixers.spring.service.DefaultMigrationService}
  * is thread-safe and can be safely used concurrently from multiple threads.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.service.MigrationService
  * @see de.splatgames.aether.datafixers.spring.service.MigrationResult
  * @see de.splatgames.aether.datafixers.spring.service.DefaultMigrationService

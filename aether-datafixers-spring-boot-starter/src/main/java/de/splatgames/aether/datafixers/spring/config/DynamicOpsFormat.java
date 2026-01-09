@@ -60,7 +60,7 @@ import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
  * of the configured format. The configured format only matters when both libraries
  * are present.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties#getDefaultFormat()
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.DynamicOpsAutoConfiguration
  * @since 0.4.0
@@ -89,7 +89,7 @@ public enum DynamicOpsFormat {
      * </dependency>
      * }</pre>
      *
-     * @see de.splatgames.aether.datafixers.codec.gson.GsonOps
+     * @see de.splatgames.aether.datafixers.codec.json.gson.GsonOps
      */
     GSON,
 
@@ -98,7 +98,7 @@ public enum DynamicOpsFormat {
      *
      * <p>Uses {@code com.fasterxml.jackson.databind.JsonNode} as the underlying
      * data type. This format is provided by the {@code aether-datafixers-codec}
-     * module's {@code JacksonOps} implementation.</p>
+     * module's {@code JacksonJsonOps} implementation.</p>
      *
      * <h3>Characteristics</h3>
      * <ul>
@@ -117,11 +117,106 @@ public enum DynamicOpsFormat {
      * }</pre>
      *
      * <h3>Spring Integration</h3>
-     * <p>When using Jackson with Spring, the auto-configured {@code JacksonOps}
+     * <p>When using Jackson with Spring, the auto-configured {@code JacksonJsonOps}
      * will automatically use Spring's {@code ObjectMapper} if available, ensuring
      * consistent JSON handling across the application.</p>
      *
-     * @see de.splatgames.aether.datafixers.codec.jackson.JacksonOps
+     * @see de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps
      */
-    JACKSON
+    JACKSON,
+
+    /**
+     * Jackson YAML serialization format.
+     *
+     * <p>Uses {@code com.fasterxml.jackson.databind.JsonNode} as the underlying
+     * data type with YAML serialization. This format is provided by the
+     * {@code aether-datafixers-codec} module's {@code JacksonYamlOps} implementation.</p>
+     *
+     * <h3>Required Dependency</h3>
+     * <pre>{@code
+     * <dependency>
+     *     <groupId>com.fasterxml.jackson.dataformat</groupId>
+     *     <artifactId>jackson-dataformat-yaml</artifactId>
+     * </dependency>
+     * }</pre>
+     *
+     * @see de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps
+     */
+    JACKSON_YAML,
+
+    /**
+     * SnakeYAML serialization format.
+     *
+     * <p>Uses native Java types ({@code Map}, {@code List}, primitives) as the
+     * underlying data representation. This format is provided by the
+     * {@code aether-datafixers-codec} module's {@code SnakeYamlOps} implementation.</p>
+     *
+     * <h3>Characteristics</h3>
+     * <ul>
+     *   <li>Lightweight YAML processing</li>
+     *   <li>Works with native Java types</li>
+     *   <li>No Jackson dependency required</li>
+     * </ul>
+     *
+     * <h3>Required Dependency</h3>
+     * <pre>{@code
+     * <dependency>
+     *     <groupId>org.yaml</groupId>
+     *     <artifactId>snakeyaml</artifactId>
+     * </dependency>
+     * }</pre>
+     *
+     * @see de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps
+     */
+    SNAKEYAML,
+
+    /**
+     * Jackson TOML serialization format.
+     *
+     * <p>Uses {@code com.fasterxml.jackson.databind.JsonNode} as the underlying
+     * data type with TOML serialization. This format is provided by the
+     * {@code aether-datafixers-codec} module's {@code JacksonTomlOps} implementation.</p>
+     *
+     * <h3>TOML Limitations</h3>
+     * <ul>
+     *   <li>Top-level value must be a table (object)</li>
+     *   <li>Null values are not natively supported</li>
+     * </ul>
+     *
+     * <h3>Required Dependency</h3>
+     * <pre>{@code
+     * <dependency>
+     *     <groupId>com.fasterxml.jackson.dataformat</groupId>
+     *     <artifactId>jackson-dataformat-toml</artifactId>
+     * </dependency>
+     * }</pre>
+     *
+     * @see de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps
+     */
+    JACKSON_TOML,
+
+    /**
+     * Jackson XML serialization format.
+     *
+     * <p>Uses {@code com.fasterxml.jackson.databind.JsonNode} as the underlying
+     * data type with XML serialization. This format is provided by the
+     * {@code aether-datafixers-codec} module's {@code JacksonXmlOps} implementation.</p>
+     *
+     * <h3>XML Considerations</h3>
+     * <ul>
+     *   <li>XML requires a root element</li>
+     *   <li>XML attributes may be represented differently than elements</li>
+     * </ul>
+     *
+     * <h3>Required Dependency</h3>
+     * <pre>{@code
+     * <dependency>
+     *     <groupId>com.fasterxml.jackson.dataformat</groupId>
+     *     <artifactId>jackson-dataformat-xml</artifactId>
+     * </dependency>
+     * }</pre>
+     *
+     * @see de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps
+     */
+    JACKSON_XML
 }

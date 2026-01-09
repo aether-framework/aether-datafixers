@@ -85,6 +85,32 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- ==================== YAML Libraries (Optional) ==================== -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ==================== TOML Library (Optional) ==================== -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-toml</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ==================== XML Library (Optional) ==================== -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- ==================== SLF4J ==================== -->
         <dependency>
             <groupId>org.slf4j</groupId>

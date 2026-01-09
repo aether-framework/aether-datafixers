@@ -115,7 +115,7 @@
  * is thread-safe. All counters and timers use Micrometer's internally synchronized
  * implementations that can be safely used from multiple threads concurrently.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.ActuatorAutoConfiguration.MetricsConfiguration
  * @see io.micrometer.core.instrument.MeterRegistry

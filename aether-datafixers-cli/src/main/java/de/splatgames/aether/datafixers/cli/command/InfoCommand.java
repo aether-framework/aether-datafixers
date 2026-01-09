@@ -58,7 +58,7 @@ import java.util.concurrent.Callable;
  *   <li>{@code 1} - Error loading bootstrap or missing required option</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.cli.AetherCli
  * @see de.splatgames.aether.datafixers.cli.format.FormatRegistry
  * @since 0.3.0

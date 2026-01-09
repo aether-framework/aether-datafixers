@@ -145,7 +145,7 @@ import java.util.Map;
  * <p>This class is thread-safe. All operations are read-only and the underlying
  * {@link DataFixerRegistry} uses thread-safe data structures.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see Endpoint
  * @see DataFixerRegistry
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.ActuatorAutoConfiguration
@@ -280,7 +280,7 @@ public class DataFixerEndpoint {
      *
      * @param domains map of domain names to their summary information,
      *                preserves insertion order when using LinkedHashMap
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     public record DataFixersSummary(Map<String, DomainSummary> domains) {
@@ -307,7 +307,7 @@ public class DataFixerEndpoint {
      *
      * @param currentVersion the current schema version of the domain, or -1 on error
      * @param status         the operational status ("UP" or "DOWN: {error}")
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     public record DomainSummary(int currentVersion, String status) {
@@ -333,7 +333,7 @@ public class DataFixerEndpoint {
      * @param domain         the domain name (echoed from the request path)
      * @param currentVersion the current schema version of the domain, or -1 on error
      * @param status         the operational status ("UP" or "DOWN: {error}")
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     public record DomainDetails(

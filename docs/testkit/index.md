@@ -130,7 +130,7 @@ DataFix<JsonElement> transform = QuickFix.transformField(
 import com.google.gson.JsonElement;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.fix.DataFix;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.testkit.TestData;
 import de.splatgames.aether.datafixers.testkit.factory.QuickFix;
 import de.splatgames.aether.datafixers.testkit.harness.DataFixTester;

@@ -20,10 +20,9 @@
  * SOFTWARE.
  */
 
-package de.splatgames.aether.datafixers.codec.jackson;
+package de.splatgames.aether.datafixers.codec.xml.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -32,6 +31,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.junit.jupiter.api.DisplayName;
@@ -44,12 +44,12 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for {@link JacksonOps}.
+ * Unit tests for {@link JacksonXmlOps}.
  */
-@DisplayName("JacksonOps")
-class JacksonOpsTest {
+@DisplayName("JacksonXmlOps")
+class JacksonXmlOpsTest {
 
-    private final JacksonOps ops = JacksonOps.INSTANCE;
+    private final JacksonXmlOps ops = JacksonXmlOps.INSTANCE;
     private final JsonNodeFactory factory = JsonNodeFactory.instance;
 
     @Nested
@@ -59,38 +59,38 @@ class JacksonOpsTest {
         @Test
         @DisplayName("INSTANCE is not null")
         void instanceIsNotNull() {
-            assertThat(JacksonOps.INSTANCE).isNotNull();
+            assertThat(JacksonXmlOps.INSTANCE).isNotNull();
         }
 
         @Test
         @DisplayName("INSTANCE is same reference")
         void instanceIsSameReference() {
-            assertThat(JacksonOps.INSTANCE).isSameAs(ops);
+            assertThat(JacksonXmlOps.INSTANCE).isSameAs(ops);
         }
 
         @Test
-        @DisplayName("toString() returns JacksonOps")
-        void toStringReturnsJacksonOps() {
-            assertThat(ops.toString()).isEqualTo("JacksonOps");
+        @DisplayName("toString() returns JacksonXmlOps")
+        void toStringReturnsJacksonXmlOps() {
+            assertThat(ops.toString()).isEqualTo("JacksonXmlOps");
         }
 
         @Test
-        @DisplayName("mapper() returns ObjectMapper")
-        void mapperReturnsObjectMapper() {
+        @DisplayName("mapper() returns XmlMapper")
+        void mapperReturnsXmlMapper() {
             assertThat(ops.mapper()).isNotNull();
-            assertThat(ops.mapper()).isInstanceOf(ObjectMapper.class);
+            assertThat(ops.mapper()).isInstanceOf(XmlMapper.class);
         }
     }
 
     @Nested
-    @DisplayName("Custom ObjectMapper")
-    class CustomObjectMapper {
+    @DisplayName("Custom XmlMapper")
+    class CustomXmlMapper {
 
         @Test
-        @DisplayName("can create instance with custom ObjectMapper")
-        void canCreateInstanceWithCustomObjectMapper() {
-            final ObjectMapper customMapper = new ObjectMapper();
-            final JacksonOps customOps = new JacksonOps(customMapper);
+        @DisplayName("can create instance with custom XmlMapper")
+        void canCreateInstanceWithCustomXmlMapper() {
+            final XmlMapper customMapper = new XmlMapper();
+            final JacksonXmlOps customOps = new JacksonXmlOps(customMapper);
 
             assertThat(customOps.mapper()).isSameAs(customMapper);
         }
@@ -725,33 +725,6 @@ class JacksonOpsTest {
             final JsonNode result = ops.convertTo(ops, NullNode.getInstance());
 
             assertThat(result).isEqualTo(NullNode.getInstance());
-        }
-    }
-
-    @Nested
-    @DisplayName("Cross-Ops Conversion")
-    class CrossOpsConversion {
-
-        @Test
-        @DisplayName("can convert between Gson and Jackson")
-        void canConvertBetweenGsonAndJackson() {
-            // Create data with Jackson
-            final JsonNode jacksonData = ops.createMap(Stream.of(
-                    Pair.of(ops.createString("name"), ops.createString("Alice")),
-                    Pair.of(ops.createString("age"), ops.createInt(30)),
-                    Pair.of(ops.createString("items"), ops.createList(Stream.of(
-                            ops.createInt(1),
-                            ops.createInt(2)
-                    )))
-            ));
-
-            // Convert to itself (round trip through the conversion logic)
-            final JsonNode converted = ops.convertTo(ops, jacksonData);
-
-            assertThat(converted.get("name").asText()).isEqualTo("Alice");
-            assertThat(converted.get("age").asInt()).isEqualTo(30);
-            assertThat(converted.get("items").isArray()).isTrue();
-            assertThat(converted.get("items").size()).isEqualTo(2);
         }
     }
 

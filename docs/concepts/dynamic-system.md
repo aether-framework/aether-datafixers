@@ -104,7 +104,7 @@ ObjectNode node = objectMapper.createObjectNode();
 node.put("name", "Steve");
 node.put("level", 10);
 
-Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonOps.INSTANCE, node);
+Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonJsonOps.INSTANCE, node);
 ```
 
 ### Creating New Values
@@ -320,7 +320,7 @@ Dynamic<?> value = migrated.value();       // Updated dynamic
 For working with Gson's `JsonElement`:
 
 ```java
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 
 Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
 
@@ -329,14 +329,14 @@ JsonElement stringJson = GsonOps.INSTANCE.createString("hello");
 JsonElement intJson = GsonOps.INSTANCE.createInt(42);
 ```
 
-### JacksonOps
+### JacksonJsonOps
 
 For working with Jackson's `JsonNode`:
 
 ```java
-import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
 
-Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonOps.INSTANCE, jsonNode);
+Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonJsonOps.INSTANCE, jsonNode);
 ```
 
 ### Custom DynamicOps
@@ -499,14 +499,26 @@ fixer.update(tagged, fromVersion, toVersion);
 | `DynamicOps<T>` | Format-specific operations |
 | `OptionalDynamic` | Safe nested access |
 | `TaggedDynamic` | Associates data with type |
-| `GsonOps` | Gson JsonElement operations |
-| `JacksonOps` | Jackson JsonNode operations |
+
+## Available DynamicOps Implementations
+
+| Implementation | Format | Data Type | Package |
+|----------------|--------|-----------|---------|
+| `GsonOps` | JSON | `JsonElement` | `codec.json.gson` |
+| `JacksonJsonOps` | JSON | `JsonNode` | `codec.json.jackson` |
+| `SnakeYamlOps` | YAML | `Object` | `codec.yaml.snakeyaml` |
+| `JacksonYamlOps` | YAML | `JsonNode` | `codec.yaml.jackson` |
+| `JacksonTomlOps` | TOML | `JsonNode` | `codec.toml.jackson` |
+| `JacksonXmlOps` | XML | `JsonNode` | `codec.xml.jackson` |
+
+See [Codec Module Documentation](../codec/index.md) for detailed usage of each implementation.
 
 ---
 
 ## Related
 
 - [Codec System](codec-system.md) — Encoding/decoding typed data
+- [Codec Module](../codec/index.md) — All DynamicOps implementations
 - [DataFix System](datafix-system.md) — Using Dynamic in fixes
 - [DSL](dsl.md) — Type templates with remainder
 

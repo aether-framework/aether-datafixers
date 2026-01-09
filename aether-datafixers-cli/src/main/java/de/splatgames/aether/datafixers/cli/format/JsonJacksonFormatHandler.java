@@ -28,14 +28,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
-import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Format handler for JSON using the Jackson Databind library.
  *
  * <p>This handler provides JSON parsing and serialization capabilities using
- * {@link ObjectMapper} and integrates with Aether Datafixers via {@link JacksonOps}.</p>
+ * {@link ObjectMapper} and integrates with Aether Datafixers via {@link JacksonJsonOps}.</p>
  *
  * <h2>Format Details</h2>
  * <ul>
@@ -65,9 +65,9 @@ import org.jetbrains.annotations.NotNull;
  *   <li>Performance is critical (Jackson is generally faster for large documents)</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see FormatHandler
- * @see JacksonOps
+ * @see JacksonJsonOps
  * @see JsonGsonFormatHandler
  * @since 0.3.0
  */
@@ -125,12 +125,12 @@ public class JsonJacksonFormatHandler implements FormatHandler<JsonNode> {
     /**
      * {@inheritDoc}
      *
-     * @return {@link JacksonOps#INSTANCE}
+     * @return {@link JacksonJsonOps#INSTANCE}
      */
     @Override
     @NotNull
     public DynamicOps<JsonNode> ops() {
-        return JacksonOps.INSTANCE;
+        return JacksonJsonOps.INSTANCE;
     }
 
     /**

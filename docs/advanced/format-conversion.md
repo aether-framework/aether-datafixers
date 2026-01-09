@@ -9,7 +9,7 @@ Since `Dynamic` is format-agnostic, you can convert between formats by re-encodi
 ```java
 // JSON to Jackson
 Dynamic<JsonElement> gsonDynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-Dynamic<JsonNode> jacksonDynamic = gsonDynamic.convert(JacksonOps.INSTANCE);
+Dynamic<JsonNode> jacksonDynamic = gsonDynamic.convert(JacksonJsonOps.INSTANCE);
 ```
 
 ## JSON to Jackson
@@ -17,7 +17,7 @@ Dynamic<JsonNode> jacksonDynamic = gsonDynamic.convert(JacksonOps.INSTANCE);
 ```java
 public JsonNode gsonToJackson(JsonElement gson) {
     Dynamic<JsonElement> gsonDynamic = new Dynamic<>(GsonOps.INSTANCE, gson);
-    Dynamic<JsonNode> jacksonDynamic = gsonDynamic.convert(JacksonOps.INSTANCE);
+    Dynamic<JsonNode> jacksonDynamic = gsonDynamic.convert(JacksonJsonOps.INSTANCE);
     return jacksonDynamic.value();
 }
 ```
@@ -26,7 +26,7 @@ public JsonNode gsonToJackson(JsonElement gson) {
 
 ```java
 public JsonElement jacksonToGson(JsonNode jackson) {
-    Dynamic<JsonNode> jacksonDynamic = new Dynamic<>(JacksonOps.INSTANCE, jackson);
+    Dynamic<JsonNode> jacksonDynamic = new Dynamic<>(JacksonJsonOps.INSTANCE, jackson);
     Dynamic<JsonElement> gsonDynamic = jacksonDynamic.convert(GsonOps.INSTANCE);
     return gsonDynamic.value();
 }
@@ -54,7 +54,7 @@ public JsonNode migrateAndConvert(JsonElement input, int fromVersion) {
     TaggedDynamic migrated = fixer.update(tagged, new DataVersion(fromVersion), currentVersion);
 
     // Convert to Jackson
-    return ((Dynamic<?>) migrated.value()).convert(JacksonOps.INSTANCE).value();
+    return ((Dynamic<?>) migrated.value()).convert(JacksonJsonOps.INSTANCE).value();
 }
 ```
 

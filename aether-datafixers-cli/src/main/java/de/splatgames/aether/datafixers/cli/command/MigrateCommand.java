@@ -86,7 +86,7 @@ import java.util.concurrent.Callable;
  *   <li><b>Output file specified:</b> Result is written to the specified file or directory</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.cli.AetherCli
  * @see ValidateCommand
  * @since 0.3.0

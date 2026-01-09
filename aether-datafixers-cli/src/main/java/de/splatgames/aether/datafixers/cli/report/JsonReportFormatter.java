@@ -64,7 +64,7 @@ import java.time.Duration;
  *   <li>Integration with CI/CD pipelines for automated validation</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ReportFormatter
  * @see TextReportFormatter
  * @since 0.3.0

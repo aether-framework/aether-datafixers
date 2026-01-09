@@ -10,7 +10,7 @@ Aether Datafixers is modular. Choose the modules you need:
 |--------|---------|-------------|
 | `aether-datafixers-api` | Core interfaces | Always (transitive dependency) |
 | `aether-datafixers-core` | Default implementations | Always needed for runtime |
-| `aether-datafixers-codec` | GsonOps, JacksonOps | When working with JSON |
+| `aether-datafixers-codec` | GsonOps, JacksonJsonOps | When working with JSON |
 | `aether-datafixers-spring-boot-starter` | Spring Boot integration | For Spring Boot applications |
 | `aether-datafixers-cli` | Command-line interface | For CLI-based data migration |
 | `aether-datafixers-schema-tools` | Schema analysis and validation | For CI/CD validation, diffing, coverage |

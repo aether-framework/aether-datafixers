@@ -53,7 +53,7 @@ import java.util.concurrent.Callable;
  * aether-cli info --bootstrap com.example.MyBootstrap
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @since 0.3.0
  */
 @Command(

@@ -63,7 +63,7 @@ import java.util.Set;
  * <h2>Thread Safety</h2>
  * <p>This class is immutable and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see MigrationPath
  * @see MigrationAnalyzer
  * @since 0.3.0
@@ -330,7 +330,7 @@ public final class MigrationStep {
      *     .build();
      * }</pre>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.3.0
      */
     public static final class Builder {
