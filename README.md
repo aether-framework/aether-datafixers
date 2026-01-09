@@ -10,7 +10,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.4.0)
+## ✨ Features (v0.3.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
@@ -33,7 +33,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 - **aether-datafixers-api** — Core interfaces and API contracts (no implementation logic)
 - **aether-datafixers-core** — Default implementations of the API interfaces
-- **aether-datafixers-codec** — Multi-format codec implementations (JSON, YAML, TOML, XML)
+- **aether-datafixers-codec** — Codec implementations for serialization formats
 - **aether-datafixers-testkit** — Testing utilities for DataFix, Schema, and migration testing
 - **aether-datafixers-cli** — Command-line interface for data migration and validation
 - **aether-datafixers-schema-tools** — Schema analysis, validation, diffing, and introspection
@@ -422,7 +422,7 @@ public class GameService {
 aether:
   datafixers:
     enabled: true                    # Enable/disable auto-config
-    default-format: gson             # gson | jackson | jackson_yaml | snakeyaml | jackson_toml | jackson_xml
+    default-format: gson             # gson | jackson
     default-current-version: 200     # Fallback version
     domains:
       game:
@@ -556,19 +556,20 @@ mvn test
   - **High-performance APIs** — `Rules.batch()` and single-pass conditional transforms
   - **Performance optimizations** — Path caching, optimized fix registry, reduced allocations
 
-- **v0.3.0**
+- **v0.3.0** (current)
   - **CLI module** — Migrate files from the command line with batch processing and reports
   - **Schema Tools module** — Schema diffing, migration analysis, validation, and introspection
   - **Fix coverage analysis** — Detect schema changes without corresponding DataFixes
   - **Convention checking** — Enforce naming conventions for types, fields, and classes
 
-- **v0.4.0** (current)
+- **v0.4.0** (next)
   - **Spring Boot Starter** — Auto-configuration, MigrationService with fluent API
   - **Actuator integration** — Health indicator, info contributor, custom endpoint, Micrometer metrics
   - **Multi-domain support** — Multiple DataFixers with @Qualifier annotations
   - **DynamicOps auto-configuration** — Conditional beans for all supported formats
   - **Multi-format DynamicOps** — YAML (SnakeYAML, Jackson), TOML (Jackson), XML (Jackson)
   - **Package restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
+  - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
 
 - **v0.5.0** (API freeze candidate)
   - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
