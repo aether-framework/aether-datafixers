@@ -29,7 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import org.jetbrains.annotations.NotNull;
 
 /**

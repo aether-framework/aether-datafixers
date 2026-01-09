@@ -44,7 +44,7 @@
  *   <tr>
  *     <td>{@link de.splatgames.aether.datafixers.spring.autoconfigure.DynamicOpsAutoConfiguration}</td>
  *     <td>Configures serialization format adapters</td>
- *     <td>GsonOps, JacksonOps, DynamicOps</td>
+ *     <td>GsonOps, JacksonJsonOps, DynamicOps</td>
  *   </tr>
  *   <tr>
  *     <td>{@link de.splatgames.aether.datafixers.spring.autoconfigure.MigrationServiceAutoConfiguration}</td>

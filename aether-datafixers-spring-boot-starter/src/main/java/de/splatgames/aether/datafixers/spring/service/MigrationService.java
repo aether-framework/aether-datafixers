@@ -358,7 +358,7 @@ public interface MigrationService {
          *
          * <p>This allows overriding the default DynamicOps implementation for
          * special serialization requirements. If not called, the auto-configured
-         * DynamicOps (GsonOps or JacksonOps) will be used.</p>
+         * DynamicOps (GsonOps or JacksonJsonOps) will be used.</p>
          *
          * @param ops the dynamic ops implementation, must not be {@code null}
          * @param <T> the underlying data type of the DynamicOps

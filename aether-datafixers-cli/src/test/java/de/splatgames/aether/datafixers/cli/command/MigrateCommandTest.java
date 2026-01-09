@@ -26,7 +26,7 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
 import de.splatgames.aether.datafixers.api.fix.FixRegistrar;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.testkit.factory.MockSchemas;
 import de.splatgames.aether.datafixers.testkit.factory.QuickFix;
 import org.jetbrains.annotations.NotNull;

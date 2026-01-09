@@ -22,7 +22,7 @@ This guide shows how to use Aether Datafixers with the Gson JSON library.
 ```java
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 
 // Create a JsonObject

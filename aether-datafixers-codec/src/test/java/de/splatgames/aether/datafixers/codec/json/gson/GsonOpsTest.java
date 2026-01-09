@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.splatgames.aether.datafixers.codec.gson;
+package de.splatgames.aether.datafixers.codec.json.gson;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

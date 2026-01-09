@@ -35,7 +35,7 @@ import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.TypeRegistry;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.core.codec.SimpleCodecRegistry;
 import de.splatgames.aether.datafixers.core.fix.DataFixRegistry;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;

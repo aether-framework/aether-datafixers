@@ -104,7 +104,7 @@ ObjectNode node = objectMapper.createObjectNode();
 node.put("name", "Steve");
 node.put("level", 10);
 
-Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonOps.INSTANCE, node);
+Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonJsonOps.INSTANCE, node);
 ```
 
 ### Creating New Values
@@ -320,7 +320,7 @@ Dynamic<?> value = migrated.value();       // Updated dynamic
 For working with Gson's `JsonElement`:
 
 ```java
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 
 Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
 
@@ -329,14 +329,14 @@ JsonElement stringJson = GsonOps.INSTANCE.createString("hello");
 JsonElement intJson = GsonOps.INSTANCE.createInt(42);
 ```
 
-### JacksonOps
+### JacksonJsonOps
 
 For working with Jackson's `JsonNode`:
 
 ```java
-import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
 
-Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonOps.INSTANCE, jsonNode);
+Dynamic<JsonNode> dynamic = new Dynamic<>(JacksonJsonOps.INSTANCE, jsonNode);
 ```
 
 ### Custom DynamicOps
@@ -500,7 +500,7 @@ fixer.update(tagged, fromVersion, toVersion);
 | `OptionalDynamic` | Safe nested access |
 | `TaggedDynamic` | Associates data with type |
 | `GsonOps` | Gson JsonElement operations |
-| `JacksonOps` | Jackson JsonNode operations |
+| `JacksonJsonOps` | Jackson JsonNode operations |
 
 ---
 

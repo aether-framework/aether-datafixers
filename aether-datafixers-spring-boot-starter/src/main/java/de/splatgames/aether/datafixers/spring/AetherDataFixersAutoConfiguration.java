@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Import;
  *
  * <h2>Components Configured</h2>
  * <ul>
- *   <li>{@link DynamicOpsAutoConfiguration} - GsonOps and JacksonOps beans</li>
+ *   <li>{@link DynamicOpsAutoConfiguration} - GsonOps and JacksonJsonOps beans</li>
  *   <li>{@link DataFixerAutoConfiguration} - AetherDataFixer beans</li>
  *   <li>{@link MigrationServiceAutoConfiguration} - MigrationService with fluent API</li>
  *   <li>{@link ActuatorAutoConfiguration} - Health, Info, Endpoint, and Metrics</li>

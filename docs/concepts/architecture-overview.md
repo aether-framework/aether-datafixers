@@ -72,7 +72,7 @@ Codec implementations for common serialization formats.
 | Class | Purpose |
 |-------|---------|
 | `GsonOps` | `DynamicOps` for Gson's `JsonElement` |
-| `JacksonOps` | `DynamicOps` for Jackson's `JsonNode` |
+| `JacksonJsonOps` | `DynamicOps` for Jackson's `JsonNode` |
 
 ### aether-datafixers-bom
 

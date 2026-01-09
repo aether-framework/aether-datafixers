@@ -24,7 +24,7 @@ package de.splatgames.aether.datafixers.cli.format;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

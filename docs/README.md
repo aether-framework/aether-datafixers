@@ -140,7 +140,7 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 |--------|-------------|
 | `aether-datafixers-api` | Core interfaces and API contracts |
 | `aether-datafixers-core` | Default implementations |
-| `aether-datafixers-codec` | GsonOps, JacksonOps implementations |
+| `aether-datafixers-codec` | GsonOps, JacksonJsonOps implementations |
 | `aether-datafixers-spring-boot-starter` | Spring Boot auto-configuration, MigrationService, Actuator, Metrics |
 | `aether-datafixers-cli` | Command-line interface for data migration |
 | `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |

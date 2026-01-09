@@ -25,7 +25,7 @@ package de.splatgames.aether.datafixers.cli.format;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -84,9 +84,9 @@ class JsonJacksonFormatHandlerTest {
     class Ops {
 
         @Test
-        @DisplayName("returns JacksonOps.INSTANCE")
+        @DisplayName("returns JacksonJsonOps.INSTANCE")
         void returnsJacksonOps() {
-            assertThat(handler.ops()).isSameAs(JacksonOps.INSTANCE);
+            assertThat(handler.ops()).isSameAs(JacksonJsonOps.INSTANCE);
         }
     }
 
