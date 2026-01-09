@@ -11,6 +11,7 @@ Aether Datafixers is modular. Choose the modules you need:
 | `aether-datafixers-api` | Core interfaces | Always (transitive dependency) |
 | `aether-datafixers-core` | Default implementations | Always needed for runtime |
 | `aether-datafixers-codec` | GsonOps, JacksonOps | When working with JSON |
+| `aether-datafixers-spring-boot-starter` | Spring Boot integration | For Spring Boot applications |
 | `aether-datafixers-cli` | Command-line interface | For CLI-based data migration |
 | `aether-datafixers-schema-tools` | Schema analysis and validation | For CI/CD validation, diffing, coverage |
 | `aether-datafixers-testkit` | Testing utilities | For unit/integration testing |
@@ -235,6 +236,27 @@ Aether Datafixers has minimal dependencies:
 | SLF4J API | Compile | Logging interface |
 | Gson | Optional | JSON support (codec module) |
 | Jackson | Optional | JSON support (codec module) |
+
+---
+
+## Spring Boot Installation
+
+For Spring Boot applications, use the dedicated starter module:
+
+```xml
+<dependency>
+    <groupId>de.splatgames.aether</groupId>
+    <artifactId>aether-datafixers-spring-boot-starter</artifactId>
+</dependency>
+```
+
+This includes auto-configuration for:
+- Automatic DataFixer bean creation from `DataFixerBootstrap` beans
+- `MigrationService` with fluent API
+- Health indicators and Actuator endpoints
+- Micrometer metrics integration
+
+→ [Spring Boot Quick Start](../spring-boot/getting-started.md) — Get started with Spring Boot integration
 
 ---
 

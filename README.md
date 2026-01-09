@@ -20,6 +20,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - ✅ **Testkit** — Fluent test data builders, custom assertions, and test harnesses for DataFix testing
 - ✅ **CLI Tool** — Migrate and validate data files from the command line with batch processing
 - ✅ **Schema Tools** — Schema diffing, validation, migration analysis, and type introspection
+- ✅ **Spring Boot 3.x** — Auto-configuration, MigrationService with fluent API, Actuator integration
 - ✅ **Migration Diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
 - ✅ **Extended Rewrite Rules** — Batch operations, path-based transforms, conditional rules
 - ✅ **High-Performance APIs** — `Rules.batch()` for single-pass multi-operation transforms
@@ -35,6 +36,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - **aether-datafixers-testkit** — Testing utilities for DataFix, Schema, and migration testing
 - **aether-datafixers-cli** — Command-line interface for data migration and validation
 - **aether-datafixers-schema-tools** — Schema analysis, validation, diffing, and introspection
+- **aether-datafixers-spring-boot-starter** — Spring Boot 3.x auto-configuration with Actuator support
 - **aether-datafixers-examples** — Practical examples demonstrating real-world usage
 - **aether-datafixers-bom** — Bill of Materials for coordinated dependency management
 
@@ -84,7 +86,7 @@ Dynamic<?> updated = fixer.update(
 
 ```xml
 <dependency>
-    <groupId>de.splatgames.aether</groupId>
+    <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-core</artifactId>
     <version>0.3.0</version>
 </dependency>
@@ -94,7 +96,7 @@ Dynamic<?> updated = fixer.update(
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.3.0'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0'
 }
 ```
 
@@ -102,7 +104,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.3.0")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0")
 }
 ```
 
@@ -120,7 +122,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>de.splatgames.aether</groupId>
+            <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
             <version>0.3.0</version>
             <type>pom</type>
@@ -132,11 +134,11 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 <dependencies>
     <!-- No version needed -->
     <dependency>
-        <groupId>de.splatgames.aether</groupId>
+        <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-core</artifactId>
     </dependency>
     <dependency>
-        <groupId>de.splatgames.aether</groupId>
+        <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-codec</artifactId>
     </dependency>
 </dependencies>
@@ -146,11 +148,11 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether:aether-datafixers-bom:0.3.0')
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0')
 
     // No version needed
-    implementation 'de.splatgames.aether:aether-datafixers-core'
-    implementation 'de.splatgames.aether:aether-datafixers-codec'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec'
 }
 ```
 
@@ -158,11 +160,11 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether:aether-datafixers-bom:0.3.0"))
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0"))
 
     // No version needed
-    implementation("de.splatgames.aether:aether-datafixers-core")
-    implementation("de.splatgames.aether:aether-datafixers-codec")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-codec")
 }
 ```
 
@@ -351,6 +353,138 @@ Add to your project:
 
 ---
 
+## 🍃 Spring Boot Integration
+
+The `aether-datafixers-spring-boot-starter` provides comprehensive Spring Boot 3.x integration.
+
+### Installation
+
+**Maven**
+
+```xml
+<dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-spring-boot-starter</artifactId>
+    <version>0.4.0</version>
+</dependency>
+```
+
+**Gradle (Kotlin)**
+
+```kotlin
+implementation("de.splatgames.aether.datafixers:aether-datafixers-spring-boot-starter:0.4.0")
+```
+
+### Quick Start
+
+1. **Create a DataFixerBootstrap bean:**
+
+```java
+@Configuration
+public class DataFixerConfig {
+    @Bean
+    public DataFixerBootstrap gameBootstrap() {
+        return new GameDataBootstrap();
+    }
+}
+```
+
+2. **Inject and use MigrationService:**
+
+```java
+@Service
+public class GameService {
+    private final MigrationService migrationService;
+
+    public GameService(MigrationService migrationService) {
+        this.migrationService = migrationService;
+    }
+
+    public Dynamic<?> migratePlayerData(Dynamic<?> data, int fromVersion) {
+        MigrationResult result = migrationService
+            .migrate(data)
+            .from(fromVersion)
+            .toLatest()
+            .execute();
+
+        if (result.isSuccess()) {
+            return result.getData();
+        }
+        throw new MigrationException(result.getErrorMessage());
+    }
+}
+```
+
+### Configuration Properties
+
+```yaml
+aether:
+  datafixers:
+    enabled: true                    # Enable/disable auto-config
+    default-format: gson             # gson | jackson
+    default-current-version: 200     # Fallback version
+    domains:
+      game:
+        current-version: 200
+        primary: true
+      user:
+        current-version: 150
+    actuator:
+      include-schema-details: true
+      include-fix-details: true
+    metrics:
+      timing: true
+      counting: true
+```
+
+### Multi-Domain Support
+
+Support multiple DataFixers with `@Qualifier`:
+
+```java
+@Configuration
+public class DataFixerConfig {
+    @Bean
+    @Qualifier("game")
+    public DataFixerBootstrap gameBootstrap() {
+        return new GameDataBootstrap();
+    }
+
+    @Bean
+    @Qualifier("user")
+    public DataFixerBootstrap userBootstrap() {
+        return new UserDataBootstrap();
+    }
+}
+
+// Usage
+MigrationResult result = migrationService
+    .migrate(data)
+    .usingDomain("game")  // Select domain
+    .from(100)
+    .toLatest()
+    .execute();
+```
+
+### Actuator Endpoints
+
+| Endpoint               | Description                               |
+|------------------------|-------------------------------------------|
+| `/actuator/health`     | Health indicator showing DataFixer status |
+| `/actuator/info`       | Schema version information                |
+| `/actuator/datafixers` | Detailed domain and version info          |
+
+### Micrometer Metrics
+
+| Metric                                      | Type         | Description             |
+|---------------------------------------------|--------------|-------------------------|
+| `aether.datafixers.migrations.success`      | Counter      | Successful migrations   |
+| `aether.datafixers.migrations.failure`      | Counter      | Failed migrations       |
+| `aether.datafixers.migrations.duration`     | Timer        | Migration duration      |
+| `aether.datafixers.migrations.version.span` | Distribution | Version span statistics |
+
+---
+
 ## 📖 Examples
 
 The `aether-datafixers-examples` module provides a complete, runnable example demonstrating real-world usage patterns.
@@ -428,7 +562,10 @@ mvn test
   - **Convention checking** — Enforce naming conventions for types, fields, and classes
 
 - **v0.4.0** (next)
-  - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
+  - **Spring Boot Starter** — Auto-configuration, MigrationService with fluent API
+  - **Actuator integration** — Health indicator, info contributor, custom endpoint, Micrometer metrics
+  - **Multi-domain support** — Multiple DataFixers with @Qualifier annotations
+  - **DynamicOps auto-configuration** — Conditional GsonOps/JacksonOps beans
   - **Extra ops modules** — Optional YAML/TOML support (format adapters)
   - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
 

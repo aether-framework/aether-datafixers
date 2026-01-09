@@ -113,6 +113,18 @@ For experienced users:
 - [Performance Optimization](advanced/performance-optimization.md)
 - [Extending the Framework](advanced/extending-framework.md)
 
+### Spring Boot Integration
+
+Seamlessly integrate Aether Datafixers into Spring Boot applications:
+
+- [Spring Boot Overview](spring-boot/index.md) — Introduction to the Spring Boot starter
+- [Quick Start](spring-boot/getting-started.md) — Add the starter and run your first migration
+- [Configuration Reference](spring-boot/configuration.md) — All configuration properties
+- [MigrationService API](spring-boot/migration-service.md) — Fluent migration API
+- [Multi-Domain Setup](spring-boot/multi-domain.md) — Managing multiple DataFixer instances
+- [Actuator Integration](spring-boot/actuator.md) — Health indicators and endpoints
+- [Metrics Integration](spring-boot/metrics.md) — Micrometer metrics for observability
+
 ### Support
 
 - [Troubleshooting](troubleshooting/index.md)
@@ -129,6 +141,7 @@ For experienced users:
 | `aether-datafixers-api` | Core interfaces and API contracts |
 | `aether-datafixers-core` | Default implementations |
 | `aether-datafixers-codec` | GsonOps, JacksonOps implementations |
+| `aether-datafixers-spring-boot-starter` | Spring Boot auto-configuration, MigrationService, Actuator, Metrics |
 | `aether-datafixers-cli` | Command-line interface for data migration |
 | `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |
 | `aether-datafixers-schema-tools` | Schema analysis, validation, and diffing utilities |

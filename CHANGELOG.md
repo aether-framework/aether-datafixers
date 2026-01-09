@@ -6,6 +6,78 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.4.0] - 2026-01-09
+
+### Added
+
+#### Spring Boot Starter Module (`aether-datafixers-spring-boot-starter`)
+
+New module providing seamless Spring Boot integration with auto-configuration, fluent migration API, and observability features.
+
+**Auto-Configuration (`spring.autoconfigure`):**
+- `AetherDataFixersAutoConfiguration` — Main entry point coordinating all sub-configurations
+- `DynamicOpsAutoConfiguration` — Auto-configures `GsonOps` and `JacksonOps` beans based on classpath
+- `DataFixerAutoConfiguration` — Creates `AetherDataFixer` beans from `DataFixerBootstrap` definitions
+- `MigrationServiceAutoConfiguration` — Configures the `MigrationService` with metrics integration
+- `ActuatorAutoConfiguration` — Configures health indicators, info contributors, and custom endpoints
+- Conditional activation via `aether.datafixers.enabled` property (default: `true`)
+- Version resolution from properties, bootstrap `CURRENT_VERSION` constant, or global default
+
+**Configuration Properties (`spring.config`):**
+- `AetherDataFixersProperties` — Root configuration with `aether.datafixers.*` prefix
+- `DataFixerDomainProperties` — Per-domain configuration (version, primary, description)
+- `DynamicOpsFormat` — Enum for selecting default serialization format (GSON, JACKSON)
+- `ActuatorProperties` — Control schema/fix detail exposure in actuator responses
+- `MetricsProperties` — Configure timing, counting, and domain tag name
+
+**Migration Service (`spring.service`):**
+- `MigrationService` — High-level interface with fluent builder API
+- `MigrationService.MigrationRequestBuilder` — Builder for configuring migrations
+- `DefaultMigrationService` — Thread-safe implementation with metrics integration
+- `MigrationResult` — Immutable result object with success/failure, data, versions, duration, error
+- Fluent API: `.migrate(data).from(version).to(version).execute()`
+- Domain selection: `.usingDomain("game")` for multi-domain setups
+- Latest version resolution: `.toLatest()` resolves at execution time
+- Async execution: `.executeAsync()` returns `CompletableFuture<MigrationResult>`
+- Custom DynamicOps: `.withOps(ops)` for custom serialization
+
+**Multi-Domain Support (`spring.autoconfigure`):**
+- `DataFixerRegistry` — Thread-safe registry for managing multiple DataFixer instances
+- Support for `@Qualifier` annotated bootstrap beans
+- `createQualifiedFixer()` factory method for domain-specific DataFixer creation
+- Domain availability checking via `hasDomain()` and `getAvailableDomains()`
+- Default domain ("default") for single-bootstrap setups
+
+**Actuator Integration (`spring.actuator`):**
+- `DataFixerHealthIndicator` — Reports UP/DOWN/UNKNOWN based on DataFixer operational status
+- `DataFixerInfoContributor` — Adds `aether-datafixers` section to `/actuator/info`
+- `DataFixerEndpoint` — Custom endpoint at `/actuator/datafixers` with domain details
+- Per-domain health status and version information
+- Domain-specific endpoint: `/actuator/datafixers/{domain}`
+- Fail-fast on first domain error with detailed error message
+
+**Micrometer Metrics (`spring.metrics`):**
+- `MigrationMetrics` — Records migration metrics using Micrometer
+- `aether.datafixers.migrations.success` — Counter for successful migrations (tagged by domain)
+- `aether.datafixers.migrations.failure` — Counter for failed migrations (tagged by domain, error_type)
+- `aether.datafixers.migrations.duration` — Timer for migration execution time
+- `aether.datafixers.migrations.version.span` — Distribution summary of version spans
+- Automatic metric recording in `DefaultMigrationService`
+- Thread-safe meter caching per domain
+
+### Documentation
+
+- Added comprehensive Spring Boot Integration documentation
+- Quick Start Guide with complete code examples
+- Configuration Reference for all `aether.datafixers.*` properties
+- MigrationService API documentation with sync/async patterns
+- Multi-Domain Setup guide with `@Qualifier` examples
+- Actuator Integration guide with security recommendations
+- Metrics Integration guide with PromQL queries, Grafana dashboard, and alerting rules
+- Updated main documentation with Spring Boot module links
+
+---
+
 ## [0.3.0] - 2026-01-08
 
 ### Added

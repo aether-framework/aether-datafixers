@@ -47,6 +47,11 @@
                 <artifactId>aether-datafixers-cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>de.splatgames.aether.datafixers</groupId>
+                <artifactId>aether-datafixers-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
