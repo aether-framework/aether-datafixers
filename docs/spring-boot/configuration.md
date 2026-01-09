@@ -8,14 +8,14 @@ All properties use the prefix `aether.datafixers`.
 
 ## Property Summary
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `enabled` | boolean | `true` | Enable/disable auto-configuration |
-| `default-format` | enum | `GSON` | Default serialization format |
-| `default-current-version` | Integer | `null` | Fallback version for all domains |
-| `domains.<name>.*` | Map | `{}` | Per-domain configuration |
-| `actuator.*` | object | — | Actuator settings |
-| `metrics.*` | object | — | Metrics settings |
+| Property                  | Type    | Default | Description                       |
+|---------------------------|---------|---------|-----------------------------------|
+| `enabled`                 | boolean | `true`  | Enable/disable auto-configuration |
+| `default-format`          | enum    | `GSON`  | Default serialization format      |
+| `default-current-version` | Integer | `null`  | Fallback version for all domains  |
+| `domains.<name>.*`        | Map     | `{}`    | Per-domain configuration          |
+| `actuator.*`              | object  | —       | Actuator settings                 |
+| `metrics.*`               | object  | —       | Metrics settings                  |
 
 ---
 

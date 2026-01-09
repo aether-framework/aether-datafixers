@@ -19,11 +19,11 @@ Add Spring Boot Actuator to your project:
 
 ## Available Components
 
-| Component | Endpoint | Description |
-|-----------|----------|-------------|
-| Health Indicator | `/actuator/health` | Reports UP/DOWN status for all DataFixer domains |
-| Info Contributor | `/actuator/info` | Adds DataFixer metadata to the info endpoint |
-| Custom Endpoint | `/actuator/datafixers` | Dedicated endpoint for DataFixer management |
+| Component        | Endpoint               | Description                                      |
+|------------------|------------------------|--------------------------------------------------|
+| Health Indicator | `/actuator/health`     | Reports UP/DOWN status for all DataFixer domains |
+| Info Contributor | `/actuator/info`       | Adds DataFixer metadata to the info endpoint     |
+| Custom Endpoint  | `/actuator/datafixers` | Dedicated endpoint for DataFixer management      |
 
 ---
 
@@ -115,11 +115,11 @@ GET /actuator/health
 
 ### Health Status Semantics
 
-| Status | Meaning |
-|--------|---------|
-| `UP` | All DataFixers operational |
-| `DOWN` | At least one DataFixer failed |
-| `UNKNOWN` | No DataFixers registered |
+| Status    | Meaning                       |
+|-----------|-------------------------------|
+| `UP`      | All DataFixers operational    |
+| `DOWN`    | At least one DataFixer failed |
+| `UNKNOWN` | No DataFixers registered      |
 
 ### Kubernetes Integration
 
@@ -245,10 +245,10 @@ management:
 
 ### Operations
 
-| HTTP Method | Path | Description |
-|-------------|------|-------------|
-| GET | `/actuator/datafixers` | Summary of all domains |
-| GET | `/actuator/datafixers/{domain}` | Details for specific domain |
+| HTTP Method | Path                            | Description                 |
+|-------------|---------------------------------|-----------------------------|
+| GET         | `/actuator/datafixers`          | Summary of all domains      |
+| GET         | `/actuator/datafixers/{domain}` | Details for specific domain |
 
 ### Summary Response
 

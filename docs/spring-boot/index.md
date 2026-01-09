@@ -4,14 +4,14 @@ The `aether-datafixers-spring-boot-starter` module provides seamless integration
 
 ## Key Features
 
-| Feature | Description |
-|---------|-------------|
-| **Auto-Configuration** | Automatic setup of DataFixer beans from `DataFixerBootstrap` definitions |
-| **Fluent Migration API** | High-level `MigrationService` with builder pattern |
-| **Multi-Domain Support** | Independent DataFixer instances for different data types |
-| **Actuator Integration** | Health indicators, info contributors, and custom endpoints |
-| **Micrometer Metrics** | Success/failure counters, timing, and version span tracking |
-| **Async Execution** | Non-blocking migration with `CompletableFuture` support |
+| Feature                  | Description                                                              |
+|--------------------------|--------------------------------------------------------------------------|
+| **Auto-Configuration**   | Automatic setup of DataFixer beans from `DataFixerBootstrap` definitions |
+| **Fluent Migration API** | High-level `MigrationService` with builder pattern                       |
+| **Multi-Domain Support** | Independent DataFixer instances for different data types                 |
+| **Actuator Integration** | Health indicators, info contributors, and custom endpoints               |
+| **Micrometer Metrics**   | Success/failure counters, timing, and version span tracking              |
+| **Async Execution**      | Non-blocking migration with `CompletableFuture` support                  |
 
 ---
 
@@ -138,13 +138,13 @@ The Spring Boot starter organizes components into the following layers:
 
 ## Auto-Configuration Classes
 
-| Configuration Class | Purpose |
-|---------------------|---------|
-| `AetherDataFixersAutoConfiguration` | Main entry point, imports all sub-configurations |
-| `DynamicOpsAutoConfiguration` | Creates `GsonOps` and `JacksonOps` beans |
-| `DataFixerAutoConfiguration` | Creates `AetherDataFixer` beans from bootstraps |
-| `MigrationServiceAutoConfiguration` | Creates the `MigrationService` bean |
-| `ActuatorAutoConfiguration` | Creates health indicators, info contributors, and endpoints |
+| Configuration Class                 | Purpose                                                     |
+|-------------------------------------|-------------------------------------------------------------|
+| `AetherDataFixersAutoConfiguration` | Main entry point, imports all sub-configurations            |
+| `DynamicOpsAutoConfiguration`       | Creates `GsonOps` and `JacksonOps` beans                    |
+| `DataFixerAutoConfiguration`        | Creates `AetherDataFixer` beans from bootstraps             |
+| `MigrationServiceAutoConfiguration` | Creates the `MigrationService` bean                         |
+| `ActuatorAutoConfiguration`         | Creates health indicators, info contributors, and endpoints |
 
 ---
 
@@ -167,20 +167,20 @@ aether:
 
 ## Requirements
 
-| Requirement | Version |
-|-------------|---------|
-| Java | 17+ |
-| Spring Boot | 3.0+ |
-| Spring Framework | 6.0+ |
+| Requirement      | Version |
+|------------------|---------|
+| Java             | 17+     |
+| Spring Boot      | 3.0+    |
+| Spring Framework | 6.0+    |
 
 ### Optional Dependencies
 
-| Dependency | Purpose |
-|------------|---------|
+| Dependency                     | Purpose                                                |
+|--------------------------------|--------------------------------------------------------|
 | `spring-boot-starter-actuator` | Health indicators, info contributors, custom endpoints |
-| `micrometer-core` | Migration metrics recording |
-| `gson` | JSON support via `GsonOps` |
-| `jackson-databind` | JSON support via `JacksonOps` |
+| `micrometer-core`              | Migration metrics recording                            |
+| `gson`                         | JSON support via `GsonOps`                             |
+| `jackson-databind`             | JSON support via `JacksonOps`                          |
 
 ---
 
