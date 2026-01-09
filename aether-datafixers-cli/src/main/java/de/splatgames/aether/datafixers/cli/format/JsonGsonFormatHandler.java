@@ -56,7 +56,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>This handler is thread-safe. The internal {@link Gson} instances are
  * immutable and can be safely shared across threads.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see FormatHandler
  * @see GsonOps
  * @see JsonJacksonFormatHandler

@@ -139,7 +139,7 @@
  *       - Configuration properties binding class</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersAutoConfiguration
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties
  * @see de.splatgames.aether.datafixers.spring.service.MigrationService

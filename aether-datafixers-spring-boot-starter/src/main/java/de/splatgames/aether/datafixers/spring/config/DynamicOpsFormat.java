@@ -60,7 +60,7 @@ import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
  * of the configured format. The configured format only matters when both libraries
  * are present.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties#getDefaultFormat()
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.DynamicOpsAutoConfiguration
  * @since 0.4.0

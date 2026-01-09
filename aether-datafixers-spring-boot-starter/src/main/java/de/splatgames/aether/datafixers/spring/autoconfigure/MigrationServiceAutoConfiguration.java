@@ -115,7 +115,7 @@ import org.springframework.context.annotation.Configuration;
  * <p>This configuration runs after {@link DataFixerAutoConfiguration} to ensure that
  * the {@link DataFixerRegistry} and {@link AetherDataFixer} beans are available.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see MigrationService
  * @see DefaultMigrationService
  * @see MigrationMetrics

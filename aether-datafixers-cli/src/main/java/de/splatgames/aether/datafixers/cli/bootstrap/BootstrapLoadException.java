@@ -26,7 +26,7 @@ package de.splatgames.aether.datafixers.cli.bootstrap;
  * Exception thrown when loading a {@link de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap}
  * implementation fails.
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @since 0.3.0
  */
 public class BootstrapLoadException extends RuntimeException {

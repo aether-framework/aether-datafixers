@@ -200,7 +200,7 @@ import java.util.stream.StreamSupport;
  *       which may employ caching for common values</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see de.splatgames.aether.datafixers.api.dynamic.Dynamic
  * @see JsonNode

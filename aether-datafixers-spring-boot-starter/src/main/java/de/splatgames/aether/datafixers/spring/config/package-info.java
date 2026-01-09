@@ -69,7 +69,7 @@
  *   <li>{@code default-current-version} from global properties</li>
  * </ol>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties
  * @see de.splatgames.aether.datafixers.spring.config.DynamicOpsFormat
  * @see de.splatgames.aether.datafixers.spring.config.DataFixerDomainProperties

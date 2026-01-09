@@ -208,7 +208,7 @@ import java.util.stream.StreamSupport;
  *   <tr><td>Configuration flexibility</td><td>High (via ObjectMapper)</td><td>Low</td></tr>
  * </table>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see de.splatgames.aether.datafixers.api.dynamic.Dynamic
  * @see JsonNode

@@ -176,7 +176,7 @@
  * <p>All actuator components in this package are thread-safe and can handle
  * concurrent requests from multiple HTTP threads.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.actuator.DataFixerHealthIndicator
  * @see de.splatgames.aether.datafixers.spring.actuator.DataFixerInfoContributor
  * @see de.splatgames.aether.datafixers.spring.actuator.DataFixerEndpoint

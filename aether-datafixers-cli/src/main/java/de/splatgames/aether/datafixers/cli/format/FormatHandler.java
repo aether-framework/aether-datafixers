@@ -67,7 +67,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>Register in {@code META-INF/services/de.splatgames.aether.datafixers.cli.format.FormatHandler}</p>
  *
  * @param <T> the underlying data representation type
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @since 0.3.0
  */
 public interface FormatHandler<T> {

@@ -193,7 +193,7 @@ import java.util.stream.Stream;
  *       highly optimized in modern JVMs and has negligible performance impact.</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see de.splatgames.aether.datafixers.api.dynamic.Dynamic
  * @see DataResult

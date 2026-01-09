@@ -105,7 +105,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This allows applications to start simple and migrate to multi-domain later without
  * changing their code.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see AetherDataFixer
  * @see DataFixerAutoConfiguration
  * @see de.splatgames.aether.datafixers.spring.config.DataFixerDomainProperties

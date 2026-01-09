@@ -65,7 +65,7 @@ import org.jetbrains.annotations.NotNull;
  * <h2>Thread Safety</h2>
  * <p>This class is stateless and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DataVersion
  * @see Dynamic
  * @since 0.3.0

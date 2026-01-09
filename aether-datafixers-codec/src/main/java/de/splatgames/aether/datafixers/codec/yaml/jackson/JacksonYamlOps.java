@@ -210,7 +210,7 @@ import java.util.stream.StreamSupport;
  *   <li>Data can be freely converted between the two formats since both use {@link JsonNode}</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see de.splatgames.aether.datafixers.api.dynamic.Dynamic
  * @see JsonNode

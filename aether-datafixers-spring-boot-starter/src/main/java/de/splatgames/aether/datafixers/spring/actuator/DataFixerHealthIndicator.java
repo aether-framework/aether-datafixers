@@ -122,7 +122,7 @@ import java.util.Map;
  * <p>This class is thread-safe. The underlying {@link DataFixerRegistry} uses
  * thread-safe data structures, and the health check method is stateless.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see HealthIndicator
  * @see DataFixerRegistry
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.ActuatorAutoConfiguration

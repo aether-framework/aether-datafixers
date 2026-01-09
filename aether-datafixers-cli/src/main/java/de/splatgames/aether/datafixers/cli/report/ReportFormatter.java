@@ -46,7 +46,7 @@ import java.time.Duration;
  * String report = formatter.formatSimple("player.json", "player", 100, 200, duration);
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see TextReportFormatter
  * @see JsonReportFormatter
  * @since 0.3.0

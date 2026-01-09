@@ -62,7 +62,7 @@ import java.util.Objects;
  * <h2>Thread Safety</h2>
  * <p>This class is immutable and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see TypeDiff
  * @see FieldInfo
  * @since 0.3.0

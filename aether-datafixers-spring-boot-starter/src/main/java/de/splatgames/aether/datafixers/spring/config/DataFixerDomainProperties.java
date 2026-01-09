@@ -72,7 +72,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>This class is mutable and not thread-safe. It is designed to be configured
  * during application startup through Spring's property binding mechanism.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry
  * @since 0.4.0

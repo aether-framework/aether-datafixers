@@ -32,7 +32,7 @@ package de.splatgames.aether.datafixers.schematools.validation;
  *   <li>{@link #INFO} - Informational, suggestions or notes</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ValidationIssue
  * @since 0.3.0
  */

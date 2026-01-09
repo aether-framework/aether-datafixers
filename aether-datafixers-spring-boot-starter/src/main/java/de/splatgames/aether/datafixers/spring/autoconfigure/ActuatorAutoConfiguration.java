@@ -142,7 +142,7 @@ import org.springframework.context.annotation.Configuration;
  *         include: health, info         # Exclude datafixers from public access
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DataFixerHealthIndicator
  * @see DataFixerInfoContributor
  * @see DataFixerEndpoint
@@ -166,7 +166,7 @@ public class ActuatorAutoConfiguration {
      * <p>Activated when the health indicator is enabled via
      * {@code management.health.datafixer.enabled=true} (enabled by default).</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -197,7 +197,7 @@ public class ActuatorAutoConfiguration {
      * <p>Activated when the info contributor is enabled via
      * {@code management.info.datafixer.enabled=true} (enabled by default).</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -228,7 +228,7 @@ public class ActuatorAutoConfiguration {
      * <p>Activated when the endpoint is available (exposed and not disabled).
      * The endpoint provides detailed DataFixer information at {@code /actuator/datafixers}.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -263,7 +263,7 @@ public class ActuatorAutoConfiguration {
      * are automatically integrated with the {@link de.splatgames.aether.datafixers.spring.service.MigrationService}
      * to record migration statistics.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)

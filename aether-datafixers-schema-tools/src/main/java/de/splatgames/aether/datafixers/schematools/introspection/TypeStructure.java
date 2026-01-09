@@ -66,7 +66,7 @@ import java.util.Objects;
  * <h2>Thread Safety</h2>
  * <p>This class is immutable and thread-safe.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see TypeIntrospector
  * @see FieldInfo
  * @since 0.3.0
@@ -379,7 +379,7 @@ public final class TypeStructure {
      * <p><b>Thread Safety:</b>
      * Builders are not thread-safe and should not be shared between threads.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.3.0
      */
     public static final class Builder {

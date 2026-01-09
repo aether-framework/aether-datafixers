@@ -68,7 +68,7 @@ import org.springframework.context.annotation.Import;
  * }
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see AetherDataFixersProperties
  * @see DynamicOpsAutoConfiguration
  * @see DataFixerAutoConfiguration

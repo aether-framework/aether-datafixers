@@ -240,7 +240,7 @@ import java.util.stream.StreamSupport;
  *       instance rather than creating new ones</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see de.splatgames.aether.datafixers.api.dynamic.Dynamic
  * @see JsonNode

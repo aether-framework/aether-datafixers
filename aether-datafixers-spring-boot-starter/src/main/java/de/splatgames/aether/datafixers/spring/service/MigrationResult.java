@@ -123,7 +123,7 @@ import java.util.Optional;
  * <p>This class does not override {@code equals()} and {@code hashCode()}.
  * Each instance is unique and identity-based comparison is used.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see MigrationService
  * @see MigrationService.MigrationRequestBuilder
  * @since 0.4.0

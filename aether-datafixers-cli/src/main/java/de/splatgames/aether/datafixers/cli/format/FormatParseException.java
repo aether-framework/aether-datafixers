@@ -25,7 +25,7 @@ package de.splatgames.aether.datafixers.cli.format;
 /**
  * Exception thrown when parsing input data fails.
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @since 0.3.0
  */
 public class FormatParseException extends RuntimeException {

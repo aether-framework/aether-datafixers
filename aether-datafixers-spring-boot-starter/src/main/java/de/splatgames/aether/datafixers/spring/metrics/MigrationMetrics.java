@@ -140,7 +140,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>Version span summaries: 1 per domain</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see io.micrometer.core.instrument.MeterRegistry
  * @see de.splatgames.aether.datafixers.spring.service.MigrationService
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties.MetricsProperties

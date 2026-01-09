@@ -175,7 +175,7 @@ import java.util.Map;
  *   <li>Register each fixer in the registry</li>
  * </ol>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DataFixerBootstrap
  * @see AetherDataFixer
  * @see DataFixerRegistry

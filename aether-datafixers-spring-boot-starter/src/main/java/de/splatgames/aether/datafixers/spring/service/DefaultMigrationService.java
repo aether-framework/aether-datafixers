@@ -96,7 +96,7 @@ import java.util.concurrent.ForkJoinPool;
  * This allows for consistent handling of both successful and failed migrations. Validation
  * errors (missing configuration) are thrown as exceptions.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see MigrationService
  * @see MigrationResult
  * @see DataFixerRegistry
@@ -262,7 +262,7 @@ public class DefaultMigrationService implements MigrationService {
      * <p>This builder is NOT thread-safe. Each thread should obtain its own
      * builder instance from {@link #migrate(TaggedDynamic)}.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     private class DefaultMigrationRequestBuilder implements MigrationRequestBuilder {

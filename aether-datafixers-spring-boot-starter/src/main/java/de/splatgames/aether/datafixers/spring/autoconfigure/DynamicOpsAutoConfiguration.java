@@ -136,7 +136,7 @@ import org.springframework.context.annotation.Primary;
  * }</pre>
  * <p>This will prevent the auto-configured default from being created.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DynamicOps
  * @see GsonOps
  * @see JacksonJsonOps
@@ -159,7 +159,7 @@ public class DynamicOpsAutoConfiguration {
      * It provides both the specific {@link GsonOps} bean and conditionally sets it
      * as the primary {@link DynamicOps} based on the default-format configuration.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -214,7 +214,7 @@ public class DynamicOpsAutoConfiguration {
      * It provides both the specific {@link JacksonJsonOps} bean (with Spring ObjectMapper
      * integration) and conditionally sets it as the primary {@link DynamicOps}.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -280,7 +280,7 @@ public class DynamicOpsAutoConfiguration {
      *
      * <p>This configuration is activated only when Jackson YAML is available on the classpath.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -315,7 +315,7 @@ public class DynamicOpsAutoConfiguration {
      *
      * <p>This configuration is activated only when SnakeYAML is available on the classpath.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -346,7 +346,7 @@ public class DynamicOpsAutoConfiguration {
      *
      * <p>This configuration is activated only when Jackson TOML is available on the classpath.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)
@@ -381,7 +381,7 @@ public class DynamicOpsAutoConfiguration {
      *
      * <p>This configuration is activated only when Jackson XML is available on the classpath.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @since 0.4.0
      */
     @Configuration(proxyBeanMethods = false)

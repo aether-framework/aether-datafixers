@@ -80,7 +80,7 @@ import java.util.Set;
  * <h2>Thread Safety</h2>
  * <p>This class is not thread-safe. Create a new instance for each analysis.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see MigrationPath
  * @see FixCoverage
  * @since 0.3.0

@@ -65,7 +65,7 @@ import org.jetbrains.annotations.NotNull;
  *   <li>Performance is critical (Jackson is generally faster for large documents)</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see FormatHandler
  * @see JacksonJsonOps
  * @see JsonGsonFormatHandler

@@ -111,7 +111,7 @@ import java.util.Map;
  * <p>This class is thread-safe. The contribute method is stateless and the underlying
  * {@link DataFixerRegistry} uses thread-safe data structures.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see InfoContributor
  * @see DataFixerRegistry
  * @see de.splatgames.aether.datafixers.spring.autoconfigure.ActuatorAutoConfiguration

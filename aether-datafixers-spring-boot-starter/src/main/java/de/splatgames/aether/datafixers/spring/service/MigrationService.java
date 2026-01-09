@@ -140,7 +140,7 @@ import java.util.concurrent.CompletableFuture;
  * {@link DefaultMigrationService} implementation is fully thread-safe and can
  * be safely shared across multiple threads and used concurrently.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see MigrationResult
  * @see MigrationRequestBuilder
  * @see DefaultMigrationService
@@ -260,7 +260,7 @@ public interface MigrationService {
      * <p>Builder instances are NOT thread-safe. Each thread should obtain its
      * own builder instance from {@link MigrationService#migrate(TaggedDynamic)}.</p>
      *
-     * @author Erik Pfoertner
+     * @author Erik Pförtner
      * @see MigrationService
      * @see MigrationResult
      * @since 0.4.0

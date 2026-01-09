@@ -99,7 +99,7 @@
  * <p>Custom beans prevent auto-configured beans from being created due to
  * {@code @ConditionalOnMissingBean} annotations.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersAutoConfiguration
  * @see de.splatgames.aether.datafixers.spring.AetherDataFixersProperties
  * @since 0.4.0

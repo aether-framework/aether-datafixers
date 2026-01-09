@@ -47,7 +47,7 @@ import java.time.Duration;
  *   <li>{@code (42ms)} - Migration duration in milliseconds</li>
  * </ul>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ReportFormatter
  * @see JsonReportFormatter
  * @since 0.3.0

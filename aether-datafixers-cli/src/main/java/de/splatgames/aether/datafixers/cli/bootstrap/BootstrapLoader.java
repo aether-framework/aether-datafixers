@@ -61,7 +61,7 @@ import java.util.ServiceLoader;
  * }
  * }</pre>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see DataFixerBootstrap
  * @see BootstrapLoadException
  * @see java.util.ServiceLoader

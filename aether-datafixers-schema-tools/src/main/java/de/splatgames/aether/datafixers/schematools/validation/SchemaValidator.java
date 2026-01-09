@@ -75,7 +75,7 @@ import org.jetbrains.annotations.NotNull;
  * <h2>Thread Safety</h2>
  * <p>This class is not thread-safe. Create a new instance for each validation.</p>
  *
- * @author Erik Pfoertner
+ * @author Erik Pförtner
  * @see ValidationResult
  * @see ConventionRules
  * @since 0.3.0
