@@ -1129,13 +1129,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return type;
+            return this.type;
         }
 
         @NotNull
         @Override
         public String describe() {
-            return name;
+            return this.name;
         }
     }
 
@@ -1160,13 +1160,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return family.apply(index);
+            return family.apply(this.index);
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "µ" + index;
+            return "µ" + this.index;
         }
     }
 
@@ -1193,13 +1193,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return Type.product(first.apply(family), second.apply(family));
+            return Type.product(this.first.apply(family), this.second.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "(" + first.describe() + " × " + second.describe() + ")";
+            return "(" + this.first.describe() + " × " + this.second.describe() + ")";
         }
     }
 
@@ -1226,13 +1226,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return Type.sum(left.apply(family), right.apply(family));
+            return Type.sum(this.left.apply(family), this.right.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "(" + left.describe() + " + " + right.describe() + ")";
+            return "(" + this.left.describe() + " + " + this.right.describe() + ")";
         }
     }
 
@@ -1255,13 +1255,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return Type.list(element.apply(family));
+            return Type.list(this.element.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "List<" + element.describe() + ">";
+            return "List<" + this.element.describe() + ">";
         }
     }
 
@@ -1285,13 +1285,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return Type.optional(element.apply(family));
+            return Type.optional(this.element.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "Optional<" + element.describe() + ">";
+            return "Optional<" + this.element.describe() + ">";
         }
     }
 
@@ -1321,14 +1321,14 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            final Type<?> fieldType = type.apply(family);
-            return optional ? Type.optionalField(name, fieldType) : Type.field(name, fieldType);
+            final Type<?> fieldType = this.type.apply(family);
+            return this.optional ? Type.optionalField(this.name, fieldType) : Type.field(this.name, fieldType);
         }
 
         @NotNull
         @Override
         public String describe() {
-            return (optional ? "?" : "") + name + ": " + type.describe();
+            return (this.optional ? "?" : "") + this.name + ": " + this.type.describe();
         }
     }
 
@@ -1354,13 +1354,13 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            return Type.named(name, template.apply(family));
+            return Type.named(this.name, this.template.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return name + "=" + template.describe();
+            return this.name + "=" + this.template.describe();
         }
     }
 
@@ -1411,12 +1411,12 @@ public final class DSL {
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
             Preconditions.checkNotNull(family, "family must not be null");
-            final Map<String, Type<?>> resolvedChoices = choices.entrySet().stream()
+            final Map<String, Type<?>> resolvedChoices = this.choices.entrySet().stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             entry -> entry.getValue().apply(family)
                     ));
-            return Type.taggedChoice(tagField, resolvedChoices);
+            return Type.taggedChoice(this.tagField, resolvedChoices);
         }
 
         @NotNull
@@ -1425,7 +1425,7 @@ public final class DSL {
             final String choicesStr = choices.entrySet().stream()
                     .map(e -> e.getKey() + " -> " + e.getValue().describe())
                     .collect(Collectors.joining(", "));
-            return "TaggedChoice<" + tagField + ">{" + choicesStr + "}";
+            return "TaggedChoice<" + this.tagField + ">{" + choicesStr + "}";
         }
     }
 
@@ -1470,7 +1470,7 @@ public final class DSL {
                         return name;
                     }
                 };
-                return definition.apply(selfRef).apply(family);
+                return this.definition.apply(selfRef).apply(family);
             });
             return recursiveFamily.apply(0);
         }
@@ -1478,7 +1478,7 @@ public final class DSL {
         @NotNull
         @Override
         public String describe() {
-            return "µ" + name + "." + definition.apply(id(0)).describe();
+            return "µ" + this.name + "." + this.definition.apply(id(0)).describe();
         }
     }
 }

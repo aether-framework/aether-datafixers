@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.core.diagnostic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
 import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
@@ -73,19 +74,13 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
 
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
-        if (message == null) {
-            throw new NullPointerException("message must not be null");
-        }
-
+        Preconditions.checkNotNull(message, "message must not be null");
         this.logs.add(new LogEntry(LogLevel.INFO, message, args));
     }
 
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
-        if (message == null) {
-            throw new NullPointerException("message must not be null");
-        }
-
+        Preconditions.checkNotNull(message, "message must not be null");
         this.logs.add(new LogEntry(LogLevel.WARN, message, args));
         this.reportBuilder.addWarning(formatMessage(message, args));
     }
@@ -282,6 +277,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
             return DiagnosticContextImpl.formatMessage(this.message, this.args);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return String.format("[%s] %s", this.level, this.formattedMessage());

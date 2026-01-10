@@ -105,7 +105,7 @@ public final class BatchTransform<T> {
     public BatchTransform<T> rename(@NotNull final String from, @NotNull final String to) {
         Preconditions.checkNotNull(from, "from must not be null");
         Preconditions.checkNotNull(to, "to must not be null");
-        operations.add(new RenameOp<>(from, to));
+        this.operations.add(new RenameOp<>(from, to));
         return this;
     }
 
@@ -121,7 +121,7 @@ public final class BatchTransform<T> {
     @NotNull
     public BatchTransform<T> remove(@NotNull final String field) {
         Preconditions.checkNotNull(field, "field must not be null");
-        operations.add(new RemoveOp<>(field));
+        this.operations.add(new RemoveOp<>(field));
         return this;
     }
 
@@ -141,7 +141,7 @@ public final class BatchTransform<T> {
                                  @NotNull final Function<Dynamic<T>, Dynamic<T>> valueSupplier) {
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(valueSupplier, "valueSupplier must not be null");
-        operations.add(new SetOp<>(field, valueSupplier));
+        this.operations.add(new SetOp<>(field, valueSupplier));
         return this;
     }
 
@@ -160,7 +160,7 @@ public final class BatchTransform<T> {
                                        @NotNull final Dynamic<T> value) {
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-        operations.add(new SetOp<>(field, d -> value));
+        this.operations.add(new SetOp<>(field, d -> value));
         return this;
     }
 
@@ -180,7 +180,7 @@ public final class BatchTransform<T> {
                                        @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
-        operations.add(new TransformOp<>(field, transform));
+        this.operations.add(new TransformOp<>(field, transform));
         return this;
     }
 
@@ -200,7 +200,7 @@ public final class BatchTransform<T> {
                                           @NotNull final Function<Dynamic<T>, Dynamic<T>> valueSupplier) {
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(valueSupplier, "valueSupplier must not be null");
-        operations.add(new AddIfMissingOp<>(field, valueSupplier));
+        this.operations.add(new AddIfMissingOp<>(field, valueSupplier));
         return this;
     }
 
@@ -217,7 +217,7 @@ public final class BatchTransform<T> {
                                                 @NotNull final Dynamic<T> value) {
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-        operations.add(new AddIfMissingOp<>(field, d -> value));
+        this.operations.add(new AddIfMissingOp<>(field, d -> value));
         return this;
     }
 
@@ -235,7 +235,7 @@ public final class BatchTransform<T> {
         Preconditions.checkNotNull(input, "input must not be null");
 
         Dynamic<T> result = input;
-        for (final FieldOperation<T> op : operations) {
+        for (final FieldOperation<T> op : this.operations) {
             result = op.apply(result);
         }
         return result;
@@ -247,7 +247,7 @@ public final class BatchTransform<T> {
      * @return the operation count
      */
     public int size() {
-        return operations.size();
+        return this.operations.size();
     }
 
     /**
@@ -256,7 +256,7 @@ public final class BatchTransform<T> {
      * @return {@code true} if empty, {@code false} otherwise
      */
     public boolean isEmpty() {
-        return operations.isEmpty();
+        return this.operations.isEmpty();
     }
 
     // ==================== Internal Operation Classes ====================
@@ -277,11 +277,11 @@ public final class BatchTransform<T> {
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
             Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-            final Dynamic<T> value = dynamic.get(from);
+            final Dynamic<T> value = dynamic.get(this.from);
             if (value == null) {
                 return dynamic;
             }
-            return dynamic.remove(from).set(to, value);
+            return dynamic.remove(this.from).set(this.to, value);
         }
     }
 
@@ -293,7 +293,7 @@ public final class BatchTransform<T> {
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
             Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-            return dynamic.remove(field);
+            return dynamic.remove(this.field);
         }
     }
 
@@ -305,7 +305,7 @@ public final class BatchTransform<T> {
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
             Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-            return dynamic.set(field, valueSupplier.apply(dynamic));
+            return dynamic.set(this.field, this.valueSupplier.apply(dynamic));
         }
     }
 
@@ -318,11 +318,11 @@ public final class BatchTransform<T> {
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
             Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-            final Dynamic<T> value = dynamic.get(field);
+            final Dynamic<T> value = dynamic.get(this.field);
             if (value == null) {
                 return dynamic;
             }
-            return dynamic.set(field, transform.apply(value));
+            return dynamic.set(this.field, this.transform.apply(value));
         }
     }
 
@@ -335,10 +335,10 @@ public final class BatchTransform<T> {
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
             Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-            if (dynamic.get(field) != null) {
+            if (dynamic.get(this.field) != null) {
                 return dynamic;
             }
-            return dynamic.set(field, valueSupplier.apply(dynamic));
+            return dynamic.set(this.field, this.valueSupplier.apply(dynamic));
         }
     }
 }

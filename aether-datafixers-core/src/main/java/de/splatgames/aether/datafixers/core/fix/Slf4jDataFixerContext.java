@@ -109,15 +109,15 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
 
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
-        if (logger.isInfoEnabled()) {
-            logger.info(formatMessage(message, args));
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info(formatMessage(message, args));
         }
     }
 
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
-        if (logger.isWarnEnabled()) {
-            logger.warn(formatMessage(message, args));
+        if (this.logger.isWarnEnabled()) {
+            this.logger.warn(formatMessage(message, args));
         }
     }
 
@@ -128,7 +128,7 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
      */
     @NotNull
     public Logger getLogger() {
-        return logger;
+        return this.logger;
     }
 
     private static String formatMessage(String message, Object... args) {

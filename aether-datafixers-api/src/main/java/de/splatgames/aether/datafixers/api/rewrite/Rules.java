@@ -1570,7 +1570,7 @@ public final class Rules {
             for (final var entry : entries) {
                 final String key = entry.first().asString().result().orElse(null);
                 if (key != null) {
-                    @SuppressWarnings("unchecked") final Dynamic<T> value = (Dynamic<T>) entry.second();
+                    final Dynamic<T> value = entry.second();
                     result = result.set(key, value);
                 }
             }
@@ -1894,7 +1894,6 @@ public final class Rules {
         return new TypeRewriteRule() {
             @Override
             @NotNull
-            @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
@@ -1950,7 +1949,6 @@ public final class Rules {
         return new TypeRewriteRule() {
             @Override
             @NotNull
-            @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
@@ -2011,7 +2009,6 @@ public final class Rules {
         return new TypeRewriteRule() {
             @Override
             @NotNull
-            @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
