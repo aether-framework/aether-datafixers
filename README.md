@@ -570,7 +570,8 @@ mvn test
   - **Multi-format DynamicOps** — YAML (SnakeYAML, Jackson), TOML (Jackson), XML (Jackson)
   - **Package restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
 
-- **v0.5.0** (next, API freeze candidate)
+- **v0.5.0** (next, API freeze candidate – expect one last missed out feature)
+  - **Codec integration** — Integration of extra codecs for aether-datafixers-testkit and aether-datafixers-cli
   - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
   - **Compatibility checks in CI** — Binary/source compatibility guardrails for public API
   - **Hardened error model** — Consistent exception types + structured error details
