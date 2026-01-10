@@ -454,13 +454,13 @@ registerType(TypeReferences.CONFIG, DSL.and(
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Type` | Associates TypeReference with Codec |
-| `TypeRegistry` | Maps TypeReference → Type |
-| `TypeTemplate` | Blueprint for creating Types |
-| `SimpleType` | Default Type implementation |
-| `Typed<A>` | Wrapper combining value with type |
+| Component      | Purpose                             |
+|----------------|-------------------------------------|
+| `Type`         | Associates TypeReference with Codec |
+| `TypeRegistry` | Maps TypeReference → Type           |
+| `TypeTemplate` | Blueprint for creating Types        |
+| `SimpleType`   | Default Type implementation         |
+| `Typed<A>`     | Wrapper combining value with type   |
 
 ---
 

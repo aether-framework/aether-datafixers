@@ -8,13 +8,13 @@ Aether Datafixers is inspired by DFU but designed to be more accessible and ligh
 
 ## Key Differences
 
-| Aspect | DFU | Aether Datafixers |
-|--------|-----|-------------------|
-| Learning curve | Steep | Moderate |
-| Documentation | Limited | Comprehensive |
-| API complexity | Complex | Simplified |
-| Dependencies | Minimal | Minimal |
-| Use case | Minecraft | General purpose |
+| Aspect         | DFU       | Aether Datafixers |
+|----------------|-----------|-------------------|
+| Learning curve | Steep     | Moderate          |
+| Documentation  | Limited   | Comprehensive     |
+| API complexity | Complex   | Simplified        |
+| Dependencies   | Minimal   | Minimal           |
+| Use case       | Minecraft | General purpose   |
 
 ## Simplified APIs
 

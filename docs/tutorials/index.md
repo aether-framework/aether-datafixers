@@ -6,26 +6,26 @@ This section contains step-by-step tutorials that guide you through common tasks
 
 ### Getting Started
 
-| Tutorial | Description | Prerequisites |
-|----------|-------------|---------------|
-| [Basic Migration](basic-migration.md) | Create your first complete migration | Concepts overview |
-| [Multi-Version Migration](multi-version-migration.md) | Chain multiple migrations | Basic migration |
-| [Schema Inheritance](schema-inheritance.md) | Use parent-child schemas | Multi-version migration |
+| Tutorial                                              | Description                          | Prerequisites           |
+|-------------------------------------------------------|--------------------------------------|-------------------------|
+| [Basic Migration](basic-migration.md)                 | Create your first complete migration | Concepts overview       |
+| [Multi-Version Migration](multi-version-migration.md) | Chain multiple migrations            | Basic migration         |
+| [Schema Inheritance](schema-inheritance.md)           | Use parent-child schemas             | Multi-version migration |
 
 ### Working with Codecs
 
-| Tutorial | Description | Prerequisites |
-|----------|-------------|---------------|
-| [Using Codecs](using-codecs.md) | Build and use codecs | Dynamic system |
-| [RecordCodecBuilder](record-codec-builder.md) | Create complex record codecs | Using codecs |
+| Tutorial                                      | Description                  | Prerequisites  |
+|-----------------------------------------------|------------------------------|----------------|
+| [Using Codecs](using-codecs.md)               | Build and use codecs         | Dynamic system |
+| [RecordCodecBuilder](record-codec-builder.md) | Create complex record codecs | Using codecs   |
 
 ### Advanced Patterns
 
-| Tutorial | Description | Prerequisites |
-|----------|-------------|---------------|
-| [Polymorphic Data](polymorphic-data.md) | Handle sum types with TaggedChoice | Schema system, DSL |
-| [Nested Transformations](nested-transformations.md) | Transform deeply nested data | Rewrite rules |
-| [Custom DynamicOps](custom-dynamicops.md) | Support new data formats | Dynamic system |
+| Tutorial                                            | Description                        | Prerequisites      |
+|-----------------------------------------------------|------------------------------------|--------------------|
+| [Polymorphic Data](polymorphic-data.md)             | Handle sum types with TaggedChoice | Schema system, DSL |
+| [Nested Transformations](nested-transformations.md) | Transform deeply nested data       | Rewrite rules      |
+| [Custom DynamicOps](custom-dynamicops.md)           | Support new data formats           | Dynamic system     |
 
 ## Learning Path
 

@@ -311,13 +311,13 @@ public static final TypeReference OBJECT = new TypeReference("object");
 
 ## Summary
 
-| Aspect | Details |
-|--------|---------|
-| **Type** | `record TypeReference(String id)` |
-| **Purpose** | Identify data types for routing |
-| **Usage** | Schema registration, fix routing, tagging data |
-| **Best Practice** | Centralize in `TypeReferences` class |
-| **Immutability** | Immutable, thread-safe |
+| Aspect            | Details                                        |
+|-------------------|------------------------------------------------|
+| **Type**          | `record TypeReference(String id)`              |
+| **Purpose**       | Identify data types for routing                |
+| **Usage**         | Schema registration, fix routing, tagging data |
+| **Best Practice** | Centralize in `TypeReferences` class           |
+| **Immutability**  | Immutable, thread-safe                         |
 
 ---
 

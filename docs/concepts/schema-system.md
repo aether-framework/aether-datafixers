@@ -455,13 +455,13 @@ Schema definitions should never change after release. If you need to modify a ty
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Schema` | Defines types at a specific version |
-| `SchemaRegistry` | Manages all schemas |
-| `TypeRegistry` | Maps TypeReference → Type within a schema |
-| `DSL` | Factory for type templates |
-| Parent Schema | Enables inheritance of unchanged types |
+| Component        | Purpose                                   |
+|------------------|-------------------------------------------|
+| `Schema`         | Defines types at a specific version       |
+| `SchemaRegistry` | Manages all schemas                       |
+| `TypeRegistry`   | Maps TypeReference → Type within a schema |
+| `DSL`            | Factory for type templates                |
+| Parent Schema    | Enables inheritance of unchanged types    |
 
 ---
 

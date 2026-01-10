@@ -428,16 +428,16 @@ DataResult<String> displayName = loadPlayer(id)
 
 ## Summary
 
-| Method | Purpose |
-|--------|---------|
-| `success(value)` | Create success result |
-| `error(message)` | Create error result |
-| `result()` | Get Optional success value |
-| `error()` | Get Optional error |
-| `map(fn)` | Transform success value |
-| `flatMap(fn)` | Chain DataResult operations |
-| `mapError(fn)` | Transform error message |
-| `apply2(other, fn)` | Combine two results |
+| Method                    | Purpose                      |
+|---------------------------|------------------------------|
+| `success(value)`          | Create success result        |
+| `error(message)`          | Create error result          |
+| `result()`                | Get Optional success value   |
+| `error()`                 | Get Optional error           |
+| `map(fn)`                 | Transform success value      |
+| `flatMap(fn)`             | Chain DataResult operations  |
+| `mapError(fn)`            | Transform error message      |
+| `apply2(other, fn)`       | Combine two results          |
 | `resultOrPartial(logger)` | Get value with error logging |
 
 ---

@@ -265,12 +265,12 @@ Lens<Inventory, Item> firstItem = Lens.of(
 
 ## Lens vs Other Optics
 
-| Optic | Focus | When to Use |
-|-------|-------|-------------|
-| **Lens** | Exactly 1 | Required fields |
-| Affine | 0 or 1 | Optional fields |
-| Prism | 0 or 1 | Sum type cases |
-| Traversal | 0 to N | Collections |
+| Optic     | Focus     | When to Use     |
+|-----------|-----------|-----------------|
+| **Lens**  | Exactly 1 | Required fields |
+| Affine    | 0 or 1    | Optional fields |
+| Prism     | 0 or 1    | Sum type cases  |
+| Traversal | 0 to N    | Collections     |
 
 ### When to Use Lens
 
@@ -323,12 +323,12 @@ Player player = modifyIf(playerLevel, player, level -> level < 100, level -> lev
 
 ## Summary
 
-| Method | Description |
-|--------|-------------|
-| `get(S)` | Extract the focused value |
-| `set(S, A)` | Return new structure with updated value |
-| `modify(S, A → A)` | Transform the focused value |
-| `compose(Lens<A, B>)` | Compose with another lens |
+| Method                | Description                             |
+|-----------------------|-----------------------------------------|
+| `get(S)`              | Extract the focused value               |
+| `set(S, A)`           | Return new structure with updated value |
+| `modify(S, A → A)`    | Transform the focused value             |
+| `compose(Lens<A, B>)` | Compose with another lens               |
 
 ---
 

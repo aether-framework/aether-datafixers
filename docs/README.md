@@ -146,17 +146,17 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 
 ## Modules
 
-| Module | Description |
-|--------|-------------|
-| `aether-datafixers-api` | Core interfaces and API contracts |
-| `aether-datafixers-core` | Default implementations |
-| `aether-datafixers-codec` | DynamicOps for JSON, YAML, TOML, XML (Gson, Jackson, SnakeYAML) |
+| Module                                  | Description                                                         |
+|-----------------------------------------|---------------------------------------------------------------------|
+| `aether-datafixers-api`                 | Core interfaces and API contracts                                   |
+| `aether-datafixers-core`                | Default implementations                                             |
+| `aether-datafixers-codec`               | DynamicOps for JSON, YAML, TOML, XML (Gson, Jackson, SnakeYAML)     |
 | `aether-datafixers-spring-boot-starter` | Spring Boot auto-configuration, MigrationService, Actuator, Metrics |
-| `aether-datafixers-cli` | Command-line interface for data migration |
-| `aether-datafixers-testkit` | Testing utilities for DataFix, Schema, and migration testing |
-| `aether-datafixers-schema-tools` | Schema analysis, validation, and diffing utilities |
-| `aether-datafixers-examples` | Practical usage examples |
-| `aether-datafixers-bom` | Bill of Materials for version management |
+| `aether-datafixers-cli`                 | Command-line interface for data migration                           |
+| `aether-datafixers-testkit`             | Testing utilities for DataFix, Schema, and migration testing        |
+| `aether-datafixers-schema-tools`        | Schema analysis, validation, and diffing utilities                  |
+| `aether-datafixers-examples`            | Practical usage examples                                            |
+| `aether-datafixers-bom`                 | Bill of Materials for version management                            |
 
 ---
 

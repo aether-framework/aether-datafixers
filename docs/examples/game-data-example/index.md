@@ -6,11 +6,11 @@ A complete example demonstrating player data migration across three versions.
 
 This example shows how to migrate game player data:
 
-| Version | Changes |
-|---------|---------|
-| v1 (100) | Initial format with `playerName`, `xp`, `hp` |
+| Version  | Changes                                          |
+|----------|--------------------------------------------------|
+| v1 (100) | Initial format with `playerName`, `xp`, `hp`     |
 | v2 (110) | Renamed fields to `name`, `experience`, `health` |
-| v3 (200) | Added `level` computed from experience |
+| v3 (200) | Added `level` computed from experience           |
 
 ## Data Evolution
 

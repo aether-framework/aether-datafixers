@@ -6,11 +6,11 @@ Migrating application configuration files with defaults and restructuring.
 
 An application stores configuration that evolves across versions:
 
-| Version | Changes |
-|---------|---------|
-| v1 | Flat structure with basic settings |
-| v2 | Grouped settings into categories |
-| v3 | Added feature flags, deprecated old settings |
+| Version | Changes                                      |
+|---------|----------------------------------------------|
+| v1      | Flat structure with basic settings           |
+| v2      | Grouped settings into categories             |
+| v3      | Added feature flags, deprecated old settings |
 
 ## Data Evolution
 

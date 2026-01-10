@@ -216,15 +216,15 @@ public void writeJson(Path path, Dynamic<JsonNode> dynamic) throws IOException {
 
 ## Comparison
 
-| Feature | GsonOps | JacksonJsonOps |
-|---------|---------|----------------|
-| **Data Type** | `JsonElement` | `JsonNode` |
-| **Library Size** | ~300 KB | ~1.7 MB |
-| **Performance** | Good | Excellent |
-| **Streaming API** | No | Yes |
-| **Custom Config** | No | Yes (ObjectMapper) |
-| **Null Handling** | `JsonNull` | `NullNode` |
-| **Dependencies** | Gson only | Jackson Databind |
+| Feature           | GsonOps       | JacksonJsonOps     |
+|-------------------|---------------|--------------------|
+| **Data Type**     | `JsonElement` | `JsonNode`         |
+| **Library Size**  | ~300 KB       | ~1.7 MB            |
+| **Performance**   | Good          | Excellent          |
+| **Streaming API** | No            | Yes                |
+| **Custom Config** | No            | Yes (ObjectMapper) |
+| **Null Handling** | `JsonNull`    | `NullNode`         |
+| **Dependencies**  | Gson only     | Jackson Databind   |
 
 ## Migration Example
 

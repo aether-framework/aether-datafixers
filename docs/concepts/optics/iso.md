@@ -270,12 +270,12 @@ String json = personJson.reverseGet(new Person("Steve", 30));
 
 ## Iso vs Other Optics
 
-| Optic | Forward | Backward | Always Succeeds |
-|-------|---------|----------|-----------------|
-| **Iso** | ✅ | ✅ | ✅ |
-| Lens | ✅ | ✅ | ✅ (single focus) |
-| Prism | ✅ (optional) | ✅ | ❌ (may not match) |
-| Affine | ✅ (optional) | ✅ (optional) | ❌ |
+| Optic   | Forward      | Backward     | Always Succeeds   |
+|---------|--------------|--------------|-------------------|
+| **Iso** | ✅            | ✅            | ✅                 |
+| Lens    | ✅            | ✅            | ✅ (single focus)  |
+| Prism   | ✅ (optional) | ✅            | ❌ (may not match) |
+| Affine  | ✅ (optional) | ✅ (optional) | ❌                 |
 
 ### When to Use Iso
 
@@ -304,14 +304,14 @@ Iso<String, String> identity = Iso.of(
 
 ## Iso Summary
 
-| Operation | Description | Returns |
-|-----------|-------------|---------|
-| `get(S)` | Convert S to A | `A` |
-| `reverseGet(A)` | Convert A to S | `S` |
-| `reverse()` | Flip the direction | `Iso<A, S>` |
-| `modify(S, A → A)` | Transform via iso | `S` |
-| `compose(Iso)` | Compose with iso | `Iso` |
-| `compose(Lens)` | Compose with lens | `Lens` |
+| Operation          | Description        | Returns     |
+|--------------------|--------------------|-------------|
+| `get(S)`           | Convert S to A     | `A`         |
+| `reverseGet(A)`    | Convert A to S     | `S`         |
+| `reverse()`        | Flip the direction | `Iso<A, S>` |
+| `modify(S, A → A)` | Transform via iso  | `S`         |
+| `compose(Iso)`     | Compose with iso   | `Iso`       |
+| `compose(Lens)`    | Compose with lens  | `Lens`      |
 
 ---
 

@@ -95,10 +95,10 @@ DiagnosticOptions.defaults();
 DiagnosticOptions.minimal();
 ```
 
-| Preset | Snapshots | Rule Details | Pretty Print |
-|--------|-----------|--------------|--------------|
-| `defaults()` | Yes | Yes | Yes |
-| `minimal()` | No | No | No |
+| Preset       | Snapshots | Rule Details | Pretty Print |
+|--------------|-----------|--------------|--------------|
+| `defaults()` | Yes       | Yes          | Yes          |
+| `minimal()`  | No        | No           | No           |
 
 ## Working with Fix Executions
 
@@ -286,64 +286,64 @@ fixer.update(type, data, from, to);  // No context = no overhead
 
 ### DiagnosticContext
 
-| Method | Description |
-|--------|-------------|
-| `create()` | Create with default options |
-| `create(options)` | Create with custom options |
-| `isDiagnosticEnabled()` | Always returns `true` |
-| `getReport()` | Get the migration report |
-| `options()` | Get the diagnostic options |
-| `warn(message, args...)` | Emit a warning |
+| Method                   | Description                 |
+|--------------------------|-----------------------------|
+| `create()`               | Create with default options |
+| `create(options)`        | Create with custom options  |
+| `isDiagnosticEnabled()`  | Always returns `true`       |
+| `getReport()`            | Get the migration report    |
+| `options()`              | Get the diagnostic options  |
+| `warn(message, args...)` | Emit a warning              |
 
 ### MigrationReport
 
-| Method | Description |
-|--------|-------------|
-| `type()` | The migrated TypeReference |
-| `fromVersion()` | Source version |
-| `toVersion()` | Target version |
-| `startTime()` | When migration started |
-| `totalDuration()` | Total migration time |
-| `fixCount()` | Number of fixes applied |
-| `fixExecutions()` | List of FixExecution records |
-| `ruleApplicationCount()` | Total rule applications |
-| `touchedTypes()` | Set of touched TypeReferences |
-| `inputSnapshot()` | Optional input snapshot |
-| `outputSnapshot()` | Optional output snapshot |
-| `hasWarnings()` | Whether warnings were emitted |
-| `warnings()` | List of warning messages |
-| `toSummary()` | Human-readable summary string |
+| Method                   | Description                   |
+|--------------------------|-------------------------------|
+| `type()`                 | The migrated TypeReference    |
+| `fromVersion()`          | Source version                |
+| `toVersion()`            | Target version                |
+| `startTime()`            | When migration started        |
+| `totalDuration()`        | Total migration time          |
+| `fixCount()`             | Number of fixes applied       |
+| `fixExecutions()`        | List of FixExecution records  |
+| `ruleApplicationCount()` | Total rule applications       |
+| `touchedTypes()`         | Set of touched TypeReferences |
+| `inputSnapshot()`        | Optional input snapshot       |
+| `outputSnapshot()`       | Optional output snapshot      |
+| `hasWarnings()`          | Whether warnings were emitted |
+| `warnings()`             | List of warning messages      |
+| `toSummary()`            | Human-readable summary string |
 
 ### FixExecution
 
-| Method | Description |
-|--------|-------------|
-| `fixName()` | Name of the fix |
-| `fromVersion()` | Fix input version |
-| `toVersion()` | Fix output version |
-| `startTime()` | When fix started |
-| `duration()` | Fix execution time |
-| `durationMillis()` | Duration in milliseconds |
-| `ruleApplications()` | List of RuleApplication records |
-| `ruleCount()` | Number of rules |
-| `matchedRuleCount()` | Number of matched rules |
-| `beforeSnapshotOpt()` | Optional before snapshot |
-| `afterSnapshotOpt()` | Optional after snapshot |
-| `toSummary()` | Human-readable summary |
+| Method                | Description                     |
+|-----------------------|---------------------------------|
+| `fixName()`           | Name of the fix                 |
+| `fromVersion()`       | Fix input version               |
+| `toVersion()`         | Fix output version              |
+| `startTime()`         | When fix started                |
+| `duration()`          | Fix execution time              |
+| `durationMillis()`    | Duration in milliseconds        |
+| `ruleApplications()`  | List of RuleApplication records |
+| `ruleCount()`         | Number of rules                 |
+| `matchedRuleCount()`  | Number of matched rules         |
+| `beforeSnapshotOpt()` | Optional before snapshot        |
+| `afterSnapshotOpt()`  | Optional after snapshot         |
+| `toSummary()`         | Human-readable summary          |
 
 ### RuleApplication
 
-| Method | Description |
-|--------|-------------|
-| `ruleName()` | Name of the rule |
-| `typeName()` | TypeReference name |
-| `timestamp()` | When rule was applied |
-| `duration()` | Rule execution time |
+| Method             | Description              |
+|--------------------|--------------------------|
+| `ruleName()`       | Name of the rule         |
+| `typeName()`       | TypeReference name       |
+| `timestamp()`      | When rule was applied    |
+| `duration()`       | Rule execution time      |
 | `durationMillis()` | Duration in milliseconds |
-| `matched()` | Whether rule matched |
-| `description()` | Optional description |
-| `descriptionOpt()` | Description as Optional |
-| `toSummary()` | Human-readable summary |
+| `matched()`        | Whether rule matched     |
+| `description()`    | Optional description     |
+| `descriptionOpt()` | Description as Optional  |
+| `toSummary()`      | Human-readable summary   |
 
 ## Related
 

@@ -13,13 +13,13 @@ Writing tests for data migrations shouldn't require extensive boilerplate. The t
 
 ## Module Contents
 
-| Package | Description |
-|---------|-------------|
-| `testkit` | `TestData`, `TestDataBuilder`, `TestDataListBuilder` — Test data creation |
-| `testkit.assertion` | `AetherAssertions`, `DynamicAssert`, `DataResultAssert`, `TypedAssert` |
-| `testkit.harness` | `DataFixTester`, `MigrationTester`, `SchemaTester` |
-| `testkit.factory` | `QuickFix`, `MockSchemas` |
-| `testkit.context` | `RecordingContext`, `AssertingContext` |
+| Package             | Description                                                               |
+|---------------------|---------------------------------------------------------------------------|
+| `testkit`           | `TestData`, `TestDataBuilder`, `TestDataListBuilder` — Test data creation |
+| `testkit.assertion` | `AetherAssertions`, `DynamicAssert`, `DataResultAssert`, `TypedAssert`    |
+| `testkit.harness`   | `DataFixTester`, `MigrationTester`, `SchemaTester`                        |
+| `testkit.factory`   | `QuickFix`, `MockSchemas`                                                 |
+| `testkit.context`   | `RecordingContext`, `AssertingContext`                                    |
 
 ## Installation
 

@@ -493,23 +493,23 @@ fixer.update(tagged, fromVersion, toVersion);
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Dynamic<T>` | Format-agnostic data wrapper |
-| `DynamicOps<T>` | Format-specific operations |
-| `OptionalDynamic` | Safe nested access |
-| `TaggedDynamic` | Associates data with type |
+| Component         | Purpose                      |
+|-------------------|------------------------------|
+| `Dynamic<T>`      | Format-agnostic data wrapper |
+| `DynamicOps<T>`   | Format-specific operations   |
+| `OptionalDynamic` | Safe nested access           |
+| `TaggedDynamic`   | Associates data with type    |
 
 ## Available DynamicOps Implementations
 
-| Implementation | Format | Data Type | Package |
-|----------------|--------|-----------|---------|
-| `GsonOps` | JSON | `JsonElement` | `codec.json.gson` |
-| `JacksonJsonOps` | JSON | `JsonNode` | `codec.json.jackson` |
-| `SnakeYamlOps` | YAML | `Object` | `codec.yaml.snakeyaml` |
-| `JacksonYamlOps` | YAML | `JsonNode` | `codec.yaml.jackson` |
-| `JacksonTomlOps` | TOML | `JsonNode` | `codec.toml.jackson` |
-| `JacksonXmlOps` | XML | `JsonNode` | `codec.xml.jackson` |
+| Implementation   | Format | Data Type     | Package                |
+|------------------|--------|---------------|------------------------|
+| `GsonOps`        | JSON   | `JsonElement` | `codec.json.gson`      |
+| `JacksonJsonOps` | JSON   | `JsonNode`    | `codec.json.jackson`   |
+| `SnakeYamlOps`   | YAML   | `Object`      | `codec.yaml.snakeyaml` |
+| `JacksonYamlOps` | YAML   | `JsonNode`    | `codec.yaml.jackson`   |
+| `JacksonTomlOps` | TOML   | `JsonNode`    | `codec.toml.jackson`   |
+| `JacksonXmlOps`  | XML    | `JsonNode`    | `codec.xml.jackson`    |
 
 See [Codec Module Documentation](../codec/index.md) for detailed usage of each implementation.
 

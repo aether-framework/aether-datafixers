@@ -380,12 +380,12 @@ class PlayerMigrationTest {
 
 ## Common Mistakes
 
-| Mistake | Solution |
-|---------|----------|
-| Forgetting `DSL.remainder()` | Always include to preserve unknown fields |
-| Not chaining schemas | Pass parent schema to child constructor |
-| Wrong version numbers | Ensure fix `fromVersion`/`toVersion` match schemas |
-| Reusing version numbers | Each schema change needs a new version |
+| Mistake                      | Solution                                           |
+|------------------------------|----------------------------------------------------|
+| Forgetting `DSL.remainder()` | Always include to preserve unknown fields          |
+| Not chaining schemas         | Pass parent schema to child constructor            |
+| Wrong version numbers        | Ensure fix `fromVersion`/`toVersion` match schemas |
+| Reusing version numbers      | Each schema change needs a new version             |
 
 ## Next Steps
 

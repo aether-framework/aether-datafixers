@@ -6,11 +6,11 @@ Migrating user profile data with nested objects and optional fields.
 
 A web application stores user profiles that evolve over time:
 
-| Version | Changes |
-|---------|---------|
-| v1 | Basic profile: username, email |
-| v2 | Added address as nested object |
-| v3 | Split name into firstName/lastName, added preferences |
+| Version | Changes                                               |
+|---------|-------------------------------------------------------|
+| v1      | Basic profile: username, email                        |
+| v2      | Added address as nested object                        |
+| v3      | Split name into firstName/lastName, added preferences |
 
 ## Data Evolution
 

@@ -300,12 +300,12 @@ public List<Entity> levelUpPlayers(List<Entity> entities) {
 
 ## Prism vs Other Optics
 
-| Optic | Focus | Extraction | Construction |
-|-------|-------|------------|--------------|
-| **Prism** | 0 or 1 case | May fail | Always works |
-| Lens | Exactly 1 field | Always works | Always works |
-| Affine | 0 or 1 | May fail | May fail |
-| Iso | 1 (bidirectional) | Always works | Always works |
+| Optic     | Focus             | Extraction   | Construction |
+|-----------|-------------------|--------------|--------------|
+| **Prism** | 0 or 1 case       | May fail     | Always works |
+| Lens      | Exactly 1 field   | Always works | Always works |
+| Affine    | 0 or 1            | May fail     | May fail     |
+| Iso       | 1 (bidirectional) | Always works | Always works |
 
 ### When to Use Prism
 
@@ -321,13 +321,13 @@ public List<Entity> levelUpPlayers(List<Entity> entities) {
 
 ## Prism Operations Summary
 
-| Operation | Description | Returns |
-|-----------|-------------|---------|
-| `getOptional(S)` | Try to extract the case | `Optional<A>` |
-| `reverseGet(A)` | Construct from the case | `S` |
-| `modify(S, A → A)` | Transform if matches | `S` |
-| `compose(Lens)` | Compose with lens | `Affine` |
-| `compose(Prism)` | Compose with prism | `Prism` |
+| Operation          | Description             | Returns       |
+|--------------------|-------------------------|---------------|
+| `getOptional(S)`   | Try to extract the case | `Optional<A>` |
+| `reverseGet(A)`    | Construct from the case | `S`           |
+| `modify(S, A → A)` | Transform if matches    | `S`           |
+| `compose(Lens)`    | Compose with lens       | `Affine`      |
+| `compose(Prism)`   | Compose with prism      | `Prism`       |
 
 ---
 

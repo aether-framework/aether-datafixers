@@ -6,9 +6,9 @@ This page provides detailed documentation for all CLI commands and their options
 
 These options are available for all commands:
 
-| Option | Description |
-|--------|-------------|
-| `-h`, `--help` | Show help message and exit |
+| Option            | Description                       |
+|-------------------|-----------------------------------|
+| `-h`, `--help`    | Show help message and exit        |
 | `-V`, `--version` | Show version information and exit |
 
 ---
@@ -25,51 +25,51 @@ aether-cli migrate [OPTIONS] <files>...
 
 ### Required Options
 
-| Option | Description |
-|--------|-------------|
-| `--to <version>` | Target data version to migrate to |
-| `-t`, `--type <type>` | Type reference ID (e.g., `player`, `world`) |
+| Option                | Description                                             |
+|-----------------------|---------------------------------------------------------|
+| `--to <version>`      | Target data version to migrate to                       |
+| `-t`, `--type <type>` | Type reference ID (e.g., `player`, `world`)             |
 | `--bootstrap <class>` | Fully qualified class name of your `DataFixerBootstrap` |
 
 ### Optional Options
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--from <version>` | (auto) | Source version (auto-detected from data if not specified) |
-| `--version-field <path>` | `dataVersion` | Field path containing the version in input files |
-| `-o`, `--output <path>` | (varies) | Output file or directory |
-| `--format <id>` | `json-gson` | Input/output format handler |
-| `--backup` | `true` | Create `.bak` backup before in-place modification |
-| `--pretty` | `true` | Pretty-print output with indentation |
-| `-v`, `--verbose` | `false` | Enable detailed progress output |
-| `--fail-fast` | `false` | Stop immediately on first error |
-| `--report` | `false` | Generate migration report |
-| `--report-format <fmt>` | `text` | Report format: `text` or `json` |
-| `--report-file <path>` | (stderr) | Write report to file instead of stderr |
+| Option                   | Default       | Description                                               |
+|--------------------------|---------------|-----------------------------------------------------------|
+| `--from <version>`       | (auto)        | Source version (auto-detected from data if not specified) |
+| `--version-field <path>` | `dataVersion` | Field path containing the version in input files          |
+| `-o`, `--output <path>`  | (varies)      | Output file or directory                                  |
+| `--format <id>`          | `json-gson`   | Input/output format handler                               |
+| `--backup`               | `true`        | Create `.bak` backup before in-place modification         |
+| `--pretty`               | `true`        | Pretty-print output with indentation                      |
+| `-v`, `--verbose`        | `false`       | Enable detailed progress output                           |
+| `--fail-fast`            | `false`       | Stop immediately on first error                           |
+| `--report`               | `false`       | Generate migration report                                 |
+| `--report-format <fmt>`  | `text`        | Report format: `text` or `json`                           |
+| `--report-file <path>`   | (stderr)      | Write report to file instead of stderr                    |
 
 ### Arguments
 
-| Argument | Description |
-|----------|-------------|
+| Argument     | Description                                                          |
+|--------------|----------------------------------------------------------------------|
 | `<files>...` | One or more input files to migrate (glob patterns expanded by shell) |
 
 ### Output Behavior
 
 The output destination depends on the combination of options:
 
-| Scenario | Behavior |
-|----------|----------|
-| Single file, no `--output` | Write to stdout |
+| Scenario                      | Behavior                                            |
+|-------------------------------|-----------------------------------------------------|
+| Single file, no `--output`    | Write to stdout                                     |
 | Multiple files, no `--output` | Modify in-place (with backup if `--backup` is true) |
-| `--output` is a file | Write single file there (error if multiple inputs) |
-| `--output` is a directory | Write all files to that directory |
+| `--output` is a file          | Write single file there (error if multiple inputs)  |
+| `--output` is a directory     | Write all files to that directory                   |
 
 ### Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | All files migrated successfully |
-| `1` | One or more errors occurred |
+| Code | Meaning                         |
+|------|---------------------------------|
+| `0`  | All files migrated successfully |
+| `1`  | One or more errors occurred     |
 
 ### Examples
 
@@ -123,23 +123,23 @@ aether-cli validate [OPTIONS] <files>...
 
 ### Required Options
 
-| Option | Description |
-|--------|-------------|
-| `--to <version>` | Target version to validate against |
-| `-t`, `--type <type>` | Type reference ID |
+| Option                | Description                                             |
+|-----------------------|---------------------------------------------------------|
+| `--to <version>`      | Target version to validate against                      |
+| `-t`, `--type <type>` | Type reference ID                                       |
 | `--bootstrap <class>` | Fully qualified class name of your `DataFixerBootstrap` |
 
 ### Optional Options
 
-| Option | Default | Description |
-|--------|---------|-------------|
+| Option                   | Default       | Description                       |
+|--------------------------|---------------|-----------------------------------|
 | `--version-field <path>` | `dataVersion` | Field path containing the version |
-| `--format <id>` | `json-gson` | Input format handler |
+| `--format <id>`          | `json-gson`   | Input format handler              |
 
 ### Arguments
 
-| Argument | Description |
-|----------|-------------|
+| Argument     | Description                         |
+|--------------|-------------------------------------|
 | `<files>...` | One or more input files to validate |
 
 ### Output Format
@@ -160,11 +160,11 @@ Summary: 5 up-to-date, 3 need migration, 1 errors
 
 ### Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | All files are up-to-date |
-| `1` | One or more errors occurred |
-| `2` | No errors, but one or more files need migration |
+| Code | Meaning                                         |
+|------|-------------------------------------------------|
+| `0`  | All files are up-to-date                        |
+| `1`  | One or more errors occurred                     |
+| `2`  | No errors, but one or more files need migration |
 
 ### Examples
 
@@ -209,11 +209,11 @@ aether-cli info [OPTIONS]
 
 ### Optional Options
 
-| Option | Description |
-|--------|-------------|
-| `--formats` | List available format handlers |
-| `--bootstrap <class>` | Show bootstrap information |
-| `--to <version>` | Target version (required with `--bootstrap`) |
+| Option                | Description                                  |
+|-----------------------|----------------------------------------------|
+| `--formats`           | List available format handlers               |
+| `--bootstrap <class>` | Show bootstrap information                   |
+| `--to <version>`      | Target version (required with `--bootstrap`) |
 
 ### Output
 
@@ -243,10 +243,10 @@ Bootstrap Information:
 
 ### Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | Information displayed successfully |
-| `1` | Error loading bootstrap or missing `--to` option |
+| Code | Meaning                                          |
+|------|--------------------------------------------------|
+| `0`  | Information displayed successfully               |
+| `1`  | Error loading bootstrap or missing `--to` option |
 
 ### Examples
 
@@ -292,11 +292,11 @@ aether-cli migrate --help
 
 The `--version-field` option supports dot notation for nested fields:
 
-| Path | Example JSON | Extracted Version |
-|------|--------------|-------------------|
-| `dataVersion` | `{"dataVersion": 100}` | `100` |
-| `meta.version` | `{"meta": {"version": 100}}` | `100` |
-| `data.schema.v` | `{"data": {"schema": {"v": 100}}}` | `100` |
+| Path            | Example JSON                       | Extracted Version |
+|-----------------|------------------------------------|-------------------|
+| `dataVersion`   | `{"dataVersion": 100}`             | `100`             |
+| `meta.version`  | `{"meta": {"version": 100}}`       | `100`             |
+| `data.schema.v` | `{"data": {"schema": {"v": 100}}}` | `100`             |
 
 ---
 
@@ -304,10 +304,10 @@ The `--version-field` option supports dot notation for nested fields:
 
 Available format handlers:
 
-| ID | Description | Extensions |
-|----|-------------|------------|
-| `json-gson` | JSON using Google Gson (default) | `.json` |
-| `json-jackson` | JSON using Jackson Databind | `.json` |
+| ID             | Description                      | Extensions |
+|----------------|----------------------------------|------------|
+| `json-gson`    | JSON using Google Gson (default) | `.json`    |
+| `json-jackson` | JSON using Jackson Databind      | `.json`    |
 
 Use `aether-cli info --formats` to see all available handlers.
 

@@ -59,14 +59,14 @@ By the end of this getting started guide, you'll have:
 
 Before diving in, here's a quick overview of what you'll encounter:
 
-| Concept | Purpose |
-|---------|---------|
-| `DataVersion` | Integer identifying a schema version (e.g., 100 = v1.0.0) |
-| `TypeReference` | String identifier for a data type (e.g., "player") |
-| `Schema` | Defines what types exist at a particular version |
-| `DataFix` | A single migration from one version to another |
-| `DataFixer` | Orchestrates applying multiple fixes |
-| `Dynamic` | Format-agnostic data wrapper |
+| Concept         | Purpose                                                   |
+|-----------------|-----------------------------------------------------------|
+| `DataVersion`   | Integer identifying a schema version (e.g., 100 = v1.0.0) |
+| `TypeReference` | String identifier for a data type (e.g., "player")        |
+| `Schema`        | Defines what types exist at a particular version          |
+| `DataFix`       | A single migration from one version to another            |
+| `DataFixer`     | Orchestrates applying multiple fixes                      |
+| `Dynamic`       | Format-agnostic data wrapper                              |
 
 ## Next Steps
 

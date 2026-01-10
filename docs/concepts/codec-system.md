@@ -462,15 +462,15 @@ public static final Codec<Player> CODEC = ...;
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Encoder<A>` | A → Dynamic (serialization) |
-| `Decoder<A>` | Dynamic → A (deserialization) |
-| `Codec<A>` | Both encode and decode |
-| `MapCodec<A>` | Codec for map structures |
-| `RecordCodecBuilder` | Build codecs for records |
-| `Codecs` | Primitive codec instances |
-| `DataResult` | Success/error handling |
+| Component            | Purpose                       |
+|----------------------|-------------------------------|
+| `Encoder<A>`         | A → Dynamic (serialization)   |
+| `Decoder<A>`         | Dynamic → A (deserialization) |
+| `Codec<A>`           | Both encode and decode        |
+| `MapCodec<A>`        | Codec for map structures      |
+| `RecordCodecBuilder` | Build codecs for records      |
+| `Codecs`             | Primitive codec instances     |
+| `DataResult`         | Success/error handling        |
 
 ---
 

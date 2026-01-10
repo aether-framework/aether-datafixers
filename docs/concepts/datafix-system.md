@@ -481,14 +481,14 @@ void testPlayerV1ToV2Migration() {
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `DataFix` | Single migration (v1 → v2) |
-| `DataFixer` | Orchestrates multiple fixes |
-| `SchemaDataFix` | Fix with schema access |
-| `TypeRewriteRule` | Transformation logic |
-| `Rules` | Rule factory methods |
-| `FixRegistrar` | Fix registration |
+| Component         | Purpose                     |
+|-------------------|-----------------------------|
+| `DataFix`         | Single migration (v1 → v2)  |
+| `DataFixer`       | Orchestrates multiple fixes |
+| `SchemaDataFix`   | Fix with schema access      |
+| `TypeRewriteRule` | Transformation logic        |
+| `Rules`           | Rule factory methods        |
+| `FixRegistrar`    | Fix registration            |
 
 ---
 

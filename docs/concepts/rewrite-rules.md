@@ -521,39 +521,39 @@ Rules.ifFieldEquals(GsonOps.INSTANCE, "version", 1,
 
 ### Basic Rules
 
-| Rule | Description |
-|------|-------------|
-| `renameField(type, old, new)` | Rename a field |
-| `transformField(type, field, fn)` | Transform a field's value |
-| `transform(type, fn)` | Transform entire structure |
+| Rule                              | Description                  |
+|-----------------------------------|------------------------------|
+| `renameField(type, old, new)`     | Rename a field               |
+| `transformField(type, field, fn)` | Transform a field's value    |
+| `transform(type, fn)`             | Transform entire structure   |
 | `addField(type, name, defaultFn)` | Add a new field (if missing) |
-| `removeField(type, name)` | Remove a field |
-| `seq(rules...)` | Apply rules in sequence |
-| `all(rules...)` | Apply all rules |
-| `conditional(pred, rule)` | Conditional application |
-| `topDown(rule)` | Traverse top to bottom |
-| `bottomUp(rule)` | Traverse bottom to top |
-| `everywhere(rule)` | Apply at all matching nodes |
+| `removeField(type, name)`         | Remove a field               |
+| `seq(rules...)`                   | Apply rules in sequence      |
+| `all(rules...)`                   | Apply all rules              |
+| `conditional(pred, rule)`         | Conditional application      |
+| `topDown(rule)`                   | Traverse top to bottom       |
+| `bottomUp(rule)`                  | Traverse bottom to top       |
+| `everywhere(rule)`                | Apply at all matching nodes  |
 
 ### Extended Rules
 
-| Rule | Description |
-|------|-------------|
-| `dynamicTransform(name, ops, fn)` | Custom Dynamic transformation |
-| `setField(ops, field, value)` | Set field (overwrites existing) |
-| `renameFields(ops, map)` | Batch rename multiple fields |
-| `removeFields(ops, fields...)` | Batch remove multiple fields |
-| `groupFields(ops, target, fields...)` | Group fields into nested object |
-| `flattenField(ops, field)` | Flatten nested object to root |
-| `moveField(ops, source, target)` | Move field between paths |
-| `copyField(ops, source, target)` | Copy field (keeps original) |
-| `transformFieldAt(ops, path, fn)` | Transform at nested path |
-| `renameFieldAt(ops, path, newName)` | Rename at nested path |
-| `removeFieldAt(ops, path)` | Remove at nested path |
-| `addFieldAt(ops, path, value)` | Add at nested path |
-| `ifFieldExists(ops, field, rule)` | Conditional on existence |
-| `ifFieldMissing(ops, field, rule)` | Conditional on absence |
-| `ifFieldEquals(ops, field, value, rule)` | Conditional on value |
+| Rule                                     | Description                     |
+|------------------------------------------|---------------------------------|
+| `dynamicTransform(name, ops, fn)`        | Custom Dynamic transformation   |
+| `setField(ops, field, value)`            | Set field (overwrites existing) |
+| `renameFields(ops, map)`                 | Batch rename multiple fields    |
+| `removeFields(ops, fields...)`           | Batch remove multiple fields    |
+| `groupFields(ops, target, fields...)`    | Group fields into nested object |
+| `flattenField(ops, field)`               | Flatten nested object to root   |
+| `moveField(ops, source, target)`         | Move field between paths        |
+| `copyField(ops, source, target)`         | Copy field (keeps original)     |
+| `transformFieldAt(ops, path, fn)`        | Transform at nested path        |
+| `renameFieldAt(ops, path, newName)`      | Rename at nested path           |
+| `removeFieldAt(ops, path)`               | Remove at nested path           |
+| `addFieldAt(ops, path, value)`           | Add at nested path              |
+| `ifFieldExists(ops, field, rule)`        | Conditional on existence        |
+| `ifFieldMissing(ops, field, rule)`       | Conditional on absence          |
+| `ifFieldEquals(ops, field, value, rule)` | Conditional on value            |
 
 ## Best Practices
 
@@ -621,13 +621,13 @@ void testGameModeConversion() {
 
 ## Summary
 
-| Concept | Purpose |
-|---------|---------|
-| `TypeRewriteRule` | Transformation definition |
-| `Rules` | Factory for common rules |
-| `seq` | Sequential combination |
-| `all` | Parallel combination |
-| Traversal | Top-down, bottom-up, everywhere |
+| Concept           | Purpose                         |
+|-------------------|---------------------------------|
+| `TypeRewriteRule` | Transformation definition       |
+| `Rules`           | Factory for common rules        |
+| `seq`             | Sequential combination          |
+| `all`             | Parallel combination            |
+| Traversal         | Top-down, bottom-up, everywhere |
 
 ---
 

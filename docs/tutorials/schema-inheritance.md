@@ -35,12 +35,12 @@ With inheritance, schemas only define what changed:
 
 Let's say we have three data types that evolve differently:
 
-| Version | PLAYER | WORLD | CONFIG |
-|---------|--------|-------|--------|
-| v1 | Initial | Initial | Initial |
-| v2 | **Changed** | Same | Same |
-| v3 | Same | **Changed** | Same |
-| v4 | Same | Same | **Changed** |
+| Version | PLAYER      | WORLD       | CONFIG      |
+|---------|-------------|-------------|-------------|
+| v1      | Initial     | Initial     | Initial     |
+| v2      | **Changed** | Same        | Same        |
+| v3      | Same        | **Changed** | Same        |
+| v4      | Same        | Same        | **Changed** |
 
 ### Schema1: The Base Schema
 

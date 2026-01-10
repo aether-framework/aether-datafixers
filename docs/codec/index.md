@@ -4,14 +4,14 @@ The `aether-datafixers-codec` module provides `DynamicOps` implementations for v
 
 ## Supported Formats
 
-| Format | Implementation | Underlying Library | Data Type |
-|--------|----------------|-------------------|-----------|
-| **JSON** | `GsonOps` | Google Gson | `JsonElement` |
-| **JSON** | `JacksonJsonOps` | Jackson Databind | `JsonNode` |
-| **YAML** | `SnakeYamlOps` | SnakeYAML | `Object` (Map/List) |
-| **YAML** | `JacksonYamlOps` | Jackson YAML | `JsonNode` |
-| **TOML** | `JacksonTomlOps` | Jackson TOML | `JsonNode` |
-| **XML** | `JacksonXmlOps` | Jackson XML | `JsonNode` |
+| Format   | Implementation   | Underlying Library | Data Type           |
+|----------|------------------|--------------------|---------------------|
+| **JSON** | `GsonOps`        | Google Gson        | `JsonElement`       |
+| **JSON** | `JacksonJsonOps` | Jackson Databind   | `JsonNode`          |
+| **YAML** | `SnakeYamlOps`   | SnakeYAML          | `Object` (Map/List) |
+| **YAML** | `JacksonYamlOps` | Jackson YAML       | `JsonNode`          |
+| **TOML** | `JacksonTomlOps` | Jackson TOML       | `JsonNode`          |
+| **XML**  | `JacksonXmlOps`  | Jackson XML        | `JsonNode`          |
 
 ## Quick Start
 
@@ -117,47 +117,47 @@ de.splatgames.aether.datafixers.codec
 
 ### JSON
 
-| Feature | GsonOps | JacksonJsonOps |
-|---------|---------|----------------|
-| Library Size | ~300 KB | ~1.7 MB |
-| Performance | Good | Excellent |
-| Streaming | No | Yes |
-| Custom Mappers | No | Yes |
-| Tree Model | `JsonElement` | `JsonNode` |
+| Feature        | GsonOps       | JacksonJsonOps |
+|----------------|---------------|----------------|
+| Library Size   | ~300 KB       | ~1.7 MB        |
+| Performance    | Good          | Excellent      |
+| Streaming      | No            | Yes            |
+| Custom Mappers | No            | Yes            |
+| Tree Model     | `JsonElement` | `JsonNode`     |
 
 **Recommendation:** Use `GsonOps` for simple use cases with minimal dependencies. Use `JacksonJsonOps` when you need maximum performance or already use Jackson.
 
 ### YAML
 
-| Feature | SnakeYamlOps | JacksonYamlOps |
-|---------|--------------|----------------|
-| Library Size | ~300 KB | ~100 KB + Jackson |
-| Native Types | Yes (Map/List) | No (JsonNode) |
-| YAML Features | Full | Subset |
-| Anchors/Aliases | Yes | Limited |
-| Multi-Document | Yes | Limited |
+| Feature         | SnakeYamlOps   | JacksonYamlOps    |
+|-----------------|----------------|-------------------|
+| Library Size    | ~300 KB        | ~100 KB + Jackson |
+| Native Types    | Yes (Map/List) | No (JsonNode)     |
+| YAML Features   | Full           | Subset            |
+| Anchors/Aliases | Yes            | Limited           |
+| Multi-Document  | Yes            | Limited           |
 
 **Recommendation:** Use `SnakeYamlOps` for full YAML feature support. Use `JacksonYamlOps` when you need consistent `JsonNode` handling across formats.
 
 ### TOML
 
-| Feature | JacksonTomlOps |
-|---------|----------------|
-| TOML 1.0 | Yes |
-| Date/Time | Via String |
-| Inline Tables | Yes |
-| Arrays of Tables | Yes |
+| Feature          | JacksonTomlOps |
+|------------------|----------------|
+| TOML 1.0         | Yes            |
+| Date/Time        | Via String     |
+| Inline Tables    | Yes            |
+| Arrays of Tables | Yes            |
 
 **Recommendation:** `JacksonTomlOps` is the standard choice for TOML support.
 
 ### XML
 
-| Feature | JacksonXmlOps |
-|---------|---------------|
-| Attributes | Via Conventions |
-| Namespaces | Limited |
-| Mixed Content | Limited |
-| Tree Model | JsonNode |
+| Feature       | JacksonXmlOps   |
+|---------------|-----------------|
+| Attributes    | Via Conventions |
+| Namespaces    | Limited         |
+| Mixed Content | Limited         |
+| Tree Model    | JsonNode        |
 
 **Recommendation:** `JacksonXmlOps` provides basic XML support. For complex XML with namespaces, consider a dedicated XML library.
 

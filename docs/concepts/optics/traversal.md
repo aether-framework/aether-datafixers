@@ -277,12 +277,12 @@ Traversal<List<String>, String> first = index(0);
 
 ## Traversal vs Other Optics
 
-| Optic | Focus Count | Use Case |
-|-------|-------------|----------|
-| Lens | Exactly 1 | Single required field |
-| Prism | 0 or 1 | Sum type case |
-| Affine | 0 or 1 | Optional field |
-| **Traversal** | 0 to N | Collections, multiple foci |
+| Optic         | Focus Count | Use Case                   |
+|---------------|-------------|----------------------------|
+| Lens          | Exactly 1   | Single required field      |
+| Prism         | 0 or 1      | Sum type case              |
+| Affine        | 0 or 1      | Optional field             |
+| **Traversal** | 0 to N      | Collections, multiple foci |
 
 ### When to Use Traversal
 
@@ -322,14 +322,14 @@ assert result1.equals(result2);
 
 ## Traversal Summary
 
-| Operation | Description | Returns |
-|-----------|-------------|---------|
-| `getAll(S)` | Get all focused values | `List<A>` |
-| `modify(S, A → A)` | Transform all values | `S` |
-| `set(S, A)` | Set all to same value | `S` |
-| `compose(Traversal)` | Compose traversals | `Traversal` |
-| `compose(Lens)` | Compose with lens | `Traversal` |
-| `compose(Prism)` | Compose with prism | `Traversal` |
+| Operation            | Description            | Returns     |
+|----------------------|------------------------|-------------|
+| `getAll(S)`          | Get all focused values | `List<A>`   |
+| `modify(S, A → A)`   | Transform all values   | `S`         |
+| `set(S, A)`          | Set all to same value  | `S`         |
+| `compose(Traversal)` | Compose traversals     | `Traversal` |
+| `compose(Lens)`      | Compose with lens      | `Traversal` |
+| `compose(Prism)`     | Compose with prism     | `Traversal` |
 
 ---
 

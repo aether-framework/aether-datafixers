@@ -6,16 +6,16 @@ This guide covers how to add Aether Datafixers to your project using Maven or Gr
 
 Aether Datafixers is modular. Choose the modules you need:
 
-| Module | Purpose | When to Use |
-|--------|---------|-------------|
-| `aether-datafixers-api` | Core interfaces | Always (transitive dependency) |
-| `aether-datafixers-core` | Default implementations | Always needed for runtime |
-| `aether-datafixers-codec` | GsonOps, JacksonJsonOps | When working with JSON |
-| `aether-datafixers-spring-boot-starter` | Spring Boot integration | For Spring Boot applications |
-| `aether-datafixers-cli` | Command-line interface | For CLI-based data migration |
-| `aether-datafixers-schema-tools` | Schema analysis and validation | For CI/CD validation, diffing, coverage |
-| `aether-datafixers-testkit` | Testing utilities | For unit/integration testing |
-| `aether-datafixers-bom` | Version management | Recommended for multi-module projects |
+| Module                                  | Purpose                        | When to Use                             |
+|-----------------------------------------|--------------------------------|-----------------------------------------|
+| `aether-datafixers-api`                 | Core interfaces                | Always (transitive dependency)          |
+| `aether-datafixers-core`                | Default implementations        | Always needed for runtime               |
+| `aether-datafixers-codec`               | GsonOps, JacksonJsonOps        | When working with JSON                  |
+| `aether-datafixers-spring-boot-starter` | Spring Boot integration        | For Spring Boot applications            |
+| `aether-datafixers-cli`                 | Command-line interface         | For CLI-based data migration            |
+| `aether-datafixers-schema-tools`        | Schema analysis and validation | For CI/CD validation, diffing, coverage |
+| `aether-datafixers-testkit`             | Testing utilities              | For unit/integration testing            |
+| `aether-datafixers-bom`                 | Version management             | Recommended for multi-module projects   |
 
 ## Maven
 
@@ -229,13 +229,13 @@ Aether Datafixers installed successfully!
 
 Aether Datafixers has minimal dependencies:
 
-| Dependency | Scope | Purpose |
-|------------|-------|---------|
-| Guava | Compile | `Preconditions` for validation |
-| JetBrains Annotations | Compile | `@NotNull`, `@Nullable` |
-| SLF4J API | Compile | Logging interface |
-| Gson | Optional | JSON support (codec module) |
-| Jackson | Optional | JSON support (codec module) |
+| Dependency            | Scope    | Purpose                        |
+|-----------------------|----------|--------------------------------|
+| Guava                 | Compile  | `Preconditions` for validation |
+| JetBrains Annotations | Compile  | `@NotNull`, `@Nullable`        |
+| SLF4J API             | Compile  | Logging interface              |
+| Gson                  | Optional | JSON support (codec module)    |
+| Jackson               | Optional | JSON support (codec module)    |
 
 ---
 

@@ -380,11 +380,11 @@ public class GameExample {
 
 Use a consistent scheme. Recommended: SemVer encoded as integers.
 
-| SemVer | ID |
+| SemVer | ID  |
 |--------|-----|
-| 1.0.0 | 100 |
-| 1.1.0 | 110 |
-| 2.0.0 | 200 |
+| 1.0.0  | 100 |
+| 1.1.0  | 110 |
+| 2.0.0  | 200 |
 
 ### 2. One Fix Per Version Step
 
