@@ -54,6 +54,28 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- YAML for TestData.snakeYaml() and TestData.jacksonYaml() -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+
+        <!-- TOML for TestData.jacksonToml() -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-toml</artifactId>
+        </dependency>
+
+        <!-- XML for TestData.jacksonXml() -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+
         <!-- Testing dependencies (compile scope - this IS a test library!) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

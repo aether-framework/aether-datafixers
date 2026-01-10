@@ -51,6 +51,28 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- YAML libraries (for built-in format handlers) -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+
+        <!-- TOML library (for built-in format handler) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-toml</artifactId>
+        </dependency>
+
+        <!-- XML library (for built-in format handler) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+
         <!-- Guava for utilities -->
         <dependency>
             <groupId>com.google.guava</groupId>

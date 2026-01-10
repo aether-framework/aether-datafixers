@@ -9,15 +9,29 @@ The `TestData` class is the entry point for all test data creation:
 ```java
 import de.splatgames.aether.datafixers.testkit.TestData;
 
-// For Gson (JsonElement)
+// JSON - Gson (JsonElement)
 TestData.gson()...
 
-// For Jackson (JsonNode)
-TestData.jackson()...
+// JSON - Jackson (JsonNode)
+TestData.jacksonJson()...
 
-// For any DynamicOps
+// YAML - SnakeYAML (native Java types: Object)
+TestData.snakeYaml()...
+
+// YAML - Jackson (JsonNode)
+TestData.jacksonYaml()...
+
+// TOML - Jackson (JsonNode)
+TestData.jacksonToml()...
+
+// XML - Jackson (JsonNode)
+TestData.jacksonXml()...
+
+// Custom DynamicOps
 TestData.using(myCustomOps)...
 ```
+
+> **Deprecation Notice:** `TestData.jackson()` is deprecated since 0.5.0 and will be removed in 1.0.0. Use `TestData.jacksonJson()` instead for explicit format naming.
 
 ## Creating Primitives
 
@@ -188,19 +202,50 @@ Dynamic<JsonElement> matrix = TestData.gson().list()
     .build();
 ```
 
-## Working with Jackson
+## Working with Different Formats
 
-All builders work identically with Jackson:
+All builders work identically across formats:
+
+### Jackson JSON
 
 ```java
 import com.fasterxml.jackson.databind.JsonNode;
 
-Dynamic<JsonNode> player = TestData.jackson().object()
+Dynamic<JsonNode> player = TestData.jacksonJson().object()
     .put("name", "Alice")
     .put("level", 10)
     .putObject("position", pos -> pos
         .put("x", 100)
         .put("y", 64))
+    .build();
+```
+
+### SnakeYAML
+
+```java
+Dynamic<Object> config = TestData.snakeYaml().object()
+    .put("database", "localhost")
+    .put("port", 5432)
+    .putObject("options", opts -> opts
+        .put("timeout", 30)
+        .put("retries", 3))
+    .build();
+```
+
+### Jackson YAML / TOML / XML
+
+```java
+// All Jackson-based formats use JsonNode
+Dynamic<JsonNode> yamlData = TestData.jacksonYaml().object()
+    .put("key", "value")
+    .build();
+
+Dynamic<JsonNode> tomlData = TestData.jacksonToml().object()
+    .put("key", "value")
+    .build();
+
+Dynamic<JsonNode> xmlData = TestData.jacksonXml().object()
+    .put("key", "value")
     .build();
 ```
 

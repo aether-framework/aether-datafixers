@@ -35,6 +35,10 @@ import org.jetbrains.annotations.NotNull;
  * <ul>
  *   <li>{@code json-gson} — JSON format using Google Gson</li>
  *   <li>{@code json-jackson} — JSON format using Jackson Databind</li>
+ *   <li>{@code yaml-snakeyaml} — YAML format using SnakeYAML</li>
+ *   <li>{@code yaml-jackson} — YAML format using Jackson YAML</li>
+ *   <li>{@code toml-jackson} — TOML format using Jackson TOML</li>
+ *   <li>{@code xml-jackson} — XML format using Jackson XML</li>
  * </ul>
  *
  * <h2>Implementing a Custom Format Handler</h2>

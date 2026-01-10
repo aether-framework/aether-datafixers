@@ -44,6 +44,10 @@ import java.util.ServiceLoader;
  * <ol>
  *   <li>{@link JsonGsonFormatHandler} - JSON using Google Gson ({@code json-gson})</li>
  *   <li>{@link JsonJacksonFormatHandler} - JSON using Jackson ({@code json-jackson})</li>
+ *   <li>{@link YamlSnakeYamlFormatHandler} - YAML using SnakeYAML ({@code yaml-snakeyaml})</li>
+ *   <li>{@link YamlJacksonFormatHandler} - YAML using Jackson ({@code yaml-jackson})</li>
+ *   <li>{@link TomlJacksonFormatHandler} - TOML using Jackson ({@code toml-jackson})</li>
+ *   <li>{@link XmlJacksonFormatHandler} - XML using Jackson ({@code xml-jackson})</li>
  * </ol>
  *
  * <h2>Custom Handler Registration</h2>
@@ -88,6 +92,18 @@ public final class FormatRegistry {
      */
     private static final Map<String, FormatHandler<?>> HANDLERS = new LinkedHashMap<>();
 
+    /**
+     * Set of built-in format IDs that should not be overridden by ServiceLoader.
+     */
+    private static final java.util.Set<String> BUILTIN_FORMAT_IDS = java.util.Set.of(
+            "json-gson",
+            "json-jackson",
+            "yaml-snakeyaml",
+            "yaml-jackson",
+            "toml-jackson",
+            "xml-jackson"
+    );
+
     /*
      * Static initializer block that registers built-in handlers and discovers
      * additional handlers via ServiceLoader.
@@ -95,19 +111,26 @@ public final class FormatRegistry {
      * Order of registration:
      * 1. JsonGsonFormatHandler (json-gson)
      * 2. JsonJacksonFormatHandler (json-jackson)
-     * 3. ServiceLoader-discovered handlers (excluding duplicates of built-in IDs)
+     * 3. YamlSnakeYamlFormatHandler (yaml-snakeyaml)
+     * 4. YamlJacksonFormatHandler (yaml-jackson)
+     * 5. TomlJacksonFormatHandler (toml-jackson)
+     * 6. XmlJacksonFormatHandler (xml-jackson)
+     * 7. ServiceLoader-discovered handlers (excluding duplicates of built-in IDs)
      */
     static {
         // Load built-in handlers first
         register(new JsonGsonFormatHandler());
         register(new JsonJacksonFormatHandler());
+        register(new YamlSnakeYamlFormatHandler());
+        register(new YamlJacksonFormatHandler());
+        register(new TomlJacksonFormatHandler());
+        register(new XmlJacksonFormatHandler());
 
         // Load SPI handlers (may override built-in handlers)
         final ServiceLoader<FormatHandler> loader = ServiceLoader.load(FormatHandler.class);
         for (final FormatHandler<?> handler : loader) {
             // Skip built-in handlers that might be registered via SPI
-            if (!"json-gson".equals(handler.formatId())
-                    && !"json-jackson".equals(handler.formatId())) {
+            if (!BUILTIN_FORMAT_IDS.contains(handler.formatId())) {
                 register(handler);
             }
         }
