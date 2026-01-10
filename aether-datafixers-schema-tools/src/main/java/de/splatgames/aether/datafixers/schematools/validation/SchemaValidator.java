@@ -307,6 +307,8 @@ public final class SchemaValidator {
             @NotNull final Schema schema,
             @NotNull ValidationResult result
     ) {
+        Preconditions.checkNotNull(schema, "schema must not be null");
+        Preconditions.checkNotNull(result, "result must not be null");
         if (this.validateStructure) {
             result = result.merge(StructureValidator.validate(schema, null));
         }
@@ -338,6 +340,8 @@ public final class SchemaValidator {
             @NotNull final SchemaRegistry registry,
             @NotNull ValidationResult result
     ) {
+        Preconditions.checkNotNull(registry, "registry must not be null");
+        Preconditions.checkNotNull(result, "result must not be null");
         // Structure validation
         if (this.validateStructure) {
             result = result.merge(StructureValidator.validateRegistry(registry));

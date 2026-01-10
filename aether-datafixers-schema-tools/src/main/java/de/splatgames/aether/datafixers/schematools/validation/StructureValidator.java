@@ -181,6 +181,9 @@ public final class StructureValidator {
             @NotNull final ValidationResult.Builder result,
             @NotNull final String location
     ) {
+        Preconditions.checkNotNull(schema, "schema must not be null");
+        Preconditions.checkNotNull(result, "result must not be null");
+        Preconditions.checkNotNull(location, "location must not be null");
         final Set<Integer> visited = new HashSet<>();
         visited.add(schema.version().getVersion());
 
