@@ -27,7 +27,7 @@ Add the core dependency to your `pom.xml`:
 <dependency>
     <groupId>de.splatgames.aether</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -38,18 +38,18 @@ Add the core dependency to your `pom.xml`:
     <dependency>
         <groupId>de.splatgames.aether</groupId>
         <artifactId>aether-datafixers-core</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </dependency>
     <dependency>
         <groupId>de.splatgames.aether</groupId>
         <artifactId>aether-datafixers-codec</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </dependency>
     <!-- Gson is optional in codec module, add explicitly -->
     <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
-        <version>2.11.0</version>
+        <version>2.13.2</version>
     </dependency>
 </dependencies>
 ```
@@ -63,18 +63,18 @@ Add the testkit module for unit testing your migrations:
     <dependency>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-core</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </dependency>
     <dependency>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-codec</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </dependency>
     <!-- Testkit for unit testing -->
     <dependency>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-testkit</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -90,7 +90,7 @@ The Bill of Materials (BOM) ensures consistent versions across all modules:
         <dependency>
             <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -124,7 +124,7 @@ The Bill of Materials (BOM) ensures consistent versions across all modules:
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.3.0'
+    implementation 'de.splatgames.aether:aether-datafixers-core:0.4.0'
 }
 ```
 
@@ -132,9 +132,9 @@ With JSON support:
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether:aether-datafixers-core:0.3.0'
-    implementation 'de.splatgames.aether:aether-datafixers-codec:0.3.0'
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'de.splatgames.aether:aether-datafixers-core:0.4.0'
+    implementation 'de.splatgames.aether:aether-datafixers-codec:0.4.0'
+    implementation 'com.google.code.gson:gson:2.13.2'
 }
 ```
 
@@ -142,7 +142,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.3.0")
+    implementation("de.splatgames.aether:aether-datafixers-core:0.4.0")
 }
 ```
 
@@ -150,9 +150,9 @@ With JSON support:
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether:aether-datafixers-core:0.3.0")
-    implementation("de.splatgames.aether:aether-datafixers-codec:0.3.0")
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("de.splatgames.aether:aether-datafixers-core:0.4.0")
+    implementation("de.splatgames.aether:aether-datafixers-codec:0.4.0")
+    implementation("com.google.code.gson:gson:2.13.2")
 }
 ```
 
@@ -160,9 +160,9 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0'
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec:0.3.0'
-    testImplementation 'de.splatgames.aether.datafixers:aether-datafixers-testkit:0.3.0'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec:0.4.0'
+    testImplementation 'de.splatgames.aether.datafixers:aether-datafixers-testkit:0.4.0'
 }
 ```
 
@@ -172,7 +172,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0')
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0')
 
     // No version needed
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
@@ -185,7 +185,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0"))
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0"))
 
     // No version needed
     implementation("de.splatgames.aether.datafixers:aether-datafixers-core")

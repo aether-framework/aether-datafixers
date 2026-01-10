@@ -1,19 +1,19 @@
-# 🚀 **Aether Datafixers v0.3.0 — CLI, Schema Tools, and Convention Validation**
+# Aether Datafixers v0.4.0 — Spring Boot Integration & Multi-Format DynamicOps
 
-Command-line interface for batch migrations, schema analysis tools, and naming convention validation.
-
----
-
-## 🎯 Highlights in v0.3.0
-
-- ✅ **CLI Module** — New `aether-datafixers-cli` module for migrating and validating data files from the command line with batch processing and reports.
-- ✅ **Schema Tools Module** — New `aether-datafixers-schema-tools` module for schema diffing, migration analysis, validation, and type introspection.
-- ✅ **Fix Coverage Analysis** — Detect schema changes without corresponding DataFixes to ensure complete migration coverage.
-- ✅ **Convention Checking** — Enforce naming conventions for types, fields, schema classes, and fix classes.
+Spring Boot auto-configuration with fluent MigrationService API, Actuator integration, and comprehensive multi-format support for YAML, TOML, and XML.
 
 ---
 
-## 📦 Installation
+## Highlights in v0.4.0
+
+- **Spring Boot Starter** — New `aether-datafixers-spring-boot-starter` module with auto-configuration, fluent `MigrationService` API, multi-domain support, Actuator health/info/endpoints, and Micrometer metrics
+- **Multi-Format DynamicOps** — New DynamicOps implementations for YAML (SnakeYAML, Jackson), TOML (Jackson), and XML (Jackson)
+- **Package Restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
+- **Comprehensive Documentation** — New Spring Boot integration docs and codec format guides
+
+---
+
+## Installation
 
 > [!TIP]
 > All Aether artifacts are available on **Maven Central** — no extra repository required.
@@ -24,7 +24,7 @@ Command-line interface for batch migrations, schema analysis tools, and naming c
 <dependency>
   <groupId>de.splatgames.aether.datafixers</groupId>
   <artifactId>aether-datafixers-core</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 
@@ -36,7 +36,7 @@ Command-line interface for batch migrations, schema analysis tools, and naming c
     <dependency>
       <groupId>de.splatgames.aether.datafixers</groupId>
       <artifactId>aether-datafixers-bom</artifactId>
-      <version>0.3.0</version>
+      <version>0.4.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -44,11 +44,11 @@ Command-line interface for batch migrations, schema analysis tools, and naming c
 </dependencyManagement>
 
 <dependencies>
-<!-- No version needed -->
-<dependency>
-  <groupId>de.splatgames.aether.datafixers</groupId>
-  <artifactId>aether-datafixers-core</artifactId>
-</dependency>
+  <!-- No version needed -->
+  <dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-core</artifactId>
+  </dependency>
 </dependencies>
 ```
 
@@ -56,9 +56,9 @@ Command-line interface for batch migrations, schema analysis tools, and naming c
 
 ```groovy
 dependencies {
-  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0'
+  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0'
   // Or with BOM:
-  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0')
+  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0')
   implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
 }
 ```
@@ -67,179 +67,153 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0")
+  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0")
   // Or with BOM:
-  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0"))
+  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0"))
   implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
 }
 ```
 
 ---
 
-## 🆕 What's New
+## What's New
 
-### 🖥️ CLI Module
+### Spring Boot Starter Module
 
-New module `aether-datafixers-cli` for command-line data migration:
+New module `aether-datafixers-spring-boot-starter` for seamless Spring Boot 3.x integration:
 
 ```xml
 <dependency>
   <groupId>de.splatgames.aether.datafixers</groupId>
-  <artifactId>aether-datafixers-cli</artifactId>
-  <version>0.3.0</version>
+  <artifactId>aether-datafixers-spring-boot-starter</artifactId>
+  <version>0.4.0</version>
 </dependency>
 ```
 
-**Commands:**
+**Key Features:**
 
-| Command | Description |
+| Feature | Description |
 |---------|-------------|
-| `migrate` | Migrate data files from one schema version to another |
-| `validate` | Check if files need migration without modifying them |
-| `info` | Display version info, available formats, and bootstrap details |
+| Auto-Configuration | Automatic DataFixer bean creation from `DataFixerBootstrap` beans |
+| MigrationService | Fluent API: `.migrate(data).from(100).to(200).execute()` |
+| Multi-Domain | Multiple DataFixers with `@Qualifier` and `.usingDomain("game")` |
+| Actuator | Health indicator, info contributor, `/actuator/datafixers` endpoint |
+| Metrics | Micrometer counters, timers, and distribution summaries |
+| Async | `CompletableFuture` support via `.executeAsync()` |
 
-**Features:**
-- Batch processing of multiple files with shell glob expansion
-- Auto-detection of source version from configurable data field path
-- In-place file modification with automatic `.bak` backup
-- Output to stdout, file, or directory
-- Pretty-printed or compact JSON output
-- Migration reports in text or JSON format
-- Verbose mode with detailed progress and stack traces
-- CI/CD friendly exit codes (0=success, 1=error, 2=migration needed)
+**Quick Start:**
+
+```java
+@Configuration
+public class DataFixerConfig {
+    @Bean
+    public DataFixerBootstrap gameBootstrap() {
+        return new GameDataBootstrap();
+    }
+}
+
+@Service
+public class GameService {
+    private final MigrationService migrationService;
+
+    public Dynamic<?> migrateData(Dynamic<?> data, int fromVersion) {
+        return migrationService
+            .migrate(data)
+            .from(fromVersion)
+            .toLatest()
+            .execute()
+            .getData();
+    }
+}
+```
+
+**Configuration Properties:**
+
+```yaml
+aether:
+  datafixers:
+    enabled: true
+    default-format: gson  # gson | jackson | jackson_yaml | snakeyaml | jackson_toml | jackson_xml
+    default-current-version: 200
+    domains:
+      game:
+        current-version: 200
+        primary: true
+    actuator:
+      include-schema-details: true
+    metrics:
+      timing: true
+      counting: true
+```
+
+### Multi-Format DynamicOps
+
+New DynamicOps implementations in the codec module:
+
+| Format | Implementation   | Data Type     | Library      |
+|--------|------------------|---------------|--------------|
+| JSON   | `GsonOps`        | `JsonElement` | Gson         |
+| JSON   | `JacksonJsonOps` | `JsonNode`    | Jackson      |
+| YAML   | `SnakeYamlOps`   | `Object`      | SnakeYAML    |
+| YAML   | `JacksonYamlOps` | `JsonNode`    | Jackson YAML |
+| TOML   | `JacksonTomlOps` | `JsonNode`    | Jackson TOML |
+| XML    | `JacksonXmlOps`  | `JsonNode`    | Jackson XML  |
 
 **Example:**
-```bash
-# Migrate a single file
-aether-cli migrate --from 100 --to 200 --type player --bootstrap com.example.MyBootstrap input.json
-
-# Migrate with auto-detected version
-aether-cli migrate --to 200 --type player --version-field dataVersion --bootstrap com.example.MyBootstrap input.json
-
-# Validate files (check without modifying)
-aether-cli validate --to 200 --type player --bootstrap com.example.MyBootstrap *.json
-
-# Show available formats and bootstrap info
-aether-cli info --formats
-aether-cli info --bootstrap com.example.MyBootstrap
-```
-
-### 🔧 Schema Tools Module
-
-New module `aether-datafixers-schema-tools` for schema analysis and validation:
-
-```xml
-<dependency>
-  <groupId>de.splatgames.aether.datafixers</groupId>
-  <artifactId>aether-datafixers-schema-tools</artifactId>
-  <version>0.3.0</version>
-</dependency>
-```
-
-#### Schema Diffing
-
-Compare schemas between versions to see what changed:
 
 ```java
-SchemaDiff diff = SchemaDiffer.compare(schemaV1, schemaV2)
-    .includeFieldLevel(true)
-    .diff();
+// YAML with SnakeYAML (native Java types)
+Dynamic<Object> yaml = new Dynamic<>(SnakeYamlOps.INSTANCE, yamlData);
 
-// Check results
-diff.addedTypes();    // Types new in schemaV2
-diff.removedTypes();  // Types removed from schemaV1
-diff.commonTypes();   // Types in both schemas
-diff.typeDiffs();     // Field-level changes for common types
+// TOML with Jackson
+Dynamic<JsonNode> toml = new Dynamic<>(JacksonTomlOps.INSTANCE, tomlData);
+
+// Cross-format conversion
+Dynamic<JsonElement> json = yaml.convert(GsonOps.INSTANCE);
 ```
 
-#### Migration Analysis
+### Breaking Change: Package Restructuring
 
-Analyze migration paths and detect coverage gaps:
+The codec module now uses format-first package organization:
 
+**Old:**
 ```java
-FixCoverage coverage = MigrationAnalyzer.forBootstrap(bootstrap)
-    .from(100).to(200)
-    .analyzeCoverage();
-
-// Find schema changes without DataFixes
-for (CoverageGap gap : coverage.gaps()) {
-    System.out.println("Missing fix for: " + gap.type() + " (" + gap.reason() + ")");
-}
-
-// Detect orphan fixes (fixes without schema changes)
-coverage.orphanFixes();
+import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.jackson.JacksonOps;
 ```
 
-#### Schema Validation
-
-Validate schema structure and naming conventions:
-
+**New:**
 ```java
-ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
-    .validateStructure()
-    .validateConventions(ConventionRules.STRICT)
-    .validate();
-
-// Check for issues
-for (ValidationIssue issue : result.issues()) {
-    System.out.println(issue.severity() + ": " + issue.message());
-}
-```
-
-#### Convention Checking
-
-Enforce naming conventions:
-
-```java
-ConventionChecker checker = ConventionChecker.withRules(ConventionRules.builder()
-    .typeNamePattern(Pattern.compile("[a-z][a-z0-9_]*"))  // snake_case types
-    .fieldNamePattern(Pattern.compile("[a-z][a-zA-Z0-9]*")) // camelCase fields
-    .schemaClassPrefix("Schema")  // Schema100, Schema200
-    .fixClassSuffix("Fix")        // PlayerNameFix, PositionFix
-    .build());
-
-List<ValidationIssue> issues = checker.check(bootstrap);
-```
-
-#### Type Introspection
-
-Inspect type structures programmatically:
-
-```java
-TypeStructure structure = TypeIntrospector.introspect(type);
-
-// Get all fields with their paths
-for (FieldInfo field : structure.fields()) {
-    System.out.println(field.path() + " : " + field.typeKind());
-}
-
-// Compare structures
-boolean equal = TypeIntrospector.structurallyEqual(type1, type2);
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
+import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
+import de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps;
+import de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps;
+import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
 ```
 
 ---
 
-## 📝 Changelog
+## Changelog
 
-**New in 0.3.0**
+**New in 0.4.0**
 
-- CLI module with migrate, validate, and info commands
-- Schema Tools module with diffing, analysis, validation, and introspection
-- Fix coverage analysis to detect missing DataFixes
-- Convention checking for type, field, and class names
-- Format handler SPI with Gson and Jackson implementations
-- Comprehensive documentation updates
+- Spring Boot Starter with auto-configuration and MigrationService
+- Actuator health indicator, info contributor, and custom endpoint
+- Micrometer metrics for migration success/failure/duration
+- Multi-domain DataFixer support with `@Qualifier`
+- SnakeYamlOps for YAML (native Java types)
+- JacksonYamlOps for YAML (Jackson dataformat)
+- JacksonTomlOps for TOML
+- JacksonXmlOps for XML
+- Format-first package restructuring in codec module
+- Comprehensive Spring Boot and codec documentation
 
-**Full Changelog:** [v0.2.0...v0.3.0](https://github.com/aether-framework/aether-datafixers/compare/v0.2.0...v0.3.0)
+**Full Changelog:** [v0.3.0...v0.4.0](https://github.com/aether-framework/aether-datafixers/compare/v0.3.0...v0.4.0)
 
 ---
 
-## 🗺️ Roadmap (next)
-
-- **v0.4.0**
-  - **Spring Boot integration** — Auto-configuration for DataFixer in Spring apps
-  - **Extra ops modules** — Optional YAML/TOML support (format adapters)
-  - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
+## Roadmap (next)
 
 - **v0.5.0** (API freeze candidate)
   - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
@@ -249,6 +223,6 @@ boolean equal = TypeIntrospector.structurallyEqual(type1, type2);
 
 ---
 
-## 📜 License
+## License
 
 **MIT** — see `LICENSE`.

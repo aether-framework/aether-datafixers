@@ -7,7 +7,8 @@ We provide security updates for the following versions:
 | Version | Supported           |
 |---------|---------------------|
 | 1.0.x   | ❌ Not supported yet |
-| 0.3.x   | ✅ Active Support    |
+| 0.4.x   | ✅ Active Support    |
+| 0.3.x   | ❌ Not supported     |
 | 0.2.x   | ❌ Not supported     |
 | 0.1.x   | ❌ Not supported     |
 
