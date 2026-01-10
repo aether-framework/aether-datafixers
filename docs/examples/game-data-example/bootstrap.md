@@ -153,22 +153,22 @@ public class PlayerDataLoader {
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Bootstrap Execution                       │
+│                    Bootstrap Execution                      │
 ├─────────────────────────────────────────────────────────────┤
-│                                                              │
+│                                                             │
 │  1. registerSchemas(SchemaRegistry)                         │
 │     ├── Schema100 (v1.0.0) ─────────────────┐               │
 │     ├── Schema110 (v1.1.0) ─────────────────┤ Schema Chain  │
 │     └── Schema200 (v2.0.0) ─────────────────┘               │
-│                                                              │
+│                                                             │
 │  2. registerFixes(FixRegistrar)                             │
-│     ├── PlayerV1ToV2Fix (100 → 110)                        │
-│     ├── PlayerV2ToV3Fix (110 → 200)                        │
-│     └── WorldV1ToV2Fix (100 → 200)                         │
-│                                                              │
-│  3. DataFixer Built                                          │
+│     ├── PlayerV1ToV2Fix (100 → 110)                         │
+│     ├── PlayerV2ToV3Fix (110 → 200)                         │
+│     └── WorldV1ToV2Fix (100 → 200)                          │
+│                                                             │
+│  3. DataFixer Built                                         │
 │     └── Ready for update() calls                            │
-│                                                              │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 

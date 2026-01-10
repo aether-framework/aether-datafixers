@@ -23,15 +23,15 @@ Finder navigates through Dynamic data, handling the uncertainty at each step:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Dynamic<?> data                               │
-│  {                                                               │
-│    "player": {                                                   │
+│                    Dynamic<?> data                              │
+│  {                                                              │
+│    "player": {                                                  │
 │      "name": "Steve",         ◀── Finder.field("player")        │
 │      "stats": {                   .then(Finder.field("name"))   │
 │        "level": 10                .then(Finder.asString())      │
-│      }                                                           │
-│    }                              Result: Optional.of("Steve")   │
-│  }                                                               │
+│      }                                                          │
+│    }                              Result: Optional.of("Steve")  │
+│  }                                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

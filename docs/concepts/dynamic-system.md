@@ -5,17 +5,17 @@ The Dynamic system is the core abstraction that allows Aether Datafixers to work
 ## Overview
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                       Dynamic<T>                                  │
-│  ┌────────────────────────┐    ┌─────────────────────────────┐   │
-│  │     DynamicOps<T>      │    │         T value             │   │
-│  │   (format operations)  │    │   (underlying data)         │   │
-│  └────────────────────────┘    └─────────────────────────────┘   │
-│                                                                   │
-│  Example: Dynamic<JsonElement>                                    │
-│  ├── ops: GsonOps.INSTANCE                                        │
-│  └── value: {"name": "Steve", "level": 10}                        │
-└──────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                       Dynamic<T>                                │
+│  ┌────────────────────────┐    ┌─────────────────────────────┐  │
+│  │     DynamicOps<T>      │    │         T value             │  │
+│  │   (format operations)  │    │   (underlying data)         │  │
+│  └────────────────────────┘    └─────────────────────────────┘  │
+│                                                                 │
+│  Example: Dynamic<JsonElement>                                  │
+│  ├── ops: GsonOps.INSTANCE                                      │
+│  └── value: {"name": "Steve", "level": 10}                      │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 The key insight is that **all data manipulation happens through `Dynamic`**, which delegates to the appropriate `DynamicOps` for the underlying format. This means the same fix code works with JSON, NBT, YAML, or any other format.

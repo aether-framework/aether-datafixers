@@ -31,7 +31,7 @@ An Iso represents an equivalence between types:
 ┌─────────────┐     get()      ┌─────────────┐
 │     S       │ ──────────────▶│     A       │
 │   (source)  │                │   (target)  │
-│             │◀──────────────│             │
+│             │◀──────────────│              │
 └─────────────┘   reverseGet() └─────────────┘
 ```
 

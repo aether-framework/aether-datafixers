@@ -7,19 +7,19 @@ Rewrite rules define how data is transformed during migrations. The `TypeRewrite
 A `TypeRewriteRule` represents a transformation that can be applied to data. Rules can be combined and composed to build complex migrations from simple operations.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     TypeRewriteRule                              │
-│                                                                  │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
-│  │  rename      │ +  │  transform   │ +  │  restructure │       │
-│  │  field       │    │  value       │    │  data        │       │
-│  └──────────────┘    └──────────────┘    └──────────────┘       │
-│         │                   │                   │               │
-│         └───────────────────┴───────────────────┘               │
-│                             │                                    │
-│                             ▼                                    │
-│                    Combined Rule (seq)                           │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                     TypeRewriteRule                        │
+│                                                            │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
+│  │  rename      │ +  │  transform   │ +  │  restructure │  │
+│  │  field       │    │  value       │    │  data        │  │
+│  └──────────────┘    └──────────────┘    └──────────────┘  │
+│         │                   │                   │          │
+│         └───────────────────┴───────────────────┘          │
+│                             │                              │
+│                             ▼                              │
+│                    Combined Rule (seq)                     │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ## The Rules Factory

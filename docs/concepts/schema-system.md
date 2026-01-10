@@ -7,18 +7,18 @@ The schema system is the foundation of Aether Datafixers. It defines what data t
 A **Schema** represents the state of your data model at a specific version. It associates a `DataVersion` with a `TypeRegistry` containing type definitions.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────┐
 │                         Schema                               │
-│  ┌─────────────────┐    ┌─────────────────────────────────┐ │
-│  │  DataVersion    │    │         TypeRegistry            │ │
-│  │     (100)       │    │  ┌───────────────────────────┐  │ │
-│  └─────────────────┘    │  │ TypeReference → Type      │  │ │
-│                         │  │ "player"    → PlayerType  │  │ │
-│  ┌─────────────────┐    │  │ "world"     → WorldType   │  │ │
-│  │  Parent Schema  │    │  └───────────────────────────┘  │ │
-│  │   (optional)    │    └─────────────────────────────────┘ │
-│  └─────────────────┘                                        │
-└─────────────────────────────────────────────────────────────┘
+│  ┌─────────────────┐    ┌─────────────────────────────────┐  │
+│  │  DataVersion    │    │         TypeRegistry            │  │
+│  │     (100)       │    │  ┌───────────────────────────┐  │  │
+│  └─────────────────┘    │  │ TypeReference → Type      │  │  │
+│                         │  │ "player"    → PlayerType  │  │  │
+│  ┌─────────────────┐    │  │ "world"     → WorldType   │  │  │
+│  │  Parent Schema  │    │  └───────────────────────────┘  │  │
+│  │   (optional)    │    └─────────────────────────────────┘  │
+│  └─────────────────┘                                         │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Components
