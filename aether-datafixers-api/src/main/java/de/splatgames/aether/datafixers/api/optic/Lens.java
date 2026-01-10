@@ -320,6 +320,35 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation delegates to {@link #compose(Lens)} if the provided optic is a
+     * {@link Lens}. For other optic types, an {@link UnsupportedOperationException} is thrown
+     * since lens composition requires the other optic to also be a lens to maintain lens semantics
+     * (guaranteed single focus with read/write access).</p>
+     *
+     * <h4>Supported Compositions</h4>
+     * <ul>
+     *   <li>{@link Lens} - Produces a composed {@link Lens}</li>
+     * </ul>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Lens<Person, Person, Address, Address> addressLens = ...;
+     * Optic<Address, Address, String, String> cityOptic = cityLens; // A Lens
+     *
+     * Optic<Person, Person, String, String> composed = addressLens.compose(cityOptic);
+     * // Returns a Lens focusing on the city within a Person's address
+     * }</pre>
+     *
+     * @param other the optic to compose with, must be a {@link Lens}, must not be {@code null}
+     * @param <C>   the new focus type
+     * @param <D>   the new modified focus type
+     * @return a composed optic (specifically a {@link Lens} if {@code other} is a Lens), never {@code null}
+     * @throws NullPointerException          if {@code other} is {@code null}
+     * @throws UnsupportedOperationException if {@code other} is not a {@link Lens}
+     */
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
         Preconditions.checkNotNull(other, "other must not be null");

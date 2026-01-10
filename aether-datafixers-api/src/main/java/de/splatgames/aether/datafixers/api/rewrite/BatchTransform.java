@@ -262,17 +262,46 @@ public final class BatchTransform<T> {
     // ==================== Internal Operation Classes ====================
 
     /**
-     * Base interface for field operations.
+     * Base interface for field operations in a batch transform.
+     *
+     * <p>All field operations implement this interface, allowing them to be
+     * collected and applied sequentially to a {@link Dynamic} value. Operations
+     * are immutable and return new Dynamic instances.</p>
+     *
+     * @param <T> the underlying data format type
+     * @since 0.4.0
      */
     private interface FieldOperation<T> {
+
+        /**
+         * Applies this operation to the given dynamic value.
+         *
+         * @param dynamic the dynamic value to transform, must not be {@code null}
+         * @return the transformed dynamic value, never {@code null}
+         */
         @NotNull
         Dynamic<T> apply(@NotNull Dynamic<T> dynamic);
     }
 
     /**
-     * Rename operation: moves value from one field to another.
+     * Rename operation that moves a value from one field name to another.
+     *
+     * <p>If the source field does not exist, the dynamic is returned unchanged.
+     * The source field is removed after copying its value to the target field.</p>
+     *
+     * @param from the source field name to rename from
+     * @param to   the target field name to rename to
+     * @param <T>  the underlying data format type
+     * @since 0.4.0
      */
     private record RenameOp<T>(String from, String to) implements FieldOperation<T> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Moves the value from the {@code from} field to the {@code to} field.
+         * Returns the dynamic unchanged if the source field doesn't exist.</p>
+         */
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
@@ -286,9 +315,21 @@ public final class BatchTransform<T> {
     }
 
     /**
-     * Remove operation: removes a field.
+     * Remove operation that deletes a field from the dynamic.
+     *
+     * <p>If the field does not exist, the dynamic is returned unchanged.</p>
+     *
+     * @param field the name of the field to remove
+     * @param <T>   the underlying data format type
+     * @since 0.4.0
      */
     private record RemoveOp<T>(String field) implements FieldOperation<T> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Removes the specified field from the dynamic.</p>
+         */
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
@@ -298,9 +339,23 @@ public final class BatchTransform<T> {
     }
 
     /**
-     * Set operation: sets a field to a computed value (overwrites existing).
+     * Set operation that creates or overwrites a field with a computed value.
+     *
+     * <p>The value is computed by applying the supplier function to the current
+     * dynamic state, allowing the new value to depend on existing fields.</p>
+     *
+     * @param field         the name of the field to set
+     * @param valueSupplier function to compute the new value from the current dynamic
+     * @param <T>           the underlying data format type
+     * @since 0.4.0
      */
     private record SetOp<T>(String field, Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements FieldOperation<T> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Sets the field to the value computed by the supplier function.</p>
+         */
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
@@ -310,10 +365,25 @@ public final class BatchTransform<T> {
     }
 
     /**
-     * Transform operation: transforms an existing field value.
+     * Transform operation that modifies an existing field's value.
+     *
+     * <p>The transformation function receives the current field value and returns
+     * the new value. If the field does not exist, the dynamic is returned unchanged.</p>
+     *
+     * @param field     the name of the field to transform
+     * @param transform function to transform the current field value
+     * @param <T>       the underlying data format type
+     * @since 0.4.0
      */
     private record TransformOp<T>(String field,
                                   Function<Dynamic<T>, Dynamic<T>> transform) implements FieldOperation<T> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Transforms the field value using the transformation function.
+         * Returns the dynamic unchanged if the field doesn't exist.</p>
+         */
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
@@ -327,10 +397,25 @@ public final class BatchTransform<T> {
     }
 
     /**
-     * Add if missing operation: sets a field only if it doesn't exist.
+     * Add-if-missing operation that sets a field only if it doesn't already exist.
+     *
+     * <p>This is useful for providing default values during migration without
+     * overwriting existing values. The value is computed lazily only when needed.</p>
+     *
+     * @param field         the name of the field to add
+     * @param valueSupplier function to compute the default value
+     * @param <T>           the underlying data format type
+     * @since 0.4.0
      */
     private record AddIfMissingOp<T>(String field,
                                      Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements FieldOperation<T> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Adds the field with the supplied value only if the field doesn't exist.
+         * Returns the dynamic unchanged if the field already has a value.</p>
+         */
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {

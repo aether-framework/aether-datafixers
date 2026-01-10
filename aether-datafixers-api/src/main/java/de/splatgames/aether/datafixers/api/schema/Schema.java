@@ -296,23 +296,60 @@ public class Schema {
     /**
      * Internal type implementation that wraps a DSL-generated type with a TypeReference.
      *
-     * @param <A> the value type
+     * <p>This class is used internally by {@link Schema#registerType} to associate
+     * a {@link TypeReference} with a type that was generated from a {@link TypeTemplate}.
+     * It implements the decorator pattern, delegating codec operations to the underlying
+     * DSL-generated type while providing the reference information.</p>
+     *
+     * <h2>Purpose</h2>
+     * <p>When types are registered in a schema using templates, the resulting type
+     * needs both a reference (for lookup) and a codec (for serialization). This class
+     * provides that association by wrapping any {@link Type} with its reference.</p>
+     *
+     * <h2>Thread Safety</h2>
+     * <p>This class is immutable and thread-safe.</p>
+     *
+     * @param <A> the value type that this type can encode/decode
+     * @since 0.1.0
      */
     private static final class TemplateBasedType<A> implements Type<A> {
+
+        /** The type reference identifying this type in the registry. */
         private final TypeReference reference;
+
+        /** The underlying type providing codec functionality. */
         private final Type<A> delegate;
 
+        /**
+         * Creates a new template-based type wrapping the given delegate.
+         *
+         * @param reference the type reference for registry lookup, must not be {@code null}
+         * @param delegate  the underlying type providing codec functionality, must not be {@code null}
+         * @throws NullPointerException if {@code reference} or {@code delegate} is {@code null}
+         */
         TemplateBasedType(@NotNull final TypeReference reference, @NotNull final Type<A> delegate) {
             this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
             this.delegate = Preconditions.checkNotNull(delegate, "delegate must not be null");
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return the type reference associated with this type
+         */
         @NotNull
         @Override
         public TypeReference reference() {
             return this.reference;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Delegates to the underlying type's codec.</p>
+         *
+         * @return the codec from the delegate type
+         */
         @NotNull
         @Override
         public Codec<A> codec() {

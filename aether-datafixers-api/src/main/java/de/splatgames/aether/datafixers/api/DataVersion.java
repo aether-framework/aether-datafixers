@@ -70,6 +70,13 @@ import java.util.Objects;
  */
 public final class DataVersion implements Comparable<DataVersion> {
 
+    /**
+     * The internal numeric representation of this data version.
+     *
+     * <p>This value is guaranteed to be non-negative and represents the version number
+     * in a monotonically increasing sequence. Higher values indicate newer versions of
+     * the data schema.</p>
+     */
     private final int version;
 
     /**
@@ -85,19 +92,87 @@ public final class DataVersion implements Comparable<DataVersion> {
     }
 
     /**
-     * Returns the numeric version value.
+     * Returns the numeric version value of this data version.
      *
-     * @return the version number
+     * <p>The returned value is always non-negative and represents the sequential
+     * version number of the data schema. This value can be used for:</p>
+     * <ul>
+     *   <li>Persisting the version alongside serialized data</li>
+     *   <li>Calculating version ranges for migrations</li>
+     *   <li>Displaying version information to users or in logs</li>
+     * </ul>
+     *
+     * @return the version number as a non-negative integer
      */
     public int getVersion() {
         return this.version;
     }
 
+    /**
+     * Compares this data version with another data version for ordering.
+     *
+     * <p>This method establishes a natural ordering for data versions based on their
+     * numeric values. The ordering follows these rules:</p>
+     * <ul>
+     *   <li>A version with a lower numeric value is considered "less than" a version
+     *       with a higher numeric value</li>
+     *   <li>Two versions with the same numeric value are considered equal</li>
+     * </ul>
+     *
+     * <p>This ordering is consistent with {@link #equals(Object)}, meaning that
+     * {@code v1.compareTo(v2) == 0} implies {@code v1.equals(v2)} and vice versa.</p>
+     *
+     * <p><b>Example usage:</b></p>
+     * <pre>{@code
+     * DataVersion v100 = new DataVersion(100);
+     * DataVersion v200 = new DataVersion(200);
+     *
+     * // Returns negative value (v100 < v200)
+     * int result = v100.compareTo(v200);
+     *
+     * // Can be used for sorting
+     * List<DataVersion> versions = Arrays.asList(v200, v100);
+     * Collections.sort(versions); // Results in [v100, v200]
+     * }</pre>
+     *
+     * @param o the data version to compare against; must not be {@code null}
+     * @return a negative integer if this version is less than the specified version,
+     *         zero if they are equal, or a positive integer if this version is
+     *         greater than the specified version
+     * @throws NullPointerException if the specified data version is {@code null}
+     */
     @Override
     public int compareTo(@NotNull final DataVersion o) {
         return Integer.compare(this.version, o.version);
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this data version.
+     *
+     * <p>Two {@code DataVersion} instances are considered equal if and only if they
+     * have the same numeric version value. This method adheres to the general contract
+     * of {@link Object#equals(Object)}, providing:</p>
+     * <ul>
+     *   <li><b>Reflexivity:</b> For any non-null {@code DataVersion x}, {@code x.equals(x)}
+     *       returns {@code true}</li>
+     *   <li><b>Symmetry:</b> For any non-null {@code DataVersion} instances {@code x} and
+     *       {@code y}, {@code x.equals(y)} returns {@code true} if and only if
+     *       {@code y.equals(x)} returns {@code true}</li>
+     *   <li><b>Transitivity:</b> For any non-null {@code DataVersion} instances {@code x},
+     *       {@code y}, and {@code z}, if {@code x.equals(y)} returns {@code true} and
+     *       {@code y.equals(z)} returns {@code true}, then {@code x.equals(z)} returns
+     *       {@code true}</li>
+     *   <li><b>Consistency:</b> Multiple invocations of {@code x.equals(y)} consistently
+     *       return the same result, provided neither object is modified</li>
+     *   <li><b>Non-nullity:</b> For any non-null {@code DataVersion x}, {@code x.equals(null)}
+     *       returns {@code false}</li>
+     * </ul>
+     *
+     * @param obj the reference object with which to compare; may be {@code null}
+     * @return {@code true} if this data version is equal to the specified object;
+     *         {@code false} otherwise
+     * @see #hashCode()
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -109,11 +184,47 @@ public final class DataVersion implements Comparable<DataVersion> {
         return this.version == other.version;
     }
 
+    /**
+     * Returns a hash code value for this data version.
+     *
+     * <p>The hash code is computed based on the numeric version value. This implementation
+     * satisfies the general contract of {@link Object#hashCode()}, which states that:</p>
+     * <ul>
+     *   <li>If two {@code DataVersion} objects are equal according to the
+     *       {@link #equals(Object)} method, then calling {@code hashCode()} on each of
+     *       the two objects produces the same integer result</li>
+     *   <li>It is not required that if two {@code DataVersion} objects are unequal according
+     *       to {@link #equals(Object)}, then their hash codes must be distinct; however,
+     *       producing distinct hash codes for unequal objects may improve hash table performance</li>
+     * </ul>
+     *
+     * <p>This method is suitable for use in hash-based collections such as
+     * {@link java.util.HashMap} and {@link java.util.HashSet}.</p>
+     *
+     * @return a hash code value for this data version
+     * @see #equals(Object)
+     */
     @Override
     public int hashCode() {
         return Objects.hash(this.version);
     }
 
+    /**
+     * Returns a string representation of this data version.
+     *
+     * <p>The returned string follows the format {@code "DataVersion{version=N}"} where
+     * {@code N} is the numeric version value. This format is intended for debugging and
+     * logging purposes and should not be parsed programmatically.</p>
+     *
+     * <p><b>Example output:</b></p>
+     * <pre>{@code
+     * new DataVersion(100).toString() // Returns "DataVersion{version=100}"
+     * new DataVersion(0).toString()   // Returns "DataVersion{version=0}"
+     * }</pre>
+     *
+     * @return a string representation of this data version in the format
+     *         {@code "DataVersion{version=N}"}
+     */
     @Override
     public String toString() {
         return "DataVersion{" + "version=" + this.version + '}';

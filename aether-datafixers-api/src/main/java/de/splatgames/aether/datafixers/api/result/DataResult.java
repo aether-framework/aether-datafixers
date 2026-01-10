@@ -496,56 +496,139 @@ public sealed interface DataResult<A> {
     /**
      * Implementation of {@link DataResult} representing a successful result.
      *
-     * <p>A success contains a non-null value and has no error message or partial result.</p>
+     * <p>A success contains a non-null value and has no error message or partial result.
+     * This record implementation is immutable and thread-safe.</p>
+     *
+     * <h2>Usage</h2>
+     * <p>Instances should be created via the factory method {@link DataResult#success(Object)}
+     * rather than directly constructing this record.</p>
+     *
+     * <pre>{@code
+     * DataResult<Integer> result = DataResult.success(42);
+     * // Equivalent to: new DataResult.Success<>(42)
+     * }</pre>
+     *
+     * <h2>Behavior</h2>
+     * <ul>
+     *   <li>{@link #isSuccess()} always returns {@code true}</li>
+     *   <li>{@link #isError()} always returns {@code false}</li>
+     *   <li>{@link #result()} returns {@code Optional.of(value)}</li>
+     *   <li>{@link #error()} returns {@code Optional.empty()}</li>
+     *   <li>{@link #partialResult()} returns {@code Optional.empty()}</li>
+     *   <li>{@link #map(Function)} applies the mapper and returns a new Success</li>
+     *   <li>{@link #flatMap(Function)} applies the mapper and returns its result</li>
+     *   <li>{@link #mapError(Function)} returns this unchanged</li>
+     *   <li>{@link #toEither()} returns {@code Either.right(value)}</li>
+     * </ul>
      *
      * @param value the successful value, must not be {@code null}
      * @param <A>   the type of the successful value
      */
     record Success<A>(@NotNull A value) implements DataResult<A> {
+
+        /**
+         * Canonical constructor for the Success record.
+         *
+         * <p>Validates that the provided value is not {@code null}.</p>
+         *
+         * @param value the successful value to store
+         * @throws NullPointerException if {@code value} is {@code null}
+         */
         public Success {
             Preconditions.checkNotNull(value, "value must not be null");
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code true} for Success
+         */
         @Override
         public boolean isSuccess() {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code false} for Success
+         */
         @Override
         public boolean isError() {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return an {@link Optional} containing the successful value
+         */
         @NotNull
         @Override
         public Optional<A> result() {
             return Optional.of(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@link Optional#empty()} for Success
+         */
         @NotNull
         @Override
         public Optional<String> error() {
             return Optional.empty();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@link Optional#empty()} for Success (no partial needed)
+         */
         @NotNull
         @Override
         public Optional<A> partialResult() {
             return Optional.empty();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, applies the mapper to the value and returns a new Success.</p>
+         *
+         * @param mapper the mapping function to apply
+         * @param <B>    the new value type
+         * @return a new Success containing the mapped value
+         */
         @Override
         public <B> @NotNull DataResult<B> map(@NotNull final Function<? super A, ? extends B> mapper) {
             Preconditions.checkNotNull(mapper, "mapper must not be null");
             return DataResult.success(mapper.apply(this.value));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, applies the mapper to the value and returns its result.</p>
+         *
+         * @param mapper the mapping function to apply
+         * @param <B>    the new value type
+         * @return the result of applying the mapper
+         */
         @Override
         public <B> @NotNull DataResult<B> flatMap(@NotNull final Function<? super A, ? extends DataResult<B>> mapper) {
             Preconditions.checkNotNull(mapper, "mapper must not be null");
             return mapper.apply(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns this unchanged (no error to map).</p>
+         *
+         * @param onError the error mapping function (not applied for Success)
+         * @return this instance unchanged
+         */
         @NotNull
         @Override
         public DataResult<A> mapError(@NotNull final Function<String, String> onError) {
@@ -553,29 +636,70 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns the value without throwing.</p>
+         *
+         * @param exceptionFactory the factory (not used for Success)
+         * @param <X>              the exception type
+         * @return the successful value
+         */
         @Override
         public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) throws X {
             Preconditions.checkNotNull(exceptionFactory, "exceptionFactory must not be null");
             return this.value;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns the value without invoking the error handler.</p>
+         *
+         * @param onError the error handler (not invoked for Success)
+         * @return the successful value
+         */
         @Override
         public A resultOrPartial(@NotNull final Consumer<String> onError) {
             Preconditions.checkNotNull(onError, "onError must not be null");
             return this.value;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns the successful value, ignoring the default.</p>
+         *
+         * @param defaultValue the default value (ignored for Success)
+         * @return the successful value
+         */
         @Override
         public A orElse(final A defaultValue) {
             return this.value;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns the value without invoking the supplier.</p>
+         *
+         * @param supplier the supplier (not invoked for Success)
+         * @return the successful value
+         */
         @Override
         public A orElseGet(@NotNull final Supplier<? extends A> supplier) {
             Preconditions.checkNotNull(supplier, "supplier must not be null");
             return this.value;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, invokes the consumer with the successful value.</p>
+         *
+         * @param consumer the consumer to invoke
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public DataResult<A> ifSuccess(@NotNull final Consumer<? super A> consumer) {
@@ -584,6 +708,14 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, the consumer is not invoked (no error).</p>
+         *
+         * @param consumer the consumer (not invoked for Success)
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public DataResult<A> ifError(@NotNull final Consumer<String> consumer) {
@@ -591,6 +723,17 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, combines with another result using the combiner function.</p>
+         *
+         * @param other    the other result to combine with
+         * @param combiner the function to combine values
+         * @param <B>      the type of the other value
+         * @param <C>      the combined result type
+         * @return a combined result
+         */
         @Override
         public <B, C> @NotNull DataResult<C> apply2(@NotNull final DataResult<B> other,
                                                     @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner) {
@@ -599,12 +742,27 @@ public sealed interface DataResult<A> {
             return other.map(b -> combiner.apply(this.value, b));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns {@code Either.right(value)}.</p>
+         *
+         * @return an Either containing the successful value on the right
+         */
         @NotNull
         @Override
         public Either<String, A> toEither() {
             return Either.right(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Success, returns this unchanged (nothing to promote).</p>
+         *
+         * @param onError the error handler (not invoked for Success)
+         * @return this instance unchanged
+         */
         @NotNull
         @Override
         public DataResult<A> promotePartial(@NotNull final Consumer<String> onError) {
@@ -612,6 +770,14 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * Compares this Success to another object for equality.
+         *
+         * <p>Two Success instances are equal if they contain equal values.</p>
+         *
+         * @param obj the object to compare with
+         * @return {@code true} if the other object is a Success with an equal value
+         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
@@ -623,11 +789,21 @@ public sealed interface DataResult<A> {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * Returns the hash code for this Success.
+         *
+         * @return the hash code based on the value
+         */
         @Override
         public int hashCode() {
             return Objects.hash(this.value);
         }
 
+        /**
+         * Returns a string representation of this Success.
+         *
+         * @return a string in the format "DataResult.Success[value]"
+         */
         @NotNull
         @Override
         public String toString() {
@@ -639,7 +815,39 @@ public sealed interface DataResult<A> {
      * Implementation of {@link DataResult} representing an error result.
      *
      * <p>An error contains a non-null error message and optionally a partial result
-     * that represents a "best effort" value despite the error.</p>
+     * that represents a "best effort" value despite the error. This record implementation
+     * is immutable and thread-safe.</p>
+     *
+     * <h2>Usage</h2>
+     * <p>Instances should be created via the factory methods {@link DataResult#error(String)}
+     * or {@link DataResult#error(String, Object)} rather than directly constructing this record.</p>
+     *
+     * <pre>{@code
+     * // Error without partial result
+     * DataResult<Integer> error = DataResult.error("Invalid input");
+     *
+     * // Error with partial result (best-effort value)
+     * DataResult<Integer> partial = DataResult.error("Parsing warning", 42);
+     * }</pre>
+     *
+     * <h2>Partial Results</h2>
+     * <p>Partial results allow error recovery in scenarios where a "best effort" value
+     * can be computed despite encountering an error. This is useful for lenient parsing
+     * or graceful degradation.</p>
+     *
+     * <h2>Behavior</h2>
+     * <ul>
+     *   <li>{@link #isSuccess()} always returns {@code false}</li>
+     *   <li>{@link #isError()} always returns {@code true}</li>
+     *   <li>{@link #result()} returns {@code Optional.empty()}</li>
+     *   <li>{@link #error()} returns {@code Optional.of(message)}</li>
+     *   <li>{@link #partialResult()} returns {@code Optional.ofNullable(partial)}</li>
+     *   <li>{@link #map(Function)} maps the partial result if present, keeps error message</li>
+     *   <li>{@link #flatMap(Function)} chains errors, preserving/combining messages</li>
+     *   <li>{@link #mapError(Function)} transforms the error message</li>
+     *   <li>{@link #toEither()} returns {@code Either.left(message)}</li>
+     *   <li>{@link #promotePartial(Consumer)} promotes partial to success if present</li>
+     * </ul>
      *
      * @param message the error message describing what went wrong, must not be {@code null}
      * @param partial the optional partial/best-effort result, may be {@code null}
@@ -647,38 +855,86 @@ public sealed interface DataResult<A> {
      */
     record Error<A>(@NotNull String message,
                     @Nullable A partial) implements DataResult<A> {
+
+        /**
+         * Canonical constructor for the Error record.
+         *
+         * <p>Validates that the error message is not {@code null}. The partial
+         * result may be {@code null} to indicate no best-effort value is available.</p>
+         *
+         * @param message the error message to store
+         * @param partial the optional partial result, may be {@code null}
+         * @throws NullPointerException if {@code message} is {@code null}
+         */
         public Error {
             Preconditions.checkNotNull(message, "message must not be null");
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code false} for Error
+         */
         @Override
         public boolean isSuccess() {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code true} for Error
+         */
         @Override
         public boolean isError() {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@link Optional#empty()} for Error (no successful result)
+         */
         @NotNull
         @Override
         public Optional<A> result() {
             return Optional.empty();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return an {@link Optional} containing the error message
+         */
         @NotNull
         @Override
         public Optional<String> error() {
             return Optional.of(this.message);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return an {@link Optional} containing the partial result if available,
+         *         otherwise {@link Optional#empty()}
+         */
         @NotNull
         @Override
         public Optional<A> partialResult() {
             return Optional.ofNullable(this.partial);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, if a partial result exists, applies the mapper to it and
+         * returns a new Error with the same message but mapped partial result. If no
+         * partial result exists, returns this instance with type adjusted.</p>
+         *
+         * @param mapper the mapping function to apply to the partial result
+         * @param <B>    the new value type
+         * @return a new Error with mapped partial, or this instance if no partial
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <B> @NotNull DataResult<B> map(@NotNull final Function<? super A, ? extends B> mapper) {
@@ -689,6 +945,18 @@ public sealed interface DataResult<A> {
             return (DataResult<B>) this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, if a partial result exists, applies the mapper and combines
+         * error messages. If the mapper returns a success, the success value becomes
+         * the new partial while preserving this error's message. If the mapper returns
+         * an error, the messages are concatenated with "; " separator.</p>
+         *
+         * @param mapper the mapping function to apply to the partial result
+         * @param <B>    the new value type
+         * @return a new Error with combined messages, or this instance if no partial
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <B> @NotNull DataResult<B> flatMap(@NotNull final Function<? super A, ? extends DataResult<B>> mapper) {
@@ -703,6 +971,15 @@ public sealed interface DataResult<A> {
             return (DataResult<B>) this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, applies the function to the error message and returns a new
+         * Error with the transformed message while preserving the partial result.</p>
+         *
+         * @param onError the function to transform the error message
+         * @return a new Error with the transformed message
+         */
         @NotNull
         @Override
         public DataResult<A> mapError(@NotNull final Function<String, String> onError) {
@@ -710,12 +987,33 @@ public sealed interface DataResult<A> {
             return new Error<>(onError.apply(this.message), this.partial);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, always throws the exception created from the error message.</p>
+         *
+         * @param exceptionFactory the factory to create the exception
+         * @param <X>              the exception type
+         * @return never returns normally
+         * @throws X always thrown for Error, created from the error message
+         */
         @Override
         public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) throws X {
             Preconditions.checkNotNull(exceptionFactory, "exceptionFactory must not be null");
             throw exceptionFactory.apply(this.message);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, invokes the error handler with the message, then returns the
+         * partial result if available. If no partial result exists, throws an
+         * {@link IllegalStateException}.</p>
+         *
+         * @param onError the error handler to invoke before returning partial
+         * @return the partial result if available
+         * @throws IllegalStateException if no partial result is available
+         */
         @Override
         public A resultOrPartial(@NotNull final Consumer<String> onError) {
             Preconditions.checkNotNull(onError, "onError must not be null");
@@ -726,17 +1024,41 @@ public sealed interface DataResult<A> {
             throw new IllegalStateException("No result or partial result available: " + this.message);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, always returns the provided default value.</p>
+         *
+         * @param defaultValue the default value to return
+         * @return the default value
+         */
         @Override
         public A orElse(final A defaultValue) {
             return defaultValue;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, always invokes the supplier and returns its result.</p>
+         *
+         * @param supplier the supplier to compute the default value
+         * @return the computed default value
+         */
         @Override
         public A orElseGet(@NotNull final Supplier<? extends A> supplier) {
             Preconditions.checkNotNull(supplier, "supplier must not be null");
             return supplier.get();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, the consumer is not invoked (no successful value).</p>
+         *
+         * @param consumer the consumer (not invoked for Error)
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public DataResult<A> ifSuccess(@NotNull final Consumer<? super A> consumer) {
@@ -744,6 +1066,14 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, invokes the consumer with the error message.</p>
+         *
+         * @param consumer the consumer to invoke with the error message
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public DataResult<A> ifError(@NotNull final Consumer<String> consumer) {
@@ -752,6 +1082,20 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, attempts to combine with another result using partial values.
+         * If this has a partial and other is successful, combines them into a new Error
+         * preserving this error's message. If both have errors and partials, combines
+         * messages with "; " separator. If no partials available, returns this unchanged.</p>
+         *
+         * @param other    the other result to combine with
+         * @param combiner the function to combine values
+         * @param <B>      the type of the other value
+         * @param <C>      the combined result type
+         * @return a combined Error result or this instance
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <B, C> @NotNull DataResult<C> apply2(@NotNull final DataResult<B> other,
@@ -770,12 +1114,29 @@ public sealed interface DataResult<A> {
             return (DataResult<C>) this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error, returns {@code Either.left(message)} with the error message.</p>
+         *
+         * @return an Either containing the error message on the left
+         */
         @NotNull
         @Override
         public Either<String, A> toEither() {
             return Either.left(this.message);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Error with a partial result, invokes the error handler and promotes
+         * the partial to a full Success. If no partial result exists, returns this
+         * Error unchanged.</p>
+         *
+         * @param onError the error handler to invoke when promoting
+         * @return a Success containing the partial, or this Error if no partial
+         */
         @NotNull
         @Override
         public DataResult<A> promotePartial(@NotNull final Consumer<String> onError) {
@@ -787,6 +1148,15 @@ public sealed interface DataResult<A> {
             return this;
         }
 
+        /**
+         * Compares this Error to another object for equality.
+         *
+         * <p>Two Error instances are equal if they have the same message and the same
+         * partial result (both null or both equal).</p>
+         *
+         * @param obj the object to compare with
+         * @return {@code true} if the other object is an Error with equal message and partial
+         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
@@ -798,11 +1168,24 @@ public sealed interface DataResult<A> {
             return Objects.equals(this.message, other.message) && Objects.equals(this.partial, other.partial);
         }
 
+        /**
+         * Returns the hash code for this Error.
+         *
+         * @return the hash code based on the message and partial result
+         */
         @Override
         public int hashCode() {
             return Objects.hash(this.message, this.partial);
         }
 
+        /**
+         * Returns a string representation of this Error.
+         *
+         * <p>The format includes the message and, if present, the partial result.</p>
+         *
+         * @return a string in the format "DataResult.Error[message]" or
+         *         "DataResult.Error[message, partial=value]"
+         */
         @NotNull
         @Override
         public String toString() {

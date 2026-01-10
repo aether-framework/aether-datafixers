@@ -474,6 +474,45 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation supports composition with multiple optic types, delegating to the
+     * appropriate specialized compose method based on the runtime type of the provided optic.
+     * An {@link Iso} is the most versatile optic for composition since it implements both
+     * {@link Lens} and {@link Prism}.</p>
+     *
+     * <h4>Supported Compositions</h4>
+     * <ul>
+     *   <li>{@link Iso} - Produces a composed {@link Iso} (highest priority)</li>
+     *   <li>{@link Lens} - Delegates to {@link Lens#compose(Lens)}</li>
+     *   <li>{@link Prism} - Delegates to {@link Prism#compose(Prism)}</li>
+     * </ul>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Iso<String, String, List<Character>, List<Character>> stringCharsIso = ...;
+     *
+     * // Compose with another Iso
+     * Iso<List<Character>, List<Character>, Integer, Integer> lengthIso = ...;
+     * Optic<String, String, Integer, Integer> composed1 = stringCharsIso.compose(lengthIso);
+     *
+     * // Compose with a Lens (result is a Lens)
+     * Lens<List<Character>, List<Character>, Character, Character> firstLens = ...;
+     * Optic<String, String, Character, Character> composed2 = stringCharsIso.compose(firstLens);
+     *
+     * // Compose with a Prism (result is a Prism)
+     * Prism<List<Character>, List<Character>, Character, Character> headPrism = ...;
+     * Optic<String, String, Character, Character> composed3 = stringCharsIso.compose(headPrism);
+     * }</pre>
+     *
+     * @param other the optic to compose with ({@link Iso}, {@link Lens}, or {@link Prism}), must not be {@code null}
+     * @param <C>   the new focus type
+     * @param <D>   the new modified focus type
+     * @return a composed optic whose type depends on the type of {@code other}, never {@code null}
+     * @throws NullPointerException          if {@code other} is {@code null}
+     * @throws UnsupportedOperationException if {@code other} is not an {@link Iso}, {@link Lens}, or {@link Prism}
+     */
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
         Preconditions.checkNotNull(other, "other must not be null");

@@ -97,11 +97,32 @@ public final class Fixes {
     /**
      * Creates a rule that transforms typed values of a specific type.
      *
-     * @param name       the fix name
-     * @param inputType  the input type
-     * @param outputType the output type
-     * @param rewrite    the transformation function
-     * @return a type rewrite rule
+     * <p>This method creates a {@link TypeRewriteRule} that matches values of the specified
+     * input type and transforms them using the provided rewrite function. The rule only
+     * matches types with the same {@link de.splatgames.aether.datafixers.api.TypeReference}
+     * as the input type.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule rule = Fixes.fixTypeEverywhereTyped(
+     *     "upgradePlayerStats",
+     *     playerTypeV1,
+     *     playerTypeV2,
+     *     typed -> {
+     *         // Transform the typed value
+     *         int oldHealth = typed.get("health").orElse(100);
+     *         return typed.set("maxHealth", oldHealth);
+     *     }
+     * );
+     * }</pre>
+     *
+     * @param name       the descriptive name of this fix for logging and debugging; must not be {@code null}
+     * @param inputType  the type that this rule matches against; must not be {@code null}
+     * @param outputType the expected output type after transformation; must not be {@code null}
+     * @param rewrite    the function that transforms the typed value; must not be {@code null}
+     * @return a type rewrite rule that applies the transformation to matching types; never {@code null}
+     * @throws NullPointerException if any parameter is {@code null}
+     * @see #fixTypeEverywhere(String, Type, Function)
      */
     @NotNull
     public static TypeRewriteRule fixTypeEverywhereTyped(@NotNull final String name,

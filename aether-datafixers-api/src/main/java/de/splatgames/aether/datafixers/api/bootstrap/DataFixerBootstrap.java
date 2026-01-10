@@ -85,22 +85,105 @@ import org.jetbrains.annotations.NotNull;
 public interface DataFixerBootstrap {
 
     /**
-     * Registers all schemas with the schema registry.
+     * Registers all schemas with the provided schema registry.
      *
-     * <p>This method is called during data fixer initialization to populate
-     * the schema registry with {@link Schema} instances for each supported data version.</p>
+     * <p>This method is invoked during data fixer initialization to populate the schema
+     * registry with {@link Schema} instances for each supported data version. Schemas define
+     * the structure and types available at each version of the data model.</p>
      *
-     * @param schemas the schema registry to populate, must not be {@code null}
+     * <h3>Implementation Guidelines</h3>
+     * <p>When implementing this method, consider the following best practices:</p>
+     * <ul>
+     *   <li><b>Version Ordering:</b> Register schemas in ascending version order for clarity,
+     *       though the registry does not enforce any particular order</li>
+     *   <li><b>Complete Coverage:</b> Ensure all versions that have associated fixes are covered
+     *       by corresponding schema definitions</li>
+     *   <li><b>Type Consistency:</b> Types referenced by fixes must be defined in the appropriate
+     *       schema versions</li>
+     *   <li><b>Parent Schemas:</b> Consider using parent schema references to share type
+     *       definitions between versions when types remain unchanged</li>
+     * </ul>
+     *
+     * <h3>Example Implementation</h3>
+     * <pre>{@code
+     * @Override
+     * public void registerSchemas(SchemaRegistry schemas) {
+     *     // Base schema for version 1
+     *     TypeRegistry v1Registry = new SimpleTypeRegistry();
+     *     v1Registry.register(new SimpleType<>(TypeReferences.PLAYER, playerCodecV1));
+     *     v1Registry.register(new SimpleType<>(TypeReferences.WORLD, worldCodecV1));
+     *     schemas.register(new Schema(new DataVersion(100), v1Registry));
+     *
+     *     // Extended schema for version 2 with additional fields
+     *     TypeRegistry v2Registry = new SimpleTypeRegistry();
+     *     v2Registry.register(new SimpleType<>(TypeReferences.PLAYER, playerCodecV2));
+     *     v2Registry.register(new SimpleType<>(TypeReferences.WORLD, worldCodecV1)); // unchanged
+     *     schemas.register(new Schema(new DataVersion(200), v2Registry));
+     * }
+     * }</pre>
+     *
+     * <h3>Thread Safety</h3>
+     * <p>This method is typically called once during initialization on a single thread.
+     * Implementations do not need to be thread-safe, but they should not retain references
+     * to the registry after the method returns.</p>
+     *
+     * @param schemas the schema registry to populate with version-specific schemas;
+     *                must not be {@code null}
+     * @throws NullPointerException if {@code schemas} is {@code null}
+     * @see Schema
+     * @see SchemaRegistry
      */
     void registerSchemas(@NotNull final SchemaRegistry schemas);
 
     /**
-     * Registers all data fixes with the fix registrar.
+     * Registers all data fixes with the provided fix registrar.
      *
-     * <p>This method is called during data fixer initialization to register
-     * all {@link DataFix} instances that handle migrations between versions.</p>
+     * <p>This method is invoked during data fixer initialization to register all
+     * {@link DataFix} instances that handle migrations between data versions. Each fix
+     * defines a transformation from one version to another for a specific type or set
+     * of types.</p>
      *
-     * @param fixes the fix registrar to populate, must not be {@code null}
+     * <h3>Implementation Guidelines</h3>
+     * <p>When implementing this method, adhere to these best practices:</p>
+     * <ul>
+     *   <li><b>Version Coverage:</b> Ensure there are fixes to migrate between all
+     *       consecutive schema versions</li>
+     *   <li><b>Type Association:</b> Register fixes with the appropriate type references
+     *       they operate on</li>
+     *   <li><b>Fix Ordering:</b> While the registrar handles ordering internally, registering
+     *       fixes in version order improves code readability</li>
+     *   <li><b>Idempotency:</b> Fixes should be designed to work correctly regardless of
+     *       the order in which they are registered</li>
+     * </ul>
+     *
+     * <h3>Example Implementation</h3>
+     * <pre>{@code
+     * @Override
+     * public void registerFixes(FixRegistrar fixes) {
+     *     // Register fix for migrating player data from v1 to v2
+     *     fixes.register(TypeReferences.PLAYER, new PlayerRenameFieldsFix(
+     *         new DataVersion(100), new DataVersion(200)));
+     *
+     *     // Register fix for adding new fields with defaults
+     *     fixes.register(TypeReferences.PLAYER, new PlayerAddNewFieldsFix(
+     *         new DataVersion(200), new DataVersion(300)));
+     *
+     *     // Register fix that affects multiple types
+     *     fixes.register(TypeReferences.WORLD, new WorldUpdateFormatFix(
+     *         new DataVersion(100), new DataVersion(200)));
+     * }
+     * }</pre>
+     *
+     * <h3>Thread Safety</h3>
+     * <p>This method is typically called once during initialization on a single thread.
+     * Implementations do not need to be thread-safe, but they should not retain references
+     * to the registrar after the method returns.</p>
+     *
+     * @param fixes the fix registrar to populate with data migration fixes;
+     *              must not be {@code null}
+     * @throws NullPointerException if {@code fixes} is {@code null}
+     * @see DataFix
+     * @see FixRegistrar
      */
     void registerFixes(@NotNull final FixRegistrar fixes);
 }

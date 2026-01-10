@@ -1116,15 +1116,31 @@ public final class DSL {
      * {@link #bool()}, {@link #intType()}, {@link #string()}, etc.</p>
      */
     private static final class ConstTemplate implements TypeTemplate {
+
+        /** The human-readable name of this constant type for descriptions. */
         private final String name;
+
+        /** The fixed type that this template always produces. */
         private final Type<?> type;
 
+        /**
+         * Creates a new constant template with the given name and type.
+         *
+         * @param name the human-readable name for descriptions
+         * @param type the fixed type to return on every application
+         */
         ConstTemplate(final String name,
                       final Type<?> type) {
             this.name = name;
             this.type = type;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For constant templates, this always returns the fixed type,
+         * ignoring the provided family.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1132,6 +1148,11 @@ public final class DSL {
             return this.type;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return the name of this constant type
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1150,12 +1171,24 @@ public final class DSL {
      * following the convention from type theory for recursive types.</p>
      */
     private static final class IdTemplate implements TypeTemplate {
+
+        /** The zero-based index of the type parameter to retrieve from the family. */
         private final int index;
 
+        /**
+         * Creates a new identity template referencing the type at the given index.
+         *
+         * @param index the zero-based index of the type parameter to reference
+         */
         IdTemplate(final int index) {
             this.index = index;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Retrieves the type at this template's index from the provided family.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1163,6 +1196,11 @@ public final class DSL {
             return family.apply(this.index);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return µ notation with the index (e.g., "µ0")
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1180,15 +1218,30 @@ public final class DSL {
      * <p>The description uses × (times) notation: {@code (A × B)}.</p>
      */
     private static final class ProductTemplate implements TypeTemplate {
+
+        /** The template for the first component of the product. */
         private final TypeTemplate first;
+
+        /** The template for the second component of the product. */
         private final TypeTemplate second;
 
+        /**
+         * Creates a new product template combining two sub-templates.
+         *
+         * @param first  the template for the first component
+         * @param second the template for the second component
+         */
         ProductTemplate(final TypeTemplate first,
                         final TypeTemplate second) {
             this.first = first;
             this.second = second;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Instantiates both sub-templates and creates a product type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1196,6 +1249,11 @@ public final class DSL {
             return Type.product(this.first.apply(family), this.second.apply(family));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return product notation "(A × B)"
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1213,15 +1271,30 @@ public final class DSL {
      * <p>The description uses + (plus) notation: {@code (A + B)}.</p>
      */
     private static final class SumTemplate implements TypeTemplate {
+
+        /** The template for the left alternative. */
         private final TypeTemplate left;
+
+        /** The template for the right alternative. */
         private final TypeTemplate right;
 
+        /**
+         * Creates a new sum template with two alternatives.
+         *
+         * @param left  the template for the left alternative
+         * @param right the template for the right alternative
+         */
         SumTemplate(final TypeTemplate left,
                     final TypeTemplate right) {
             this.left = left;
             this.right = right;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Instantiates both alternatives and creates a sum type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1229,6 +1302,11 @@ public final class DSL {
             return Type.sum(this.left.apply(family), this.right.apply(family));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return sum notation "(A + B)"
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1245,12 +1323,24 @@ public final class DSL {
      * <p>The description uses generic notation: {@code List<E>}.</p>
      */
     private static final class ListTemplate implements TypeTemplate {
+
+        /** The template for elements of this list. */
         private final TypeTemplate element;
 
+        /**
+         * Creates a new list template for elements of the given type.
+         *
+         * @param element the template for list elements
+         */
         ListTemplate(final TypeTemplate element) {
             this.element = element;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Instantiates the element template and wraps it in a list type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1258,6 +1348,11 @@ public final class DSL {
             return Type.list(this.element.apply(family));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return generic notation "List&lt;E&gt;"
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1275,12 +1370,24 @@ public final class DSL {
      * <p>The description uses generic notation: {@code Optional<E>}.</p>
      */
     private static final class OptionalTemplate implements TypeTemplate {
+
+        /** The template for the optional element. */
         private final TypeTemplate element;
 
+        /**
+         * Creates a new optional template wrapping the given type.
+         *
+         * @param element the template for the optional element
+         */
         OptionalTemplate(final TypeTemplate element) {
             this.element = element;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Instantiates the element template and wraps it in an optional type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1288,6 +1395,11 @@ public final class DSL {
             return Type.optional(this.element.apply(family));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return generic notation "Optional&lt;E&gt;"
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1305,10 +1417,23 @@ public final class DSL {
      * fields, {@code ?name: Type} for optional fields.</p>
      */
     private static final class FieldTemplate implements TypeTemplate {
+
+        /** The name of the field in the object structure. */
         private final String name;
+
+        /** The template for the field's value type. */
         private final TypeTemplate type;
+
+        /** Whether this field is optional (may be absent). */
         private final boolean optional;
 
+        /**
+         * Creates a new field template with the given name and type.
+         *
+         * @param name     the field name in the object structure
+         * @param type     the template for the field's value type
+         * @param optional whether the field is optional
+         */
         FieldTemplate(final String name,
                       final TypeTemplate type,
                       final boolean optional) {
@@ -1317,6 +1442,11 @@ public final class DSL {
             this.optional = optional;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Creates a field type with the resolved value type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1325,6 +1455,11 @@ public final class DSL {
             return this.optional ? Type.optionalField(this.name, fieldType) : Type.field(this.name, fieldType);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return field notation "name: Type" or "?name: Type" for optional
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1341,15 +1476,30 @@ public final class DSL {
      * <p>The description uses equals notation: {@code Name=Type}.</p>
      */
     private static final class NamedTemplate implements TypeTemplate {
+
+        /** The symbolic name for this type. */
         private final String name;
+
+        /** The underlying template that defines the type structure. */
         private final TypeTemplate template;
 
+        /**
+         * Creates a named wrapper around the given template.
+         *
+         * @param name     the symbolic name for the type
+         * @param template the underlying type template
+         */
         NamedTemplate(final String name,
                       final TypeTemplate template) {
             this.name = name;
             this.template = template;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Creates a named type wrapping the resolved inner type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1357,6 +1507,11 @@ public final class DSL {
             return Type.named(this.name, this.template.apply(family));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return named notation "Name=Type"
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1374,6 +1529,11 @@ public final class DSL {
      */
     private static final class RemainderTemplate implements TypeTemplate {
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Always returns {@link Type#PASSTHROUGH} regardless of the family.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1381,6 +1541,11 @@ public final class DSL {
             return Type.PASSTHROUGH;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return ellipsis notation "..."
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1398,15 +1563,30 @@ public final class DSL {
      * <p>The description lists all choices: {@code TaggedChoice<tag>{a -> A, b -> B}}.</p>
      */
     private static final class TaggedChoiceTemplate implements TypeTemplate {
+
+        /** The name of the discriminator field that determines the variant. */
         private final String tagField;
+
+        /** Mapping from tag values to type templates for each variant. */
         private final Map<String, TypeTemplate> choices;
 
+        /**
+         * Creates a tagged choice template with the given tag field and choices.
+         *
+         * @param tagField the name of the discriminator field
+         * @param choices  mapping from tag values to type templates
+         */
         TaggedChoiceTemplate(final String tagField,
                              final Map<String, TypeTemplate> choices) {
             this.tagField = tagField;
             this.choices = Map.copyOf(choices);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Resolves all choice templates and creates a tagged choice type.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1419,6 +1599,11 @@ public final class DSL {
             return Type.taggedChoice(this.tagField, resolvedChoices);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return tagged choice notation "TaggedChoice&lt;tag&gt;{a -&gt; A, b -&gt; B}"
+         */
         @NotNull
         @Override
         public String describe() {
@@ -1440,15 +1625,31 @@ public final class DSL {
      * where Name is bound in Body for self-reference.</p>
      */
     private static final class RecursiveTemplate implements TypeTemplate {
+
+        /** The name for the recursive type, used in descriptions and self-references. */
         private final String name;
+
+        /** The definition function that receives the self-reference template and returns the body. */
         private final Function<TypeTemplate, TypeTemplate> definition;
 
+        /**
+         * Creates a recursive template with the given name and definition.
+         *
+         * @param name       the name for the recursive type
+         * @param definition function receiving self-reference, returning the type body
+         */
         RecursiveTemplate(final String name,
                           final Function<TypeTemplate, TypeTemplate> definition) {
             this.name = name;
             this.definition = definition;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Creates a self-referential type using {@link TypeFamily#recursive}.
+         * The definition function receives a template that references the type being defined.</p>
+         */
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
@@ -1475,6 +1676,11 @@ public final class DSL {
             return recursiveFamily.apply(0);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return µ notation "µName.Body"
+         */
         @NotNull
         @Override
         public String describe() {
