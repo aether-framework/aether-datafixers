@@ -6,7 +6,144 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [0.4.0] - 2026-01-09
+## [0.5.0] - 2026-01-12
+
+### Added
+
+#### CLI Format Handlers for YAML, TOML, and XML (`aether-datafixers-cli`)
+
+Extended the CLI with four new built-in format handlers:
+
+**YAML Support:**
+- `YamlSnakeYamlFormatHandler` — Format ID `yaml-snakeyaml`, uses SnakeYAML with native Java types
+- `YamlJacksonFormatHandler` — Format ID `yaml-jackson`, uses Jackson YAML with JsonNode
+
+**TOML Support:**
+- `TomlJacksonFormatHandler` — Format ID `toml-jackson`, uses Jackson TOML with JsonNode
+
+**XML Support:**
+- `XmlJacksonFormatHandler` — Format ID `xml-jackson`, uses Jackson XML with JsonNode
+
+**Usage Examples:**
+```bash
+# Migrate YAML files
+aether-cli migrate --format yaml-snakeyaml --to 200 --type config input.yaml
+
+# Migrate TOML configuration
+aether-cli migrate --format toml-jackson --to 200 --type config config.toml
+
+# Migrate XML data
+aether-cli migrate --format xml-jackson --to 200 --type player data.xml
+```
+
+**New CLI Dependencies:**
+```xml
+<dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-yaml</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-toml</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-xml</artifactId>
+</dependency>
+```
+
+#### Testkit Format Factory Methods (`aether-datafixers-testkit`)
+
+Added new factory methods to `TestData` for all supported formats:
+
+| Method            | Format | Data Type     | DynamicOps Used     |
+|-------------------|--------|---------------|---------------------|
+| `jacksonJson()`   | JSON   | `JsonNode`    | `JacksonJsonOps`    |
+| `snakeYaml()`     | YAML   | `Object`      | `SnakeYamlOps`      |
+| `jacksonYaml()`   | YAML   | `JsonNode`    | `JacksonYamlOps`    |
+| `jacksonToml()`   | TOML   | `JsonNode`    | `JacksonTomlOps`    |
+| `jacksonXml()`    | XML    | `JsonNode`    | `JacksonXmlOps`     |
+
+**Usage:**
+```java
+// YAML test data with SnakeYAML
+Dynamic<Object> yamlData = TestData.snakeYaml().object()
+    .put("name", "test")
+    .put("value", 42)
+    .build();
+
+// TOML test data
+Dynamic<JsonNode> tomlData = TestData.jacksonToml().object()
+    .put("key", "value")
+    .build();
+
+// XML test data
+Dynamic<JsonNode> xmlData = TestData.jacksonXml().object()
+    .put("element", "content")
+    .build();
+```
+
+**New Testkit Dependencies:**
+```xml
+<dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-yaml</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-toml</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-xml</artifactId>
+</dependency>
+```
+
+#### Comprehensive Format Handler Tests (`aether-datafixers-cli`)
+
+Added test classes for all new format handlers with full coverage:
+
+- `YamlSnakeYamlFormatHandlerTest` — 21 tests for SnakeYAML handler
+- `YamlJacksonFormatHandlerTest` — 20 tests for Jackson YAML handler
+- `TomlJacksonFormatHandlerTest` — 19 tests for Jackson TOML handler
+- `XmlJacksonFormatHandlerTest` — 20 tests for Jackson XML handler
+
+Tests cover parsing, serialization, error handling, and round-trip consistency.
+
+### Deprecated
+
+#### `TestData.jackson()` (`aether-datafixers-testkit`)
+
+The `TestData.jackson()` method is deprecated and will be removed in version 1.0.0.
+
+**Reason:** With the addition of multiple Jackson-based format handlers (JSON, YAML, TOML, XML), explicit format naming is required for clarity.
+
+**Migration:**
+```java
+// Before (deprecated)
+Dynamic<JsonNode> data = TestData.jackson().object().build();
+
+// After
+Dynamic<JsonNode> data = TestData.jacksonJson().object().build();
+```
+
+### Documentation
+
+- Updated [Format Handlers](docs/cli/format-handlers.md) with all new built-in handlers
+- Updated [Test Data Builders](docs/testkit/test-data-builders.md) with new factory methods and deprecation notice
+- Added version 0.5.0 section to [Documentation Changelog](docs/appendix/changelog.md)
+
+---
+
+## [0.4.0] - 2026-01-10
 
 ### Breaking Changes
 

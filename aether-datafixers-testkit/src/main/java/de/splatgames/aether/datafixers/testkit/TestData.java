@@ -29,6 +29,10 @@ import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
+import de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps;
+import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
+import de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps;
+import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -66,8 +70,20 @@ import org.jetbrains.annotations.NotNull;
  * // Using Gson (default)
  * Dynamic<JsonElement> gsonData = TestData.gson().object().put("key", "value").build();
  *
- * // Using Jackson
- * Dynamic<JsonNode> jacksonData = TestData.jackson().object().put("key", "value").build();
+ * // Using Jackson JSON
+ * Dynamic<JsonNode> jacksonData = TestData.jacksonJson().object().put("key", "value").build();
+ *
+ * // Using SnakeYAML (native Java types)
+ * Dynamic<Object> snakeData = TestData.snakeYaml().object().put("key", "value").build();
+ *
+ * // Using Jackson YAML
+ * Dynamic<JsonNode> yamlData = TestData.jacksonYaml().object().put("key", "value").build();
+ *
+ * // Using Jackson TOML
+ * Dynamic<JsonNode> tomlData = TestData.jacksonToml().object().put("key", "value").build();
+ *
+ * // Using Jackson XML
+ * Dynamic<JsonNode> xmlData = TestData.jacksonXml().object().put("key", "value").build();
  *
  * // Using custom DynamicOps
  * Dynamic<MyFormat> customData = TestData.using(myOps).object().put("key", "value").build();
@@ -129,10 +145,88 @@ public final class TestData {
      * <p>Use this when testing with Jackson's JSON representation.</p>
      *
      * @return a new {@link TestDataBuilder} for Jackson JSON
+     * @deprecated Since 0.5.0. Use {@link #jacksonJson()} instead for explicit format naming.
+     *             This method will be removed in version 1.0.0.
      */
+    @Deprecated(forRemoval = true, since = "0.5.0")
     @NotNull
     public static TestDataBuilder<JsonNode> jackson() {
+        return jacksonJson();
+    }
+
+    /**
+     * Creates a builder using {@link JacksonJsonOps}.
+     *
+     * <p>Use this when testing with Jackson's JSON representation. This method provides
+     * explicit naming to distinguish from other Jackson-based format builders like
+     * {@link #jacksonYaml()}, {@link #jacksonToml()}, and {@link #jacksonXml()}.</p>
+     *
+     * @return a new {@link TestDataBuilder} for Jackson JSON
+     * @since 0.5.0
+     */
+    @NotNull
+    public static TestDataBuilder<JsonNode> jacksonJson() {
         return new TestDataBuilder<>(JacksonJsonOps.INSTANCE);
+    }
+
+    /**
+     * Creates a builder using {@link SnakeYamlOps}.
+     *
+     * <p>Use this when testing with SnakeYAML's native Java type representation.
+     * The underlying data types are standard Java objects (Map, List, String,
+     * Number, Boolean).</p>
+     *
+     * @return a new {@link TestDataBuilder} for SnakeYAML
+     * @since 0.5.0
+     */
+    @NotNull
+    public static TestDataBuilder<Object> snakeYaml() {
+        return new TestDataBuilder<>(SnakeYamlOps.INSTANCE);
+    }
+
+    /**
+     * Creates a builder using {@link JacksonYamlOps}.
+     *
+     * <p>Use this when testing with Jackson's YAML representation. This is useful
+     * when you need consistency with other Jackson-based formats or when you need
+     * Jackson's advanced features.</p>
+     *
+     * @return a new {@link TestDataBuilder} for Jackson YAML
+     * @since 0.5.0
+     */
+    @NotNull
+    public static TestDataBuilder<JsonNode> jacksonYaml() {
+        return new TestDataBuilder<>(JacksonYamlOps.INSTANCE);
+    }
+
+    /**
+     * Creates a builder using {@link JacksonTomlOps}.
+     *
+     * <p>Use this when testing with TOML data. Note that TOML has some structural
+     * constraints: root element must be a table (object), arrays can only contain
+     * elements of the same type, and null values are not supported.</p>
+     *
+     * @return a new {@link TestDataBuilder} for Jackson TOML
+     * @since 0.5.0
+     */
+    @NotNull
+    public static TestDataBuilder<JsonNode> jacksonToml() {
+        return new TestDataBuilder<>(JacksonTomlOps.INSTANCE);
+    }
+
+    /**
+     * Creates a builder using {@link JacksonXmlOps}.
+     *
+     * <p>Use this when testing with XML data. Note that XML has some structural
+     * requirements: a single root element is required, and element names must
+     * follow XML naming conventions.</p>
+     *
+     * @return a new {@link TestDataBuilder} for Jackson XML
+     * @since 0.5.0
+     */
+    @NotNull
+    public static TestDataBuilder<JsonNode> jacksonXml() {
+        return new TestDataBuilder<>(JacksonXmlOps.INSTANCE);
     }
 
     // ==================== Quick Primitive Helpers ====================

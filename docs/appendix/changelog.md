@@ -4,6 +4,42 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ---
 
+## Version 0.5.0
+
+### CLI: New Built-in Format Handlers
+
+Extended the CLI with four new format handlers for YAML, TOML, and XML support:
+
+- **yaml-snakeyaml** — YAML support using SnakeYAML with native Java types
+- **yaml-jackson** — YAML support using Jackson YAML with JsonNode
+- **toml-jackson** — TOML support using Jackson TOML with JsonNode
+- **xml-jackson** — XML support using Jackson XML with JsonNode
+
+Updated documentation:
+- [Format Handlers](../cli/format-handlers.md) — Added sections for all new handlers, updated output examples
+
+### Testkit: New Factory Methods
+
+Added new format-specific factory methods to `TestData`:
+
+| Method          | Format       | Data Type   |
+|-----------------|--------------|-------------|
+| `jacksonJson()` | JSON         | `JsonNode`  |
+| `snakeYaml()`   | YAML         | `Object`    |
+| `jacksonYaml()` | YAML         | `JsonNode`  |
+| `jacksonToml()` | TOML         | `JsonNode`  |
+| `jacksonXml()`  | XML          | `JsonNode`  |
+
+Updated documentation:
+- [Test Data Builders](../testkit/test-data-builders.md) — Added new factory methods and format examples
+
+### Deprecations
+
+- **`TestData.jackson()`** — Deprecated since 0.5.0, use `jacksonJson()` instead. Will be removed in 1.0.0.
+- **`JacksonOps`** — Already deprecated in 0.4.0, use `JacksonJsonOps` instead. Will be removed in 1.0.0.
+
+---
+
 ## Version 0.4.0
 
 ### New Section: Codec Formats

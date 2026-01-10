@@ -4,9 +4,11 @@ Format handlers enable the CLI to read and write data in various serialization f
 
 ## Built-in Format Handlers
 
-The CLI includes two JSON format handlers out of the box:
+The CLI includes six format handlers out of the box, covering JSON, YAML, TOML, and XML:
 
-### json-gson (Default)
+### JSON Handlers
+
+#### json-gson (Default)
 
 Uses Google Gson for JSON parsing and serialization.
 
@@ -20,7 +22,7 @@ aether-cli migrate --format json-gson --to 200 --type player \
 - Pretty printing with 2-space indentation
 - Preserves insertion order
 
-### json-jackson
+#### json-jackson
 
 Uses Jackson Databind for JSON parsing and serialization.
 
@@ -34,6 +36,72 @@ aether-cli migrate --format json-jackson --to 200 --type player \
 - High performance for large files
 - Configurable via Jackson modules
 
+### YAML Handlers
+
+#### yaml-snakeyaml
+
+Uses SnakeYAML for YAML parsing and serialization with native Java types.
+
+```bash
+aether-cli migrate --format yaml-snakeyaml --to 200 --type player \
+    --bootstrap com.example.MyBootstrap input.yaml
+```
+
+**Characteristics:**
+- Native Java type representation (Map, List, String, Number, Boolean)
+- Block-style pretty printing
+- Supports multiline strings and anchors
+
+#### yaml-jackson
+
+Uses Jackson YAML for YAML parsing and serialization with JsonNode.
+
+```bash
+aether-cli migrate --format yaml-jackson --to 200 --type player \
+    --bootstrap com.example.MyBootstrap input.yaml
+```
+
+**Characteristics:**
+- Consistent with other Jackson-based handlers
+- JsonNode representation for unified processing
+- Supports Jackson annotations and modules
+
+### TOML Handler
+
+#### toml-jackson
+
+Uses Jackson TOML for TOML parsing and serialization.
+
+```bash
+aether-cli migrate --format toml-jackson --to 200 --type config \
+    --bootstrap com.example.MyBootstrap config.toml
+```
+
+**Characteristics:**
+- Full TOML 1.0 specification support
+- Table and inline table support
+- Preserves arrays and nested structures
+
+**Note:** TOML has structural constraints: root element must be a table, arrays can only contain elements of the same type, and null values are not supported.
+
+### XML Handler
+
+#### xml-jackson
+
+Uses Jackson XML for XML parsing and serialization.
+
+```bash
+aether-cli migrate --format xml-jackson --to 200 --type player \
+    --bootstrap com.example.MyBootstrap input.xml
+```
+
+**Characteristics:**
+- Automatic attribute/element handling
+- CDATA section support
+- XML declaration with UTF-8 encoding
+
+**Note:** XML requires a single root element, and element names must follow XML naming conventions.
+
 ---
 
 ## Listing Available Formats
@@ -46,7 +114,7 @@ aether-cli info --formats
 
 Output:
 ```
-Aether Datafixers CLI v0.4.0
+Aether Datafixers CLI v0.5.0
 ============================
 
 Available Formats:
@@ -54,13 +122,23 @@ Available Formats:
     Extensions: json
   - json-jackson: JSON format using Jackson
     Extensions: json
+  - yaml-snakeyaml: YAML format using SnakeYAML (native Java types)
+    Extensions: yaml, yml
+  - yaml-jackson: YAML format using Jackson
+    Extensions: yaml, yml
+  - toml-jackson: TOML format using Jackson
+    Extensions: toml
+  - xml-jackson: XML format using Jackson
+    Extensions: xml
 ```
 
 ---
 
 ## Creating a Custom Format Handler
 
-You can extend the CLI to support additional formats (YAML, TOML, XML, etc.) by implementing the `FormatHandler` interface.
+You can extend the CLI to support additional formats by implementing the `FormatHandler` interface. This is useful for proprietary formats, binary formats, or alternative libraries.
+
+> **Note:** JSON, YAML, TOML, and XML are already supported out of the box. Only implement custom handlers for formats not listed above.
 
 ### Step 1: Implement the Interface
 
@@ -72,53 +150,52 @@ import de.splatgames.aether.datafixers.cli.format.FormatHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Format handler for YAML files.
+ * Format handler for a custom binary format.
  */
-public class YamlFormatHandler implements FormatHandler<YamlNode> {
+public class BinaryFormatHandler implements FormatHandler<BinaryNode> {
 
-    private final YamlOps ops = new YamlOps();
-    private final YamlParser parser = new YamlParser();
+    private final BinaryOps ops = new BinaryOps();
+    private final BinaryParser parser = new BinaryParser();
 
     @Override
     @NotNull
     public String formatId() {
-        return "yaml";
+        return "binary-custom";
     }
 
     @Override
     @NotNull
     public String description() {
-        return "YAML format";
+        return "Custom binary format";
     }
 
     @Override
     @NotNull
     public String[] fileExtensions() {
-        return new String[]{"yaml", "yml"};
+        return new String[]{"bin", "dat"};
     }
 
     @Override
     @NotNull
-    public DynamicOps<YamlNode> ops() {
-        return ops;
+    public DynamicOps<BinaryNode> ops() {
+        return this.ops;
     }
 
     @Override
     @NotNull
-    public YamlNode parse(@NotNull String content) {
-        return parser.parse(content);
+    public BinaryNode parse(@NotNull String content) {
+        return this.parser.parse(content);
     }
 
     @Override
     @NotNull
-    public String serialize(@NotNull YamlNode data) {
-        return parser.dump(data);
+    public String serialize(@NotNull BinaryNode data) {
+        return this.parser.dump(data);
     }
 
     @Override
     @NotNull
-    public String serializePretty(@NotNull YamlNode data) {
-        // YAML is typically already human-readable
+    public String serializePretty(@NotNull BinaryNode data) {
         return serialize(data);
     }
 }
@@ -136,44 +213,44 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class YamlOps implements DynamicOps<YamlNode> {
+public class BinaryOps implements DynamicOps<BinaryNode> {
 
     @Override
-    public YamlNode empty() {
-        return YamlNode.nullNode();
+    public BinaryNode empty() {
+        return BinaryNode.nullNode();
     }
 
     @Override
-    public YamlNode createString(String value) {
-        return YamlNode.string(value);
+    public BinaryNode createString(String value) {
+        return BinaryNode.string(value);
     }
 
     @Override
-    public YamlNode createInt(int value) {
-        return YamlNode.number(value);
+    public BinaryNode createInt(int value) {
+        return BinaryNode.number(value);
     }
 
     @Override
-    public Optional<String> getStringValue(YamlNode input) {
+    public Optional<String> getStringValue(BinaryNode input) {
         return input.isString()
             ? Optional.of(input.asString())
             : Optional.empty();
     }
 
     @Override
-    public Optional<Number> getNumberValue(YamlNode input) {
+    public Optional<Number> getNumberValue(BinaryNode input) {
         return input.isNumber()
             ? Optional.of(input.asNumber())
             : Optional.empty();
     }
 
     @Override
-    public YamlNode createMap(Map<YamlNode, YamlNode> map) {
-        return YamlNode.mapping(map);
+    public BinaryNode createMap(Map<BinaryNode, BinaryNode> map) {
+        return BinaryNode.mapping(map);
     }
 
     @Override
-    public Optional<Stream<Map.Entry<YamlNode, YamlNode>>> getMapValues(YamlNode input) {
+    public Optional<Stream<Map.Entry<BinaryNode, BinaryNode>>> getMapValues(BinaryNode input) {
         return input.isMapping()
             ? Optional.of(input.entries().stream())
             : Optional.empty();
@@ -190,7 +267,7 @@ Create a service provider configuration file:
 **File:** `META-INF/services/de.splatgames.aether.datafixers.cli.format.FormatHandler`
 
 ```
-com.example.format.YamlFormatHandler
+com.example.format.BinaryFormatHandler
 ```
 
 ### Step 4: Package and Use
@@ -200,10 +277,10 @@ com.example.format.YamlFormatHandler
 3. Use the new format:
 
 ```bash
-java -cp "aether-cli.jar:yaml-handler.jar" \
+java -cp "aether-cli.jar:binary-handler.jar" \
     de.splatgames.aether.datafixers.cli.AetherCli \
-    migrate --format yaml --to 200 --type player \
-    --bootstrap com.example.MyBootstrap input.yaml
+    migrate --format binary-custom --to 200 --type player \
+    --bootstrap com.example.MyBootstrap input.bin
 ```
 
 ---
