@@ -108,8 +108,8 @@ public class Schema {
      */
     public Schema(@NotNull final DataVersion version,
                   @NotNull final TypeRegistry types) {
-        Preconditions.checkNotNull(version, "DataVersion version must not be null");
-        Preconditions.checkNotNull(types, "TypeRegistry types must not be null");
+        Preconditions.checkNotNull(version, "version must not be null");
+        Preconditions.checkNotNull(types, "types must not be null");
 
         this.version = version;
         this.types = types;
@@ -231,7 +231,7 @@ public class Schema {
      * @param type the type to register
      */
     protected final void registerType(@NotNull final Type<?> type) {
-        Preconditions.checkNotNull(type, "Type<?> type must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
         this.types.register(type);
     }
@@ -265,8 +265,8 @@ public class Schema {
      */
     protected final void registerType(@NotNull final TypeReference reference,
                                       @NotNull final TypeTemplate template) {
-        Preconditions.checkNotNull(reference, "TypeReference reference must not be null");
-        Preconditions.checkNotNull(template, "TypeTemplate template must not be null");
+        Preconditions.checkNotNull(reference, "reference must not be null");
+        Preconditions.checkNotNull(template, "template must not be null");
         Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
 
         // Apply the template with an empty family to get the concrete type
@@ -288,7 +288,7 @@ public class Schema {
      */
     @NotNull
     public Type<?> require(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
 
         return this.types().require(ref);
     }
@@ -302,9 +302,9 @@ public class Schema {
         private final TypeReference reference;
         private final Type<A> delegate;
 
-        TemplateBasedType(final TypeReference reference, final Type<A> delegate) {
-            this.reference = reference;
-            this.delegate = delegate;
+        TemplateBasedType(@NotNull final TypeReference reference, @NotNull final Type<A> delegate) {
+            this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
+            this.delegate = Preconditions.checkNotNull(delegate, "delegate must not be null");
         }
 
         @NotNull

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -165,6 +166,9 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     static <S, A> Iso<S, S, A, A> of(@NotNull final String id,
                                      @NotNull final Function<S, A> to,
                                      @NotNull final Function<A, S> from) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
         return new Iso<>() {
             @NotNull
             @Override
@@ -175,18 +179,22 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @NotNull
             @Override
             public A to(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return to.apply(source);
             }
 
             @NotNull
             @Override
             public S from(@NotNull final A target) {
+                Preconditions.checkNotNull(target, "target must not be null");
                 return from.apply(target);
             }
 
             @NotNull
             @Override
             public S modify(@NotNull final S source, @NotNull final Function<A, A> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from.apply(modifier.apply(to.apply(source)));
             }
         };
@@ -226,12 +234,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @NotNull
             @Override
             public S to(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return source;
             }
 
             @NotNull
             @Override
             public S from(@NotNull final S target) {
+                Preconditions.checkNotNull(target, "target must not be null");
                 return target;
             }
 
@@ -239,6 +249,8 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @Override
             public S modify(@NotNull final S source,
                             @NotNull final Function<S, S> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return modifier.apply(source);
             }
         };
@@ -313,6 +325,8 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @Override
     default T modify(@NotNull final S source,
                      @NotNull final Function<A, B> modifier) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(modifier, "modifier must not be null");
         return from(modifier.apply(to(source)));
     }
 
@@ -351,12 +365,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @NotNull
             @Override
             public T to(@NotNull final B source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return self.from(source);
             }
 
             @NotNull
             @Override
             public A from(@NotNull final S target) {
+                Preconditions.checkNotNull(target, "target must not be null");
                 return self.to(target);
             }
 
@@ -364,12 +380,15 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @Override
             public A modify(@NotNull final B source,
                             @NotNull final Function<T, S> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from(modifier.apply(to(source)));
             }
 
             @NotNull
             @Override
             public <C, D> Optic<B, A, C, D> compose(@NotNull final Optic<T, S, C, D> other) {
+                Preconditions.checkNotNull(other, "other must not be null");
                 throw new UnsupportedOperationException("Compose on reversed iso");
             }
         };
@@ -411,6 +430,7 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      */
     @NotNull
     default <C, D> Iso<S, T, C, D> compose(@NotNull final Iso<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Iso<S, T, A, B> self = this;
         return new Iso<>() {
             @NotNull
@@ -422,12 +442,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @NotNull
             @Override
             public C to(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return other.to(self.to(source));
             }
 
             @NotNull
             @Override
             public T from(@NotNull final D target) {
+                Preconditions.checkNotNull(target, "target must not be null");
                 return self.from(other.from(target));
             }
 
@@ -435,12 +457,15 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @Override
             public T modify(@NotNull final S source,
                             @NotNull final Function<C, D> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from(modifier.apply(to(source)));
             }
 
             @NotNull
             @Override
             public <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Iso<C, D, E, F> iso) {
                     return this.compose((Optic<C, D, E, F>) iso);
                 }
@@ -451,6 +476,7 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Iso<A, B, C, D> iso) {
             return compose(iso);
         }

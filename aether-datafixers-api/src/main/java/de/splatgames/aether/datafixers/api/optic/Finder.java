@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -146,6 +147,7 @@ public interface Finder<A> {
      */
     @NotNull
     static Finder<Object> field(@NotNull final String fieldName) {
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         return new Finder<>() {
             @NotNull
             @Override
@@ -156,6 +158,7 @@ public interface Finder<A> {
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
                 return root.get(fieldName);
             }
 
@@ -163,6 +166,8 @@ public interface Finder<A> {
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
                 @SuppressWarnings("unchecked") final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
                 @SuppressWarnings("unchecked") final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
                 return typedRoot.set(fieldName, typedNewValue);
@@ -209,6 +214,7 @@ public interface Finder<A> {
 
             @Override
             public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
                 return root.asListStream()
                         .result()
                         .flatMap(stream -> stream.skip(index).findFirst())
@@ -219,6 +225,8 @@ public interface Finder<A> {
             @SuppressWarnings("unchecked")
             public @NotNull Dynamic<?> set(@NotNull final Dynamic<?> root,
                                            @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
                 final var listResult = root.asListStream();
                 if (listResult.isError()) {
                     return root;
@@ -288,6 +296,7 @@ public interface Finder<A> {
             @NotNull
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
                 return root;
             }
 
@@ -295,6 +304,8 @@ public interface Finder<A> {
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
                 return newValue;
             }
         };
@@ -343,6 +354,7 @@ public interface Finder<A> {
      */
     @NotNull
     static Finder<Object> remainder(@NotNull final String... excludedFields) {
+        Preconditions.checkNotNull(excludedFields, "excludedFields must not be null");
         final java.util.Set<String> excluded = java.util.Set.of(excludedFields);
         return new Finder<>() {
             @NotNull
@@ -354,6 +366,7 @@ public interface Finder<A> {
             @Override
             @SuppressWarnings("unchecked")
             public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
                 if (!root.isMap()) {
                     return null;
                 }
@@ -379,6 +392,8 @@ public interface Finder<A> {
             @SuppressWarnings("unchecked")
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
                 // Validation: root must be a map
                 if (!root.isMap()) {
                     return root;
@@ -497,6 +512,7 @@ public interface Finder<A> {
      */
     @NotNull
     default Optional<Dynamic<?>> getOptional(@NotNull final Dynamic<?> root) {
+        Preconditions.checkNotNull(root, "root must not be null");
         return Optional.ofNullable(get(root));
     }
 
@@ -527,6 +543,8 @@ public interface Finder<A> {
     @NotNull
     default Dynamic<?> update(@NotNull final Dynamic<?> root,
                               @NotNull final Function<Dynamic<?>, Dynamic<?>> updater) {
+        Preconditions.checkNotNull(root, "root must not be null");
+        Preconditions.checkNotNull(updater, "updater must not be null");
         final Dynamic<?> current = get(root);
         if (current == null) {
             return root;
@@ -557,6 +575,7 @@ public interface Finder<A> {
      */
     @NotNull
     default <B> Finder<B> then(@NotNull final Finder<B> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Finder<A> self = this;
         return new Finder<>() {
             @NotNull
@@ -568,6 +587,7 @@ public interface Finder<A> {
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
                 final Dynamic<?> intermediate = self.get(root);
                 if (intermediate == null) {
                     return null;
@@ -579,6 +599,8 @@ public interface Finder<A> {
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
                 return self.update(root, intermediate -> other.set(intermediate, newValue));
             }
         };

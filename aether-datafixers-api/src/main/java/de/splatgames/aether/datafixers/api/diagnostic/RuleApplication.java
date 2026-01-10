@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.diagnostic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,18 +81,10 @@ public record RuleApplication(
      * @throws NullPointerException if any required parameter is {@code null}
      */
     public RuleApplication {
-        if (ruleName == null) {
-            throw new NullPointerException("ruleName must not be null");
-        }
-        if (typeName == null) {
-            throw new NullPointerException("typeName must not be null");
-        }
-        if (timestamp == null) {
-            throw new NullPointerException("timestamp must not be null");
-        }
-        if (duration == null) {
-            throw new NullPointerException("duration must not be null");
-        }
+        Preconditions.checkNotNull(ruleName, "ruleName must not be null");
+        Preconditions.checkNotNull(typeName, "typeName must not be null");
+        Preconditions.checkNotNull(timestamp, "timestamp must not be null");
+        Preconditions.checkNotNull(duration, "duration must not be null");
     }
 
     /**

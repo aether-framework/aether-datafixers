@@ -87,7 +87,7 @@ public final class BatchTransform<T> {
      * @param ops the dynamic operations for the data format, must not be {@code null}
      */
     public BatchTransform(@NotNull final DynamicOps<T> ops) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
         this.ops = ops;
     }
 
@@ -103,8 +103,8 @@ public final class BatchTransform<T> {
      */
     @NotNull
     public BatchTransform<T> rename(@NotNull final String from, @NotNull final String to) {
-        Preconditions.checkNotNull(from, "String from must not be null");
-        Preconditions.checkNotNull(to, "String to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
+        Preconditions.checkNotNull(to, "to must not be null");
         operations.add(new RenameOp<>(from, to));
         return this;
     }
@@ -120,7 +120,7 @@ public final class BatchTransform<T> {
      */
     @NotNull
     public BatchTransform<T> remove(@NotNull final String field) {
-        Preconditions.checkNotNull(field, "String field must not be null");
+        Preconditions.checkNotNull(field, "field must not be null");
         operations.add(new RemoveOp<>(field));
         return this;
     }
@@ -139,8 +139,8 @@ public final class BatchTransform<T> {
     @NotNull
     public BatchTransform<T> set(@NotNull final String field,
                                  @NotNull final Function<Dynamic<T>, Dynamic<T>> valueSupplier) {
-        Preconditions.checkNotNull(field, "String field must not be null");
-        Preconditions.checkNotNull(valueSupplier, "Function valueSupplier must not be null");
+        Preconditions.checkNotNull(field, "field must not be null");
+        Preconditions.checkNotNull(valueSupplier, "valueSupplier must not be null");
         operations.add(new SetOp<>(field, valueSupplier));
         return this;
     }
@@ -158,8 +158,8 @@ public final class BatchTransform<T> {
     @NotNull
     public BatchTransform<T> setStatic(@NotNull final String field,
                                        @NotNull final Dynamic<T> value) {
-        Preconditions.checkNotNull(field, "String field must not be null");
-        Preconditions.checkNotNull(value, "Dynamic<T> value must not be null");
+        Preconditions.checkNotNull(field, "field must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         operations.add(new SetOp<>(field, d -> value));
         return this;
     }
@@ -178,8 +178,8 @@ public final class BatchTransform<T> {
     @NotNull
     public BatchTransform<T> transform(@NotNull final String field,
                                        @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
-        Preconditions.checkNotNull(field, "String field must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(field, "field must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
         operations.add(new TransformOp<>(field, transform));
         return this;
     }
@@ -198,8 +198,8 @@ public final class BatchTransform<T> {
     @NotNull
     public BatchTransform<T> addIfMissing(@NotNull final String field,
                                           @NotNull final Function<Dynamic<T>, Dynamic<T>> valueSupplier) {
-        Preconditions.checkNotNull(field, "String field must not be null");
-        Preconditions.checkNotNull(valueSupplier, "Function valueSupplier must not be null");
+        Preconditions.checkNotNull(field, "field must not be null");
+        Preconditions.checkNotNull(valueSupplier, "valueSupplier must not be null");
         operations.add(new AddIfMissingOp<>(field, valueSupplier));
         return this;
     }
@@ -215,8 +215,8 @@ public final class BatchTransform<T> {
     @NotNull
     public BatchTransform<T> addIfMissingStatic(@NotNull final String field,
                                                 @NotNull final Dynamic<T> value) {
-        Preconditions.checkNotNull(field, "String field must not be null");
-        Preconditions.checkNotNull(value, "Dynamic<T> value must not be null");
+        Preconditions.checkNotNull(field, "field must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         operations.add(new AddIfMissingOp<>(field, d -> value));
         return this;
     }
@@ -232,7 +232,7 @@ public final class BatchTransform<T> {
      */
     @NotNull
     public Dynamic<T> apply(@NotNull final Dynamic<T> input) {
-        Preconditions.checkNotNull(input, "Dynamic<T> input must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
 
         Dynamic<T> result = input;
         for (final FieldOperation<T> op : operations) {
@@ -276,6 +276,7 @@ public final class BatchTransform<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
+            Preconditions.checkNotNull(dynamic, "dynamic must not be null");
             final Dynamic<T> value = dynamic.get(from);
             if (value == null) {
                 return dynamic;
@@ -291,6 +292,7 @@ public final class BatchTransform<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
+            Preconditions.checkNotNull(dynamic, "dynamic must not be null");
             return dynamic.remove(field);
         }
     }
@@ -302,6 +304,7 @@ public final class BatchTransform<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
+            Preconditions.checkNotNull(dynamic, "dynamic must not be null");
             return dynamic.set(field, valueSupplier.apply(dynamic));
         }
     }
@@ -314,6 +317,7 @@ public final class BatchTransform<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
+            Preconditions.checkNotNull(dynamic, "dynamic must not be null");
             final Dynamic<T> value = dynamic.get(field);
             if (value == null) {
                 return dynamic;
@@ -330,6 +334,7 @@ public final class BatchTransform<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
+            Preconditions.checkNotNull(dynamic, "dynamic must not be null");
             if (dynamic.get(field) != null) {
                 return dynamic;
             }

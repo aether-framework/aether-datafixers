@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.codec;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
@@ -102,6 +103,8 @@ public interface Decoder<A> {
      */
     @NotNull
     default <T> DataResult<A> parse(@NotNull final DynamicOps<T> ops, @NotNull final T input) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         return decode(ops, input).map(Pair::first);
     }
 
@@ -121,6 +124,7 @@ public interface Decoder<A> {
      */
     @NotNull
     default <T> DataResult<A> parse(@NotNull final Dynamic<T> input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return parse(input.ops(), input.value());
     }
 }

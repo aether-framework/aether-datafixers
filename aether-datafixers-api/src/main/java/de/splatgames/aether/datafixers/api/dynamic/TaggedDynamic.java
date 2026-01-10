@@ -77,8 +77,8 @@ public class TaggedDynamic {
      * @throws NullPointerException if {@code type} or {@code value} is {@code null}
      */
     public TaggedDynamic(@NotNull final TypeReference type, @NotNull final Dynamic<?> value) {
-        Preconditions.checkNotNull(type, "TypeReference type must not be null");
-        Preconditions.checkNotNull(value, "Dynamic<?> value must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
 
         this.type = type;
         this.value = value;

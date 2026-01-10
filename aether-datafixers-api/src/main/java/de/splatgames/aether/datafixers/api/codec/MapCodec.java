@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.codec;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
@@ -106,12 +107,17 @@ public interface MapCodec<A> {
     @NotNull
     static <A> MapCodec<A> of(@NotNull final MapEncoder<A> encoder,
                               @NotNull final MapDecoder<A> decoder) {
+        Preconditions.checkNotNull(encoder, "encoder must not be null");
+        Preconditions.checkNotNull(decoder, "decoder must not be null");
         return new MapCodec<>() {
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T map) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(map, "map must not be null");
                 return encoder.encode(input, ops, map);
             }
 
@@ -119,6 +125,8 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
                                             @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return decoder.decode(ops, input);
             }
         };
@@ -168,6 +176,8 @@ public interface MapCodec<A> {
     @NotNull
     default <B> MapCodec<B> xmap(@NotNull final Function<? super A, ? extends B> to,
                                  @NotNull final Function<? super B, ? extends A> from) {
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
         final MapCodec<A> self = this;
         return new MapCodec<>() {
             @NotNull
@@ -175,6 +185,9 @@ public interface MapCodec<A> {
             public <T> DataResult<T> encode(@NotNull final B input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T map) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(map, "map must not be null");
                 return self.encode(from.apply(input), ops, map);
             }
 
@@ -182,6 +195,8 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<B> decode(@NotNull final DynamicOps<T> ops,
                                             @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.decode(ops, input).map(to);
             }
         };
@@ -203,6 +218,8 @@ public interface MapCodec<A> {
     @SuppressWarnings("unchecked")
     default <B> MapCodec<B> flatXmap(@NotNull final Function<? super A, ? extends DataResult<? extends B>> to,
                                      @NotNull final Function<? super B, ? extends DataResult<? extends A>> from) {
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
         final MapCodec<A> self = this;
         return new MapCodec<>() {
             @NotNull
@@ -210,6 +227,9 @@ public interface MapCodec<A> {
             public <T> DataResult<T> encode(@NotNull final B input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T map) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(map, "map must not be null");
                 return from.apply(input).flatMap(a -> self.encode(a, ops, map));
             }
 
@@ -217,6 +237,8 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<B> decode(@NotNull final DynamicOps<T> ops,
                                             @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.decode(ops, input).flatMap(a -> (DataResult<B>) to.apply(a));
             }
         };
@@ -252,6 +274,7 @@ public interface MapCodec<A> {
      */
     @NotNull
     default <O> RecordCodecBuilder.Field<O, A> forGetter(@NotNull final Function<O, A> getter) {
+        Preconditions.checkNotNull(getter, "getter must not be null");
         return new RecordCodecBuilder.Field<>(this, getter);
     }
 
@@ -293,6 +316,9 @@ public interface MapCodec<A> {
             public <T> DataResult<T> encode(@NotNull final A input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T prefix) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(prefix, "prefix must not be null");
                 return self.encode(input, ops, ops.emptyMap());
             }
 
@@ -300,6 +326,8 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,
                                                      @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.decode(ops, input).map(a -> Pair.of(a, input));
             }
         };

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -143,6 +144,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     static <S, T, A, B> Traversal<S, T, A, B> fromLens(@NotNull final Lens<S, T, A, B> lens) {
+        Preconditions.checkNotNull(lens, "lens must not be null");
         return new Traversal<>() {
             @NotNull
             @Override
@@ -153,12 +155,15 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Stream<A> getAll(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return Stream.of(lens.get(source));
             }
 
             @NotNull
             @Override
             public T modify(@NotNull final S source, @NotNull final Function<A, B> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return lens.modify(source, modifier);
             }
         };
@@ -202,6 +207,9 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
     static <S, A> Traversal<S, S, A, A> of(@NotNull final String id,
                                            @NotNull final Function<S, Stream<A>> getAll,
                                            @NotNull final ModifyFunction<S, A> modify) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getAll, "getAll must not be null");
+        Preconditions.checkNotNull(modify, "modify must not be null");
         return new Traversal<>() {
             @NotNull
             @Override
@@ -212,6 +220,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Stream<A> getAll(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return getAll.apply(source);
             }
 
@@ -219,6 +228,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public S modify(@NotNull final S source,
                             @NotNull final Function<A, A> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return modify.apply(source, modifier);
             }
         };
@@ -288,6 +299,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     default T set(@NotNull final S source,
                   @NotNull final B value) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         return modify(source, a -> value);
     }
 
@@ -310,6 +323,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default List<A> toList(@NotNull final S source) {
+        Preconditions.checkNotNull(source, "source must not be null");
         return getAll(source).toList();
     }
 
@@ -340,6 +354,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default <C, D> Traversal<S, T, C, D> compose(@NotNull final Traversal<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Traversal<S, T, A, B> self = this;
         return new Traversal<>() {
             @NotNull
@@ -351,6 +366,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Stream<C> getAll(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return self.getAll(source).flatMap(other::getAll);
             }
 
@@ -358,11 +374,14 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public T modify(@NotNull final S source,
                             @NotNull final Function<C, D> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return self.modify(source, a -> other.modify(a, modifier));
             }
 
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Traversal<C, D, E, F> traversal) {
                     return this.compose(traversal);
                 }
@@ -373,6 +392,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Traversal<A, B, C, D> traversal) {
             return compose(traversal);
         }

@@ -93,8 +93,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * @throws NullPointerException if {@code ops} or {@code value} is {@code null}
      */
     public Dynamic {
-        Preconditions.checkNotNull(ops, "DynamicOps must not be null");
-        Preconditions.checkNotNull(value, "Value must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
     }
 
     // ==================== Type Checks ====================

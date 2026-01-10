@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -177,6 +178,9 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
     static <S, A> Prism<S, S, A, A> of(@NotNull final String id,
                                        @NotNull final Function<S, Optional<A>> getOption,
                                        @NotNull final Function<A, S> reverseGet) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getOption, "getOption must not be null");
+        Preconditions.checkNotNull(reverseGet, "reverseGet must not be null");
         return new Prism<>() {
             @NotNull
             @Override
@@ -187,12 +191,14 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Optional<A> getOption(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return getOption.apply(source);
             }
 
             @NotNull
             @Override
             public S reverseGet(@NotNull final A value) {
+                Preconditions.checkNotNull(value, "value must not be null");
                 return reverseGet.apply(value);
             }
         };
@@ -267,6 +273,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
     @SuppressWarnings("unchecked")
     default T modify(@NotNull final S source,
                      @NotNull final Function<A, B> modifier) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(modifier, "modifier must not be null");
         return getOption(source)
                 .map(a -> reverseGet(modifier.apply(a)))
                 .orElse((T) source);
@@ -295,6 +303,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     @SuppressWarnings("unchecked")
     default T set(@NotNull final S source, @NotNull final B value) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         return getOption(source)
                 .map(a -> reverseGet(value))
                 .orElse((T) source);
@@ -324,6 +334,7 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default <C, D> Prism<S, T, C, D> compose(@NotNull final Prism<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Prism<S, T, A, B> self = this;
         return new Prism<>() {
             @NotNull
@@ -335,17 +346,20 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Optional<C> getOption(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return self.getOption(source).flatMap(other::getOption);
             }
 
             @NotNull
             @Override
             public T reverseGet(@NotNull final D value) {
+                Preconditions.checkNotNull(value, "value must not be null");
                 return self.reverseGet(other.reverseGet(value));
             }
 
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Prism<C, D, E, F> prism) {
                     return this.compose(prism);
                 }
@@ -356,6 +370,7 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Prism<A, B, C, D> prism) {
             return compose(prism);
         }

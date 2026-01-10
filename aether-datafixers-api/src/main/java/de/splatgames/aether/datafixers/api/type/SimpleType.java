@@ -78,8 +78,8 @@ public final class SimpleType<A> implements Type<A> {
      */
     public SimpleType(@NotNull final TypeReference reference,
                       @NotNull final Codec<A> codec) {
-        Preconditions.checkNotNull(reference, "TypeReference reference must not be null");
-        Preconditions.checkNotNull(codec, "Codec<A> codec must not be null");
+        Preconditions.checkNotNull(reference, "reference must not be null");
+        Preconditions.checkNotNull(codec, "codec must not be null");
 
         this.reference = reference;
         this.codec = codec;

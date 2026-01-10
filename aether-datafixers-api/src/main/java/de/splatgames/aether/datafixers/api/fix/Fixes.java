@@ -108,16 +108,18 @@ public final class Fixes {
                                                          @NotNull final Type<?> inputType,
                                                          @NotNull final Type<?> outputType,
                                                          @NotNull final Function<Typed<?>, Typed<?>> rewrite) {
-        Preconditions.checkNotNull(name, "String name must not be null");
-        Preconditions.checkNotNull(inputType, "Type<?> inputType must not be null");
-        Preconditions.checkNotNull(outputType, "Type<?> outputType must not be null");
-        Preconditions.checkNotNull(rewrite, "Function<Typed<?>, Typed<?>> rewrite must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(inputType, "inputType must not be null");
+        Preconditions.checkNotNull(outputType, "outputType must not be null");
+        Preconditions.checkNotNull(rewrite, "rewrite must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!type.reference().equals(inputType.reference())) {
                     return Optional.empty();
                 }
@@ -152,6 +154,8 @@ public final class Fixes {
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(inputType, "inputType must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!inputType.reference().equals(type.reference())) {
                     return Optional.empty();
                 }
@@ -185,6 +189,10 @@ public final class Fixes {
                                                   @NotNull final String oldName,
                                                   @NotNull final String newName,
                                                   @NotNull final Type<?> containerType) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(oldName, "oldName must not be null");
+        Preconditions.checkNotNull(newName, "newName must not be null");
+        Preconditions.checkNotNull(containerType, "containerType must not be null");
         return Rules.renameField(ops, oldName, newName).ifType(containerType);
     }
 
@@ -201,6 +209,9 @@ public final class Fixes {
     public static <T> TypeRewriteRule removeField(@NotNull final DynamicOps<T> ops,
                                                   @NotNull final String fieldName,
                                                   @NotNull final Type<?> containerType) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(containerType, "containerType must not be null");
         return Rules.removeField(ops, fieldName).ifType(containerType);
     }
 
@@ -222,11 +233,18 @@ public final class Fixes {
                                                   @NotNull final Type<A> fieldType,
                                                   @NotNull final Supplier<A> defaultValue,
                                                   @NotNull final Type<?> containerType) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(fieldType, "fieldType must not be null");
+        Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
+        Preconditions.checkNotNull(containerType, "containerType must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!type.reference().equals(containerType.reference())) {
                     return Optional.empty();
                 }
@@ -268,6 +286,10 @@ public final class Fixes {
                                                      @NotNull final String fieldName,
                                                      @NotNull final Function<Dynamic<?>, Dynamic<?>> transform,
                                                      @NotNull final Type<?> containerType) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
+        Preconditions.checkNotNull(containerType, "containerType must not be null");
         return Rules.transformField(ops, fieldName, transform).ifType(containerType);
     }
 
@@ -288,11 +310,17 @@ public final class Fixes {
                                                 @NotNull final String tagField,
                                                 @NotNull final Type<?> type,
                                                 @NotNull final Map<String, Function<Dynamic<?>, Dynamic<?>>> fixByTag) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(tagField, "tagField must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fixByTag, "fixByTag must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(inputType, "inputType must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!inputType.reference().equals(type.reference())) {
                     return Optional.empty();
                 }
@@ -341,11 +369,18 @@ public final class Fixes {
                                                    @NotNull final String oldTag,
                                                    @NotNull final String newTag,
                                                    @NotNull final Type<?> type) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(tagField, "tagField must not be null");
+        Preconditions.checkNotNull(oldTag, "oldTag must not be null");
+        Preconditions.checkNotNull(newTag, "newTag must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(inputType, "inputType must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!inputType.reference().equals(type.reference())) {
                     return Optional.empty();
                 }
@@ -389,6 +424,9 @@ public final class Fixes {
     public static TypeRewriteRule walkRecursive(@NotNull final String name,
                                                 @NotNull final Type<?> type,
                                                 @NotNull final Function<Typed<?>, Typed<?>> walker) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(walker, "walker must not be null");
         return Rules.everywhere(TypeRewriteRule.forType(name, (Type) type, value -> walker.apply(new Typed<>((Type) type, value)).value()));
     }
 
@@ -404,6 +442,8 @@ public final class Fixes {
     @NotNull
     public static TypeRewriteRule composite(@NotNull final String name,
                                             @NotNull final TypeRewriteRule... rules) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(rules, "rules must not be null");
         return Rules.seqAll(rules).named(name);
     }
 
@@ -419,11 +459,16 @@ public final class Fixes {
     public static TypeRewriteRule conditional(@NotNull final String name,
                                               @NotNull final java.util.function.Predicate<Typed<?>> condition,
                                               @NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(condition, "condition must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!condition.test(input)) {
                     return Optional.empty();
                 }

@@ -22,10 +22,13 @@
 
 package de.splatgames.aether.datafixers.api.type;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 /**
  * A registry for storing and retrieving {@link Type} instances by their references.
@@ -99,7 +102,7 @@ public interface TypeRegistry {
      * @since 0.3.0
      */
     @NotNull
-    java.util.Set<TypeReference> references();
+    Set<TypeReference> references();
 
     /**
      * Retrieves a type by its reference, throwing if not found.
@@ -110,6 +113,7 @@ public interface TypeRegistry {
      */
     @NotNull
     default Type<?> require(@NotNull final TypeReference ref) {
+        Preconditions.checkNotNull(ref, "ref must not be null");
         final Type<?> type = this.get(ref);
         if (type == null) {
             throw new IllegalStateException("Missing type for reference: " + ref);

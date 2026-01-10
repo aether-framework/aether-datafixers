@@ -350,6 +350,7 @@ public final class RecordCodecBuilder {
          */
         @NotNull
         public <A> Builder1<O, A> group(@NotNull final Field<O, A> f1) {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
             return new Builder1<>(f1);
         }
 
@@ -367,6 +368,8 @@ public final class RecordCodecBuilder {
                 @NotNull final Field<O, A> f1,
                 @NotNull final Field<O, B> f2
         ) {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
             return new Builder2<>(f1, f2);
         }
 
@@ -386,6 +389,9 @@ public final class RecordCodecBuilder {
                                                     @NotNull final Field<O, B> f2,
                                                     @NotNull final Field<O, C> f3
         ) {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
             return new Builder3<>(f1, f2, f3);
         }
 
@@ -408,6 +414,10 @@ public final class RecordCodecBuilder {
                                                           @NotNull final Field<O, C> f3,
                                                           @NotNull final Field<O, D> f4
         ) {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
             return new Builder4<>(f1, f2, f3, f4);
         }
 
@@ -433,6 +443,11 @@ public final class RecordCodecBuilder {
                                                                 @NotNull final Field<O, D> f4,
                                                                 @NotNull final Field<O, E> f5
         ) {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+            Preconditions.checkNotNull(f5, "f5 must not be null");
             return new Builder5<>(f1, f2, f3, f4, f5);
         }
 
@@ -461,6 +476,12 @@ public final class RecordCodecBuilder {
                                                                       @NotNull final Field<O, E> f5,
                                                                       @NotNull final Field<O, F> f6
         ) {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+            Preconditions.checkNotNull(f5, "f5 must not be null");
+            Preconditions.checkNotNull(f6, "f6 must not be null");
             return new Builder6<>(f1, f2, f3, f4, f5, f6);
         }
 
@@ -483,12 +504,16 @@ public final class RecordCodecBuilder {
          */
         @NotNull
         public <A> MapCodec<A> point(@NotNull final A value) {
+            Preconditions.checkNotNull(value, "value must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final A input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return DataResult.success(map);
                 }
 
@@ -496,6 +521,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     return DataResult.success(value);
                 }
             };
@@ -511,6 +538,15 @@ public final class RecordCodecBuilder {
      */
     public record Builder1<O, A>(@NotNull Field<O, A> f1) {
         /**
+         * Creates a new Builder1 with validation.
+         *
+         * @throws NullPointerException if {@code f1} is {@code null}
+         */
+        public Builder1 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+        }
+
+        /**
          * Applies a constructor function to create the final codec.
          *
          * @param instance    the builder instance (for type inference)
@@ -520,12 +556,17 @@ public final class RecordCodecBuilder {
         @NotNull
         public MapCodec<O> apply(@NotNull final Instance<O> instance,
                                  @NotNull final Function<A, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return f1.codec.encode(f1.getter.apply(input), ops, map);
                 }
 
@@ -533,6 +574,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     return f1.codec.decode(ops, input).map(constructor);
                 }
             };
@@ -551,6 +594,16 @@ public final class RecordCodecBuilder {
     public record Builder2<O, A, B>(@NotNull Field<O, A> f1,
                                     @NotNull Field<O, B> f2) {
         /**
+         * Creates a new Builder2 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder2 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+        }
+
+        /**
          * Applies a constructor function to create the final codec.
          *
          * @param instance    the builder instance (for type inference)
@@ -560,12 +613,17 @@ public final class RecordCodecBuilder {
         @NotNull
         public MapCodec<O> apply(@NotNull final Instance<O> instance,
                                  @NotNull final BiFunction<A, B, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return f1.codec.encode(f1.getter.apply(input), ops, map)
                             .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m));
                 }
@@ -574,6 +632,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     return f1.codec.decode(ops, input)
                             .apply2(f2.codec.decode(ops, input), constructor);
                 }
@@ -598,6 +658,17 @@ public final class RecordCodecBuilder {
                                        @NotNull Field<O, B> f2,
                                        @NotNull Field<O, C> f3) {
         /**
+         * Creates a new Builder3 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder3 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+        }
+
+        /**
          * Applies a constructor function to create the final codec.
          *
          * @param instance    the builder instance (for type inference)
@@ -607,12 +678,17 @@ public final class RecordCodecBuilder {
         @NotNull
         public MapCodec<O> apply(@NotNull final Instance<O> instance,
                                  @NotNull final Function3<A, B, C, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return f1.codec.encode(f1.getter.apply(input), ops, map)
                             .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m))
                             .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m));
@@ -622,6 +698,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     final DataResult<A> a = f1.codec.decode(ops, input);
                     final DataResult<B> b = f2.codec.decode(ops, input);
                     final DataResult<C> c = f3.codec.decode(ops, input);
@@ -649,6 +727,18 @@ public final class RecordCodecBuilder {
                                           @NotNull Field<O, C> f3,
                                           @NotNull Field<O, D> f4) {
         /**
+         * Creates a new Builder4 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder4 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+        }
+
+        /**
          * Applies a constructor function to create the final codec.
          *
          * @param instance    the builder instance (for type inference)
@@ -658,12 +748,17 @@ public final class RecordCodecBuilder {
         @NotNull
         public MapCodec<O> apply(@NotNull final Instance<O> instance,
                                  @NotNull final Function4<A, B, C, D, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return f1.codec.encode(f1.getter.apply(input), ops, map)
                             .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m))
                             .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m))
@@ -674,6 +769,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     final DataResult<A> a = f1.codec.decode(ops, input);
                     final DataResult<B> b = f2.codec.decode(ops, input);
                     final DataResult<C> c = f3.codec.decode(ops, input);
@@ -707,6 +804,19 @@ public final class RecordCodecBuilder {
                                              @NotNull Field<O, D> f4,
                                              @NotNull Field<O, E> f5) {
         /**
+         * Creates a new Builder5 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder5 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+            Preconditions.checkNotNull(f5, "f5 must not be null");
+        }
+
+        /**
          * Applies a constructor function to create the final codec.
          *
          * @param instance    the builder instance (for type inference)
@@ -716,12 +826,17 @@ public final class RecordCodecBuilder {
         @NotNull
         public MapCodec<O> apply(@NotNull final Instance<O> instance,
                                  @NotNull final Function5<A, B, C, D, E, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return f1.codec.encode(f1.getter.apply(input), ops, map)
                             .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m))
                             .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m))
@@ -733,6 +848,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     final DataResult<A> a = f1.codec.decode(ops, input);
                     final DataResult<B> b = f2.codec.decode(ops, input);
                     final DataResult<C> c = f3.codec.decode(ops, input);
@@ -771,6 +888,20 @@ public final class RecordCodecBuilder {
                                                 @NotNull Field<O, E> f5,
                                                 @NotNull Field<O, F> f6) {
         /**
+         * Creates a new Builder6 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder6 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+            Preconditions.checkNotNull(f5, "f5 must not be null");
+            Preconditions.checkNotNull(f6, "f6 must not be null");
+        }
+
+        /**
          * Applies a constructor function to create the final codec.
          *
          * @param instance    the builder instance (for type inference)
@@ -780,12 +911,17 @@ public final class RecordCodecBuilder {
         @NotNull
         public MapCodec<O> apply(@NotNull final Instance<O> instance,
                                  @NotNull final Function6<A, B, C, D, E, F, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
                     return f1.codec.encode(f1.getter.apply(input), ops, map)
                             .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m))
                             .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m))
@@ -798,6 +934,8 @@ public final class RecordCodecBuilder {
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     final DataResult<A> a = f1.codec.decode(ops, input);
                     final DataResult<B> b = f2.codec.decode(ops, input);
                     final DataResult<C> c = f3.codec.decode(ops, input);

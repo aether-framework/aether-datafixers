@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
@@ -164,6 +165,9 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
     static <S, A> Lens<S, S, A, A> of(@NotNull final String id,
                                       @NotNull final Function<S, A> getter,
                                       @NotNull final BiFunction<S, A, S> setter) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getter, "getter must not be null");
+        Preconditions.checkNotNull(setter, "setter must not be null");
         return new Lens<>() {
             @NotNull
             @Override
@@ -174,12 +178,15 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public A get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return getter.apply(source);
             }
 
             @NotNull
             @Override
             public S set(@NotNull final S source, @NotNull final A value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
                 return setter.apply(source, value);
             }
         };
@@ -248,6 +255,8 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     default T modify(@NotNull final S source,
                      @NotNull final Function<A, B> modifier) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(modifier, "modifier must not be null");
         return set(source, modifier.apply(get(source)));
     }
 
@@ -275,6 +284,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default <C, D> Lens<S, T, C, D> compose(@NotNull final Lens<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Lens<S, T, A, B> self = this;
         return new Lens<>() {
             @NotNull
@@ -286,6 +296,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public C get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return other.get(self.get(source));
             }
 
@@ -293,11 +304,14 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public T set(@NotNull final S source,
                          @NotNull final D value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
                 return self.set(source, other.set(self.get(source), value));
             }
 
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Lens<C, D, E, F> lens) {
                     return this.compose(lens);
                 }
@@ -308,6 +322,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Lens<A, B, C, D> lens) {
             return compose(lens);
         }

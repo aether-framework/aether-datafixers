@@ -84,7 +84,7 @@ public final class TypeReference {
      * @throws IllegalArgumentException if id is empty
      */
     public TypeReference(@NotNull final String id) {
-        Preconditions.checkNotNull(id, "TypeReference id cannot be null");
+        Preconditions.checkNotNull(id, "id must not be null");
         Preconditions.checkArgument(!id.isEmpty(), "TypeReference id cannot be empty");
 
         this.id = id;

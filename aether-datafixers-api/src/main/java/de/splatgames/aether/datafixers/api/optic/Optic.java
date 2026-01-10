@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -101,6 +102,7 @@ public interface Optic<S, T, A, B> {
 
             @Override
             public @NotNull <C, D> Optic<S, S, C, D> compose(@NotNull final Optic<S, S, C, D> other) {
+                Preconditions.checkNotNull(other, "other must not be null");
                 return other;
             }
         };

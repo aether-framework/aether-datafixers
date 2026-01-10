@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -134,6 +135,7 @@ public interface Getter<S, A> {
      */
     @NotNull
     static <S, T, A, B> Getter<S, A> fromLens(@NotNull final Lens<S, T, A, B> lens) {
+        Preconditions.checkNotNull(lens, "lens must not be null");
         return new Getter<>() {
             @NotNull
             @Override
@@ -144,6 +146,7 @@ public interface Getter<S, A> {
             @NotNull
             @Override
             public A get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return lens.get(source);
             }
         };
@@ -182,6 +185,8 @@ public interface Getter<S, A> {
     @NotNull
     static <S, A> Getter<S, A> of(@NotNull final String id,
                                   @NotNull final Function<S, A> getter) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getter, "getter must not be null");
         return new Getter<>() {
             @NotNull
             @Override
@@ -192,6 +197,7 @@ public interface Getter<S, A> {
             @NotNull
             @Override
             public A get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return getter.apply(source);
             }
         };
@@ -259,6 +265,7 @@ public interface Getter<S, A> {
      */
     @NotNull
     default <B> Getter<S, B> compose(@NotNull final Getter<A, B> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Getter<S, A> self = this;
         return new Getter<>() {
             @NotNull
@@ -270,6 +277,7 @@ public interface Getter<S, A> {
             @NotNull
             @Override
             public B get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return other.get(self.get(source));
             }
         };

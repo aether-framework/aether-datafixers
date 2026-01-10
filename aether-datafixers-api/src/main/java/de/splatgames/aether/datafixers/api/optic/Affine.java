@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -145,6 +146,7 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     static <S, T, A, B> Affine<S, T, A, B> fromLens(@NotNull final Lens<S, T, A, B> lens) {
+        Preconditions.checkNotNull(lens, "lens must not be null");
         return new Affine<>() {
             @NotNull
             @Override
@@ -155,6 +157,7 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Optional<A> getOption(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return Optional.of(lens.get(source));
             }
 
@@ -162,6 +165,8 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public T set(@NotNull final S source,
                          @NotNull final B value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
                 return lens.set(source, value);
             }
         };
@@ -205,6 +210,9 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull final Function<S, Optional<A>> getOption,
             @NotNull final BiFunction<S, A, S> set
     ) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getOption, "getOption must not be null");
+        Preconditions.checkNotNull(set, "set must not be null");
         return new Affine<>() {
             @NotNull
             @Override
@@ -215,6 +223,7 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Optional<A> getOption(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return getOption.apply(source);
             }
 
@@ -222,6 +231,8 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public S set(@NotNull final S source,
                          @NotNull final A value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
                 return set.apply(source, value);
             }
         };
@@ -298,6 +309,8 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     @SuppressWarnings("unchecked")
     default T modify(@NotNull final S source, @NotNull final Function<A, B> modifier) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(modifier, "modifier must not be null");
         return getOption(source)
                 .map(a -> set(source, modifier.apply(a)))
                 .orElse((T) source);
@@ -327,6 +340,7 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default <C, D> Affine<S, T, C, D> compose(@NotNull final Affine<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Affine<S, T, A, B> self = this;
         return new Affine<>() {
             @NotNull
@@ -338,12 +352,15 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Optional<C> getOption(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return self.getOption(source).flatMap(other::getOption);
             }
 
             @Override
             @SuppressWarnings("unchecked")
             public @NotNull T set(@NotNull final S source, @NotNull final D value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
                 return self.getOption(source)
                         .map(a -> self.set(source, other.set(a, value)))
                         .orElse((T) source);
@@ -352,6 +369,7 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Affine<C, D, E, F> affine) {
                     return this.compose(affine);
                 }
@@ -363,6 +381,7 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     @Override
     default <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Affine<A, B, C, D> affine) {
             return compose(affine);
         }

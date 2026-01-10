@@ -144,6 +144,7 @@ public final class Rules {
      */
     @NotNull
     public static TypeRewriteRule seq(@NotNull final TypeRewriteRule... rules) {
+        Preconditions.checkNotNull(rules, "rules must not be null");
         if (rules.length == 0) {
             return TypeRewriteRule.identity();
         }
@@ -155,6 +156,8 @@ public final class Rules {
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 Typed<?> current = input;
                 for (final TypeRewriteRule rule : rules) {
                     final Optional<Typed<?>> result = rule.rewrite(current.type(), current);
@@ -199,11 +202,14 @@ public final class Rules {
      */
     @NotNull
     public static TypeRewriteRule seqAll(@NotNull final TypeRewriteRule... rules) {
+        Preconditions.checkNotNull(rules, "rules must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 Typed<?> current = input;
                 for (final TypeRewriteRule rule : rules) {
                     current = rule.rewrite(current.type(), current).orElse(current);
@@ -244,11 +250,14 @@ public final class Rules {
      */
     @NotNull
     public static TypeRewriteRule choice(@NotNull final TypeRewriteRule... rules) {
+        Preconditions.checkNotNull(rules, "rules must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 for (final TypeRewriteRule rule : rules) {
                     final Optional<Typed<?>> result = rule.rewrite(type, input);
                     if (result.isPresent()) {
@@ -288,11 +297,14 @@ public final class Rules {
      */
     @NotNull
     public static TypeRewriteRule checkOnce(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return rule.rewrite(type, input);
             }
 
@@ -326,6 +338,7 @@ public final class Rules {
      */
     @NotNull
     public static TypeRewriteRule tryOnce(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return rule.orKeep();
     }
 
@@ -360,8 +373,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule all(@NotNull final DynamicOps<T> ops,
                                           @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
@@ -369,6 +382,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<List<Typed<?>>> childrenResult = input.children(ops);
                 if (childrenResult.isError()) {
                     return Optional.empty();
@@ -417,11 +432,14 @@ public final class Rules {
     @Deprecated
     @NotNull
     public static TypeRewriteRule all(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // Without DynamicOps, we cannot traverse children
                 return Optional.of(input);
             }
@@ -458,8 +476,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule one(@NotNull final DynamicOps<T> ops,
                                           @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
@@ -467,6 +485,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<List<Typed<?>>> childrenResult = input.children(ops);
                 if (childrenResult.isError()) {
                     return Optional.empty();
@@ -517,11 +537,14 @@ public final class Rules {
     @Deprecated
     @NotNull
     public static TypeRewriteRule one(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // Without DynamicOps, we cannot traverse children
                 return Optional.empty();
             }
@@ -558,8 +581,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule everywhere(@NotNull final DynamicOps<T> ops,
                                                  @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
@@ -567,6 +590,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // Apply rule to self (continue even if it doesn't match)
                 Typed<?> current = rule.rewrite(type, input).orElse(input);
 
@@ -612,11 +637,14 @@ public final class Rules {
     @Deprecated
     @NotNull
     public static TypeRewriteRule everywhere(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // Without DynamicOps, just apply to self
                 return Optional.of(rule.rewrite(type, input).orElse(input));
             }
@@ -653,8 +681,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule bottomUp(@NotNull final DynamicOps<T> ops,
                                                @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
@@ -662,6 +690,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // First, recursively apply to children
                 Typed<?> current = input;
 
@@ -704,11 +734,14 @@ public final class Rules {
     @Deprecated
     @NotNull
     public static TypeRewriteRule bottomUp(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // Without DynamicOps, just apply to self
                 return Optional.of(rule.rewrite(type, input).orElse(input));
             }
@@ -745,8 +778,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule topDown(@NotNull final DynamicOps<T> ops,
                                               @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
@@ -754,6 +787,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // First, apply rule to self
                 Typed<?> current = rule.rewrite(type, input).orElse(input);
 
@@ -798,11 +833,14 @@ public final class Rules {
     @Deprecated
     @NotNull
     public static TypeRewriteRule topDown(@NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 // Without DynamicOps, just apply to self
                 return Optional.of(rule.rewrite(type, input).orElse(input));
             }
@@ -826,6 +864,8 @@ public final class Rules {
     @NotNull
     public static TypeRewriteRule ifType(@NotNull final Type<?> targetType,
                                          @NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return rule.ifType(targetType);
     }
 
@@ -842,6 +882,9 @@ public final class Rules {
     public static <A> TypeRewriteRule transformType(@NotNull final String name,
                                                     @NotNull final Type<A> type,
                                                     @NotNull final Function<A, A> transformer) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(transformer, "transformer must not be null");
         return TypeRewriteRule.forType(name, type, transformer);
     }
 
@@ -862,11 +905,17 @@ public final class Rules {
                                                @NotNull final DynamicOps<T> ops,
                                                @NotNull final Finder<?> finder,
                                                @NotNull final Function<Dynamic<?>, Dynamic<?>> updater) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(finder, "finder must not be null");
+        Preconditions.checkNotNull(updater, "updater must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Typed<?>> updateResult = (DataResult<Typed<?>>) (DataResult) input.updateAt(ops, finder, updater);
                 return updateResult.result();
             }
@@ -908,11 +957,16 @@ public final class Rules {
     public static <T> TypeRewriteRule renameField(@NotNull final DynamicOps<T> ops,
                                                   @NotNull final String oldName,
                                                   @NotNull final String newName) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(oldName, "oldName must not be null");
+        Preconditions.checkNotNull(newName, "newName must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 return encodeResult.flatMap(dynamic -> {
                     final Dynamic<T> value = dynamic.get(oldName);
@@ -961,11 +1015,15 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule removeField(@NotNull final DynamicOps<T> ops,
                                                   @NotNull final String fieldName) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 return encodeResult.flatMap(dynamic -> {
                     final Dynamic<T> updated = dynamic.remove(fieldName);
@@ -1016,11 +1074,16 @@ public final class Rules {
     public static <T> TypeRewriteRule addField(@NotNull final DynamicOps<T> ops,
                                                @NotNull final String fieldName,
                                                @NotNull final Dynamic<T> defaultValue) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 return encodeResult.flatMap(dynamic -> {
                     final Dynamic<T> updated;
@@ -1079,6 +1142,9 @@ public final class Rules {
     public static <T> TypeRewriteRule transformField(@NotNull final DynamicOps<T> ops,
                                                      @NotNull final String fieldName,
                                                      @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
         return updateAt(
                 "transformField(" + fieldName + ")",
                 ops,
@@ -1126,8 +1192,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule batch(@NotNull final DynamicOps<T> ops,
                                             @NotNull final Consumer<BatchTransform<T>> builder) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(builder, "Consumer builder must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(builder, "builder must not be null");
 
         final BatchTransform<T> batch = new BatchTransform<>(ops);
         builder.accept(batch);
@@ -1177,9 +1243,9 @@ public final class Rules {
     public static <T> TypeRewriteRule dynamicTransform(@NotNull final String name,
                                                        @NotNull final DynamicOps<T> ops,
                                                        @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
-        Preconditions.checkNotNull(name, "String name must not be null");
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
 
         return new TypeRewriteRule() {
             @Override
@@ -1187,6 +1253,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return input.encode(ops).flatMap(dynamic -> {
                     final Dynamic<?> transformed = transform.apply(dynamic);
                     final Type rawType = input.type();
@@ -1232,15 +1300,17 @@ public final class Rules {
     public static <T> TypeRewriteRule setField(@NotNull final DynamicOps<T> ops,
                                                @NotNull final String fieldName,
                                                @NotNull final Dynamic<T> value) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(value, "Dynamic<T> value must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
 
         return new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 return encodeResult.flatMap(dynamic -> {
                     final Dynamic<T> updated = dynamic.set(fieldName, value);
@@ -1288,8 +1358,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule renameFields(@NotNull final DynamicOps<T> ops,
                                                    @NotNull final java.util.Map<String, String> renames) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(renames, "Map renames must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(renames, "renames must not be null");
 
         if (renames.isEmpty()) {
             return TypeRewriteRule.identity();
@@ -1300,6 +1370,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 return encodeResult.flatMap(dynamic -> {
                     Dynamic<T> current = dynamic;
@@ -1351,8 +1423,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule removeFields(@NotNull final DynamicOps<T> ops,
                                                    @NotNull final String... fieldNames) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldNames, "String[] fieldNames must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldNames, "fieldNames must not be null");
 
         if (fieldNames.length == 0) {
             return TypeRewriteRule.identity();
@@ -1363,6 +1435,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 return encodeResult.flatMap(dynamic -> {
                     Dynamic<T> current = dynamic;
@@ -1414,9 +1488,9 @@ public final class Rules {
     public static <T> TypeRewriteRule groupFields(@NotNull final DynamicOps<T> ops,
                                                   @NotNull final String targetField,
                                                   @NotNull final String... sourceFields) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(targetField, "String targetField must not be null");
-        Preconditions.checkNotNull(sourceFields, "String[] sourceFields must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(targetField, "targetField must not be null");
+        Preconditions.checkNotNull(sourceFields, "sourceFields must not be null");
 
         if (sourceFields.length == 0) {
             return TypeRewriteRule.identity();
@@ -1472,8 +1546,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule flattenField(@NotNull final DynamicOps<T> ops,
                                                    @NotNull final String fieldName) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
 
         return dynamicTransform("flattenField(" + fieldName + ")", ops, dynamic -> {
             @SuppressWarnings("unchecked")
@@ -1535,9 +1609,9 @@ public final class Rules {
     public static <T> TypeRewriteRule moveField(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final String sourcePath,
                                                 @NotNull final String targetPath) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(sourcePath, "String sourcePath must not be null");
-        Preconditions.checkNotNull(targetPath, "String targetPath must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(sourcePath, "sourcePath must not be null");
+        Preconditions.checkNotNull(targetPath, "targetPath must not be null");
 
         final Finder<?> sourceFinder = parsePath(sourcePath);
         final Finder<?> targetFinder = parsePath(targetPath);
@@ -1585,9 +1659,9 @@ public final class Rules {
     public static <T> TypeRewriteRule copyField(@NotNull final DynamicOps<T> ops,
                                                 @NotNull final String sourcePath,
                                                 @NotNull final String targetPath) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(sourcePath, "String sourcePath must not be null");
-        Preconditions.checkNotNull(targetPath, "String targetPath must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(sourcePath, "sourcePath must not be null");
+        Preconditions.checkNotNull(targetPath, "targetPath must not be null");
 
         final Finder<?> sourceFinder = parsePath(sourcePath);
 
@@ -1634,9 +1708,9 @@ public final class Rules {
     public static <T> TypeRewriteRule transformFieldAt(@NotNull final DynamicOps<T> ops,
                                                        @NotNull final String path,
                                                        @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(path, "String path must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(path, "path must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
 
         final Finder<?> finder = parsePath(path);
         return updateAt("transformFieldAt(" + path + ")", ops, finder, transform);
@@ -1672,9 +1746,9 @@ public final class Rules {
     public static <T> TypeRewriteRule renameFieldAt(@NotNull final DynamicOps<T> ops,
                                                     @NotNull final String path,
                                                     @NotNull final String newName) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(path, "String path must not be null");
-        Preconditions.checkNotNull(newName, "String newName must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(path, "path must not be null");
+        Preconditions.checkNotNull(newName, "newName must not be null");
 
         final int lastDot = path.lastIndexOf('.');
         if (lastDot == -1) {
@@ -1731,8 +1805,8 @@ public final class Rules {
     @NotNull
     public static <T> TypeRewriteRule removeFieldAt(@NotNull final DynamicOps<T> ops,
                                                     @NotNull final String path) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(path, "String path must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(path, "path must not be null");
 
         return dynamicTransform("removeFieldAt(" + path + ")", ops,
                 dynamic -> removeAtPath(dynamic, path));
@@ -1768,9 +1842,9 @@ public final class Rules {
     public static <T> TypeRewriteRule addFieldAt(@NotNull final DynamicOps<T> ops,
                                                  @NotNull final String path,
                                                  @NotNull final Dynamic<T> defaultValue) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(path, "String path must not be null");
-        Preconditions.checkNotNull(defaultValue, "Dynamic<T> defaultValue must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(path, "path must not be null");
+        Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
 
         final Finder<?> finder = parsePath(path);
 
@@ -1813,9 +1887,9 @@ public final class Rules {
     public static <T> TypeRewriteRule ifFieldExists(@NotNull final DynamicOps<T> ops,
                                                     @NotNull final String fieldName,
                                                     @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @Override
@@ -1823,6 +1897,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 final boolean fieldExists = encodeResult.result()
                         .map(dynamic -> dynamic.get(fieldName) != null)
@@ -1867,9 +1943,9 @@ public final class Rules {
     public static <T> TypeRewriteRule ifFieldMissing(@NotNull final DynamicOps<T> ops,
                                                      @NotNull final String fieldName,
                                                      @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @Override
@@ -1877,6 +1953,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 final boolean fieldMissing = encodeResult.result()
                         .map(dynamic -> dynamic.get(fieldName) == null)
@@ -1925,10 +2003,10 @@ public final class Rules {
                                                        @NotNull final String fieldName,
                                                        @NotNull final V value,
                                                        @NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(value, "V value must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
             @Override
@@ -1936,6 +2014,8 @@ public final class Rules {
             @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
                 final boolean matches = encodeResult.result()
                         .map(dynamic -> {
@@ -2006,9 +2086,9 @@ public final class Rules {
             @NotNull final DynamicOps<T> ops,
             @NotNull final Predicate<Dynamic<T>> condition,
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(condition, "Predicate condition must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(condition, "condition must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
 
         return dynamicTransform("conditionalTransform", ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
@@ -2051,9 +2131,9 @@ public final class Rules {
             @NotNull final DynamicOps<T> ops,
             @NotNull final String fieldName,
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
 
         return dynamicTransform("ifFieldExists(" + fieldName + ")", ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
@@ -2096,9 +2176,9 @@ public final class Rules {
             @NotNull final DynamicOps<T> ops,
             @NotNull final String fieldName,
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
 
         return dynamicTransform("ifFieldMissing(" + fieldName + ")", ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
@@ -2145,10 +2225,10 @@ public final class Rules {
             @NotNull final String fieldName,
             @NotNull final V value,
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(fieldName, "String fieldName must not be null");
-        Preconditions.checkNotNull(value, "V value must not be null");
-        Preconditions.checkNotNull(transform, "Function transform must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
 
         return dynamicTransform("ifFieldEquals(" + fieldName + " == " + value + ")", ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
@@ -2396,6 +2476,8 @@ public final class Rules {
     @NotNull
     public static TypeRewriteRule log(@NotNull final String message,
                                       @NotNull final TypeRewriteRule rule) {
+        Preconditions.checkNotNull(message, "message must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
         return log(message, rule, System.out::println);
     }
 
@@ -2425,14 +2507,16 @@ public final class Rules {
     public static TypeRewriteRule log(@NotNull final String message,
                                       @NotNull final TypeRewriteRule rule,
                                       @NotNull final Consumer<String> logger) {
-        Preconditions.checkNotNull(message, "String message must not be null");
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
-        Preconditions.checkNotNull(logger, "Consumer<String> logger must not be null");
+        Preconditions.checkNotNull(message, "message must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
+        Preconditions.checkNotNull(logger, "logger must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type, @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 logger.accept("[Rule] " + message + " on type: " + type.describe());
                 return rule.rewrite(type, input);
             }

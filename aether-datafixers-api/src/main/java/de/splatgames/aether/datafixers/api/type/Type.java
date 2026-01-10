@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.type;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.codec.Codec;
 import de.splatgames.aether.datafixers.api.codec.Codecs;
@@ -236,6 +237,7 @@ public interface Type<A> {
      */
     @NotNull
     default <T> DataResult<A> read(@NotNull final Dynamic<T> dynamic) {
+        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
         return codec().parse(dynamic.ops(), dynamic.value());
     }
 
@@ -272,6 +274,8 @@ public interface Type<A> {
     @NotNull
     default <T> DataResult<Dynamic<T>> write(@NotNull final A value,
                                              @NotNull final DynamicOps<T> ops) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
         return codec().encodeStart(ops, value).map(t -> new Dynamic<>(ops, t));
     }
 
@@ -307,6 +311,7 @@ public interface Type<A> {
      */
     @NotNull
     default <T> DataResult<Typed<A>> readTyped(@NotNull final Dynamic<T> dynamic) {
+        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
         return read(dynamic).map(value -> new Typed<>(this, value));
     }
 
@@ -371,6 +376,9 @@ public interface Type<A> {
                 public <T> DataResult<T> encode(@NotNull final Dynamic<?> input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T prefix) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(prefix, "prefix must not be null");
                     return DataResult.success(input.convert(ops).value());
                 }
 
@@ -378,6 +386,8 @@ public interface Type<A> {
                 @Override
                 public <T> DataResult<Pair<Dynamic<?>, T>> decode(@NotNull final DynamicOps<T> ops,
                                                                   @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     return DataResult.success(Pair.of(new Dynamic<>(ops, input), ops.empty()));
                 }
             };
@@ -422,6 +432,8 @@ public interface Type<A> {
     @NotNull
     static <A> Type<A> primitive(@NotNull final String name,
                                  @NotNull final Codec<A> codec) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(codec, "codec must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference(name);
 
@@ -470,6 +482,7 @@ public interface Type<A> {
      */
     @NotNull
     static <A> Type<List<A>> list(@NotNull final Type<A> elementType) {
+        Preconditions.checkNotNull(elementType, "elementType must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference("list[" + elementType.reference().getId() + "]");
 
@@ -525,6 +538,7 @@ public interface Type<A> {
      */
     @NotNull
     static <A> Type<Optional<A>> optional(@NotNull final Type<A> elementType) {
+        Preconditions.checkNotNull(elementType, "elementType must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference("optional[" + elementType.reference().getId() + "]");
 
@@ -586,6 +600,8 @@ public interface Type<A> {
     @NotNull
     static <A, B> Type<Pair<A, B>> product(@NotNull final Type<A> first,
                                            @NotNull final Type<B> second) {
+        Preconditions.checkNotNull(first, "first must not be null");
+        Preconditions.checkNotNull(second, "second must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference(
                     "(" + first.reference().getId() + " × " + second.reference().getId() + ")"
@@ -653,6 +669,8 @@ public interface Type<A> {
     @NotNull
     static <A, B> Type<Either<A, B>> sum(@NotNull final Type<A> left,
                                          @NotNull final Type<B> right) {
+        Preconditions.checkNotNull(left, "left must not be null");
+        Preconditions.checkNotNull(right, "right must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference(
                     "(" + left.reference().getId() + " + " + right.reference().getId() + ")"
@@ -715,6 +733,8 @@ public interface Type<A> {
     @NotNull
     static <A> Type<A> field(@NotNull final String name,
                              @NotNull final Type<A> fieldType) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(fieldType, "fieldType must not be null");
         return new FieldType<>(name, fieldType, false);
     }
 
@@ -750,6 +770,8 @@ public interface Type<A> {
     @NotNull
     static <A> Type<Optional<A>> optionalField(@NotNull final String name,
                                                @NotNull final Type<A> fieldType) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(fieldType, "fieldType must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference("?" + name + ":" + fieldType.reference().getId());
 
@@ -806,6 +828,8 @@ public interface Type<A> {
     @NotNull
     static <A> Type<A> named(@NotNull final String name,
                              @NotNull final Type<A> targetType) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
         return new Type<>() {
             private final TypeReference ref = new TypeReference(name);
 
@@ -895,6 +919,8 @@ public interface Type<A> {
     @NotNull
     static Type<Pair<String, Dynamic<?>>> taggedChoice(@NotNull final String tagField,
                                                        @NotNull final Map<String, Type<?>> choices) {
+        Preconditions.checkNotNull(tagField, "tagField must not be null");
+        Preconditions.checkNotNull(choices, "choices must not be null");
         return new TaggedChoiceType(tagField, choices);
     }
 
@@ -959,9 +985,11 @@ public interface Type<A> {
          * @param fieldType the type of the field's value, must not be {@code null}
          * @param optional  {@code true} if the field is optional, {@code false} if required
          */
-        FieldType(final String name,
-                  final Type<A> fieldType,
+        FieldType(@NotNull final String name,
+                  @NotNull final Type<A> fieldType,
                   final boolean optional) {
+            Preconditions.checkNotNull(name, "name must not be null");
+            Preconditions.checkNotNull(fieldType, "fieldType must not be null");
             this.name = name;
             this.fieldType = fieldType;
             this.optional = optional;
@@ -1137,8 +1165,10 @@ public interface Type<A> {
          * @param choices  mapping from tag values to their corresponding types, must not be {@code null}; the map is
          *                 defensively copied
          */
-        TaggedChoiceType(final String tagField,
-                         final Map<String, Type<?>> choices) {
+        TaggedChoiceType(@NotNull final String tagField,
+                         @NotNull final Map<String, Type<?>> choices) {
+            Preconditions.checkNotNull(tagField, "tagField must not be null");
+            Preconditions.checkNotNull(choices, "choices must not be null");
             this.tagField = tagField;
             this.choices = Map.copyOf(choices);
             this.ref = new TypeReference("TaggedChoice<" + tagField + ">");
@@ -1168,6 +1198,9 @@ public interface Type<A> {
                 public <T> DataResult<T> encode(@NotNull final Pair<String, Dynamic<?>> input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T prefix) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(prefix, "prefix must not be null");
                     final String tag = input.first();
                     final Dynamic<?> value = input.second();
 
@@ -1202,6 +1235,8 @@ public interface Type<A> {
                         @NotNull final DynamicOps<T> ops,
                         @NotNull final T input
                 ) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
                     // Get the tag value
                     final T tagValue = ops.get(input, tagField);
                     if (tagValue == null) {
@@ -1329,6 +1364,7 @@ public interface Type<A> {
          */
         @Nullable
         public Type<?> getChoice(@NotNull final String tag) {
+            Preconditions.checkNotNull(tag, "tag must not be null");
             return this.choices.get(tag);
         }
 

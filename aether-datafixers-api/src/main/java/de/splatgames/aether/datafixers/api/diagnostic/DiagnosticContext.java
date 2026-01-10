@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.diagnostic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,6 +93,7 @@ public interface DiagnosticContext extends DataFixerContext {
      */
     @NotNull
     static DiagnosticContext create(@NotNull final DiagnosticOptions options) {
+        Preconditions.checkNotNull(options, "options must not be null");
         // Use ServiceLoader or direct instantiation
         // For now, we'll use direct instantiation via the core module
         // This will be resolved at runtime by the core implementation

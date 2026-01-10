@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.codec;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import org.jetbrains.annotations.NotNull;
@@ -93,6 +94,8 @@ public interface Encoder<A> {
      */
     @NotNull
     default <T> DataResult<T> encodeStart(@NotNull final DynamicOps<T> ops, @NotNull final A input) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         return encode(input, ops, ops.empty());
     }
 }

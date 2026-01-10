@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.type.template;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.type.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -186,11 +187,13 @@ public interface TypeTemplate {
      */
     @NotNull
     default TypeTemplate bind(@NotNull final String name) {
+        Preconditions.checkNotNull(name, "name must not be null");
         final TypeTemplate self = this;
         return new TypeTemplate() {
             @NotNull
             @Override
             public Type<?> apply(@NotNull final TypeFamily family) {
+                Preconditions.checkNotNull(family, "family must not be null");
                 return self.apply(family);
             }
 

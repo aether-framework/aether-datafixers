@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.type.template;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.type.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,6 +134,7 @@ public interface TypeFamily {
      */
     @NotNull
     static TypeFamily of(@NotNull final Type<?>... types) {
+        Preconditions.checkNotNull(types, "types must not be null");
         final List<Type<?>> typeList = List.of(types);
         return index -> {
             if (index < 0 || index >= typeList.size()) {
@@ -165,6 +167,7 @@ public interface TypeFamily {
      */
     @NotNull
     static TypeFamily of(@NotNull final IntFunction<Type<?>> function) {
+        Preconditions.checkNotNull(function, "function must not be null");
         return function::apply;
     }
 
@@ -209,6 +212,7 @@ public interface TypeFamily {
      */
     @NotNull
     static TypeFamily recursive(@NotNull final Function<TypeFamily, Type<?>> definition) {
+        Preconditions.checkNotNull(definition, "definition must not be null");
         // Use a mutable holder to break the recursive dependency
         final Type<?>[] holder = new Type<?>[1];
         final TypeFamily self = index -> {

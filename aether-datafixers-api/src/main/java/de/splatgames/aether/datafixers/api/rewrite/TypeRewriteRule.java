@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.rewrite;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
 import org.jetbrains.annotations.NotNull;
@@ -202,11 +203,15 @@ public interface TypeRewriteRule {
             @NotNull final String name,
             @NotNull final Function<Typed<?>, Typed<?>> transformer
     ) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(transformer, "transformer must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return Optional.of(transformer.apply(input));
             }
 
@@ -250,10 +255,15 @@ public interface TypeRewriteRule {
     static <A> TypeRewriteRule forType(@NotNull final String name,
                                        @NotNull final Type<A> targetType,
                                        @NotNull final Function<A, A> transformer) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
+        Preconditions.checkNotNull(transformer, "transformer must not be null");
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type, @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 if (!type.reference().equals(targetType.reference())) {
                     return Optional.empty();
                 }
@@ -319,6 +329,7 @@ public interface TypeRewriteRule {
      */
     @NotNull
     default Typed<?> apply(@NotNull final Typed<?> input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return rewrite(input.type(), input).orElse(input);
     }
 
@@ -349,6 +360,7 @@ public interface TypeRewriteRule {
      */
     @NotNull
     default Typed<?> applyOrThrow(@NotNull final Typed<?> input) {
+        Preconditions.checkNotNull(input, "input must not be null");
         return rewrite(input.type(), input)
                 .orElseThrow(() -> new IllegalStateException("Rule did not match: " + input.type().describe()));
     }
@@ -380,6 +392,7 @@ public interface TypeRewriteRule {
      */
     @NotNull
     default TypeRewriteRule andThen(@NotNull final TypeRewriteRule next) {
+        Preconditions.checkNotNull(next, "next must not be null");
         final TypeRewriteRule self = this;
         return (type, input) -> self.rewrite(type, input)
                 .flatMap(result -> next.rewrite(result.type(), result));
@@ -409,6 +422,7 @@ public interface TypeRewriteRule {
      */
     @NotNull
     default TypeRewriteRule orElse(@NotNull final TypeRewriteRule fallback) {
+        Preconditions.checkNotNull(fallback, "fallback must not be null");
         final TypeRewriteRule self = this;
         return (type, input) -> {
             final Optional<Typed<?>> result = self.rewrite(type, input);
@@ -472,6 +486,7 @@ public interface TypeRewriteRule {
      */
     @NotNull
     default TypeRewriteRule ifType(@NotNull final Type<?> targetType) {
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
         final TypeRewriteRule self = this;
         return (type, input) -> {
             if (!type.reference().equals(targetType.reference())) {
@@ -502,12 +517,15 @@ public interface TypeRewriteRule {
      */
     @NotNull
     default TypeRewriteRule named(@NotNull final String name) {
+        Preconditions.checkNotNull(name, "name must not be null");
         final TypeRewriteRule self = this;
         return new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                               @NotNull final Typed<?> input) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.rewrite(type, input);
             }
 
