@@ -46,7 +46,7 @@ aether-cli info --formats
 
 Output:
 ```
-Aether Datafixers CLI v0.3.0
+Aether Datafixers CLI v0.4.0
 ============================
 
 Available Formats:

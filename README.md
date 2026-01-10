@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-red)
-![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether/aether-datafixers)
-![Version](https://img.shields.io/badge/version-0.3.0-orange)
+![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether.datafixers/aether-datafixers)
+![Version](https://img.shields.io/badge/version-0.4.0-orange)
 
 # Aether Datafixers 🔧
 
@@ -10,7 +10,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.3.0)
+## ✨ Features (v0.4.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
@@ -89,7 +89,7 @@ Dynamic<?> updated = fixer.update(
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -97,7 +97,7 @@ Dynamic<?> updated = fixer.update(
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0'
 }
 ```
 
@@ -105,7 +105,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.3.0")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0")
 }
 ```
 
@@ -125,7 +125,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
         <dependency>
             <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -149,7 +149,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0')
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0')
 
     // No version needed
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
@@ -161,7 +161,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.3.0"))
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0"))
 
     // No version needed
     implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
@@ -194,15 +194,15 @@ Optics provide composable, type-safe accessors for nested data structures. They 
 
 ### Optic Hierarchy
 
-| Optic         | Focus             | Description                                           |
-|---------------|-------------------|-------------------------------------------------------|
-| **Iso**       | 1 ↔ 1             | Reversible 1-to-1 transformation between two types    |
+| Optic         | Focus             | Description                                                   |
+|---------------|-------------------|---------------------------------------------------------------|
+| **Iso**       | 1 ↔ 1             | Reversible 1-to-1 transformation between two types            |
 | **Lens**      | 1 → 1             | Focus on exactly one part of a product type (always succeeds) |
-| **Prism**     | 1 → 0..1          | Focus on one case of a sum type (may not match)       |
-| **Affine**    | 1 → 0..1          | Combines lens and prism capabilities                  |
-| **Traversal** | 1 → 0..n          | Focus on zero or more parts                           |
-| **Getter**    | 1 → 1 (read-only) | Read-only focus (no modification)                     |
-| **Finder**    | Type → Optic      | Locates nested types within a schema                  |
+| **Prism**     | 1 → 0..1          | Focus on one case of a sum type (may not match)               |
+| **Affine**    | 1 → 0..1          | Combines lens and prism capabilities                          |
+| **Traversal** | 1 → 0..n          | Focus on zero or more parts                                   |
+| **Getter**    | 1 → 1 (read-only) | Read-only focus (no modification)                             |
+| **Finder**    | Type → Optic      | Locates nested types within a schema                          |
 
 ### Lens Example
 
@@ -334,13 +334,13 @@ void testFieldRename() {
 
 ### Testkit Features
 
-| Component | Description |
-|-----------|-------------|
-| **TestData** | Fluent builders for creating test data (`TestData.gson().object()...`) |
-| **AetherAssertions** | Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed` |
-| **DataFixTester** | Test harness for isolated DataFix testing |
-| **QuickFix** | Factory methods for common fix patterns (rename, add, remove, transform) |
-| **MockSchemas** | Mock schema utilities for testing |
+| Component            | Description                                                              |
+|----------------------|--------------------------------------------------------------------------|
+| **TestData**         | Fluent builders for creating test data (`TestData.gson().object()...`)   |
+| **AetherAssertions** | Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed`           |
+| **DataFixTester**    | Test harness for isolated DataFix testing                                |
+| **QuickFix**         | Factory methods for common fix patterns (rename, add, remove, transform) |
+| **MockSchemas**      | Mock schema utilities for testing                                        |
 
 Add to your project:
 
@@ -556,22 +556,21 @@ mvn test
   - **High-performance APIs** — `Rules.batch()` and single-pass conditional transforms
   - **Performance optimizations** — Path caching, optimized fix registry, reduced allocations
 
-- **v0.3.0** (current)
+- **v0.3.0**
   - **CLI module** — Migrate files from the command line with batch processing and reports
   - **Schema Tools module** — Schema diffing, migration analysis, validation, and introspection
   - **Fix coverage analysis** — Detect schema changes without corresponding DataFixes
   - **Convention checking** — Enforce naming conventions for types, fields, and classes
 
-- **v0.4.0** (next)
+- **v0.4.0** (current)
   - **Spring Boot Starter** — Auto-configuration, MigrationService with fluent API
   - **Actuator integration** — Health indicator, info contributor, custom endpoint, Micrometer metrics
   - **Multi-domain support** — Multiple DataFixers with @Qualifier annotations
   - **DynamicOps auto-configuration** — Conditional beans for all supported formats
   - **Multi-format DynamicOps** — YAML (SnakeYAML, Jackson), TOML (Jackson), XML (Jackson)
   - **Package restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
-  - **Debug utilities** — Pretty printers / tree diff for Dynamic structures (dev-facing)
 
-- **v0.5.0** (API freeze candidate)
+- **v0.5.0** (next, API freeze candidate)
   - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
   - **Compatibility checks in CI** — Binary/source compatibility guardrails for public API
   - **Hardened error model** — Consistent exception types + structured error details
