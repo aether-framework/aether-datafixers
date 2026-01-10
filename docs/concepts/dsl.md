@@ -384,21 +384,21 @@ public class Schema100 extends Schema {
 
 ## DSL Reference
 
-| Method | Description | Example |
-|--------|-------------|---------|
-| `string()` | String type | `DSL.string()` |
-| `intType()` | Integer type | `DSL.intType()` |
-| `longType()` | Long type | `DSL.longType()` |
-| `floatType()` | Float type | `DSL.floatType()` |
-| `doubleType()` | Double type | `DSL.doubleType()` |
-| `bool()` | Boolean type | `DSL.bool()` |
-| `field(name, template)` | Required field | `DSL.field("name", DSL.string())` |
+| Method                     | Description    | Example                              |
+|----------------------------|----------------|--------------------------------------|
+| `string()`                 | String type    | `DSL.string()`                       |
+| `intType()`                | Integer type   | `DSL.intType()`                      |
+| `longType()`               | Long type      | `DSL.longType()`                     |
+| `floatType()`              | Float type     | `DSL.floatType()`                    |
+| `doubleType()`             | Double type    | `DSL.doubleType()`                   |
+| `bool()`                   | Boolean type   | `DSL.bool()`                         |
+| `field(name, template)`    | Required field | `DSL.field("name", DSL.string())`    |
 | `optional(name, template)` | Optional field | `DSL.optional("nick", DSL.string())` |
-| `and(templates...)` | Product type | `DSL.and(field1, field2)` |
-| `list(template)` | List type | `DSL.list(DSL.string())` |
-| `remainder()` | Unknown fields | `DSL.remainder()` |
-| `taggedChoice(...)` | Sum type | `DSL.taggedChoice("type", ...)` |
-| `ref(typeRef)` | Type reference | `DSL.ref(TypeReferences.PLAYER)` |
+| `and(templates...)`        | Product type   | `DSL.and(field1, field2)`            |
+| `list(template)`           | List type      | `DSL.list(DSL.string())`             |
+| `remainder()`              | Unknown fields | `DSL.remainder()`                    |
+| `taggedChoice(...)`        | Sum type       | `DSL.taggedChoice("type", ...)`      |
+| `ref(typeRef)`             | Type reference | `DSL.ref(TypeReferences.PLAYER)`     |
 
 ## Best Practices
 
@@ -453,16 +453,16 @@ DSL.taggedChoice("type", DSL.string(), variants)
 
 ## Summary
 
-| Template | Purpose |
-|----------|---------|
-| Primitives | Basic data types |
-| `field` | Required named field |
-| `optional` | Optional named field |
-| `and` | Combine multiple fields |
-| `list` | Array of elements |
-| `remainder` | Unknown fields |
-| `taggedChoice` | Discriminated union |
-| `ref` | Reference other types |
+| Template       | Purpose                 |
+|----------------|-------------------------|
+| Primitives     | Basic data types        |
+| `field`        | Required named field    |
+| `optional`     | Optional named field    |
+| `and`          | Combine multiple fields |
+| `list`         | Array of elements       |
+| `remainder`    | Unknown fields          |
+| `taggedChoice` | Discriminated union     |
+| `ref`          | Reference other types   |
 
 ---
 

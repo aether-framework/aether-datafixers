@@ -21,12 +21,12 @@ A Getter is a one-way accessor:
 
 ```
 ┌─────────────────────────────────────────────┐
-│               Source S                       │
+│               Source S                      │
 │  ┌─────────────────────────────────────┐    │
 │  │            Focus A                  │    │
 │  └─────────────────────────────────────┘    │
-│                                              │
-│  get(s) → A    (read-only, no set)           │
+│                                             │
+│  get(s) → A    (read-only, no set)          │
 └─────────────────────────────────────────────┘
 ```
 
@@ -200,12 +200,12 @@ Getter<Person, Integer> age = Getter.of(
 
 ## Getter vs Other Optics
 
-| Optic | Read | Write | Focus |
-|-------|------|-------|-------|
-| **Getter** | ✅ | ❌ | 1 |
-| Lens | ✅ | ✅ | 1 |
-| Affine | ✅ (optional) | ✅ | 0-1 |
-| Prism | ✅ (optional) | construct | 0-1 |
+| Optic      | Read         | Write     | Focus |
+|------------|--------------|-----------|-------|
+| **Getter** | ✅            | ❌         | 1     |
+| Lens       | ✅            | ✅         | 1     |
+| Affine     | ✅ (optional) | ✅         | 0-1   |
+| Prism      | ✅ (optional) | construct | 0-1   |
 
 ### When to Use Getter
 
@@ -259,11 +259,11 @@ A Getter cannot be "promoted" to a Lens because it lacks update capability.
 
 ## Getter Summary
 
-| Operation | Description | Returns |
-|-----------|-------------|---------|
-| `get(S)` | Extract the focused value | `A` |
+| Operation         | Description                 | Returns  |
+|-------------------|-----------------------------|----------|
+| `get(S)`          | Extract the focused value   | `A`      |
 | `compose(Getter)` | Compose with another getter | `Getter` |
-| `compose(Lens)` | Compose with lens | `Getter` |
+| `compose(Lens)`   | Compose with lens           | `Getter` |
 
 ---
 

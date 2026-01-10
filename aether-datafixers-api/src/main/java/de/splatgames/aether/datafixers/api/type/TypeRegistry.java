@@ -22,17 +22,20 @@
 
 package de.splatgames.aether.datafixers.api.type;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 /**
  * A registry for storing and retrieving {@link Type} instances by their references.
  *
  * <p>{@code TypeRegistry} provides indexed storage for types, allowing lookup
- * by {@link TypeReference}. It is used within {@link Schema} to hold all type
- * definitions for a specific data version.</p>
+ * by {@link TypeReference}. It is used within {@link Schema} to hold all type definitions for a specific data
+ * version.</p>
  *
  * <h2>Registration</h2>
  * <p>Types register themselves using their inherent {@link Type#reference()}:</p>
@@ -93,14 +96,13 @@ public interface TypeRegistry {
      * Returns all registered type references.
      *
      * <p>The returned set is a snapshot of the registered references at the time
-     * of the call. Modifications to the registry after this call will not be
-     * reflected in the returned set.</p>
+     * of the call. Modifications to the registry after this call will not be reflected in the returned set.</p>
      *
      * @return an unmodifiable set of all registered type references, never {@code null}
      * @since 0.3.0
      */
     @NotNull
-    java.util.Set<TypeReference> references();
+    Set<TypeReference> references();
 
     /**
      * Retrieves a type by its reference, throwing if not found.
@@ -111,6 +113,7 @@ public interface TypeRegistry {
      */
     @NotNull
     default Type<?> require(@NotNull final TypeReference ref) {
+        Preconditions.checkNotNull(ref, "ref must not be null");
         final Type<?> type = this.get(ref);
         if (type == null) {
             throw new IllegalStateException("Missing type for reference: " + ref);

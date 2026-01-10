@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
@@ -31,9 +32,8 @@ import java.util.function.Function;
  * A lens focuses on exactly one part of a product type, providing both read and write access.
  *
  * <p>A {@code Lens} is one of the most commonly used optics. It represents a functional
- * reference to a field within a data structure, allowing you to get the field's value
- * and set a new value while preserving the rest of the structure. Unlike direct field
- * access, lenses are composable and work immutably.</p>
+ * reference to a field within a data structure, allowing you to get the field's value and set a new value while
+ * preserving the rest of the structure. Unlike direct field access, lenses are composable and work immutably.</p>
  *
  * <h2>When to Use a Lens</h2>
  * <p>Use a lens when you need to:</p>
@@ -130,6 +130,69 @@ import java.util.function.Function;
 public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
 
     /**
+     * Creates a monomorphic lens from getter and setter functions.
+     *
+     * <p>This factory method is the primary way to create lenses. It constructs
+     * a lens where the types don't change during updates (S=T and A=B), which covers the vast majority of use
+     * cases.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Create a lens for a Person's name field
+     * Lens<Person, Person, String, String> nameLens = Lens.of(
+     *     "person.name",
+     *     Person::name,
+     *     (person, newName) -> new Person(newName, person.age())
+     * );
+     *
+     * // For records, the setter creates a new instance with the modified field
+     * Lens<Point, Point, Integer, Integer> xLens = Lens.of(
+     *     "point.x",
+     *     Point::x,
+     *     (point, newX) -> new Point(newX, point.y())
+     * );
+     * }</pre>
+     *
+     * @param id     a unique identifier for this lens (used for debugging and composition), must not be {@code null}
+     * @param getter the function to extract the focused value from the source, must not be {@code null}
+     * @param setter the function to create a new source with an updated focus value, must not be {@code null}
+     * @param <S>    the source/whole type
+     * @param <A>    the focus/part type
+     * @return a new monomorphic lens, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    @NotNull
+    static <S, A> Lens<S, S, A, A> of(@NotNull final String id,
+                                      @NotNull final Function<S, A> getter,
+                                      @NotNull final BiFunction<S, A, S> setter) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getter, "getter must not be null");
+        Preconditions.checkNotNull(setter, "setter must not be null");
+        return new Lens<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return id;
+            }
+
+            @NotNull
+            @Override
+            public A get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                return getter.apply(source);
+            }
+
+            @NotNull
+            @Override
+            public S set(@NotNull final S source, @NotNull final A value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
+                return setter.apply(source, value);
+            }
+        };
+    }
+
+    /**
      * Extracts the focused value from the source structure.
      *
      * <p>This operation always succeeds for a lens, as the focused field
@@ -174,8 +237,8 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      * Transforms the focused value using the given function.
      *
      * <p>This is a convenience method combining {@link #get} and {@link #set}.
-     * It extracts the current value, applies the modifier function, and sets
-     * the result back into a new source structure.</p>
+     * It extracts the current value, applies the modifier function, and sets the result back into a new source
+     * structure.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -192,6 +255,8 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     default T modify(@NotNull final S source,
                      @NotNull final Function<A, B> modifier) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(modifier, "modifier must not be null");
         return set(source, modifier.apply(get(source)));
     }
 
@@ -199,8 +264,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      * Composes this lens with another lens to focus deeper into the structure.
      *
      * <p>Lens composition chains the focus: this lens focuses from S to A,
-     * and the other lens focuses from A to C, resulting in a lens that
-     * directly focuses from S to C.</p>
+     * and the other lens focuses from A to C, resulting in a lens that directly focuses from S to C.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -220,6 +284,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default <C, D> Lens<S, T, C, D> compose(@NotNull final Lens<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Lens<S, T, A, B> self = this;
         return new Lens<>() {
             @NotNull
@@ -231,6 +296,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public C get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return other.get(self.get(source));
             }
 
@@ -238,11 +304,14 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public T set(@NotNull final S source,
                          @NotNull final D value) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(value, "value must not be null");
                 return self.set(source, other.set(self.get(source), value));
             }
 
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Lens<C, D, E, F> lens) {
                     return this.compose(lens);
                 }
@@ -253,69 +322,10 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Lens<A, B, C, D> lens) {
             return compose(lens);
         }
         throw new UnsupportedOperationException("Cannot compose Lens with " + other.getClass().getSimpleName());
-    }
-
-    /**
-     * Creates a monomorphic lens from getter and setter functions.
-     *
-     * <p>This factory method is the primary way to create lenses. It constructs
-     * a lens where the types don't change during updates (S=T and A=B), which
-     * covers the vast majority of use cases.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Create a lens for a Person's name field
-     * Lens<Person, Person, String, String> nameLens = Lens.of(
-     *     "person.name",
-     *     Person::name,
-     *     (person, newName) -> new Person(newName, person.age())
-     * );
-     *
-     * // For records, the setter creates a new instance with the modified field
-     * Lens<Point, Point, Integer, Integer> xLens = Lens.of(
-     *     "point.x",
-     *     Point::x,
-     *     (point, newX) -> new Point(newX, point.y())
-     * );
-     * }</pre>
-     *
-     * @param id     a unique identifier for this lens (used for debugging and composition),
-     *               must not be {@code null}
-     * @param getter the function to extract the focused value from the source,
-     *               must not be {@code null}
-     * @param setter the function to create a new source with an updated focus value,
-     *               must not be {@code null}
-     * @param <S>    the source/whole type
-     * @param <A>    the focus/part type
-     * @return a new monomorphic lens, never {@code null}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NotNull
-    static <S, A> Lens<S, S, A, A> of(@NotNull final String id,
-                                      @NotNull final Function<S, A> getter,
-                                      @NotNull final BiFunction<S, A, S> setter) {
-        return new Lens<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return id;
-            }
-
-            @NotNull
-            @Override
-            public A get(@NotNull final S source) {
-                return getter.apply(source);
-            }
-
-            @NotNull
-            @Override
-            public S set(@NotNull final S source, @NotNull final A value) {
-                return setter.apply(source, value);
-            }
-        };
     }
 }

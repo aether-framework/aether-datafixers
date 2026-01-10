@@ -174,6 +174,7 @@ public final class SchemaTester {
      */
     @NotNull
     public SchemaTester containsType(@NotNull final String typeId) {
+        Preconditions.checkNotNull(typeId, "typeId must not be null");
         return this.containsType(new TypeReference(typeId));
     }
 
@@ -236,6 +237,7 @@ public final class SchemaTester {
      */
     @NotNull
     public SchemaTester doesNotContainType(@NotNull final String typeId) {
+        Preconditions.checkNotNull(typeId, "typeId must not be null");
         return this.doesNotContainType(new TypeReference(typeId));
     }
 

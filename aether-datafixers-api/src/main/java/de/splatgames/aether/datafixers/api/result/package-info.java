@@ -24,9 +24,8 @@
  * Result types for representing success/failure outcomes.
  *
  * <p>This package provides the {@link de.splatgames.aether.datafixers.api.result.DataResult}
- * type, a functional alternative to exceptions for representing operations that
- * may succeed or fail. This approach enables explicit error handling and composition
- * of fallible operations.</p>
+ * type, a functional alternative to exceptions for representing operations that may succeed or fail. This approach
+ * enables explicit error handling and composition of fallible operations.</p>
  *
  * <h2>Key Class</h2>
  * <ul>

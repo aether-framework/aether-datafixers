@@ -12,13 +12,13 @@ Migration analysis helps ensure your migrations are complete and well-structured
 
 ## Core Components
 
-| Class | Description |
-|-------|-------------|
-| `MigrationAnalyzer` | Entry point with fluent API for analysis |
-| `MigrationPath` | Complete migration sequence with all steps |
-| `MigrationStep` | Single version transition in the path |
-| `FixCoverage` | Coverage analysis identifying gaps |
-| `CoverageGap` | Individual gap where a fix may be missing |
+| Class               | Description                                |
+|---------------------|--------------------------------------------|
+| `MigrationAnalyzer` | Entry point with fluent API for analysis   |
+| `MigrationPath`     | Complete migration sequence with all steps |
+| `MigrationStep`     | Single version transition in the path      |
+| `FixCoverage`       | Coverage analysis identifying gaps         |
+| `CoverageGap`       | Individual gap where a fix may be missing  |
 
 ## Basic Usage
 
@@ -274,13 +274,13 @@ boolean isTypeLevel = gap.isTypeLevel();
 
 ### Gap Reasons
 
-| Reason | Level | Description |
-|--------|-------|-------------|
-| `TYPE_ADDED` | Type | New type without initialization fix |
-| `TYPE_REMOVED` | Type | Type removed without cleanup fix |
-| `TYPE_MODIFIED` | Type | Type structure changed without fix |
-| `FIELD_ADDED` | Field | New field without default value fix |
-| `FIELD_REMOVED` | Field | Field removed without cleanup fix |
+| Reason               | Level | Description                               |
+|----------------------|-------|-------------------------------------------|
+| `TYPE_ADDED`         | Type  | New type without initialization fix       |
+| `TYPE_REMOVED`       | Type  | Type removed without cleanup fix          |
+| `TYPE_MODIFIED`      | Type  | Type structure changed without fix        |
+| `FIELD_ADDED`        | Field | New field without default value fix       |
+| `FIELD_REMOVED`      | Field | Field removed without cleanup fix         |
 | `FIELD_TYPE_CHANGED` | Field | Field type changed without conversion fix |
 
 ## Example: CI/CD Validation

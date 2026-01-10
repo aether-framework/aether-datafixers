@@ -24,9 +24,8 @@
  * Schema definitions associating versions with type registries.
  *
  * <p>This package provides the infrastructure for defining data schemas at
- * specific versions. A schema describes the structure of all data types at
- * a particular version, enabling the data fixer to understand what
- * transformations are needed between versions.</p>
+ * specific versions. A schema describes the structure of all data types at a particular version, enabling the data
+ * fixer to understand what transformations are needed between versions.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>

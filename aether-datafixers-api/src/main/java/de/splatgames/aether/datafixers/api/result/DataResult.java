@@ -24,7 +24,6 @@ package de.splatgames.aether.datafixers.api.result;
 
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.util.Either;
-import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,13 +35,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * A monadic result type that represents either a successful value or an error message,
- * optionally with a partial result.
+ * A monadic result type that represents either a successful value or an error message, optionally with a partial
+ * result.
  *
  * <p>This sealed interface is the primary error handling mechanism for codec operations
- * in the Aether Datafixers framework. It provides a way to handle errors without exceptions,
- * enabling composable error handling through functional operations like {@link #map(Function)}
- * and {@link #flatMap(Function)}.</p>
+ * in the Aether Datafixers framework. It provides a way to handle errors without exceptions, enabling composable error
+ * handling through functional operations like {@link #map(Function)} and {@link #flatMap(Function)}.</p>
  *
  * <h2>Key Features</h2>
  * <ul>
@@ -177,8 +175,8 @@ public sealed interface DataResult<A> {
      * Creates an error {@code DataResult} with the given error message and a partial result.
      *
      * <p>Partial results are useful when an operation can produce a "best effort" result
-     * even though it encountered errors. This allows downstream code to use the partial
-     * result if appropriate, while still being aware that errors occurred.</p>
+     * even though it encountered errors. This allows downstream code to use the partial result if appropriate, while
+     * still being aware that errors occurred.</p>
      *
      * <pre>{@code
      * // Parsing partially succeeded - got default for missing field
@@ -224,8 +222,8 @@ public sealed interface DataResult<A> {
     /**
      * Returns the successful result wrapped in an {@link Optional}.
      *
-     * @return an {@link Optional} containing the result value if successful,
-     *         or an empty {@link Optional} if this is an error; never {@code null}
+     * @return an {@link Optional} containing the result value if successful, or an empty {@link Optional} if this is an
+     * error; never {@code null}
      */
     @NotNull
     Optional<A> result();
@@ -233,8 +231,8 @@ public sealed interface DataResult<A> {
     /**
      * Returns the error message wrapped in an {@link Optional}.
      *
-     * @return an {@link Optional} containing the error message if this is an error,
-     *         or an empty {@link Optional} if this is a success; never {@code null}
+     * @return an {@link Optional} containing the error message if this is an error, or an empty {@link Optional} if
+     * this is a success; never {@code null}
      */
     @NotNull
     Optional<String> error();
@@ -245,8 +243,8 @@ public sealed interface DataResult<A> {
      * <p>Partial results are only available for error results that were created with
      * {@link #error(String, Object)}. Success results never have partial results.</p>
      *
-     * @return an {@link Optional} containing the partial result if available,
-     *         or an empty {@link Optional} otherwise; never {@code null}
+     * @return an {@link Optional} containing the partial result if available, or an empty {@link Optional} otherwise;
+     * never {@code null}
      */
     @NotNull
     Optional<A> partialResult();
@@ -255,8 +253,8 @@ public sealed interface DataResult<A> {
      * Transforms the successful value using the given mapping function.
      *
      * <p>If this is a success, applies the mapper and returns a new success.
-     * If this is an error with a partial result, the partial result is also mapped.
-     * If this is an error without a partial result, returns this unchanged.</p>
+     * If this is an error with a partial result, the partial result is also mapped. If this is an error without a
+     * partial result, returns this unchanged.</p>
      *
      * <pre>{@code
      * DataResult<Integer> result = DataResult.success(10);
@@ -276,8 +274,8 @@ public sealed interface DataResult<A> {
      * Transforms the successful value using a function that returns a {@code DataResult}.
      *
      * <p>This is the monadic bind operation. If this is a success, applies the mapper
-     * and returns the resulting {@code DataResult}. If this is an error with a partial
-     * result, attempts to apply the mapper to the partial and preserves error messages.</p>
+     * and returns the resulting {@code DataResult}. If this is an error with a partial result, attempts to apply the
+     * mapper to the partial and preserves error messages.</p>
      *
      * <pre>{@code
      * DataResult<String> result = DataResult.success("42");
@@ -344,8 +342,8 @@ public sealed interface DataResult<A> {
      * Returns the result value, or the partial result if available, while handling the error.
      *
      * <p>If this is a success, returns the value. If this is an error with a partial result,
-     * invokes the consumer with the error message and returns the partial result.
-     * If this is an error without a partial result, throws an exception.</p>
+     * invokes the consumer with the error message and returns the partial result. If this is an error without a partial
+     * result, throws an exception.</p>
      *
      * <pre>{@code
      * DataResult<Integer> result = DataResult.error("Using default", 42);
@@ -431,8 +429,8 @@ public sealed interface DataResult<A> {
      * Combines this result with another result using the given combining function.
      *
      * <p>If both results are successful, applies the combiner and returns a success.
-     * If either is an error, returns an error with combined error messages where applicable.
-     * Partial results are preserved when possible.</p>
+     * If either is an error, returns an error with combined error messages where applicable. Partial results are
+     * preserved when possible.</p>
      *
      * <pre>{@code
      * DataResult<String> name = DataResult.success("Alice");
@@ -450,7 +448,7 @@ public sealed interface DataResult<A> {
      */
     @NotNull
     <B, C> DataResult<C> apply2(@NotNull final DataResult<B> other,
-                                 @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner);
+                                @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner);
 
     /**
      * Converts this {@code DataResult} to an {@link Either}.
@@ -477,8 +475,8 @@ public sealed interface DataResult<A> {
      * Promotes a partial result to a full success if present.
      *
      * <p>If this is an error with a partial result, logs the error via the consumer
-     * and returns a success containing the partial result. If this is a success or
-     * an error without a partial result, returns this unchanged.</p>
+     * and returns a success containing the partial result. If this is a success or an error without a partial result,
+     * returns this unchanged.</p>
      *
      * <pre>{@code
      * DataResult<Config> result = DataResult.error("Using defaults", defaultConfig);
@@ -595,7 +593,7 @@ public sealed interface DataResult<A> {
 
         @Override
         public <B, C> @NotNull DataResult<C> apply2(@NotNull final DataResult<B> other,
-                                                     @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner) {
+                                                    @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner) {
             Preconditions.checkNotNull(other, "other must not be null");
             Preconditions.checkNotNull(combiner, "combiner must not be null");
             return other.map(b -> combiner.apply(this.value, b));
@@ -616,8 +614,12 @@ public sealed interface DataResult<A> {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof Success<?> other)) return false;
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Success<?> other)) {
+                return false;
+            }
             return Objects.equals(this.value, other.value);
         }
 
@@ -753,7 +755,7 @@ public sealed interface DataResult<A> {
         @Override
         @SuppressWarnings("unchecked")
         public <B, C> @NotNull DataResult<C> apply2(@NotNull final DataResult<B> other,
-                                                     @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner) {
+                                                    @NotNull final BiFunction<? super A, ? super B, ? extends C> combiner) {
             Preconditions.checkNotNull(other, "other must not be null");
             Preconditions.checkNotNull(combiner, "combiner must not be null");
             if (this.partial != null && other.result().isPresent()) {
@@ -787,8 +789,12 @@ public sealed interface DataResult<A> {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof Error<?> other)) return false;
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Error<?> other)) {
+                return false;
+            }
             return Objects.equals(this.message, other.message) && Objects.equals(this.partial, other.partial);
         }
 

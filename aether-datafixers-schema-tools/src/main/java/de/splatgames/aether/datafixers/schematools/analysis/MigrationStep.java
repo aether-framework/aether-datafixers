@@ -138,7 +138,10 @@ public final class MigrationStep {
             @NotNull final DataFix<?> fix,
             @NotNull final Set<TypeReference> affectedTypes
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(fix, "fix must not be null");
+        Preconditions.checkNotNull(affectedTypes, "affectedTypes must not be null");
         return new MigrationStep(sourceVersion, targetVersion, fix, null, affectedTypes);
     }
 
@@ -158,6 +161,9 @@ public final class MigrationStep {
             @Nullable final SchemaDiff schemaDiff,
             @NotNull final Set<TypeReference> affectedTypes
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+        Preconditions.checkNotNull(affectedTypes, "affectedTypes must not be null");
         return new MigrationStep(sourceVersion, targetVersion, null, schemaDiff, affectedTypes);
     }
 
@@ -173,6 +179,8 @@ public final class MigrationStep {
             @NotNull final DataVersion sourceVersion,
             @NotNull final DataVersion targetVersion
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
     }
 
@@ -378,11 +386,11 @@ public final class MigrationStep {
         /**
          * Sets the DataFix for this step.
          *
-         * @param fix the fix to apply
+         * @param fix the fix to apply, may be {@code null}
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fix(final DataFix<?> fix) {
+        public Builder fix(@Nullable final DataFix<?> fix) {
             this.fix = fix;
             return this;
         }
@@ -390,11 +398,11 @@ public final class MigrationStep {
         /**
          * Sets the schema diff for this step.
          *
-         * @param diff the schema diff
+         * @param diff the schema diff, may be {@code null}
          * @return this builder for chaining
          */
         @NotNull
-        public Builder schemaDiff(final SchemaDiff diff) {
+        public Builder schemaDiff(@Nullable final SchemaDiff diff) {
             this.schemaDiff = diff;
             return this;
         }

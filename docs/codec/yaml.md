@@ -136,16 +136,16 @@ Object data = yaml.load(untrustedYaml);
 
 SnakeYamlOps works with native Java types:
 
-| YAML Type | Java Type |
-|-----------|-----------|
-| Mapping | `LinkedHashMap<String, Object>` |
-| Sequence | `ArrayList<Object>` |
-| String | `String` |
-| Integer | `Integer` or `Long` |
-| Float | `Double` |
-| Boolean | `Boolean` |
-| Null | `null` |
-| Date | `java.util.Date` |
+| YAML Type | Java Type                       |
+|-----------|---------------------------------|
+| Mapping   | `LinkedHashMap<String, Object>` |
+| Sequence  | `ArrayList<Object>`             |
+| String    | `String`                        |
+| Integer   | `Integer` or `Long`             |
+| Float     | `Double`                        |
+| Boolean   | `Boolean`                       |
+| Null      | `null`                          |
+| Date      | `java.util.Date`                |
 
 ---
 
@@ -259,15 +259,15 @@ public void writeYaml(Path path, Dynamic<JsonNode> dynamic) throws IOException {
 
 ## Comparison
 
-| Feature | SnakeYamlOps | JacksonYamlOps |
-|---------|--------------|----------------|
-| **Data Type** | `Object` (Map/List) | `JsonNode` |
-| **YAML Version** | 1.1 | 1.2 |
-| **Library Size** | ~300 KB | ~100 KB + Jackson |
-| **Anchors/Aliases** | Full support | Limited |
-| **Multi-Document** | Full support | Limited |
-| **Custom Tags** | Yes | No |
-| **Cross-Format** | Separate handling | Same as JSON |
+| Feature             | SnakeYamlOps        | JacksonYamlOps    |
+|---------------------|---------------------|-------------------|
+| **Data Type**       | `Object` (Map/List) | `JsonNode`        |
+| **YAML Version**    | 1.1                 | 1.2               |
+| **Library Size**    | ~300 KB             | ~100 KB + Jackson |
+| **Anchors/Aliases** | Full support        | Limited           |
+| **Multi-Document**  | Full support        | Limited           |
+| **Custom Tags**     | Yes                 | No                |
+| **Cross-Format**    | Separate handling   | Same as JSON      |
 
 ### When to Use SnakeYamlOps
 

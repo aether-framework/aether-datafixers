@@ -12,15 +12,15 @@ Schema validation helps maintain quality and consistency:
 
 ## Core Components
 
-| Class | Description |
-|-------|-------------|
-| `SchemaValidator` | Main entry point with fluent API |
-| `ValidationResult` | Immutable collection of validation issues |
-| `ValidationIssue` | Single issue with severity, code, and message |
-| `IssueSeverity` | Severity levels: `ERROR`, `WARNING`, `INFO` |
-| `StructureValidator` | Validates schema structure and relationships |
-| `ConventionChecker` | Checks naming conventions |
-| `ConventionRules` | Configurable naming rules |
+| Class                | Description                                   |
+|----------------------|-----------------------------------------------|
+| `SchemaValidator`    | Main entry point with fluent API              |
+| `ValidationResult`   | Immutable collection of validation issues     |
+| `ValidationIssue`    | Single issue with severity, code, and message |
+| `IssueSeverity`      | Severity levels: `ERROR`, `WARNING`, `INFO`   |
+| `StructureValidator` | Validates schema structure and relationships  |
+| `ConventionChecker`  | Checks naming conventions                     |
+| `ConventionRules`    | Configurable naming rules                     |
 
 ## Basic Usage
 
@@ -97,13 +97,13 @@ ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
 
 **Issue Codes:**
 
-| Code | Severity | Description |
-|------|----------|-------------|
-| `STRUCTURE_CYCLE` | ERROR | Schema inheritance cycle detected |
-| `STRUCTURE_VERSION_ORDER` | ERROR | Parent version >= child version |
-| `STRUCTURE_MISSING_PARENT` | ERROR | Referenced parent schema not found |
-| `STRUCTURE_EMPTY_SCHEMA` | WARNING | Schema has no registered types |
-| `STRUCTURE_NO_ROOT` | ERROR | No root schema (all schemas have parents) |
+| Code                       | Severity | Description                               |
+|----------------------------|----------|-------------------------------------------|
+| `STRUCTURE_CYCLE`          | ERROR    | Schema inheritance cycle detected         |
+| `STRUCTURE_VERSION_ORDER`  | ERROR    | Parent version >= child version           |
+| `STRUCTURE_MISSING_PARENT` | ERROR    | Referenced parent schema not found        |
+| `STRUCTURE_EMPTY_SCHEMA`   | WARNING  | Schema has no registered types            |
+| `STRUCTURE_NO_ROOT`        | ERROR    | No root schema (all schemas have parents) |
 
 ### Convention Validation
 
@@ -118,12 +118,12 @@ ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
 
 **Issue Codes:**
 
-| Code | Description |
-|------|-------------|
-| `CONVENTION_TYPE_NAME` | Type name doesn't match pattern |
-| `CONVENTION_FIELD_NAME` | Field name doesn't match pattern |
+| Code                      | Description                               |
+|---------------------------|-------------------------------------------|
+| `CONVENTION_TYPE_NAME`    | Type name doesn't match pattern           |
+| `CONVENTION_FIELD_NAME`   | Field name doesn't match pattern          |
 | `CONVENTION_SCHEMA_CLASS` | Schema class name doesn't end with suffix |
-| `CONVENTION_FIX_CLASS` | Fix class name doesn't end with suffix |
+| `CONVENTION_FIX_CLASS`    | Fix class name doesn't end with suffix    |
 
 ### Fix Coverage Validation
 

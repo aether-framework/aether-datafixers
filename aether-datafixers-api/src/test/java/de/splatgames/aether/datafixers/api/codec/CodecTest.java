@@ -58,8 +58,7 @@ class CodecTest {
                 public <T> DataResult<T> encode(@NotNull final String input,
                                                 @NotNull final DynamicOps<T> ops,
                                                 @NotNull final T prefix) {
-                    @SuppressWarnings("unchecked")
-                    final T result = (T) ops.createString(input.toUpperCase());
+                    @SuppressWarnings("unchecked") final T result = (T) ops.createString(input.toUpperCase());
                     return DataResult.success(result);
                 }
             };
@@ -67,7 +66,7 @@ class CodecTest {
                 @NotNull
                 @Override
                 public <T> DataResult<Pair<String, T>> decode(@NotNull final DynamicOps<T> ops,
-                                                               @NotNull final T input) {
+                                                              @NotNull final T input) {
                     return ops.getStringValue(input).map(s -> Pair.of(s.toLowerCase(), ops.empty()));
                 }
             };
@@ -129,7 +128,8 @@ class CodecTest {
         @Test
         @DisplayName("xmap() works with wrapper types")
         void xmapWorksWithWrapperTypes() {
-            record UserId(String value) {}
+            record UserId(String value) {
+            }
 
             final Codec<UserId> userIdCodec = Codecs.STRING.xmap(
                     UserId::new,
@@ -256,8 +256,7 @@ class CodecTest {
             final DataResult<Object> encoded = listCodec.encodeStart(ops, List.of("a", "b", "c"));
             assertThat(encoded.isSuccess()).isTrue();
 
-            @SuppressWarnings("unchecked")
-            final List<Object> encodedList = (List<Object>) encoded.result().orElseThrow();
+            @SuppressWarnings("unchecked") final List<Object> encodedList = (List<Object>) encoded.result().orElseThrow();
             assertThat(encodedList).containsExactly("a", "b", "c");
         }
 
@@ -313,8 +312,7 @@ class CodecTest {
             final DataResult<Object> result = nameField.encode("Bob", ops, emptyMap);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("name", "Bob");
         }
 

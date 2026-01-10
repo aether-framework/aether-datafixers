@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.codec;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Either;
@@ -130,6 +131,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Boolean input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createBoolean(input));
         }
 
@@ -137,6 +141,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Boolean, T>> decode(@NotNull final DynamicOps<T> ops,
                                                        @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getBooleanValue(input).map(b -> Pair.of(b, ops.empty()));
         }
     };
@@ -168,6 +174,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Integer input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createInt(input));
         }
 
@@ -175,6 +184,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Integer, T>> decode(@NotNull final DynamicOps<T> ops,
                                                        @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getNumberValue(input).map(n -> Pair.of(n.intValue(), ops.empty()));
         }
     };
@@ -203,6 +214,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Long input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createLong(input));
         }
 
@@ -210,6 +224,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Long, T>> decode(@NotNull final DynamicOps<T> ops,
                                                     @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getNumberValue(input).map(n -> Pair.of(n.longValue(), ops.empty()));
         }
     };
@@ -239,6 +255,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Float input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createFloat(input));
         }
 
@@ -246,6 +265,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Float, T>> decode(@NotNull final DynamicOps<T> ops,
                                                      @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getNumberValue(input).map(n -> Pair.of(n.floatValue(), ops.empty()));
         }
     };
@@ -275,6 +296,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Double input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createDouble(input));
         }
 
@@ -282,6 +306,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Double, T>> decode(@NotNull final DynamicOps<T> ops,
                                                       @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getNumberValue(input).map(n -> Pair.of(n.doubleValue(), ops.empty()));
         }
     };
@@ -310,6 +336,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Byte input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createByte(input));
         }
 
@@ -317,6 +346,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Byte, T>> decode(@NotNull final DynamicOps<T> ops,
                                                     @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getNumberValue(input).map(n -> Pair.of(n.byteValue(), ops.empty()));
         }
     };
@@ -345,6 +376,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final Short input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createShort(input));
         }
 
@@ -352,6 +386,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<Short, T>> decode(@NotNull final DynamicOps<T> ops,
                                                      @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getNumberValue(input).map(n -> Pair.of(n.shortValue(), ops.empty()));
         }
     };
@@ -380,6 +416,9 @@ public final class Codecs {
         public <T> DataResult<T> encode(@NotNull final String input,
                                         @NotNull final DynamicOps<T> ops,
                                         @NotNull final T prefix) {
+            Preconditions.checkNotNull(input, "input must not be null");
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(prefix, "prefix must not be null");
             return DataResult.success(ops.createString(input));
         }
 
@@ -387,6 +426,8 @@ public final class Codecs {
         @Override
         public <T> DataResult<Pair<String, T>> decode(@NotNull final DynamicOps<T> ops,
                                                       @NotNull final T input) {
+            Preconditions.checkNotNull(ops, "ops must not be null");
+            Preconditions.checkNotNull(input, "input must not be null");
             return ops.getStringValue(input).map(s -> Pair.of(s, ops.empty()));
         }
     };
@@ -445,12 +486,16 @@ public final class Codecs {
      */
     @NotNull
     public static <A> Codec<List<A>> list(@NotNull final Codec<A> elementCodec) {
+        Preconditions.checkNotNull(elementCodec, "elementCodec must not be null");
         return new Codec<>() {
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final List<A> input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T prefix) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(prefix, "prefix must not be null");
                 final List<T> encoded = new ArrayList<>(input.size());
                 for (final A element : input) {
                     final DataResult<T> result = elementCodec.encodeStart(ops, element);
@@ -466,6 +511,8 @@ public final class Codecs {
             @Override
             public <T> DataResult<Pair<List<A>, T>> decode(@NotNull final DynamicOps<T> ops,
                                                            @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return ops.getList(input).flatMap(stream -> {
                     final List<A> result = new ArrayList<>();
                     final List<String> errors = new ArrayList<>();
@@ -528,12 +575,16 @@ public final class Codecs {
      */
     @NotNull
     public static <A> Codec<Optional<A>> optional(@NotNull final Codec<A> codec) {
+        Preconditions.checkNotNull(codec, "codec must not be null");
         return new Codec<>() {
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final Optional<A> input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T prefix) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(prefix, "prefix must not be null");
                 return input
                         .<DataResult<T>>map(a -> codec.encode(a, ops, prefix))
                         .orElseGet(() -> DataResult.success(ops.empty()));
@@ -543,6 +594,8 @@ public final class Codecs {
             @Override
             public <T> DataResult<Pair<Optional<A>, T>> decode(@NotNull final DynamicOps<T> ops,
                                                                @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Pair<A, T>> result = codec.decode(ops, input);
                 if (result.isSuccess()) {
                     return result.flatMap(p -> {
@@ -603,12 +656,17 @@ public final class Codecs {
     @NotNull
     public static <L, R> Codec<Either<L, R>> either(@NotNull final Codec<L> left,
                                                     @NotNull final Codec<R> right) {
+        Preconditions.checkNotNull(left, "left must not be null");
+        Preconditions.checkNotNull(right, "right must not be null");
         return new Codec<>() {
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final Either<L, R> input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T prefix) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(prefix, "prefix must not be null");
                 return input.fold(
                         l -> left.encode(l, ops, prefix),
                         r -> right.encode(r, ops, prefix)
@@ -619,6 +677,8 @@ public final class Codecs {
             @Override
             public <T> DataResult<Pair<Either<L, R>, T>> decode(@NotNull final DynamicOps<T> ops,
                                                                 @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 final DataResult<Pair<L, T>> leftResult = left.decode(ops, input);
                 if (leftResult.isSuccess()) {
                     return leftResult.flatMap(p -> {
@@ -689,6 +749,8 @@ public final class Codecs {
     @NotNull
     public static <F, S> Codec<Pair<F, S>> pair(@NotNull final Codec<F> first,
                                                 @NotNull final Codec<S> second) {
+        Preconditions.checkNotNull(first, "first must not be null");
+        Preconditions.checkNotNull(second, "second must not be null");
         return new Codec<>() {
             @NotNull
             @Override
@@ -696,6 +758,9 @@ public final class Codecs {
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T prefix
             ) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(prefix, "prefix must not be null");
                 return first.encode(Objects.requireNonNull(input.first()), ops, prefix)
                         .flatMap(t -> second.encode(Objects.requireNonNull(input.second()), ops, t));
             }
@@ -704,6 +769,8 @@ public final class Codecs {
             @Override
             public <T> DataResult<Pair<Pair<F, S>, T>> decode(@NotNull final DynamicOps<T> ops,
                                                               @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return first.decode(ops, input).flatMap(p1 ->
                         second.decode(ops, Objects.requireNonNull(p1.second())).map(p2 ->
                                 Pair.of(

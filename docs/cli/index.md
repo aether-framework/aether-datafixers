@@ -26,12 +26,12 @@ aether-cli info --formats
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `migrate` | Migrate data files from one version to another |
-| `validate` | Check if files need migration without modifying them |
-| `info` | Display version info, available formats, and bootstrap details |
-| `help` | Show help for any command |
+| Command    | Description                                                    |
+|------------|----------------------------------------------------------------|
+| `migrate`  | Migrate data files from one version to another                 |
+| `validate` | Check if files need migration without modifying them           |
+| `info`     | Display version info, available formats, and bootstrap details |
+| `help`     | Show help for any command                                      |
 
 ## How It Works
 
@@ -64,11 +64,11 @@ The CLI uses your existing `DataFixerBootstrap` implementation to perform migrat
 
 The CLI uses standard exit codes for scripting and CI/CD integration:
 
-| Code | Meaning |
-|------|---------|
-| `0` | Success (all operations completed) |
-| `1` | Error occurred (file not found, parse error, etc.) |
-| `2` | Validation: one or more files need migration |
+| Code | Meaning                                            |
+|------|----------------------------------------------------|
+| `0`  | Success (all operations completed)                 |
+| `1`  | Error occurred (file not found, parse error, etc.) |
+| `2`  | Validation: one or more files need migration       |
 
 ## Requirements
 
@@ -78,10 +78,10 @@ The CLI uses standard exit codes for scripting and CI/CD integration:
 
 ## Built-in Format Handlers
 
-| Format ID | Description | Library |
-|-----------|-------------|---------|
-| `json-gson` | JSON format (default) | Google Gson |
-| `json-jackson` | JSON format | Jackson Databind |
+| Format ID      | Description           | Library          |
+|----------------|-----------------------|------------------|
+| `json-gson`    | JSON format (default) | Google Gson      |
+| `json-jackson` | JSON format           | Jackson Databind |
 
 Custom format handlers can be added via the ServiceLoader SPI.
 

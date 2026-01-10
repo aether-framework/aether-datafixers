@@ -25,8 +25,10 @@ package de.splatgames.aether.datafixers.testkit.factory;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
+import de.splatgames.aether.datafixers.api.codec.Codec;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
+import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.TypeRegistry;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
 import de.splatgames.aether.datafixers.core.type.SimpleTypeRegistry;
@@ -186,6 +188,7 @@ public final class MockSchemas {
             super(version, parent);
         }
 
+        @NotNull
         @Override
         protected TypeRegistry createTypeRegistry() {
             return new SimpleTypeRegistry();
@@ -234,7 +237,7 @@ public final class MockSchemas {
          */
         @NotNull
         public SchemaBuilder withType(@NotNull final TypeReference reference,
-                                       @NotNull final de.splatgames.aether.datafixers.api.type.Type<?> type) {
+                                       @NotNull final Type<?> type) {
             Preconditions.checkNotNull(reference, "reference must not be null");
             Preconditions.checkNotNull(type, "type must not be null");
             // Wrap the type with the given reference
@@ -257,11 +260,12 @@ public final class MockSchemas {
 
         private final SimpleTypeRegistry builtRegistry;
 
-        BuiltSchema(final int version, @Nullable final Schema parent, final SimpleTypeRegistry typeRegistry) {
+        BuiltSchema(final int version, @Nullable final Schema parent, @NotNull final SimpleTypeRegistry typeRegistry) {
             super(version, parent);
-            this.builtRegistry = typeRegistry;
+            this.builtRegistry = Preconditions.checkNotNull(typeRegistry, "typeRegistry must not be null");
         }
 
+        @NotNull
         @Override
         protected TypeRegistry createTypeRegistry() {
             return this.builtRegistry;
@@ -279,14 +283,14 @@ public final class MockSchemas {
      * A type wrapper that associates a type with a specific reference.
      */
     @SuppressWarnings("rawtypes")
-    private static final class WrappedType<A> implements de.splatgames.aether.datafixers.api.type.Type<A> {
+    private static final class WrappedType<A> implements Type<A> {
 
         private final TypeReference reference;
-        private final de.splatgames.aether.datafixers.api.type.Type delegate;
+        private final Type delegate;
 
-        WrappedType(final TypeReference reference, final de.splatgames.aether.datafixers.api.type.Type<?> delegate) {
-            this.reference = reference;
-            this.delegate = delegate;
+        WrappedType(@NotNull final TypeReference reference, @NotNull final Type<?> delegate) {
+            this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
+            this.delegate = Preconditions.checkNotNull(delegate, "delegate must not be null");
         }
 
         @NotNull
@@ -298,7 +302,7 @@ public final class MockSchemas {
         @SuppressWarnings("unchecked")
         @NotNull
         @Override
-        public de.splatgames.aether.datafixers.api.codec.Codec<A> codec() {
+        public Codec<A> codec() {
             return this.delegate.codec();
         }
     }

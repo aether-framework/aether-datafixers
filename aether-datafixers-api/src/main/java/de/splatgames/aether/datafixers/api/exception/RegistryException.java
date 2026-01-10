@@ -154,6 +154,25 @@ public class RegistryException extends DataFixerException {
         this.missingVersion = missingVersion;
     }
 
+    @Nullable
+    private static String buildContext(@Nullable final TypeReference missingType,
+                                       @Nullable final DataVersion missingVersion) {
+        if (missingType == null && missingVersion == null) {
+            return null;
+        }
+        final StringBuilder sb = new StringBuilder();
+        if (missingType != null) {
+            sb.append("type=").append(missingType.getId());
+        }
+        if (missingVersion != null) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("version=").append(missingVersion.getVersion());
+        }
+        return sb.toString();
+    }
+
     /**
      * Returns the type reference that was not found in the registry.
      *
@@ -172,24 +191,5 @@ public class RegistryException extends DataFixerException {
     @Nullable
     public DataVersion getMissingVersion() {
         return this.missingVersion;
-    }
-
-    @Nullable
-    private static String buildContext(@Nullable final TypeReference missingType,
-                                        @Nullable final DataVersion missingVersion) {
-        if (missingType == null && missingVersion == null) {
-            return null;
-        }
-        final StringBuilder sb = new StringBuilder();
-        if (missingType != null) {
-            sb.append("type=").append(missingType.getId());
-        }
-        if (missingVersion != null) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("version=").append(missingVersion.getVersion());
-        }
-        return sb.toString();
     }
 }

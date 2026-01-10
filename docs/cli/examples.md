@@ -422,16 +422,16 @@ docker run -v $(pwd)/data:/data aether-cli migrate \
 
 ## Summary
 
-| Use Case | Key Options |
-|----------|-------------|
-| Basic migration | `--to`, `--type`, `--bootstrap` |
-| Batch with backup | Add `--backup` |
-| Output to directory | Add `--output <dir>` |
-| Pre-check | Use `validate` command |
-| Machine-readable | `--report --report-format json` |
-| Custom version field | `--version-field <path>` |
-| Debug issues | Add `--verbose` |
-| Performance | `--format json-jackson` |
+| Use Case             | Key Options                     |
+|----------------------|---------------------------------|
+| Basic migration      | `--to`, `--type`, `--bootstrap` |
+| Batch with backup    | Add `--backup`                  |
+| Output to directory  | Add `--output <dir>`            |
+| Pre-check            | Use `validate` command          |
+| Machine-readable     | `--report --report-format json` |
+| Custom version field | `--version-field <path>`        |
+| Debug issues         | Add `--verbose`                 |
+| Performance          | `--format json-jackson`         |
 
 ---
 

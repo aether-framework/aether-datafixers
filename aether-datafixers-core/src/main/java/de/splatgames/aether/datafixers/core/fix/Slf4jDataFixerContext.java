@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.core.fix;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +96,7 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
      * @param loggerName the logger name to use
      */
     public Slf4jDataFixerContext(@NotNull final String loggerName) {
-        this(LoggerFactory.getLogger(loggerName));
+        this(LoggerFactory.getLogger(Preconditions.checkNotNull(loggerName, "loggerName must not be null")));
     }
 
     /**
@@ -104,20 +105,23 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
      * @param logger the SLF4J logger to use
      */
     public Slf4jDataFixerContext(@NotNull final Logger logger) {
+        Preconditions.checkNotNull(logger, "logger must not be null");
         this.logger = logger;
     }
 
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
-        if (logger.isInfoEnabled()) {
-            logger.info(formatMessage(message, args));
+        Preconditions.checkNotNull(message, "message must not be null");
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info(formatMessage(message, args));
         }
     }
 
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
-        if (logger.isWarnEnabled()) {
-            logger.warn(formatMessage(message, args));
+        Preconditions.checkNotNull(message, "message must not be null");
+        if (this.logger.isWarnEnabled()) {
+            this.logger.warn(formatMessage(message, args));
         }
     }
 
@@ -128,10 +132,11 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
      */
     @NotNull
     public Logger getLogger() {
-        return logger;
+        return this.logger;
     }
 
-    private static String formatMessage(String message, Object... args) {
+    private static String formatMessage(@NotNull final String message, @Nullable final Object... args) {
+        Preconditions.checkNotNull(message, "message must not be null");
         if (args == null || args.length == 0) {
             return message;
         }

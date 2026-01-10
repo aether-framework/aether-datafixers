@@ -8,32 +8,32 @@ Aether Datafixers is designed to be thread-safe, allowing concurrent data migrat
 
 The following types are immutable and fully thread-safe:
 
-| Type | Thread Safety | Notes |
-|------|---------------|-------|
-| `DataVersion` | Immutable | Safe to share between threads |
-| `TypeReference` | Immutable | Safe to share between threads |
-| `Dynamic<T>` | Immutable | Operations return new instances |
-| `DataResult<T>` | Immutable | Safe to share between threads |
-| `Pair<A, B>` | Immutable | Safe to share between threads |
-| `Either<L, R>` | Immutable | Safe to share between threads |
+| Type            | Thread Safety | Notes                           |
+|-----------------|---------------|---------------------------------|
+| `DataVersion`   | Immutable     | Safe to share between threads   |
+| `TypeReference` | Immutable     | Safe to share between threads   |
+| `Dynamic<T>`    | Immutable     | Operations return new instances |
+| `DataResult<T>` | Immutable     | Safe to share between threads   |
+| `Pair<A, B>`    | Immutable     | Safe to share between threads   |
+| `Either<L, R>`  | Immutable     | Safe to share between threads   |
 
 ### Thread-Safe Components
 
-| Component | Thread Safety | Notes |
-|-----------|---------------|-------|
-| `DataFixer` | Thread-safe | Concurrent `update()` calls are safe |
-| `Schema` | Immutable after init | Safe to share after construction |
-| `SchemaRegistry` | Thread-safe | Concurrent reads are safe |
-| `TypeRegistry` | Immutable after init | Safe to share after construction |
+| Component        | Thread Safety        | Notes                                |
+|------------------|----------------------|--------------------------------------|
+| `DataFixer`      | Thread-safe          | Concurrent `update()` calls are safe |
+| `Schema`         | Immutable after init | Safe to share after construction     |
+| `SchemaRegistry` | Thread-safe          | Concurrent reads are safe            |
+| `TypeRegistry`   | Immutable after init | Safe to share after construction     |
 
 ### Usage Guidelines
 
-| Scenario | Safe? | Notes |
-|----------|-------|-------|
-| Concurrent migrations | Yes | Multiple threads can call `fixer.update()` |
-| Shared fixer instance | Yes | Single fixer for entire application |
-| Concurrent reads of result | Yes | `Dynamic` and `DataResult` are immutable |
-| Bootstrap registration | No | Not thread-safe during setup |
+| Scenario                   | Safe? | Notes                                      |
+|----------------------------|-------|--------------------------------------------|
+| Concurrent migrations      | Yes   | Multiple threads can call `fixer.update()` |
+| Shared fixer instance      | Yes   | Single fixer for entire application        |
+| Concurrent reads of result | Yes   | `Dynamic` and `DataResult` are immutable   |
+| Bootstrap registration     | No    | Not thread-safe during setup               |
 
 ## Immutability in Practice
 

@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.dynamic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -351,6 +352,7 @@ public interface DynamicOps<T> {
      */
     @NotNull
     default T createMap(@NotNull final Map<T, T> map) {
+        Preconditions.checkNotNull(map, "map must not be null");
         return createMap(map.entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue())));
     }
 

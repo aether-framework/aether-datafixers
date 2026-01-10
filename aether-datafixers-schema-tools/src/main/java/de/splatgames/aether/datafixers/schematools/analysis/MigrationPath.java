@@ -165,6 +165,9 @@ public final class MigrationPath {
             @NotNull final DataVersion targetVersion,
             @NotNull final List<MigrationStep> steps
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+        Preconditions.checkNotNull(steps, "steps must not be null");
         return new MigrationPath(sourceVersion, targetVersion, steps);
     }
 
@@ -180,6 +183,8 @@ public final class MigrationPath {
             @NotNull final DataVersion sourceVersion,
             @NotNull final DataVersion targetVersion
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
     }
 
@@ -290,7 +295,7 @@ public final class MigrationPath {
         Preconditions.checkNotNull(type, "type must not be null");
         return this.steps.stream()
                 .filter(step -> step.affects(type))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -302,7 +307,7 @@ public final class MigrationPath {
     public List<MigrationStep> stepsWithFixes() {
         return this.steps.stream()
                 .filter(MigrationStep::hasFix)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -316,7 +321,7 @@ public final class MigrationPath {
     public List<MigrationStep> stepsWithoutFixes() {
         return this.steps.stream()
                 .filter(step -> !step.hasFix())
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**

@@ -30,8 +30,8 @@ import org.jetbrains.annotations.Nullable;
  * A registry for storing and retrieving {@link Codec} instances by type reference.
  *
  * <p>{@code CodecRegistry} provides indexed storage for codecs, allowing lookup
- * by {@link TypeReference}. This enables centralized codec management, where
- * codecs can be registered once and retrieved throughout the application.</p>
+ * by {@link TypeReference}. This enables centralized codec management, where codecs can be registered once and
+ * retrieved throughout the application.</p>
  *
  * <h2>Registration</h2>
  * <pre>{@code

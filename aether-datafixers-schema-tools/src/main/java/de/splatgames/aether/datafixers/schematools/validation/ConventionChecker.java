@@ -30,6 +30,7 @@ import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.schematools.introspection.FieldInfo;
 import de.splatgames.aether.datafixers.schematools.introspection.TypeIntrospector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -194,6 +195,12 @@ public final class ConventionChecker {
             @NotNull final ConventionRules rules,
             @NotNull final ValidationResult.Builder result
     ) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(typeName, "typeName must not be null");
+        Preconditions.checkNotNull(schemaLocation, "schemaLocation must not be null");
+        Preconditions.checkNotNull(rules, "rules must not be null");
+        Preconditions.checkNotNull(result, "result must not be null");
+
         final List<FieldInfo> fields = TypeIntrospector.extractFields(type);
 
         for (final FieldInfo field : fields) {
@@ -228,9 +235,12 @@ public final class ConventionChecker {
     private static String buildClassNameViolationMessage(
             @NotNull final String className,
             @NotNull final String type,
-            final String prefix,
-            final String suffix
+            @Nullable final String prefix,
+            @Nullable final String suffix
     ) {
+        Preconditions.checkNotNull(className, "className must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+
         final StringBuilder message = new StringBuilder();
         message.append(type).append(" class name '").append(className).append("' should ");
 
@@ -258,6 +268,11 @@ public final class ConventionChecker {
             @NotNull final String location,
             @NotNull final ConventionRules rules
     ) {
+        Preconditions.checkNotNull(code, "code must not be null");
+        Preconditions.checkNotNull(message, "message must not be null");
+        Preconditions.checkNotNull(location, "location must not be null");
+        Preconditions.checkNotNull(rules, "rules must not be null");
+
         final ValidationIssue issue = rules.treatViolationsAsErrors()
                 ? ValidationIssue.error(code, message)
                 : ValidationIssue.warning(code, message);

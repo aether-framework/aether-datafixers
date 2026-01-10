@@ -31,9 +31,8 @@ import org.jetbrains.annotations.NotNull;
  * The main entry point for applying data fixes across version boundaries.
  *
  * <p>A {@code DataFixer} orchestrates the application of {@link DataFix} instances
- * to migrate data from one {@link DataVersion} to another. It maintains a registry
- * of fixes and automatically determines which fixes to apply based on the source
- * and target versions.</p>
+ * to migrate data from one {@link DataVersion} to another. It maintains a registry of fixes and automatically
+ * determines which fixes to apply based on the source and target versions.</p>
  *
  * <h2>Version Migration</h2>
  * <p>When updating data, the fixer:</p>
@@ -86,8 +85,7 @@ public interface DataFixer {
      * <p>This is a convenience method that creates a no-op context for
      * cases where logging is not required.</p>
      *
-     * @param type  the type reference identifying what kind of data is being updated,
-     *              must not be {@code null}
+     * @param type  the type reference identifying what kind of data is being updated, must not be {@code null}
      * @param input the input data to update, must not be {@code null}
      * @param from  the source version of the input data, must not be {@code null}
      * @param to    the target version to update to, must not be {@code null}
@@ -95,9 +93,9 @@ public interface DataFixer {
      * @return the updated data at the target version, never {@code null}
      */
     @NotNull <T> Dynamic<T> update(@NotNull final TypeReference type,
-                          @NotNull final Dynamic<T> input,
-                          @NotNull final DataVersion from,
-                          @NotNull final DataVersion to);
+                                   @NotNull final Dynamic<T> input,
+                                   @NotNull final DataVersion from,
+                                   @NotNull final DataVersion to);
 
     /**
      * Updates data from one version to another with a custom context.
@@ -105,8 +103,7 @@ public interface DataFixer {
      * <p>Applies all registered fixes between the source and target versions
      * in order. The context receives logging callbacks during the update process.</p>
      *
-     * @param type    the type reference identifying what kind of data is being updated,
-     *                must not be {@code null}
+     * @param type    the type reference identifying what kind of data is being updated, must not be {@code null}
      * @param input   the input data to update, must not be {@code null}
      * @param from    the source version of the input data, must not be {@code null}
      * @param to      the target version to update to, must not be {@code null}
@@ -115,8 +112,8 @@ public interface DataFixer {
      * @return the updated data at the target version, never {@code null}
      */
     @NotNull <T> Dynamic<T> update(@NotNull final TypeReference type,
-                          @NotNull final Dynamic<T> input,
-                          @NotNull final DataVersion from,
-                          @NotNull final DataVersion to,
-                          @NotNull final DataFixerContext context);
+                                   @NotNull final Dynamic<T> input,
+                                   @NotNull final DataVersion from,
+                                   @NotNull final DataVersion to,
+                                   @NotNull final DataFixerContext context);
 }

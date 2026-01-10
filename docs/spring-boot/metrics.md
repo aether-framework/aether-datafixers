@@ -30,12 +30,12 @@ For Prometheus export:
 
 All metrics use the prefix `aether.datafixers.migrations`.
 
-| Metric | Type | Tags | Description |
-|--------|------|------|-------------|
-| `.success` | Counter | `domain` | Total successful migrations |
-| `.failure` | Counter | `domain`, `error_type` | Total failed migrations |
-| `.duration` | Timer | `domain` | Migration execution time |
-| `.version.span` | Distribution Summary | `domain` | Version span distribution |
+| Metric          | Type                 | Tags                   | Description                 |
+|-----------------|----------------------|------------------------|-----------------------------|
+| `.success`      | Counter              | `domain`               | Total successful migrations |
+| `.failure`      | Counter              | `domain`, `error_type` | Total failed migrations     |
+| `.duration`     | Timer                | `domain`               | Migration execution time    |
+| `.version.span` | Distribution Summary | `domain`               | Version span distribution   |
 
 ---
 
@@ -399,12 +399,12 @@ groups:
 
 Metrics are cached per domain (and per error type for failures). Memory usage scales with:
 
-| Metric Type | Cardinality |
-|-------------|-------------|
-| Success counters | 1 per domain |
-| Failure counters | 1 per (domain × error_type) |
-| Duration timers | 1 per domain |
-| Version span summaries | 1 per domain |
+| Metric Type            | Cardinality                 |
+|------------------------|-----------------------------|
+| Success counters       | 1 per domain                |
+| Failure counters       | 1 per (domain × error_type) |
+| Duration timers        | 1 per domain                |
+| Version span summaries | 1 per domain                |
 
 **Recommendations**:
 - Limit the number of domains to a reasonable count

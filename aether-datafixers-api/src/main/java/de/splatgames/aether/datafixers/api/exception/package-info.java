@@ -24,9 +24,8 @@
  * Exception hierarchy for the data fixing system.
  *
  * <p>This package defines the exception types used throughout the Aether Datafixers
- * framework. All exceptions extend from a common base class to enable unified
- * error handling while providing specific exception types for different failure
- * modes.</p>
+ * framework. All exceptions extend from a common base class to enable unified error handling while providing specific
+ * exception types for different failure modes.</p>
  *
  * <h2>Exception Hierarchy</h2>
  * <pre>

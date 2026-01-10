@@ -279,13 +279,13 @@ public <T> TaggedDynamic updateIfNeeded(
 
 ## Summary
 
-| Aspect | Details |
-|--------|---------|
-| **Type** | `record DataVersion(int version)` |
-| **Purpose** | Identify schema versions |
-| **Comparison** | Implements `Comparable<DataVersion>` |
+| Aspect            | Details                                   |
+|-------------------|-------------------------------------------|
+| **Type**          | `record DataVersion(int version)`         |
+| **Purpose**       | Identify schema versions                  |
+| **Comparison**    | Implements `Comparable<DataVersion>`      |
 | **Best Practice** | Use SemVer encoding (e.g., 100, 110, 200) |
-| **Immutability** | Immutable, thread-safe |
+| **Immutability**  | Immutable, thread-safe                    |
 
 ---
 

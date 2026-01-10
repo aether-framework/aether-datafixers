@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 /**
  * An immutable wrapper that pairs a value with its {@link Type} information.
@@ -113,8 +112,8 @@ public final class Typed<A> {
      */
     public Typed(@NotNull final Type<A> type,
                  @NotNull final A value) {
-        Preconditions.checkNotNull(type, "Type<A> type must not be null");
-        Preconditions.checkNotNull(value, "A value must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
 
         this.type = type;
         this.value = value;
@@ -193,7 +192,7 @@ public final class Typed<A> {
      */
     @NotNull
     public Typed<A> withValue(@NotNull final A newValue) {
-        Preconditions.checkNotNull(newValue, "A newValue must not be null");
+        Preconditions.checkNotNull(newValue, "newValue must not be null");
 
         return new Typed<>(this.type, newValue);
     }
@@ -228,7 +227,7 @@ public final class Typed<A> {
      */
     @NotNull
     public <T> DataResult<Dynamic<T>> encode(@NotNull final DynamicOps<T> ops) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
 
         return this.type.codec().encodeStartDynamic(ops, this.value);
     }
@@ -262,6 +261,7 @@ public final class Typed<A> {
      */
     @NotNull
     public <T> Dynamic<T> encodeOrThrow(@NotNull final DynamicOps<T> ops) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
         return encode(ops).getOrThrow(msg -> new EncodeException(msg, this.type.reference()));
     }
 
@@ -299,6 +299,7 @@ public final class Typed<A> {
      */
     @NotNull
     public Typed<A> update(@NotNull final Function<A, A> function) {
+        Preconditions.checkNotNull(function, "function must not be null");
         return new Typed<>(this.type, function.apply(this.value));
     }
 
@@ -339,6 +340,8 @@ public final class Typed<A> {
     @NotNull
     public <T> DataResult<Typed<A>> updateDynamic(@NotNull final DynamicOps<T> ops,
                                                   @NotNull final Function<Dynamic<T>, Dynamic<T>> updater) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(updater, "updater must not be null");
         return encode(ops)
                 .map(updater)
                 .flatMap(this.type::read)
@@ -379,6 +382,8 @@ public final class Typed<A> {
     @NotNull
     public <T> DataResult<Dynamic<T>> getAt(@NotNull final DynamicOps<T> ops,
                                             @NotNull final Finder<?> finder) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(finder, "finder must not be null");
         return encode(ops).map(dynamic -> {
             final Dynamic<?> found = finder.get(dynamic);
             if (found == null) {
@@ -435,6 +440,9 @@ public final class Typed<A> {
     public <T> DataResult<Typed<A>> updateAt(@NotNull final DynamicOps<T> ops,
                                              @NotNull final Finder<?> finder,
                                              @NotNull final Function<Dynamic<?>, Dynamic<?>> updater) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(finder, "finder must not be null");
+        Preconditions.checkNotNull(updater, "updater must not be null");
         return encode(ops)
                 .map(dynamic -> finder.update(dynamic, updater))
                 .flatMap(this.type::read)
@@ -445,9 +453,8 @@ public final class Typed<A> {
      * Returns the child typed values of this typed value.
      *
      * <p>The children are extracted based on the type's structure. This method
-     * is used by traversal combinators to recursively transform nested data
-     * structures. Each child value is paired with its corresponding child type
-     * from {@link Type#children()}.</p>
+     * is used by traversal combinators to recursively transform nested data structures. Each child value is paired with
+     * its corresponding child type from {@link Type#children()}.</p>
      *
      * <h4>Children by Type</h4>
      * <ul>
@@ -484,7 +491,7 @@ public final class Typed<A> {
     @NotNull
     @SuppressWarnings("unchecked")
     public <T> DataResult<List<Typed<?>>> children(@NotNull final DynamicOps<T> ops) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
 
         final List<Type<?>> childTypes = this.type.children();
         if (childTypes.isEmpty()) {
@@ -551,8 +558,8 @@ public final class Typed<A> {
      * Creates a new typed value by replacing child values.
      *
      * <p>This method reconstructs the typed value with new child values,
-     * preserving the type structure. It is the inverse of {@link #children(DynamicOps)}
-     * and is used by traversal combinators to reassemble transformed data.</p>
+     * preserving the type structure. It is the inverse of {@link #children(DynamicOps)} and is used by traversal
+     * combinators to reassemble transformed data.</p>
      *
      * <h4>Constraints</h4>
      * <ul>
@@ -589,9 +596,9 @@ public final class Typed<A> {
     @NotNull
     @SuppressWarnings("unchecked")
     public <T> DataResult<Typed<A>> withChildren(@NotNull final DynamicOps<T> ops,
-                                                  @NotNull final List<Typed<?>> newChildren) {
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
-        Preconditions.checkNotNull(newChildren, "List<Typed<?>> newChildren must not be null");
+                                                 @NotNull final List<Typed<?>> newChildren) {
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(newChildren, "newChildren must not be null");
 
         final List<Type<?>> childTypes = this.type.children();
         if (childTypes.isEmpty()) {

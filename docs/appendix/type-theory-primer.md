@@ -71,13 +71,13 @@ DataResult<Config> result = parseJson(input)
 
 Optics are composable accessors for data structures:
 
-| Optic | Source | Focus | Get | Modify |
-|-------|--------|-------|-----|--------|
-| Lens | Product | Field | Always | Always |
-| Prism | Sum | Variant | Maybe | Always |
-| Iso | Type | Type | Always | Always |
-| Affine | Optional | Field | Maybe | Maybe |
-| Traversal | Container | Elements | All | All |
+| Optic     | Source    | Focus    | Get    | Modify |
+|-----------|-----------|----------|--------|--------|
+| Lens      | Product   | Field    | Always | Always |
+| Prism     | Sum       | Variant  | Maybe  | Always |
+| Iso       | Type      | Type     | Always | Always |
+| Affine    | Optional  | Field    | Maybe  | Maybe  |
+| Traversal | Container | Elements | All    | All    |
 
 ## Composition
 

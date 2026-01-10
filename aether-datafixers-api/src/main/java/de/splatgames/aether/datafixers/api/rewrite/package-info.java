@@ -24,8 +24,8 @@
  * Type rewrite rules for schema transformations.
  *
  * <p>This package provides the infrastructure for defining and applying
- * transformation rules to typed data. Rewrite rules are the building blocks
- * of data fixes, describing how to transform data from one schema to another.</p>
+ * transformation rules to typed data. Rewrite rules are the building blocks of data fixes, describing how to transform
+ * data from one schema to another.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>

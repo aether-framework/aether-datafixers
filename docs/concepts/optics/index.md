@@ -54,15 +54,15 @@ Optics form a hierarchy based on their capabilities:
 
 ## Optic Types
 
-| Optic | Focus Count | Primary Use |
-|-------|-------------|-------------|
-| [Getter](getter.md) | 1 (read-only) | Extract a value |
-| [Lens](lens.md) | Exactly 1 | Access a field |
-| [Prism](prism.md) | 0 or 1 | Match a case/variant |
-| [Affine](affine.md) | 0 or 1 | Optional field access |
-| [Iso](iso.md) | 1 (bidirectional) | Type conversion |
-| [Traversal](traversal.md) | 0 to many | Collection elements |
-| [Finder](finder.md) | 0 or 1 | Dynamic data navigation |
+| Optic                     | Focus Count       | Primary Use             |
+|---------------------------|-------------------|-------------------------|
+| [Getter](getter.md)       | 1 (read-only)     | Extract a value         |
+| [Lens](lens.md)           | Exactly 1         | Access a field          |
+| [Prism](prism.md)         | 0 or 1            | Match a case/variant    |
+| [Affine](affine.md)       | 0 or 1            | Optional field access   |
+| [Iso](iso.md)             | 1 (bidirectional) | Type conversion         |
+| [Traversal](traversal.md) | 0 to many         | Collection elements     |
+| [Finder](finder.md)       | 0 or 1            | Dynamic data navigation |
 
 ## Quick Examples
 
@@ -130,14 +130,14 @@ Company updated = companyCityName.set(company, "New York");
 
 ### Composition Rules
 
-| First ◦ Second | Result |
-|----------------|--------|
-| Lens ◦ Lens | Lens |
-| Lens ◦ Prism | Affine |
-| Prism ◦ Lens | Affine |
-| Prism ◦ Prism | Prism |
-| Affine ◦ Affine | Affine |
-| Iso ◦ Iso | Iso |
+| First ◦ Second  | Result    |
+|-----------------|-----------|
+| Lens ◦ Lens     | Lens      |
+| Lens ◦ Prism    | Affine    |
+| Prism ◦ Lens    | Affine    |
+| Prism ◦ Prism   | Prism     |
+| Affine ◦ Affine | Affine    |
+| Iso ◦ Iso       | Iso       |
 | Traversal ◦ any | Traversal |
 
 ## Optics in Aether Datafixers
@@ -232,15 +232,15 @@ Lens<PlayerRecord, String> recordName = ...;
 
 ## When to Use Each Optic
 
-| Scenario | Optic |
-|----------|-------|
-| Access a required field | Lens |
-| Access an optional field | Affine |
-| Match one of several variants | Prism |
-| Convert between equivalent types | Iso |
+| Scenario                            | Optic     |
+|-------------------------------------|-----------|
+| Access a required field             | Lens      |
+| Access an optional field            | Affine    |
+| Match one of several variants       | Prism     |
+| Convert between equivalent types    | Iso       |
 | Access all elements in a collection | Traversal |
-| Read-only access | Getter |
-| Navigate Dynamic data | Finder |
+| Read-only access                    | Getter    |
+| Navigate Dynamic data               | Finder    |
 
 ---
 

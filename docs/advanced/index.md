@@ -22,14 +22,14 @@ These topics assume familiarity with:
 
 ## When to Use Advanced Features
 
-| Feature | Use Case |
-|---------|----------|
-| Traversal Strategies | Complex nested transformations |
-| Custom Optics | Domain-specific accessors |
-| Recursive Types | Tree structures, graphs |
-| Performance Optimization | Millions of records |
-| Concurrent Migrations | Multi-threaded applications |
-| Format Conversion | JSON to NBT, YAML to JSON |
+| Feature                  | Use Case                       |
+|--------------------------|--------------------------------|
+| Traversal Strategies     | Complex nested transformations |
+| Custom Optics            | Domain-specific accessors      |
+| Recursive Types          | Tree structures, graphs        |
+| Performance Optimization | Millions of records            |
+| Concurrent Migrations    | Multi-threaded applications    |
+| Format Conversion        | JSON to NBT, YAML to JSON      |
 
 ## Related
 

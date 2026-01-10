@@ -146,12 +146,12 @@ registerType(TypeReferences.PLAYER, DSL.and(
 
 ## Common Mistakes
 
-| Mistake | Solution |
-|---------|----------|
-| Forgetting to remove old field | Use `remove()` before `set()` |
-| Wrong field name in rule | Double-check spelling |
-| Not updating schema | Both fix and schema must reflect the change |
-| Case sensitivity | Field names are case-sensitive |
+| Mistake                        | Solution                                    |
+|--------------------------------|---------------------------------------------|
+| Forgetting to remove old field | Use `remove()` before `set()`               |
+| Wrong field name in rule       | Double-check spelling                       |
+| Not updating schema            | Both fix and schema must reflect the change |
+| Case sensitivity               | Field names are case-sensitive              |
 
 ## Related
 

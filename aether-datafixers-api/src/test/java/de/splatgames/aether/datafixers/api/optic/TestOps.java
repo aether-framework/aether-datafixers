@@ -34,14 +34,15 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * A simple DynamicOps implementation for testing purposes.
- * Uses plain Java objects: String, Number, Boolean, Map, List.
+ * A simple DynamicOps implementation for testing purposes. Uses plain Java objects: String, Number, Boolean, Map,
+ * List.
  */
 public final class TestOps implements DynamicOps<Object> {
 
     public static final TestOps INSTANCE = new TestOps();
 
-    private TestOps() {}
+    private TestOps() {
+    }
 
     @Override
     public @NotNull Object empty() {
@@ -169,7 +170,7 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull DataResult<Object> mergeToList(@NotNull final Object list,
-                                                    @NotNull final Object value) {
+                                                   @NotNull final Object value) {
         if (list instanceof List<?> l) {
             final var result = new java.util.ArrayList<>((List<Object>) l);
             result.add(value);
@@ -181,7 +182,7 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public @Nullable Object get(@NotNull final Object value,
-                                 @NotNull final String key) {
+                                @NotNull final String key) {
         if (value instanceof Map<?, ?> map) {
             return ((Map<String, Object>) map).get(key);
         }
@@ -191,8 +192,8 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull Object set(@NotNull final Object value,
-                                @NotNull final String key,
-                                @NotNull final Object newValue) {
+                               @NotNull final String key,
+                               @NotNull final Object newValue) {
         if (value instanceof Map<?, ?> map) {
             final var result = new LinkedHashMap<>((Map<String, Object>) map);
             result.put(key, newValue);
@@ -204,7 +205,7 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull Object remove(@NotNull final Object value,
-                                   @NotNull final String key) {
+                                  @NotNull final String key) {
         if (value instanceof Map<?, ?> map) {
             final var result = new LinkedHashMap<>((Map<String, Object>) map);
             result.remove(key);
@@ -249,8 +250,8 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull DataResult<Object> mergeToMap(@NotNull final Object map,
-                                                   @NotNull final Object key,
-                                                   @NotNull final Object value) {
+                                                  @NotNull final Object key,
+                                                  @NotNull final Object value) {
         if (!(key instanceof String keyStr)) {
             return DataResult.error("Key must be a string: " + key);
         }
@@ -265,7 +266,7 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull DataResult<Object> mergeToMap(@NotNull final Object map,
-                                                   @NotNull final Object other) {
+                                                  @NotNull final Object other) {
         final var result = new LinkedHashMap<String, Object>();
         if (map instanceof Map<?, ?> m) {
             result.putAll((Map<String, Object>) m);
@@ -279,7 +280,7 @@ public final class TestOps implements DynamicOps<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public <U> @NotNull Object convertTo(@NotNull final DynamicOps<U> ops,
-                                          @NotNull final U input) {
+                                         @NotNull final U input) {
         // Simple identity conversion for same ops type
         if (ops == this) {
             return input;

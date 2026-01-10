@@ -30,18 +30,18 @@ public interface Affine<S, A> extends Optic<S, A> {
 An Affine is like a Lens that might not find its target:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Source S                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │              May or may not contain                 │    │
-│  │  ┌─────────────────────────────────────────────┐   │    │
-│  │  │                 Focus A                      │   │    │
-│  │  └─────────────────────────────────────────────┘   │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                              │
-│  getOptional(s) → Optional<A>                                │
-│  set(s, a) → S                                               │
-└─────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────┐
+│                           Source S                        │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                May or may not contain               │  │
+│  │  ┌──────────────────────────────────────────────┐   │  │
+│  │  │                     Focus A                  │   │  │
+│  │  └──────────────────────────────────────────────┘   │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                           │
+│  getOptional(s) → Optional<A>                             │
+│  set(s, a) → S                                            │
+└───────────────────────────────────────────────────────────┘
 ```
 
 ## Creating Affines
@@ -252,12 +252,12 @@ Affine<Dynamic<?>, String> playerName = dynamicField("name",
 
 ## Affine vs Other Optics
 
-| Optic | Focus | get | set |
-|-------|-------|-----|-----|
-| Lens | Exactly 1 | Always succeeds | Always succeeds |
-| Prism | 0 or 1 | May fail | Always succeeds |
-| **Affine** | 0 or 1 | May fail | Always succeeds |
-| Traversal | 0 to N | Returns list | Always succeeds |
+| Optic      | Focus     | get             | set             |
+|------------|-----------|-----------------|-----------------|
+| Lens       | Exactly 1 | Always succeeds | Always succeeds |
+| Prism      | 0 or 1    | May fail        | Always succeeds |
+| **Affine** | 0 or 1    | May fail        | Always succeeds |
+| Traversal  | 0 to N    | Returns list    | Always succeeds |
 
 ### Difference from Prism
 
@@ -319,14 +319,14 @@ assert userEmail.set(user, email.get()).equals(user);
 
 ## Affine Summary
 
-| Operation | Description | Returns |
-|-----------|-------------|---------|
-| `getOptional(S)` | Try to get the value | `Optional<A>` |
-| `set(S, A)` | Set the value | `S` |
-| `modify(S, A → A)` | Transform if present | `S` |
-| `compose(Lens)` | Compose with lens | `Affine` |
-| `compose(Prism)` | Compose with prism | `Affine` |
-| `compose(Affine)` | Compose with affine | `Affine` |
+| Operation          | Description          | Returns       |
+|--------------------|----------------------|---------------|
+| `getOptional(S)`   | Try to get the value | `Optional<A>` |
+| `set(S, A)`        | Set the value        | `S`           |
+| `modify(S, A → A)` | Transform if present | `S`           |
+| `compose(Lens)`    | Compose with lens    | `Affine`      |
+| `compose(Prism)`   | Compose with prism   | `Affine`      |
+| `compose(Affine)`  | Compose with affine  | `Affine`      |
 
 ---
 

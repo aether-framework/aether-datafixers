@@ -38,28 +38,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Traversal")
 class TraversalTest {
 
-    // Test data models
-    record Person(String name, List<String> skills) {}
-    record Team(String name, List<Person> members) {}
-
     // Traversals
     private final Traversal<List<String>, List<String>, String, String> listTraversal = Traversal.of(
             "list.elements",
             List::stream,
             (list, modifier) -> list.stream().map(modifier).toList()
     );
-
     private final Traversal<Person, Person, String, String> skillsTraversal = Traversal.of(
             "person.skills",
             person -> person.skills().stream(),
             (person, modifier) -> new Person(person.name(), person.skills().stream().map(modifier).toList())
     );
-
     private final Traversal<Team, Team, Person, Person> membersTraversal = Traversal.of(
             "team.members",
             team -> team.members().stream(),
             (team, modifier) -> new Team(team.name(), team.members().stream().map(modifier).toList())
     );
+
+    // Test data models
+    record Person(String name, List<String> skills) {
+    }
+
+    record Team(String name, List<Person> members) {
+    }
 
     @Nested
     @DisplayName("Factory Method of()")
@@ -394,7 +395,8 @@ class TraversalTest {
         @Test
         @DisplayName("deeply nested compose")
         void deeplyNestedCompose() {
-            record Company(String name, List<Team> teams) {}
+            record Company(String name, List<Team> teams) {
+            }
 
             final Traversal<Company, Company, Team, Team> teamsTraversal = Traversal.of(
                     "company.teams",

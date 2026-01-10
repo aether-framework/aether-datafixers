@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.diagnostic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,9 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * A diagnostic-aware context for capturing detailed migration information.
  *
  * <p>{@code DiagnosticContext} extends {@link DataFixerContext} with capabilities
- * for capturing comprehensive diagnostic data during migration operations.
- * When passed to a data fixer, it enables opt-in collection of timing information,
- * applied fixes, rule applications, and data snapshots.</p>
+ * for capturing comprehensive diagnostic data during migration operations. When passed to a data fixer, it enables
+ * opt-in collection of timing information, applied fixes, rule applications, and data snapshots.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -56,13 +56,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h2>Opt-in Behavior</h2>
  * <p>Diagnostic collection is opt-in. Only when a {@code DiagnosticContext}
- * is explicitly passed to the data fixer will diagnostic data be captured.
- * This ensures zero overhead for normal operations.</p>
+ * is explicitly passed to the data fixer will diagnostic data be captured. This ensures zero overhead for normal
+ * operations.</p>
  *
  * <h2>Thread Safety</h2>
  * <p>Implementations should be designed for single-threaded use during a
- * single migration operation. The resulting {@link MigrationReport} is
- * immutable and thread-safe.</p>
+ * single migration operation. The resulting {@link MigrationReport} is immutable and thread-safe.</p>
  *
  * @author Erik Pförtner
  * @see DataFixerContext
@@ -71,49 +70,6 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.2.0
  */
 public interface DiagnosticContext extends DataFixerContext {
-
-    /**
-     * Returns whether diagnostic collection is enabled.
-     *
-     * <p>This method allows the data fixer to check if it should emit
-     * diagnostic events. For {@code DiagnosticContext} implementations,
-     * this typically returns {@code true}.</p>
-     *
-     * @return {@code true} if diagnostics are enabled
-     */
-    boolean isDiagnosticEnabled();
-
-    /**
-     * Returns the report builder for recording diagnostic events.
-     *
-     * <p>This method is intended for internal use by the data fixer
-     * implementation to record events during migration.</p>
-     *
-     * @return the report builder, never {@code null}
-     */
-    @NotNull
-    MigrationReport.Builder reportBuilder();
-
-    /**
-     * Returns the completed migration report.
-     *
-     * <p>This method should be called after the migration completes to
-     * retrieve the diagnostic information. Calling this method finalizes
-     * the report building process.</p>
-     *
-     * @return the migration report, never {@code null}
-     * @throws IllegalStateException if called before migration starts
-     */
-    @NotNull
-    MigrationReport getReport();
-
-    /**
-     * Returns the diagnostic options controlling what data is captured.
-     *
-     * @return the diagnostic options, never {@code null}
-     */
-    @NotNull
-    DiagnosticOptions options();
 
     /**
      * Creates a new diagnostic context with default options.
@@ -137,6 +93,7 @@ public interface DiagnosticContext extends DataFixerContext {
      */
     @NotNull
     static DiagnosticContext create(@NotNull final DiagnosticOptions options) {
+        Preconditions.checkNotNull(options, "options must not be null");
         // Use ServiceLoader or direct instantiation
         // For now, we'll use direct instantiation via the core module
         // This will be resolved at runtime by the core implementation
@@ -155,4 +112,45 @@ public interface DiagnosticContext extends DataFixerContext {
             );
         }
     }
+
+    /**
+     * Returns whether diagnostic collection is enabled.
+     *
+     * <p>This method allows the data fixer to check if it should emit
+     * diagnostic events. For {@code DiagnosticContext} implementations, this typically returns {@code true}.</p>
+     *
+     * @return {@code true} if diagnostics are enabled
+     */
+    boolean isDiagnosticEnabled();
+
+    /**
+     * Returns the report builder for recording diagnostic events.
+     *
+     * <p>This method is intended for internal use by the data fixer
+     * implementation to record events during migration.</p>
+     *
+     * @return the report builder, never {@code null}
+     */
+    @NotNull
+    MigrationReport.Builder reportBuilder();
+
+    /**
+     * Returns the completed migration report.
+     *
+     * <p>This method should be called after the migration completes to
+     * retrieve the diagnostic information. Calling this method finalizes the report building process.</p>
+     *
+     * @return the migration report, never {@code null}
+     * @throws IllegalStateException if called before migration starts
+     */
+    @NotNull
+    MigrationReport getReport();
+
+    /**
+     * Returns the diagnostic options controlling what data is captured.
+     *
+     * @return the diagnostic options, never {@code null}
+     */
+    @NotNull
+    DiagnosticOptions options();
 }

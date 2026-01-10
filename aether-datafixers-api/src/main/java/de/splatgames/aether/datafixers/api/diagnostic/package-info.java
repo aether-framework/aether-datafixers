@@ -24,8 +24,8 @@
  * Migration diagnostics API for capturing detailed information about data migrations.
  *
  * <p>This package provides interfaces and records for opt-in diagnostic capture
- * during data migration operations. When enabled, the diagnostic system collects
- * comprehensive information including:</p>
+ * during data migration operations. When enabled, the diagnostic system collects comprehensive information
+ * including:</p>
  *
  * <ul>
  *   <li>Timing information for the overall migration and individual fixes</li>

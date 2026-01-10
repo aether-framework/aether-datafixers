@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,9 +33,9 @@ import java.util.stream.Stream;
  * A traversal focuses on zero or more parts of a data structure simultaneously.
  *
  * <p>A {@code Traversal} generalizes a {@link Lens} to focus on multiple elements instead
- * of exactly one. While a lens always targets a single field, a traversal can target
- * all elements of a list, all values matching a predicate, or any number of locations
- * within a data structure. This makes traversals ideal for bulk transformations.</p>
+ * of exactly one. While a lens always targets a single field, a traversal can target all elements of a list, all values
+ * matching a predicate, or any number of locations within a data structure. This makes traversals ideal for bulk
+ * transformations.</p>
  *
  * <h2>When to Use a Traversal</h2>
  * <p>Use a traversal when you need to:</p>
@@ -112,11 +113,133 @@ import java.util.stream.Stream;
 public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
 
     /**
+     * Creates a traversal from a lens, treating it as a single-element traversal.
+     *
+     * <p>Since a {@link Lens} always focuses on exactly one element, it can be
+     * viewed as a traversal with a single focus. The resulting traversal's {@link #getAll} returns a stream containing
+     * exactly that one element.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Lens<Person, Person, String, String> nameLens = Lens.of(
+     *     "person.name",
+     *     Person::name,
+     *     (p, n) -> new Person(n, p.age())
+     * );
+     *
+     * Traversal<Person, Person, String, String> nameTraversal =
+     *     Traversal.fromLens(nameLens);
+     *
+     * Person alice = new Person("Alice", 30);
+     * List<String> names = nameTraversal.toList(alice); // ["Alice"]
+     * }</pre>
+     *
+     * @param lens the lens to convert, must not be {@code null}
+     * @param <S>  the source type
+     * @param <T>  the modified source type
+     * @param <A>  the focus type
+     * @param <B>  the modified focus type
+     * @return a traversal that focuses on exactly one element, never {@code null}
+     * @throws NullPointerException if {@code lens} is {@code null}
+     */
+    @NotNull
+    static <S, T, A, B> Traversal<S, T, A, B> fromLens(@NotNull final Lens<S, T, A, B> lens) {
+        Preconditions.checkNotNull(lens, "lens must not be null");
+        return new Traversal<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return lens.id();
+            }
+
+            @NotNull
+            @Override
+            public Stream<A> getAll(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                return Stream.of(lens.get(source));
+            }
+
+            @NotNull
+            @Override
+            public T modify(@NotNull final S source, @NotNull final Function<A, B> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
+                return lens.modify(source, modifier);
+            }
+        };
+    }
+
+    /**
+     * Creates a monomorphic traversal from extraction and modification functions.
+     *
+     * <p>This is the primary factory method for creating custom traversals. It
+     * constructs a traversal where the types don't change during updates (S=T and A=B).</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Traversal over all elements of a list
+     * Traversal<List<String>, List<String>, String, String> listTraversal =
+     *     Traversal.of(
+     *         "list.elements",
+     *         list -> list.stream(),
+     *         (list, modifier) -> list.stream().map(modifier).toList()
+     *     );
+     *
+     * // Traversal over specific map values
+     * Traversal<Map<String, Integer>, Map<String, Integer>, Integer, Integer> valuesTraversal =
+     *     Traversal.of(
+     *         "map.values",
+     *         map -> map.values().stream(),
+     *         (map, modifier) -> map.entrySet().stream()
+     *             .collect(Collectors.toMap(Map.Entry::getKey, e -> modifier.apply(e.getValue())))
+     *     );
+     * }</pre>
+     *
+     * @param id     a unique identifier for this traversal, must not be {@code null}
+     * @param getAll the function to extract all focused elements as a stream, must not be {@code null}
+     * @param modify the function to apply a modifier to all elements and return a new source, must not be {@code null}
+     * @param <S>    the source type
+     * @param <A>    the focus/element type
+     * @return a new monomorphic traversal, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    @NotNull
+    static <S, A> Traversal<S, S, A, A> of(@NotNull final String id,
+                                           @NotNull final Function<S, Stream<A>> getAll,
+                                           @NotNull final ModifyFunction<S, A> modify) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getAll, "getAll must not be null");
+        Preconditions.checkNotNull(modify, "modify must not be null");
+        return new Traversal<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return id;
+            }
+
+            @NotNull
+            @Override
+            public Stream<A> getAll(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                return getAll.apply(source);
+            }
+
+            @NotNull
+            @Override
+            public S modify(@NotNull final S source,
+                            @NotNull final Function<A, A> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
+                return modify.apply(source, modifier);
+            }
+        };
+    }
+
+    /**
      * Extracts all focused values from the source as a stream.
      *
      * <p>This operation returns a lazy stream of all elements that this traversal
-     * focuses on. The stream may contain zero, one, or many elements depending
-     * on the traversal's nature.</p>
+     * focuses on. The stream may contain zero, one, or many elements depending on the traversal's nature.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -136,8 +259,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      * Transforms all focused values using the given function.
      *
      * <p>This applies the modifier function to each focused element and returns
-     * a new source structure with all modifications applied. The order of
-     * modifications follows the traversal order.</p>
+     * a new source structure with all modifications applied. The order of modifications follows the traversal
+     * order.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -176,6 +299,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
     @NotNull
     default T set(@NotNull final S source,
                   @NotNull final B value) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
         return modify(source, a -> value);
     }
 
@@ -198,6 +323,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default List<A> toList(@NotNull final S source) {
+        Preconditions.checkNotNull(source, "source must not be null");
         return getAll(source).toList();
     }
 
@@ -205,8 +331,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      * Composes this traversal with another traversal for nested iteration.
      *
      * <p>The resulting traversal focuses on all combinations: for each element
-     * focused by this traversal, it applies the other traversal to get nested
-     * elements. This is similar to a nested flatMap operation.</p>
+     * focused by this traversal, it applies the other traversal to get nested elements. This is similar to a nested
+     * flatMap operation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -228,6 +354,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      */
     @NotNull
     default <C, D> Traversal<S, T, C, D> compose(@NotNull final Traversal<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Traversal<S, T, A, B> self = this;
         return new Traversal<>() {
             @NotNull
@@ -239,6 +366,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @NotNull
             @Override
             public Stream<C> getAll(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return self.getAll(source).flatMap(other::getAll);
             }
 
@@ -246,11 +374,14 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
             @Override
             public T modify(@NotNull final S source,
                             @NotNull final Function<C, D> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return self.modify(source, a -> other.modify(a, modifier));
             }
 
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Traversal<C, D, E, F> traversal) {
                     return this.compose(traversal);
                 }
@@ -261,6 +392,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Traversal<A, B, C, D> traversal) {
             return compose(traversal);
         }
@@ -268,126 +400,11 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
     }
 
     /**
-     * Creates a traversal from a lens, treating it as a single-element traversal.
-     *
-     * <p>Since a {@link Lens} always focuses on exactly one element, it can be
-     * viewed as a traversal with a single focus. The resulting traversal's
-     * {@link #getAll} returns a stream containing exactly that one element.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Lens<Person, Person, String, String> nameLens = Lens.of(
-     *     "person.name",
-     *     Person::name,
-     *     (p, n) -> new Person(n, p.age())
-     * );
-     *
-     * Traversal<Person, Person, String, String> nameTraversal =
-     *     Traversal.fromLens(nameLens);
-     *
-     * Person alice = new Person("Alice", 30);
-     * List<String> names = nameTraversal.toList(alice); // ["Alice"]
-     * }</pre>
-     *
-     * @param lens the lens to convert, must not be {@code null}
-     * @param <S>  the source type
-     * @param <T>  the modified source type
-     * @param <A>  the focus type
-     * @param <B>  the modified focus type
-     * @return a traversal that focuses on exactly one element, never {@code null}
-     * @throws NullPointerException if {@code lens} is {@code null}
-     */
-    @NotNull
-    static <S, T, A, B> Traversal<S, T, A, B> fromLens(@NotNull final Lens<S, T, A, B> lens) {
-        return new Traversal<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return lens.id();
-            }
-
-            @NotNull
-            @Override
-            public Stream<A> getAll(@NotNull final S source) {
-                return Stream.of(lens.get(source));
-            }
-
-            @NotNull
-            @Override
-            public T modify(@NotNull final S source, @NotNull final Function<A, B> modifier) {
-                return lens.modify(source, modifier);
-            }
-        };
-    }
-
-    /**
-     * Creates a monomorphic traversal from extraction and modification functions.
-     *
-     * <p>This is the primary factory method for creating custom traversals. It
-     * constructs a traversal where the types don't change during updates (S=T and A=B).</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Traversal over all elements of a list
-     * Traversal<List<String>, List<String>, String, String> listTraversal =
-     *     Traversal.of(
-     *         "list.elements",
-     *         list -> list.stream(),
-     *         (list, modifier) -> list.stream().map(modifier).toList()
-     *     );
-     *
-     * // Traversal over specific map values
-     * Traversal<Map<String, Integer>, Map<String, Integer>, Integer, Integer> valuesTraversal =
-     *     Traversal.of(
-     *         "map.values",
-     *         map -> map.values().stream(),
-     *         (map, modifier) -> map.entrySet().stream()
-     *             .collect(Collectors.toMap(Map.Entry::getKey, e -> modifier.apply(e.getValue())))
-     *     );
-     * }</pre>
-     *
-     * @param id     a unique identifier for this traversal, must not be {@code null}
-     * @param getAll the function to extract all focused elements as a stream, must not be {@code null}
-     * @param modify the function to apply a modifier to all elements and return a new source,
-     *               must not be {@code null}
-     * @param <S>    the source type
-     * @param <A>    the focus/element type
-     * @return a new monomorphic traversal, never {@code null}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NotNull
-    static <S, A> Traversal<S, S, A, A> of(@NotNull final String id,
-                                           @NotNull final Function<S, Stream<A>> getAll,
-                                           @NotNull final ModifyFunction<S, A> modify) {
-        return new Traversal<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return id;
-            }
-
-            @NotNull
-            @Override
-            public Stream<A> getAll(@NotNull final S source) {
-                return getAll.apply(source);
-            }
-
-            @NotNull
-            @Override
-            public S modify(@NotNull final S source,
-                            @NotNull final Function<A, A> modifier) {
-                return modify.apply(source, modifier);
-            }
-        };
-    }
-
-    /**
      * Functional interface for applying a modification function to all focused elements.
      *
      * <p>This interface is used by {@link #of(String, Function, ModifyFunction)} to define
-     * how a modifier should be applied to all elements of a traversal. Implementations
-     * receive the source structure and a modifier function, and must return a new source
-     * with all focused elements transformed.</p>
+     * how a modifier should be applied to all elements of a traversal. Implementations receive the source structure and
+     * a modifier function, and must return a new source with all focused elements transformed.</p>
      *
      * <p><b>Example Implementation</b></p>
      * <pre>{@code

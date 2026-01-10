@@ -5,25 +5,25 @@ The type system in Aether Datafixers provides a way to define the structure of y
 ## Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                          Type                                    │
-│  ┌─────────────────────┐    ┌─────────────────────────────────┐ │
-│  │    TypeReference    │    │           Codec                 │ │
-│  │     ("player")      │    │    encode/decode logic          │ │
-│  └─────────────────────┘    └─────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+│  ┌─────────────────────┐    ┌─────────────────────────────────┐  │
+│  │    TypeReference    │    │           Codec                 │  │
+│  │     ("player")      │    │    encode/decode logic          │  │
+│  └─────────────────────┘    └─────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      TypeRegistry                                │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  TypeReference    │    Type                              │   │
-│  ├───────────────────┼──────────────────────────────────────┤   │
-│  │  "player"         │    PlayerType (codec for player)     │   │
-│  │  "world"          │    WorldType (codec for world)       │   │
-│  │  "entity"         │    EntityType (codec for entity)     │   │
-│  └───────────────────┴──────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                      TypeRegistry                              │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  TypeReference    │    Type                              │  │
+│  ├───────────────────┼──────────────────────────────────────┤  │
+│  │  "player"         │    PlayerType (codec for player)     │  │
+│  │  "world"          │    WorldType (codec for world)       │  │
+│  │  "entity"         │    EntityType (codec for entity)     │  │
+│  └───────────────────┴──────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Interfaces
@@ -454,13 +454,13 @@ registerType(TypeReferences.CONFIG, DSL.and(
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Type` | Associates TypeReference with Codec |
-| `TypeRegistry` | Maps TypeReference → Type |
-| `TypeTemplate` | Blueprint for creating Types |
-| `SimpleType` | Default Type implementation |
-| `Typed<A>` | Wrapper combining value with type |
+| Component      | Purpose                             |
+|----------------|-------------------------------------|
+| `Type`         | Associates TypeReference with Codec |
+| `TypeRegistry` | Maps TypeReference → Type           |
+| `TypeTemplate` | Blueprint for creating Types        |
+| `SimpleType`   | Default Type implementation         |
+| `Typed<A>`     | Wrapper combining value with type   |
 
 ---
 

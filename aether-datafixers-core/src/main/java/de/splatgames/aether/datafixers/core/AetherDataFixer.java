@@ -104,9 +104,9 @@ public final class AetherDataFixer {
             @NotNull final SchemaRegistry schemaRegistry,
             @NotNull final DataFixer dataFixer
     ) {
-        Preconditions.checkNotNull(currentVersion, "DataVersion currentVersion must not be null");
-        Preconditions.checkNotNull(schemaRegistry, "SchemaRegistry schemaRegistry must not be null");
-        Preconditions.checkNotNull(dataFixer, "DataFixer dataFixer must not be null");
+        Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
+        Preconditions.checkNotNull(schemaRegistry, "schemaRegistry must not be null");
+        Preconditions.checkNotNull(dataFixer, "dataFixer must not be null");
 
         this.currentVersion = currentVersion;
         this.schemaRegistry = schemaRegistry;
@@ -146,10 +146,10 @@ public final class AetherDataFixer {
             @NotNull final A value,
             @NotNull final DynamicOps<T> ops
     ) {
-        Preconditions.checkNotNull(targetVersion, "DataVersion targetVersion must not be null");
-        Preconditions.checkNotNull(typeRef, "TypeReference typeRef must not be null");
-        Preconditions.checkNotNull(value, "A value must not be null");
-        Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+        Preconditions.checkNotNull(typeRef, "typeRef must not be null");
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
 
         final Schema schema = this.schemaRegistry.require(targetVersion);
 
@@ -178,9 +178,9 @@ public final class AetherDataFixer {
             @NotNull final DataVersion fromVersion,
             @NotNull final DataVersion toVersion
     ) {
-        Preconditions.checkNotNull(input, "TaggedDynamic input must not be null");
-        Preconditions.checkNotNull(fromVersion, "DataVersion fromVersion must not be null");
-        Preconditions.checkNotNull(toVersion, "DataVersion toVersion must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
 
         @SuppressWarnings("unchecked") final Dynamic<Object> dyn = (Dynamic<Object>) input.value();
 
@@ -208,8 +208,8 @@ public final class AetherDataFixer {
             @NotNull final DataVersion sourceVersion,
             @NotNull final TaggedDynamic input
     ) {
-        Preconditions.checkNotNull(sourceVersion, "DataVersion sourceVersion must not be null");
-        Preconditions.checkNotNull(input, "TaggedDynamic input must not be null");
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
 
         final Schema schema = this.schemaRegistry.require(sourceVersion);
 

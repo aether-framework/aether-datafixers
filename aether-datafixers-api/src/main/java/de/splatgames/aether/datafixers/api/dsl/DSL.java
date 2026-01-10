@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.dsl;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.optic.Finder;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.template.TypeFamily;
@@ -377,6 +378,7 @@ public final class DSL {
      */
     @NotNull
     public static TypeTemplate list(@NotNull final TypeTemplate element) {
+        Preconditions.checkNotNull(element, "element must not be null");
         return new ListTemplate(element);
     }
 
@@ -415,6 +417,8 @@ public final class DSL {
     @NotNull
     public static TypeTemplate and(@NotNull final TypeTemplate first,
                                    @NotNull final TypeTemplate second) {
+        Preconditions.checkNotNull(first, "first must not be null");
+        Preconditions.checkNotNull(second, "second must not be null");
         return new ProductTemplate(first, second);
     }
 
@@ -461,6 +465,7 @@ public final class DSL {
      */
     @NotNull
     public static TypeTemplate and(@NotNull final TypeTemplate... elements) {
+        Preconditions.checkNotNull(elements, "elements must not be null");
         if (elements.length < 2) {
             throw new IllegalArgumentException("Product requires at least 2 elements");
         }
@@ -504,6 +509,8 @@ public final class DSL {
     @NotNull
     public static TypeTemplate or(@NotNull final TypeTemplate first,
                                   @NotNull final TypeTemplate second) {
+        Preconditions.checkNotNull(first, "first must not be null");
+        Preconditions.checkNotNull(second, "second must not be null");
         return new SumTemplate(first, second);
     }
 
@@ -539,6 +546,7 @@ public final class DSL {
      */
     @NotNull
     public static TypeTemplate or(@NotNull final TypeTemplate... alternatives) {
+        Preconditions.checkNotNull(alternatives, "alternatives must not be null");
         if (alternatives.length < 2) {
             throw new IllegalArgumentException("Sum requires at least 2 alternatives");
         }
@@ -586,6 +594,7 @@ public final class DSL {
      */
     @NotNull
     public static TypeTemplate optional(@NotNull final TypeTemplate element) {
+        Preconditions.checkNotNull(element, "element must not be null");
         return new OptionalTemplate(element);
     }
 
@@ -634,6 +643,8 @@ public final class DSL {
     @NotNull
     public static TypeTemplate field(@NotNull final String name,
                                      @NotNull final TypeTemplate type) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
         return new FieldTemplate(name, type, false);
     }
 
@@ -680,6 +691,8 @@ public final class DSL {
     @NotNull
     public static TypeTemplate optionalField(@NotNull final String name,
                                              @NotNull final TypeTemplate type) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
         return new FieldTemplate(name, type, true);
     }
 
@@ -722,6 +735,8 @@ public final class DSL {
     @NotNull
     public static TypeTemplate named(@NotNull final String name,
                                      @NotNull final TypeTemplate template) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(template, "template must not be null");
         return new NamedTemplate(name, template);
     }
 
@@ -826,6 +841,8 @@ public final class DSL {
     public static TypeTemplate taggedChoice(@NotNull final String tagField,
                                             @NotNull final Map<String, TypeTemplate> choices
     ) {
+        Preconditions.checkNotNull(tagField, "tagField must not be null");
+        Preconditions.checkNotNull(choices, "choices must not be null");
         return new TaggedChoiceTemplate(tagField, choices);
     }
 
@@ -865,6 +882,9 @@ public final class DSL {
                                                  @NotNull final TypeTemplate keyType,
                                                  @NotNull final Map<String, TypeTemplate> choices
     ) {
+        Preconditions.checkNotNull(tagField, "tagField must not be null");
+        Preconditions.checkNotNull(keyType, "keyType must not be null");
+        Preconditions.checkNotNull(choices, "choices must not be null");
         return new TaggedChoiceTemplate(tagField, choices);
     }
 
@@ -957,6 +977,8 @@ public final class DSL {
     @NotNull
     public static TypeTemplate recursive(@NotNull final String name,
                                          @NotNull final Function<TypeTemplate, TypeTemplate> definition) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(definition, "definition must not be null");
         return new RecursiveTemplate(name, definition);
     }
 
@@ -997,6 +1019,7 @@ public final class DSL {
      */
     @NotNull
     public static Finder<Object> fieldFinder(@NotNull final String name) {
+        Preconditions.checkNotNull(name, "name must not be null");
         return Finder.field(name);
     }
 
@@ -1076,6 +1099,7 @@ public final class DSL {
      */
     @NotNull
     public static Finder<Object> remainderFinder(@NotNull final String... excludedFields) {
+        Preconditions.checkNotNull(excludedFields, "excludedFields must not be null");
         return Finder.remainder(excludedFields);
     }
 
@@ -1104,13 +1128,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return type;
+            Preconditions.checkNotNull(family, "family must not be null");
+            return this.type;
         }
 
         @NotNull
         @Override
         public String describe() {
-            return name;
+            return this.name;
         }
     }
 
@@ -1134,13 +1159,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return family.apply(index);
+            Preconditions.checkNotNull(family, "family must not be null");
+            return family.apply(this.index);
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "µ" + index;
+            return "µ" + this.index;
         }
     }
 
@@ -1166,13 +1192,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return Type.product(first.apply(family), second.apply(family));
+            Preconditions.checkNotNull(family, "family must not be null");
+            return Type.product(this.first.apply(family), this.second.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "(" + first.describe() + " × " + second.describe() + ")";
+            return "(" + this.first.describe() + " × " + this.second.describe() + ")";
         }
     }
 
@@ -1198,13 +1225,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return Type.sum(left.apply(family), right.apply(family));
+            Preconditions.checkNotNull(family, "family must not be null");
+            return Type.sum(this.left.apply(family), this.right.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "(" + left.describe() + " + " + right.describe() + ")";
+            return "(" + this.left.describe() + " + " + this.right.describe() + ")";
         }
     }
 
@@ -1226,13 +1254,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return Type.list(element.apply(family));
+            Preconditions.checkNotNull(family, "family must not be null");
+            return Type.list(this.element.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "List<" + element.describe() + ">";
+            return "List<" + this.element.describe() + ">";
         }
     }
 
@@ -1255,13 +1284,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return Type.optional(element.apply(family));
+            Preconditions.checkNotNull(family, "family must not be null");
+            return Type.optional(this.element.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return "Optional<" + element.describe() + ">";
+            return "Optional<" + this.element.describe() + ">";
         }
     }
 
@@ -1290,14 +1320,15 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            final Type<?> fieldType = type.apply(family);
-            return optional ? Type.optionalField(name, fieldType) : Type.field(name, fieldType);
+            Preconditions.checkNotNull(family, "family must not be null");
+            final Type<?> fieldType = this.type.apply(family);
+            return this.optional ? Type.optionalField(this.name, fieldType) : Type.field(this.name, fieldType);
         }
 
         @NotNull
         @Override
         public String describe() {
-            return (optional ? "?" : "") + name + ": " + type.describe();
+            return (this.optional ? "?" : "") + this.name + ": " + this.type.describe();
         }
     }
 
@@ -1322,13 +1353,14 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            return Type.named(name, template.apply(family));
+            Preconditions.checkNotNull(family, "family must not be null");
+            return Type.named(this.name, this.template.apply(family));
         }
 
         @NotNull
         @Override
         public String describe() {
-            return name + "=" + template.describe();
+            return this.name + "=" + this.template.describe();
         }
     }
 
@@ -1345,6 +1377,7 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
+            Preconditions.checkNotNull(family, "family must not be null");
             return Type.PASSTHROUGH;
         }
 
@@ -1377,12 +1410,13 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
-            final Map<String, Type<?>> resolvedChoices = choices.entrySet().stream()
+            Preconditions.checkNotNull(family, "family must not be null");
+            final Map<String, Type<?>> resolvedChoices = this.choices.entrySet().stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             entry -> entry.getValue().apply(family)
                     ));
-            return Type.taggedChoice(tagField, resolvedChoices);
+            return Type.taggedChoice(this.tagField, resolvedChoices);
         }
 
         @NotNull
@@ -1391,7 +1425,7 @@ public final class DSL {
             final String choicesStr = choices.entrySet().stream()
                     .map(e -> e.getKey() + " -> " + e.getValue().describe())
                     .collect(Collectors.joining(", "));
-            return "TaggedChoice<" + tagField + ">{" + choicesStr + "}";
+            return "TaggedChoice<" + this.tagField + ">{" + choicesStr + "}";
         }
     }
 
@@ -1418,6 +1452,7 @@ public final class DSL {
         @NotNull
         @Override
         public Type<?> apply(@NotNull final TypeFamily family) {
+            Preconditions.checkNotNull(family, "family must not be null");
             // Create a self-referential type using TypeFamily.recursive
             final TypeFamily recursiveFamily = TypeFamily.recursive(self -> {
                 // Create a template that references the recursive type
@@ -1425,6 +1460,7 @@ public final class DSL {
                     @NotNull
                     @Override
                     public Type<?> apply(@NotNull final TypeFamily f) {
+                        Preconditions.checkNotNull(f, "f must not be null");
                         return self.apply(0);
                     }
 
@@ -1434,7 +1470,7 @@ public final class DSL {
                         return name;
                     }
                 };
-                return definition.apply(selfRef).apply(family);
+                return this.definition.apply(selfRef).apply(family);
             });
             return recursiveFamily.apply(0);
         }
@@ -1442,7 +1478,7 @@ public final class DSL {
         @NotNull
         @Override
         public String describe() {
-            return "µ" + name + "." + definition.apply(id(0)).describe();
+            return "µ" + this.name + "." + this.definition.apply(id(0)).describe();
         }
     }
 }

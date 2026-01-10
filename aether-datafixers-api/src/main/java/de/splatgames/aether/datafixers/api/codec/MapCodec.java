@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.codec;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
@@ -33,9 +34,8 @@ import java.util.function.Function;
  * A codec that encodes and decodes values within a map/object structure.
  *
  * <p>{@code MapCodec} differs from {@link Codec} in that it operates on fields within
- * a larger map structure rather than standalone values. This is the foundation for
- * building record codecs where each field is encoded/decoded as a named entry in a
- * map (JSON object, NBT compound, etc.).</p>
+ * a larger map structure rather than standalone values. This is the foundation for building record codecs where each
+ * field is encoded/decoded as a named entry in a map (JSON object, NBT compound, etc.).</p>
  *
  * <h2>Key Differences from Codec</h2>
  * <ul>
@@ -72,6 +72,65 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public interface MapCodec<A> {
+
+    /**
+     * Creates a MapCodec from separate encoder and decoder functions.
+     *
+     * <p>This factory method allows constructing a MapCodec from two separate
+     * functional interfaces, which is useful when encoding and decoding logic are defined independently or when
+     * adapting existing code.</p>
+     *
+     * <h4>Usage Example</h4>
+     * <pre>{@code
+     * // Create a custom MapCodec for a "status" field
+     * MapCodec<Status> statusCodec = MapCodec.of(
+     *     // Encoder: Status -> map with "status" field
+     *     (status, ops, map) -> ops.mergeToMap(map,
+     *         ops.createString("status"),
+     *         ops.createString(status.name())),
+     *
+     *     // Decoder: map -> Status
+     *     (ops, input) -> ops.get(input, "status")
+     *         .flatMap(ops::getStringValue)
+     *         .map(Status::valueOf)
+     * );
+     * }</pre>
+     *
+     * @param encoder the function to encode values into a map, must not be {@code null}
+     * @param decoder the function to decode values from a map, must not be {@code null}
+     * @param <A>     the type of value this codec handles
+     * @return a new MapCodec combining the encoder and decoder, never {@code null}
+     * @throws NullPointerException if {@code encoder} or {@code decoder} is {@code null}
+     * @see MapEncoder
+     * @see MapDecoder
+     */
+    @NotNull
+    static <A> MapCodec<A> of(@NotNull final MapEncoder<A> encoder,
+                              @NotNull final MapDecoder<A> decoder) {
+        Preconditions.checkNotNull(encoder, "encoder must not be null");
+        Preconditions.checkNotNull(decoder, "decoder must not be null");
+        return new MapCodec<>() {
+            @NotNull
+            @Override
+            public <T> DataResult<T> encode(@NotNull final A input,
+                                            @NotNull final DynamicOps<T> ops,
+                                            @NotNull final T map) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(map, "map must not be null");
+                return encoder.encode(input, ops, map);
+            }
+
+            @NotNull
+            @Override
+            public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
+                                            @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
+                return decoder.decode(ops, input);
+            }
+        };
+    }
 
     /**
      * Encodes a value into a map structure.
@@ -116,7 +175,9 @@ public interface MapCodec<A> {
      */
     @NotNull
     default <B> MapCodec<B> xmap(@NotNull final Function<? super A, ? extends B> to,
-                                  @NotNull final Function<? super B, ? extends A> from) {
+                                 @NotNull final Function<? super B, ? extends A> from) {
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
         final MapCodec<A> self = this;
         return new MapCodec<>() {
             @NotNull
@@ -124,6 +185,9 @@ public interface MapCodec<A> {
             public <T> DataResult<T> encode(@NotNull final B input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T map) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(map, "map must not be null");
                 return self.encode(from.apply(input), ops, map);
             }
 
@@ -131,6 +195,8 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<B> decode(@NotNull final DynamicOps<T> ops,
                                             @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.decode(ops, input).map(to);
             }
         };
@@ -151,7 +217,9 @@ public interface MapCodec<A> {
     @NotNull
     @SuppressWarnings("unchecked")
     default <B> MapCodec<B> flatXmap(@NotNull final Function<? super A, ? extends DataResult<? extends B>> to,
-                                      @NotNull final Function<? super B, ? extends DataResult<? extends A>> from) {
+                                     @NotNull final Function<? super B, ? extends DataResult<? extends A>> from) {
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
         final MapCodec<A> self = this;
         return new MapCodec<>() {
             @NotNull
@@ -159,6 +227,9 @@ public interface MapCodec<A> {
             public <T> DataResult<T> encode(@NotNull final B input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T map) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(map, "map must not be null");
                 return from.apply(input).flatMap(a -> self.encode(a, ops, map));
             }
 
@@ -166,6 +237,8 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<B> decode(@NotNull final DynamicOps<T> ops,
                                             @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.decode(ops, input).flatMap(a -> (DataResult<B>) to.apply(a));
             }
         };
@@ -175,9 +248,8 @@ public interface MapCodec<A> {
      * Creates a field descriptor for use with {@link RecordCodecBuilder}.
      *
      * <p>This method binds a getter function to this MapCodec, creating a field
-     * that can extract a value from a record for encoding and provide the codec
-     * for decoding. This is the standard way to integrate MapCodecs into record
-     * codec definitions.</p>
+     * that can extract a value from a record for encoding and provide the codec for decoding. This is the standard way
+     * to integrate MapCodecs into record codec definitions.</p>
      *
      * <h4>Usage Example</h4>
      * <pre>{@code
@@ -193,17 +265,16 @@ public interface MapCodec<A> {
      * );
      * }</pre>
      *
-     * @param getter the function to extract the field value from the record type,
-     *               must not be {@code null}
+     * @param getter the function to extract the field value from the record type, must not be {@code null}
      * @param <O>    the record/object type that contains this field
-     * @return a {@link RecordCodecBuilder.Field} that pairs this codec with the getter,
-     *         never {@code null}
+     * @return a {@link RecordCodecBuilder.Field} that pairs this codec with the getter, never {@code null}
      * @throws NullPointerException if {@code getter} is {@code null}
      * @see RecordCodecBuilder
      * @see RecordCodecBuilder.Field
      */
     @NotNull
     default <O> RecordCodecBuilder.Field<O, A> forGetter(@NotNull final Function<O, A> getter) {
+        Preconditions.checkNotNull(getter, "getter must not be null");
         return new RecordCodecBuilder.Field<>(this, getter);
     }
 
@@ -211,9 +282,8 @@ public interface MapCodec<A> {
      * Converts this MapCodec to a regular {@link Codec}.
      *
      * <p>The resulting codec wraps this MapCodec's field-based operations into
-     * a standalone codec. When encoding, it creates a new empty map and encodes
-     * into it. When decoding, it passes the input map directly to this MapCodec
-     * and returns the original input as remaining data.</p>
+     * a standalone codec. When encoding, it creates a new empty map and encodes into it. When decoding, it passes the
+     * input map directly to this MapCodec and returns the original input as remaining data.</p>
      *
      * <h4>Behavior</h4>
      * <ul>
@@ -234,8 +304,7 @@ public interface MapCodec<A> {
      * // Decoding: {"name": "Alice"} -> "Alice"
      * }</pre>
      *
-     * @return a {@link Codec} that uses this MapCodec for encoding and decoding,
-     *         never {@code null}
+     * @return a {@link Codec} that uses this MapCodec for encoding and decoding, never {@code null}
      * @see Codec
      */
     @NotNull
@@ -247,6 +316,9 @@ public interface MapCodec<A> {
             public <T> DataResult<T> encode(@NotNull final A input,
                                             @NotNull final DynamicOps<T> ops,
                                             @NotNull final T prefix) {
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(prefix, "prefix must not be null");
                 return self.encode(input, ops, ops.emptyMap());
             }
 
@@ -254,59 +326,9 @@ public interface MapCodec<A> {
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,
                                                      @NotNull final T input) {
+                Preconditions.checkNotNull(ops, "ops must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
                 return self.decode(ops, input).map(a -> Pair.of(a, input));
-            }
-        };
-    }
-
-    /**
-     * Creates a MapCodec from separate encoder and decoder functions.
-     *
-     * <p>This factory method allows constructing a MapCodec from two separate
-     * functional interfaces, which is useful when encoding and decoding logic
-     * are defined independently or when adapting existing code.</p>
-     *
-     * <h4>Usage Example</h4>
-     * <pre>{@code
-     * // Create a custom MapCodec for a "status" field
-     * MapCodec<Status> statusCodec = MapCodec.of(
-     *     // Encoder: Status -> map with "status" field
-     *     (status, ops, map) -> ops.mergeToMap(map,
-     *         ops.createString("status"),
-     *         ops.createString(status.name())),
-     *
-     *     // Decoder: map -> Status
-     *     (ops, input) -> ops.get(input, "status")
-     *         .flatMap(ops::getStringValue)
-     *         .map(Status::valueOf)
-     * );
-     * }</pre>
-     *
-     * @param encoder the function to encode values into a map, must not be {@code null}
-     * @param decoder the function to decode values from a map, must not be {@code null}
-     * @param <A>     the type of value this codec handles
-     * @return a new MapCodec combining the encoder and decoder, never {@code null}
-     * @throws NullPointerException if {@code encoder} or {@code decoder} is {@code null}
-     * @see MapEncoder
-     * @see MapDecoder
-     */
-    @NotNull
-    static <A> MapCodec<A> of(@NotNull final MapEncoder<A> encoder,
-                              @NotNull final MapDecoder<A> decoder) {
-        return new MapCodec<>() {
-            @NotNull
-            @Override
-            public <T> DataResult<T> encode(@NotNull final A input,
-                                            @NotNull final DynamicOps<T> ops,
-                                            @NotNull final T map) {
-                return encoder.encode(input, ops, map);
-            }
-
-            @NotNull
-            @Override
-            public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
-                                            @NotNull final T input) {
-                return decoder.decode(ops, input);
             }
         };
     }
@@ -315,13 +337,12 @@ public interface MapCodec<A> {
      * Functional interface for encoding a value into a map structure.
      *
      * <p>A {@code MapEncoder} is responsible for adding fields to an existing
-     * map representation. Unlike {@link Encoder}, which produces standalone values,
-     * a MapEncoder merges encoded data into an existing map.</p>
+     * map representation. Unlike {@link Encoder}, which produces standalone values, a MapEncoder merges encoded data
+     * into an existing map.</p>
      *
      * <p><b>Implementation Notes</b></p>
      * <p>Implementations should use {@link DynamicOps#mergeToMap(Object, Object, Object)}
-     * or similar methods to add fields to the provided map rather than creating
-     * new standalone structures.</p>
+     * or similar methods to add fields to the provided map rather than creating new standalone structures.</p>
      *
      * @param <A> the type of value this encoder handles
      * @see MapCodec#of(MapEncoder, MapDecoder)
@@ -336,8 +357,8 @@ public interface MapCodec<A> {
          * @param ops   the dynamic operations for the target format, must not be {@code null}
          * @param map   the map to encode into, must not be {@code null}
          * @param <T>   the type of the dynamic representation
-         * @return a {@link DataResult} containing the updated map with the encoded
-         *         field(s), or an error message if encoding fails
+         * @return a {@link DataResult} containing the updated map with the encoded field(s), or an error message if
+         * encoding fails
          */
         @NotNull
         <T> DataResult<T> encode(@NotNull final A input,
@@ -349,9 +370,8 @@ public interface MapCodec<A> {
      * Functional interface for decoding a value from a map structure.
      *
      * <p>A {@code MapDecoder} is responsible for extracting and decoding fields
-     * from a map representation. Unlike {@link Decoder}, which handles standalone
-     * values and returns remaining input, a MapDecoder operates on specific fields
-     * within a map and does not track consumed input.</p>
+     * from a map representation. Unlike {@link Decoder}, which handles standalone values and returns remaining input, a
+     * MapDecoder operates on specific fields within a map and does not track consumed input.</p>
      *
      * <p><b>Implementation Notes</b></p>
      * <p>Implementations should use {@link DynamicOps#get(Object, String)} or
@@ -369,8 +389,7 @@ public interface MapCodec<A> {
          * @param ops   the dynamic operations for the source format, must not be {@code null}
          * @param input the map to decode from, must not be {@code null}
          * @param <T>   the type of the dynamic representation
-         * @return a {@link DataResult} containing the decoded value,
-         *         or an error message if decoding fails
+         * @return a {@link DataResult} containing the decoded value, or an error message if decoding fails
          */
         @NotNull
         <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,

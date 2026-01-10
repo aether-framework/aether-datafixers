@@ -589,14 +589,14 @@ public static final SimpleMapOps INSTANCE = new SimpleMapOps();
 
 Before creating a custom implementation, check if one of the built-in implementations fits your needs:
 
-| Format | Implementation | Package |
-|--------|----------------|---------|
-| JSON | `GsonOps` | `codec.json.gson` |
-| JSON | `JacksonJsonOps` | `codec.json.jackson` |
-| YAML | `SnakeYamlOps` | `codec.yaml.snakeyaml` |
-| YAML | `JacksonYamlOps` | `codec.yaml.jackson` |
-| TOML | `JacksonTomlOps` | `codec.toml.jackson` |
-| XML | `JacksonXmlOps` | `codec.xml.jackson` |
+| Format | Implementation   | Package                |
+|--------|------------------|------------------------|
+| JSON   | `GsonOps`        | `codec.json.gson`      |
+| JSON   | `JacksonJsonOps` | `codec.json.jackson`   |
+| YAML   | `SnakeYamlOps`   | `codec.yaml.snakeyaml` |
+| YAML   | `JacksonYamlOps` | `codec.yaml.jackson`   |
+| TOML   | `JacksonTomlOps` | `codec.toml.jackson`   |
+| XML    | `JacksonXmlOps`  | `codec.xml.jackson`    |
 
 See [Codec Module Documentation](../codec/index.md) for details.
 

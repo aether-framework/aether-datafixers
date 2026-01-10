@@ -196,6 +196,10 @@ public final class CoverageGap {
             @NotNull final DataVersion targetVersion,
             @NotNull final Reason reason
     ) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+        Preconditions.checkNotNull(reason, "reason must not be null");
         return new CoverageGap(type, sourceVersion, targetVersion, reason, null, null);
     }
 
@@ -217,6 +221,10 @@ public final class CoverageGap {
             @NotNull final Reason reason,
             @Nullable final TypeDiff typeDiff
     ) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+        Preconditions.checkNotNull(reason, "reason must not be null");
         return new CoverageGap(type, sourceVersion, targetVersion, reason, null, typeDiff);
     }
 
@@ -238,6 +246,10 @@ public final class CoverageGap {
             @NotNull final Reason reason,
             @NotNull final String fieldName
     ) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+        Preconditions.checkNotNull(reason, "reason must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         return new CoverageGap(type, sourceVersion, targetVersion, reason, fieldName, null);
     }

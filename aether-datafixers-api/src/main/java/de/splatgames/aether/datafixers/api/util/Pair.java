@@ -34,8 +34,8 @@ import java.util.function.Function;
  * An immutable pair of two values.
  *
  * <p>This class represents an ordered pair of two values, commonly used for returning
- * two related values from a method or storing key-value associations. The pair is
- * immutable; once created, its values cannot be changed.</p>
+ * two related values from a method or storing key-value associations. The pair is immutable; once created, its values
+ * cannot be changed.</p>
  *
  * <h2>Usage Examples</h2>
  * <pre>{@code

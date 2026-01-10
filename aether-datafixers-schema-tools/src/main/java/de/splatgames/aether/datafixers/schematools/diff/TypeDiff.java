@@ -129,6 +129,10 @@ public final class TypeDiff {
             @NotNull final Type<?> targetType,
             @NotNull final List<FieldDiff> fieldDiffs
     ) {
+        Preconditions.checkNotNull(reference, "reference must not be null");
+        Preconditions.checkNotNull(sourceType, "sourceType must not be null");
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
+        Preconditions.checkNotNull(fieldDiffs, "fieldDiffs must not be null");
         return new TypeDiff(reference, sourceType, targetType, fieldDiffs);
     }
 

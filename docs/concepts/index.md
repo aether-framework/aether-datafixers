@@ -7,18 +7,18 @@ This section provides in-depth coverage of the fundamental concepts that power A
 Aether Datafixers is built around several interconnected concepts that work together to enable safe, versioned data migrations:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        DataFixer                                │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │   Schema    │───▶│   DataFix   │───▶│   Schema    │         │
-│  │  (v1.0.0)   │    │  (v1→v2)    │    │  (v2.0.0)   │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-│         │                  │                  │                 │
-│         ▼                  ▼                  ▼                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │TypeRegistry │    │RewriteRule  │    │TypeRegistry │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                        DataFixer                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐   │
+│  │   Schema    │───▶│   DataFix   │───▶│   Schema    │   │
+│  │  (v1.0.0)   │    │  (v1→v2)    │    │  (v2.0.0)   │   │
+│  └─────────────┘    └─────────────┘    └─────────────┘   │
+│         │                  │                  │          │
+│         ▼                  ▼                  ▼          │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐   │
+│  │TypeRegistry │    │RewriteRule  │    │TypeRegistry │   │
+│  └─────────────┘    └─────────────┘    └─────────────┘   │
+└──────────────────────────────────────────────────────────┘
                               │
                               ▼
                      ┌─────────────────┐
@@ -33,49 +33,49 @@ Aether Datafixers is built around several interconnected concepts that work toge
 
 These are the building blocks you'll use in every migration:
 
-| Concept | Purpose | Learn More |
-|---------|---------|------------|
-| [DataVersion](data-version.md) | Integer identifier for a schema version | → |
-| [TypeReference](type-reference.md) | String identifier for a data type | → |
-| [Architecture](architecture-overview.md) | How the framework fits together | → |
+| Concept                                  | Purpose                                 | Learn More |
+|------------------------------------------|-----------------------------------------|------------|
+| [DataVersion](data-version.md)                       | Integer identifier for a schema version | →          |
+| [TypeReference](type-reference.md)                     | String identifier for a data type       | →          |
+| [Architecture](architecture-overview.md)                      | How the framework fits together         | →          |
 
 ### Data Definition
 
 How you define what your data looks like at each version:
 
-| Concept | Purpose | Learn More |
-|---------|---------|------------|
-| [Schema System](schema-system.md) | Define type structures per version | → |
-| [Type System](type-system.md) | Type definitions and registries | → |
-| [DSL](dsl.md) | Domain-specific language for type templates | → |
+| Concept                           | Purpose                                     | Learn More |
+|-----------------------------------|---------------------------------------------|------------|
+| [Schema System](schema-system.md)              | Define type structures per version          | →          |
+| [Type System](type-system.md)                | Type definitions and registries             | →          |
+| [DSL](dsl.md)                     | Domain-specific language for type templates | →          |
 
 ### Migration System
 
 How data gets transformed from one version to another:
 
-| Concept | Purpose | Learn More |
-|---------|---------|------------|
-| [DataFix System](datafix-system.md) | Creating and applying migrations | → |
-| [Rewrite Rules](rewrite-rules.md) | Rule combinators for transformations | → |
+| Concept                             | Purpose                              | Learn More |
+|-------------------------------------|--------------------------------------|------------|
+| [DataFix System](datafix-system.md)               | Creating and applying migrations     | →          |
+| [Rewrite Rules](rewrite-rules.md)                | Rule combinators for transformations | →          |
 
 ### Data Manipulation
 
 Format-agnostic data handling:
 
-| Concept | Purpose | Learn More |
-|---------|---------|------------|
-| [Dynamic System](dynamic-system.md) | Format-agnostic data wrapper | → |
-| [Codec System](codec-system.md) | Encoding and decoding typed data | → |
+| Concept                             | Purpose                          | Learn More |
+|-------------------------------------|----------------------------------|------------|
+| [Dynamic System](dynamic-system.md)               | Format-agnostic data wrapper     | →          |
+| [Codec System](codec-system.md)                 | Encoding and decoding typed data | →          |
 
 ### Advanced Concepts
 
 Composable data accessors and error handling:
 
-| Concept | Purpose | Learn More |
-|---------|---------|------------|
-| [Optics](optics/index.md) | Lens, Prism, Finder for data access | → |
-| [DataResult](data-result.md) | Error handling with success/failure | → |
-| [Thread Safety](thread-safety.md) | Concurrency guarantees | → |
+| Concept                           | Purpose                             | Learn More |
+|-----------------------------------|-------------------------------------|------------|
+| [Optics](optics/index.md)                     | Lens, Prism, Finder for data access | →          |
+| [DataResult](data-result.md)                 | Error handling with success/failure | →          |
+| [Thread Safety](thread-safety.md)              | Concurrency guarantees              | →          |
 
 ---
 
@@ -182,18 +182,18 @@ For newcomers, we recommend reading the concepts in this order:
 
 ### Key Classes
 
-| Class | Module | Purpose |
-|-------|--------|---------|
-| `DataVersion` | api | Version identifier |
-| `TypeReference` | api | Type identifier |
-| `Schema` | api | Type definitions for a version |
-| `DataFix` | api | Migration interface |
-| `DataFixer` | api | Migration orchestrator |
-| `Dynamic` | api | Format-agnostic data wrapper |
-| `DynamicOps` | api | Operations for a format |
-| `Codec` | api | Bidirectional transformation |
-| `DSL` | api | Type template factory |
-| `Rules` | api | Rewrite rule factory |
+| Class           | Module | Purpose                        |
+|-----------------|--------|--------------------------------|
+| `DataVersion`   | api    | Version identifier             |
+| `TypeReference` | api    | Type identifier                |
+| `Schema`        | api    | Type definitions for a version |
+| `DataFix`       | api    | Migration interface            |
+| `DataFixer`     | api    | Migration orchestrator         |
+| `Dynamic`       | api    | Format-agnostic data wrapper   |
+| `DynamicOps`    | api    | Operations for a format        |
+| `Codec`         | api    | Bidirectional transformation   |
+| `DSL`           | api    | Type template factory          |
+| `Rules`         | api    | Rewrite rule factory           |
 
 ### Key Patterns
 

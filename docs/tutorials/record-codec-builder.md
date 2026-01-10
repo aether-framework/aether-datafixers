@@ -434,12 +434,12 @@ public static final Codec<Player> CODEC = ...;
 
 ## Common Mistakes
 
-| Mistake | Solution |
-|---------|----------|
-| Wrong field order in `apply` | Order must match `group` order |
-| Missing `forGetter` | Each field needs a getter |
-| Wrong constructor arity | Constructor params must match field count |
-| Using wrong codec type | Ensure codec type matches field type |
+| Mistake                      | Solution                                  |
+|------------------------------|-------------------------------------------|
+| Wrong field order in `apply` | Order must match `group` order            |
+| Missing `forGetter`          | Each field needs a getter                 |
+| Wrong constructor arity      | Constructor params must match field count |
+| Using wrong codec type       | Ensure codec type matches field type      |
 
 ## Next Steps
 

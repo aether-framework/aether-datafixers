@@ -123,6 +123,8 @@ public final class SchemaDiffer {
      */
     @NotNull
     public static SchemaDiffer compare(@NotNull final Schema source, @NotNull final Schema target) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(target, "target must not be null");
         return new SchemaDiffer(source, target);
     }
 
@@ -231,6 +233,7 @@ public final class SchemaDiffer {
      */
     @NotNull
     private Set<TypeReference> getTypeReferences(@NotNull final Schema schema) {
+        Preconditions.checkNotNull(schema, "schema must not be null");
         return new HashSet<>(schema.types().references());
     }
 
@@ -257,6 +260,10 @@ public final class SchemaDiffer {
             @NotNull final Type<?> sourceType,
             @NotNull final Type<?> targetType
     ) {
+        Preconditions.checkNotNull(ref, "ref must not be null");
+        Preconditions.checkNotNull(sourceType, "sourceType must not be null");
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
+
         final List<FieldInfo> sourceFields = TypeIntrospector.extractFields(sourceType);
         final List<FieldInfo> targetFields = TypeIntrospector.extractFields(targetType);
 

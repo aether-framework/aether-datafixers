@@ -152,13 +152,13 @@ public class Schema200 extends Schema {
 
 ## Schema Evolution Summary
 
-| Field | v1.0.0 (100) | v1.1.0 (110) | v2.0.0 (200) |
-|-------|--------------|--------------|--------------|
-| playerName | ✓ | → name | name |
-| xp | ✓ | → experience | experience |
-| hp | ✓ | → health | health |
-| level | - | - | ✓ (new) |
-| x, y, z | ✓ | ✓ | → position.x/y/z |
+| Field      | v1.0.0 (100) | v1.1.0 (110) | v2.0.0 (200)     |
+|------------|--------------|--------------|------------------|
+| playerName | ✓            | → name       | name             |
+| xp         | ✓            | → experience | experience       |
+| hp         | ✓            | → health     | health           |
+| level      | -            | -            | ✓ (new)          |
+| x, y, z    | ✓            | ✓            | → position.x/y/z |
 
 ## DSL Patterns Used
 

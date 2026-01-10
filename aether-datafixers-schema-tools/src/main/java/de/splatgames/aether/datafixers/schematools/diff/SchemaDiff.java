@@ -152,6 +152,8 @@ public final class SchemaDiff {
      */
     @NotNull
     static Builder builder(@NotNull final Schema source, @NotNull final Schema target) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(target, "target must not be null");
         return new Builder(source, target);
     }
 

@@ -24,9 +24,8 @@
  * Format-agnostic data representation for the data fixing system.
  *
  * <p>This package provides the core abstraction that enables the data fixer to
- * operate on any serialization format (JSON, NBT, YAML, etc.) without being
- * coupled to a specific implementation. Data is represented as a generic tree
- * structure that can be traversed and manipulated uniformly.</p>
+ * operate on any serialization format (JSON, NBT, YAML, etc.) without being coupled to a specific implementation. Data
+ * is represented as a generic tree structure that can be traversed and manipulated uniformly.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>

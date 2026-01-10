@@ -102,10 +102,10 @@ public abstract class SchemaDataFix implements DataFix<Object> {
             @NotNull final DataVersion to,
             @NotNull final SchemaRegistry schemas
     ) {
-        Preconditions.checkNotNull(name, "String name must not be null");
-        Preconditions.checkNotNull(from, "DataVersion from must not be null");
-        Preconditions.checkNotNull(to, "DataVersion to must not be null");
-        Preconditions.checkNotNull(schemas, "SchemaRegistry schemas must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(schemas, "schemas must not be null");
 
         this.name = name;
         this.from = from;
@@ -150,9 +150,9 @@ public abstract class SchemaDataFix implements DataFix<Object> {
             @NotNull final Dynamic<Object> input,
             @NotNull final DataFixerContext context
     ) {
-        Preconditions.checkNotNull(type, "TypeReference type must not be null");
-        Preconditions.checkNotNull(input, "Dynamic<Object> input must not be null");
-        Preconditions.checkNotNull(context, "DataFixerContext context must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(context, "context must not be null");
 
         final Schema in = this.schemas.require(this.from);
         final Schema out = this.schemas.require(this.to);

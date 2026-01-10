@@ -23,15 +23,15 @@ Finder navigates through Dynamic data, handling the uncertainty at each step:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Dynamic<?> data                               │
-│  {                                                               │
-│    "player": {                                                   │
+│                    Dynamic<?> data                              │
+│  {                                                              │
+│    "player": {                                                  │
 │      "name": "Steve",         ◀── Finder.field("player")        │
 │      "stats": {                   .then(Finder.field("name"))   │
 │        "level": 10                .then(Finder.asString())      │
-│      }                                                           │
-│    }                              Result: Optional.of("Steve")   │
-│  }                                                               │
+│      }                                                          │
+│    }                              Result: Optional.of("Steve")  │
+│  }                                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -330,12 +330,12 @@ public List<String> extractNames(Dynamic<?> data) {
 
 ## Finder vs Other Optics
 
-| Optic | Target | Optional | Type-Safe |
-|-------|--------|----------|-----------|
-| Lens | Static types | No | Yes |
-| Affine | Static types | Yes | Yes |
-| Prism | Static types | Yes | Yes |
-| **Finder** | Dynamic data | Yes | At runtime |
+| Optic      | Target       | Optional | Type-Safe  |
+|------------|--------------|----------|------------|
+| Lens       | Static types | No       | Yes        |
+| Affine     | Static types | Yes      | Yes        |
+| Prism      | Static types | Yes      | Yes        |
+| **Finder** | Dynamic data | Yes      | At runtime |
 
 ### When to Use Finder
 
@@ -351,16 +351,16 @@ public List<String> extractNames(Dynamic<?> data) {
 
 ## Finder Summary
 
-| Method | Description | Returns |
-|--------|-------------|---------|
-| `find(Dynamic)` | Extract the value | `Optional<A>` |
-| `then(Finder)` | Compose with next step | `Finder<B>` |
-| `field(name)` | Navigate to field | `Finder<Dynamic>` |
-| `index(i)` | Navigate to list index | `Finder<Dynamic>` |
-| `asString()` | Extract as String | `Finder<String>` |
-| `asInt()` | Extract as Integer | `Finder<Integer>` |
-| `asDouble()` | Extract as Double | `Finder<Double>` |
-| `asList()` | Extract as List | `Finder<List>` |
+| Method          | Description            | Returns           |
+|-----------------|------------------------|-------------------|
+| `find(Dynamic)` | Extract the value      | `Optional<A>`     |
+| `then(Finder)`  | Compose with next step | `Finder<B>`       |
+| `field(name)`   | Navigate to field      | `Finder<Dynamic>` |
+| `index(i)`      | Navigate to list index | `Finder<Dynamic>` |
+| `asString()`    | Extract as String      | `Finder<String>`  |
+| `asInt()`       | Extract as Integer     | `Finder<Integer>` |
+| `asDouble()`    | Extract as Double      | `Finder<Double>`  |
+| `asList()`      | Extract as List        | `Finder<List>`    |
 
 ---
 

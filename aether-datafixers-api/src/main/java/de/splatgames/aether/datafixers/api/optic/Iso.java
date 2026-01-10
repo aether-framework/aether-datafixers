@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -31,9 +32,9 @@ import java.util.function.Function;
  * An isomorphism represents a lossless, reversible transformation between two types.
  *
  * <p>An {@code Iso} (isomorphism) is the most powerful optic, representing a 1-to-1
- * correspondence between two types. It can convert from S to A and back to S without
- * any loss of information. Because of this bidirectional nature, an iso is simultaneously
- * both a {@link Lens} and a {@link Prism}—it can be used anywhere either is expected.</p>
+ * correspondence between two types. It can convert from S to A and back to S without any loss of information. Because
+ * of this bidirectional nature, an iso is simultaneously both a {@link Lens} and a {@link Prism}—it can be used
+ * anywhere either is expected.</p>
  *
  * <h2>When to Use an Iso</h2>
  * <p>Use an iso when you need to:</p>
@@ -130,6 +131,132 @@ import java.util.function.Function;
 public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
 
     /**
+     * Creates a monomorphic iso from forward and reverse transformation functions.
+     *
+     * <p>This is the primary factory method for creating isomorphisms. The provided
+     * functions must satisfy the round-trip laws: {@code from(to(s)) == s} and {@code to(from(a)) == a}.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Iso between String and its reversed form
+     * Iso<String, String, String, String> reverseIso = Iso.of(
+     *     "string.reverse",
+     *     s -> new StringBuilder(s).reverse().toString(),
+     *     s -> new StringBuilder(s).reverse().toString()
+     * );
+     *
+     * // Iso between a wrapper and its value
+     * record Wrapper<T>(T value) {}
+     * Iso<Wrapper<String>, Wrapper<String>, String, String> unwrap = Iso.of(
+     *     "wrapper.unwrap",
+     *     Wrapper::value,
+     *     Wrapper::new
+     * );
+     * }</pre>
+     *
+     * @param id   a unique identifier for this iso, must not be {@code null}
+     * @param to   the forward transformation function (S→A), must not be {@code null}
+     * @param from the reverse transformation function (A→S), must not be {@code null}
+     * @param <S>  the source type
+     * @param <A>  the target type
+     * @return a new monomorphic iso, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    @NotNull
+    static <S, A> Iso<S, S, A, A> of(@NotNull final String id,
+                                     @NotNull final Function<S, A> to,
+                                     @NotNull final Function<A, S> from) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(to, "to must not be null");
+        Preconditions.checkNotNull(from, "from must not be null");
+        return new Iso<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return id;
+            }
+
+            @NotNull
+            @Override
+            public A to(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                return to.apply(source);
+            }
+
+            @NotNull
+            @Override
+            public S from(@NotNull final A target) {
+                Preconditions.checkNotNull(target, "target must not be null");
+                return from.apply(target);
+            }
+
+            @NotNull
+            @Override
+            public S modify(@NotNull final S source, @NotNull final Function<A, A> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
+                return from.apply(modifier.apply(to.apply(source)));
+            }
+        };
+    }
+
+    /**
+     * Creates an identity isomorphism that returns values unchanged.
+     *
+     * <p>The identity iso is the neutral element for iso composition. Composing
+     * any iso with the identity iso yields the original iso. Both {@link #to} and {@link #from} return their input
+     * unchanged.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Iso<String, String, String, String> id = Iso.identity();
+     * String s = id.to("hello");   // "hello"
+     * String r = id.from("hello"); // "hello"
+     *
+     * // Composing with identity has no effect
+     * Iso<String, String, Integer, Integer> parseIso = ...;
+     * Iso<String, String, Integer, Integer> same = id.compose(parseIso);
+     * // same behaves identically to parseIso
+     * }</pre>
+     *
+     * @param <S> the type (source and target are the same)
+     * @return an identity iso where to(s) == s and from(s) == s, never {@code null}
+     */
+    @NotNull
+    static <S> Iso<S, S, S, S> identity() {
+        return new Iso<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return "identity";
+            }
+
+            @NotNull
+            @Override
+            public S to(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                return source;
+            }
+
+            @NotNull
+            @Override
+            public S from(@NotNull final S target) {
+                Preconditions.checkNotNull(target, "target must not be null");
+                return target;
+            }
+
+            @NotNull
+            @Override
+            public S modify(@NotNull final S source,
+                            @NotNull final Function<S, S> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
+                return modifier.apply(source);
+            }
+        };
+    }
+
+    /**
      * Converts a value from the source type to the target type.
      *
      * <p>This is the forward direction of the isomorphism. The conversion is
@@ -152,8 +279,7 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      * Converts a value from the target type back to the source type.
      *
      * <p>This is the reverse direction of the isomorphism. Combined with
-     * {@link #to(Object)}, it satisfies the round-trip law:
-     * {@code from(to(s)) == s}.</p>
+     * {@link #to(Object)}, it satisfies the round-trip law: {@code from(to(s)) == s}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -199,6 +325,8 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @Override
     default T modify(@NotNull final S source,
                      @NotNull final Function<A, B> modifier) {
+        Preconditions.checkNotNull(source, "source must not be null");
+        Preconditions.checkNotNull(modifier, "modifier must not be null");
         return from(modifier.apply(to(source)));
     }
 
@@ -206,8 +334,8 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      * Returns the reversed isomorphism, swapping source and target types.
      *
      * <p>The reversed iso converts in the opposite direction: where the original
-     * converts S→A, the reversed version converts A→S. This is useful when you
-     * need to apply the transformation in the reverse direction.</p>
+     * converts S→A, the reversed version converts A→S. This is useful when you need to apply the transformation in the
+     * reverse direction.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -222,8 +350,7 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      * String str = charsToString.to(chars); // "hello"
      * }</pre>
      *
-     * @return an iso going in the opposite direction (A↔S instead of S↔A),
-     *         never {@code null}
+     * @return an iso going in the opposite direction (A↔S instead of S↔A), never {@code null}
      */
     @NotNull
     default Iso<B, A, T, S> reverse() {
@@ -238,12 +365,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @NotNull
             @Override
             public T to(@NotNull final B source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return self.from(source);
             }
 
             @NotNull
             @Override
             public A from(@NotNull final S target) {
+                Preconditions.checkNotNull(target, "target must not be null");
                 return self.to(target);
             }
 
@@ -251,12 +380,15 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @Override
             public A modify(@NotNull final B source,
                             @NotNull final Function<T, S> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from(modifier.apply(to(source)));
             }
 
             @NotNull
             @Override
             public <C, D> Optic<B, A, C, D> compose(@NotNull final Optic<T, S, C, D> other) {
+                Preconditions.checkNotNull(other, "other must not be null");
                 throw new UnsupportedOperationException("Compose on reversed iso");
             }
         };
@@ -266,8 +398,8 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      * Composes this iso with another iso to create a transitive conversion.
      *
      * <p>Composition chains the conversions: this iso converts S↔A, and the
-     * other iso converts A↔C, resulting in an iso that converts S↔C directly.
-     * Both forward and reverse directions are composed.</p>
+     * other iso converts A↔C, resulting in an iso that converts S↔C directly. Both forward and reverse directions are
+     * composed.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -298,6 +430,7 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      */
     @NotNull
     default <C, D> Iso<S, T, C, D> compose(@NotNull final Iso<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Iso<S, T, A, B> self = this;
         return new Iso<>() {
             @NotNull
@@ -309,12 +442,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @NotNull
             @Override
             public C to(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return other.to(self.to(source));
             }
 
             @NotNull
             @Override
             public T from(@NotNull final D target) {
+                Preconditions.checkNotNull(target, "target must not be null");
                 return self.from(other.from(target));
             }
 
@@ -322,12 +457,15 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             @Override
             public T modify(@NotNull final S source,
                             @NotNull final Function<C, D> modifier) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from(modifier.apply(to(source)));
             }
 
             @NotNull
             @Override
             public <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                Preconditions.checkNotNull(next, "next must not be null");
                 if (next instanceof Iso<C, D, E, F> iso) {
                     return this.compose((Optic<C, D, E, F>) iso);
                 }
@@ -338,6 +476,7 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
 
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         if (other instanceof Iso<A, B, C, D> iso) {
             return compose(iso);
         }
@@ -348,121 +487,5 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
             return Prism.super.compose(prism);
         }
         throw new UnsupportedOperationException("Cannot compose Iso with " + other.getClass().getSimpleName());
-    }
-
-    /**
-     * Creates a monomorphic iso from forward and reverse transformation functions.
-     *
-     * <p>This is the primary factory method for creating isomorphisms. The provided
-     * functions must satisfy the round-trip laws: {@code from(to(s)) == s} and
-     * {@code to(from(a)) == a}.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Iso between String and its reversed form
-     * Iso<String, String, String, String> reverseIso = Iso.of(
-     *     "string.reverse",
-     *     s -> new StringBuilder(s).reverse().toString(),
-     *     s -> new StringBuilder(s).reverse().toString()
-     * );
-     *
-     * // Iso between a wrapper and its value
-     * record Wrapper<T>(T value) {}
-     * Iso<Wrapper<String>, Wrapper<String>, String, String> unwrap = Iso.of(
-     *     "wrapper.unwrap",
-     *     Wrapper::value,
-     *     Wrapper::new
-     * );
-     * }</pre>
-     *
-     * @param id   a unique identifier for this iso, must not be {@code null}
-     * @param to   the forward transformation function (S→A), must not be {@code null}
-     * @param from the reverse transformation function (A→S), must not be {@code null}
-     * @param <S>  the source type
-     * @param <A>  the target type
-     * @return a new monomorphic iso, never {@code null}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NotNull
-    static <S, A> Iso<S, S, A, A> of(@NotNull final String id,
-                                     @NotNull final Function<S, A> to,
-                                     @NotNull final Function<A, S> from) {
-        return new Iso<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return id;
-            }
-
-            @NotNull
-            @Override
-            public A to(@NotNull final S source) {
-                return to.apply(source);
-            }
-
-            @NotNull
-            @Override
-            public S from(@NotNull final A target) {
-                return from.apply(target);
-            }
-
-            @NotNull
-            @Override
-            public S modify(@NotNull final S source, @NotNull final Function<A, A> modifier) {
-                return from.apply(modifier.apply(to.apply(source)));
-            }
-        };
-    }
-
-    /**
-     * Creates an identity isomorphism that returns values unchanged.
-     *
-     * <p>The identity iso is the neutral element for iso composition. Composing
-     * any iso with the identity iso yields the original iso. Both {@link #to}
-     * and {@link #from} return their input unchanged.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Iso<String, String, String, String> id = Iso.identity();
-     * String s = id.to("hello");   // "hello"
-     * String r = id.from("hello"); // "hello"
-     *
-     * // Composing with identity has no effect
-     * Iso<String, String, Integer, Integer> parseIso = ...;
-     * Iso<String, String, Integer, Integer> same = id.compose(parseIso);
-     * // same behaves identically to parseIso
-     * }</pre>
-     *
-     * @param <S> the type (source and target are the same)
-     * @return an identity iso where to(s) == s and from(s) == s, never {@code null}
-     */
-    @NotNull
-    static <S> Iso<S, S, S, S> identity() {
-        return new Iso<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return "identity";
-            }
-
-            @NotNull
-            @Override
-            public S to(@NotNull final S source) {
-                return source;
-            }
-
-            @NotNull
-            @Override
-            public S from(@NotNull final S target) {
-                return target;
-            }
-
-            @NotNull
-            @Override
-            public S modify(@NotNull final S source,
-                            @NotNull final Function<S, S> modifier) {
-                return modifier.apply(source);
-            }
-        };
     }
 }

@@ -34,35 +34,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Lens")
 class LensTest {
 
-    // Test data models
-    record Person(String name, int age) {}
-    record Address(String street, String city) {}
-    record PersonWithAddress(String name, Address address) {}
-
     // Basic lenses
     private final Lens<Person, Person, String, String> nameLens = Lens.of(
             "person.name",
             Person::name,
             (person, newName) -> new Person(newName, person.age())
     );
-
     private final Lens<Person, Person, Integer, Integer> ageLens = Lens.of(
             "person.age",
             Person::age,
             (person, newAge) -> new Person(person.name(), newAge)
     );
-
     private final Lens<Address, Address, String, String> cityLens = Lens.of(
             "address.city",
             Address::city,
             (address, newCity) -> new Address(address.street(), newCity)
     );
-
     private final Lens<PersonWithAddress, PersonWithAddress, Address, Address> addressLens = Lens.of(
             "person.address",
             PersonWithAddress::address,
             (person, newAddress) -> new PersonWithAddress(person.name(), newAddress)
     );
+
+    // Test data models
+    record Person(String name, int age) {
+    }
+
+    record Address(String street, String city) {
+    }
+
+    record PersonWithAddress(String name, Address address) {
+    }
 
     @Nested
     @DisplayName("Factory Method")

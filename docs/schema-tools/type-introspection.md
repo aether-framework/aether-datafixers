@@ -13,11 +13,11 @@ Type introspection enables:
 
 ## Core Components
 
-| Class | Description |
-|-------|-------------|
-| `TypeIntrospector` | Utility class for analyzing types |
-| `TypeStructure` | Normalized, comparable representation of a type |
-| `FieldInfo` | Metadata about a single field |
+| Class              | Description                                     |
+|--------------------|-------------------------------------------------|
+| `TypeIntrospector` | Utility class for analyzing types               |
+| `TypeStructure`    | Normalized, comparable representation of a type |
+| `FieldInfo`        | Metadata about a single field                   |
 
 ## Basic Usage
 
@@ -85,18 +85,18 @@ TypeKind kind = TypeIntrospector.determineKind(type);
 
 The introspector classifies types into these categories:
 
-| Kind | Description | Examples |
-|------|-------------|----------|
-| `PRIMITIVE` | Basic value types | `bool`, `int`, `long`, `float`, `double`, `byte`, `short`, `string` |
-| `LIST` | Collection of elements | `DSL.list(DSL.string())` |
-| `OPTIONAL` | May or may not have value | `DSL.optional(DSL.int())` |
-| `PRODUCT` | Combination of fields (AND) | `DSL.and(field1, field2)` |
-| `SUM` | Choice between variants (OR) | `DSL.or(type1, type2)` |
-| `FIELD` | Named field wrapper | `DSL.field("name", DSL.string())` |
-| `TAGGED_CHOICE` | Discriminated union | Tagged choice types |
-| `NAMED` | Named/referenced type | Type with a name reference |
-| `PASSTHROUGH` | Pass-through wrapper | Passthrough types |
-| `UNKNOWN` | Unrecognized type | Custom or complex types |
+| Kind            | Description                  | Examples                                                            |
+|-----------------|------------------------------|---------------------------------------------------------------------|
+| `PRIMITIVE`     | Basic value types            | `bool`, `int`, `long`, `float`, `double`, `byte`, `short`, `string` |
+| `LIST`          | Collection of elements       | `DSL.list(DSL.string())`                                            |
+| `OPTIONAL`      | May or may not have value    | `DSL.optional(DSL.int())`                                           |
+| `PRODUCT`       | Combination of fields (AND)  | `DSL.and(field1, field2)`                                           |
+| `SUM`           | Choice between variants (OR) | `DSL.or(type1, type2)`                                              |
+| `FIELD`         | Named field wrapper          | `DSL.field("name", DSL.string())`                                   |
+| `TAGGED_CHOICE` | Discriminated union          | Tagged choice types                                                 |
+| `NAMED`         | Named/referenced type        | Type with a name reference                                          |
+| `PASSTHROUGH`   | Pass-through wrapper         | Passthrough types                                                   |
+| `UNKNOWN`       | Unrecognized type            | Custom or complex types                                             |
 
 ## TypeStructure API
 

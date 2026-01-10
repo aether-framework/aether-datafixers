@@ -63,7 +63,7 @@ class MapCodecTest {
                 @NotNull
                 @Override
                 public <T> DataResult<String> decode(@NotNull final DynamicOps<T> ops,
-                                                      @NotNull final T input) {
+                                                     @NotNull final T input) {
                     final T field = ops.get(input, "name");
                     return field != null
                             ? ops.getStringValue(field)
@@ -75,8 +75,7 @@ class MapCodecTest {
             // Test encode
             final DataResult<Object> encoded = nameCodec.encode("Alice", ops, ops.emptyMap());
             assertThat(encoded.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encodedMap = (Map<String, Object>) encoded.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encodedMap = (Map<String, Object>) encoded.result().orElseThrow();
             assertThat(encodedMap).containsEntry("name", "Alice");
 
             // Test decode
@@ -101,8 +100,7 @@ class MapCodecTest {
             final DataResult<Object> result = nameField.encode("Alice", ops, existingMap);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("name", "Alice");
             assertThat(encoded).containsEntry("age", 30);
         }
@@ -115,8 +113,7 @@ class MapCodecTest {
             final DataResult<Object> result = ageField.encode(25, ops, ops.emptyMap());
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("age", 25);
         }
     }
@@ -185,15 +182,15 @@ class MapCodecTest {
             final DataResult<Object> result = upperCaseField.encode("HELLO", ops, ops.emptyMap());
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("text", "hello");
         }
 
         @Test
         @DisplayName("xmap() works with wrapper types")
         void xmapWorksWithWrapperTypes() {
-            record UserId(int id) {}
+            record UserId(int id) {
+            }
 
             final MapCodec<UserId> userIdField = Codecs.INT.fieldOf("userId")
                     .xmap(UserId::new, UserId::id);
@@ -203,8 +200,7 @@ class MapCodecTest {
             assertThat(decoded.result().orElseThrow().id()).isEqualTo(123);
 
             final DataResult<Object> encoded = userIdField.encode(new UserId(456), ops, ops.emptyMap());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encodedMap = (Map<String, Object>) encoded.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encodedMap = (Map<String, Object>) encoded.result().orElseThrow();
             assertThat(encodedMap).containsEntry("userId", 456);
         }
     }
@@ -252,8 +248,6 @@ class MapCodecTest {
     @DisplayName("forGetter()")
     class ForGetterOperation {
 
-        record Person(String name, int age) {}
-
         @Test
         @DisplayName("forGetter() creates Field for RecordCodecBuilder")
         void forGetterCreatesFieldForRecordCodecBuilder() {
@@ -291,9 +285,11 @@ class MapCodecTest {
             final Integer value = ageField.getter().apply(person);
 
             final DataResult<Object> result = ageField.codec().encode(value, ops, ops.emptyMap());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("age", 25);
+        }
+
+        record Person(String name, int age) {
         }
     }
 
@@ -318,8 +314,7 @@ class MapCodecTest {
             final DataResult<Object> result = codec.encodeStart(ops, "Alice");
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("name", "Alice");
         }
 
@@ -362,12 +357,10 @@ class MapCodecTest {
             assertThat(result.isSuccess()).isTrue();
 
             // Add age to the result
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> withName = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> withName = (Map<String, Object>) result.result().orElseThrow();
             result = ageField.encode(30, ops, withName);
 
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> complete = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> complete = (Map<String, Object>) result.result().orElseThrow();
             assertThat(complete).containsEntry("name", "Alice");
             assertThat(complete).containsEntry("age", 30);
         }

@@ -24,8 +24,8 @@
  * Domain-Specific Language (DSL) for defining type templates and schemas.
  *
  * <p>This package provides a fluent API for constructing type templates that
- * describe the structure of data at a particular schema version. The DSL enables
- * declarative type definitions that can be composed and referenced across schemas.</p>
+ * describe the structure of data at a particular schema version. The DSL enables declarative type definitions that can
+ * be composed and referenced across schemas.</p>
  *
  * <h2>Key Class</h2>
  * <ul>

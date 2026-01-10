@@ -85,9 +85,9 @@ public final class DataFixerImpl implements DataFixer {
             @NotNull final DataFixRegistry registry,
             @NotNull final DataFixerContext defaultContext
     ) {
-        Preconditions.checkNotNull(currentVersion, "DataVersion currentVersion must not be null");
-        Preconditions.checkNotNull(registry, "DataFixRegistry registry must not be null");
-        Preconditions.checkNotNull(defaultContext, "DataFixerContext defaultContext must not be null");
+        Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
+        Preconditions.checkNotNull(registry, "registry must not be null");
+        Preconditions.checkNotNull(defaultContext, "defaultContext must not be null");
 
         this.currentVersion = currentVersion;
         this.registry = registry;
@@ -108,6 +108,10 @@ public final class DataFixerImpl implements DataFixer {
             @NotNull final DataVersion fromVersion,
             @NotNull final DataVersion toVersion
     ) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
         return this.update(type, input, fromVersion, toVersion, this.defaultContext);
     }
 
@@ -120,11 +124,11 @@ public final class DataFixerImpl implements DataFixer {
             @NotNull final DataVersion toVersion,
             @NotNull final DataFixerContext ctx
     ) {
-        Preconditions.checkNotNull(type, "TypeReference type must not be null");
-        Preconditions.checkNotNull(input, "Dynamic<T> input must not be null");
-        Preconditions.checkNotNull(fromVersion, "DataVersion fromVersion must not be null");
-        Preconditions.checkNotNull(toVersion, "DataVersion toVersion must not be null");
-        Preconditions.checkNotNull(ctx, "DataFixerContext ctx must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkNotNull(ctx, "ctx must not be null");
 
         Preconditions.checkArgument(fromVersion.compareTo(toVersion) <= 0, "fromVersion must be <= toVersion");
         Preconditions.checkArgument(toVersion.compareTo(this.currentVersion) <= 0, "toVersion must be <= currentVersion");
@@ -219,6 +223,8 @@ public final class DataFixerImpl implements DataFixer {
             @NotNull final Dynamic<T> dynamic,
             @NotNull final DiagnosticContext ctx
     ) {
+        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
+        Preconditions.checkNotNull(ctx, "ctx must not be null");
         String snapshot = dynamic.value().toString();
 
         final int maxLength = ctx.options().maxSnapshotLength();

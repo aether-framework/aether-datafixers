@@ -7,18 +7,18 @@ The DataFix system is the heart of Aether Datafixers. It defines how data is tra
 A **DataFix** is a migration that transforms data from one `DataVersion` to another. The **DataFixer** orchestrates applying the correct sequence of fixes to migrate data to the target version.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                         DataFixer                                │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                   Fix Chain for PLAYER                      │ │
-│  │                                                             │ │
-│  │  ┌──────────┐    ┌──────────┐    ┌──────────┐              │ │
-│  │  │Fix100→110│───▶│Fix110→200│───▶│Fix200→210│              │ │
-│  │  └──────────┘    └──────────┘    └──────────┘              │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │                   Fix Chain for PLAYER                     │  │
+│  │                                                            │  │
+│  │  ┌──────────┐    ┌──────────┐    ┌──────────┐              │  │
+│  │  │Fix100→110│───▶│Fix110→200│───▶│Fix200→210│              │  │
+│  │  └──────────┘    └──────────┘    └──────────┘              │  │
+│  └────────────────────────────────────────────────────────────┘  │
 │                                                                  │
-│  Input: Data @ v100  ──────────────────────▶  Output: Data @ v210│
-└─────────────────────────────────────────────────────────────────┘
+│ Input: Data @ v100  ──────────────────────▶  Output: Data @ v210 │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Interfaces
@@ -481,14 +481,14 @@ void testPlayerV1ToV2Migration() {
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `DataFix` | Single migration (v1 → v2) |
-| `DataFixer` | Orchestrates multiple fixes |
-| `SchemaDataFix` | Fix with schema access |
-| `TypeRewriteRule` | Transformation logic |
-| `Rules` | Rule factory methods |
-| `FixRegistrar` | Fix registration |
+| Component         | Purpose                     |
+|-------------------|-----------------------------|
+| `DataFix`         | Single migration (v1 → v2)  |
+| `DataFixer`       | Orchestrates multiple fixes |
+| `SchemaDataFix`   | Fix with schema access      |
+| `TypeRewriteRule` | Transformation logic        |
+| `Rules`           | Rule factory methods        |
+| `FixRegistrar`    | Fix registration            |
 
 ---
 

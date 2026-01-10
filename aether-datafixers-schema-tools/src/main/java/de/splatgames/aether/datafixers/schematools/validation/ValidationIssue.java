@@ -147,6 +147,8 @@ public final class ValidationIssue {
      */
     @NotNull
     public static ValidationIssue error(@NotNull final String code, @NotNull final String message) {
+        Preconditions.checkNotNull(code, "code must not be null");
+        Preconditions.checkNotNull(message, "message must not be null");
         return new ValidationIssue(IssueSeverity.ERROR, code, message, null, Map.of());
     }
 
@@ -159,6 +161,8 @@ public final class ValidationIssue {
      */
     @NotNull
     public static ValidationIssue warning(@NotNull final String code, @NotNull final String message) {
+        Preconditions.checkNotNull(code, "code must not be null");
+        Preconditions.checkNotNull(message, "message must not be null");
         return new ValidationIssue(IssueSeverity.WARNING, code, message, null, Map.of());
     }
 
@@ -171,6 +175,8 @@ public final class ValidationIssue {
      */
     @NotNull
     public static ValidationIssue info(@NotNull final String code, @NotNull final String message) {
+        Preconditions.checkNotNull(code, "code must not be null");
+        Preconditions.checkNotNull(message, "message must not be null");
         return new ValidationIssue(IssueSeverity.INFO, code, message, null, Map.of());
     }
 

@@ -28,8 +28,8 @@ import org.jetbrains.annotations.NotNull;
  * Configuration options for migration diagnostics.
  *
  * <p>{@code DiagnosticOptions} controls what diagnostic data is captured
- * during a migration operation. This allows fine-tuning the balance between
- * diagnostic detail and performance/memory overhead.</p>
+ * during a migration operation. This allows fine-tuning the balance between diagnostic detail and performance/memory
+ * overhead.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -135,8 +135,8 @@ public record DiagnosticOptions(
          * Sets whether to capture before/after data snapshots.
          *
          * <p>When enabled, the migration report will include JSON representations
-         * of the data before and after each fix is applied. This is useful for
-         * debugging but increases memory usage.</p>
+         * of the data before and after each fix is applied. This is useful for debugging but increases memory
+         * usage.</p>
          *
          * @param captureSnapshots {@code true} to capture snapshots
          * @return this builder
@@ -151,8 +151,8 @@ public record DiagnosticOptions(
          * Sets whether to capture individual rule application details.
          *
          * <p>When enabled, the migration report will include details about each
-         * {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}
-         * application, including timing and match status.</p>
+         * {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule} application, including timing and match
+         * status.</p>
          *
          * @param captureRuleDetails {@code true} to capture rule details
          * @return this builder

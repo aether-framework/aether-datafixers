@@ -22,8 +22,8 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
-import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +38,8 @@ import java.util.function.Function;
  * A finder locates and manipulates specific parts of dynamic data structures.
  *
  * <p>A {@code Finder} is a specialized optic designed to work with {@link Dynamic} values,
- * enabling navigation and transformation of data without coupling to any specific format
- * (JSON, NBT, YAML, etc.). Finders are the bridge between the typed optics world and
- * the dynamic data world used in the data fixing system.</p>
+ * enabling navigation and transformation of data without coupling to any specific format (JSON, NBT, YAML, etc.).
+ * Finders are the bridge between the typed optics world and the dynamic data world used in the data fixing system.</p>
  *
  * <h2>When to Use a Finder</h2>
  * <p>Use a finder when you need to:</p>
@@ -116,8 +115,8 @@ import java.util.function.Function;
  * <p>Finder implementations should be stateless and thread-safe. The built-in
  * factory methods return immutable finder instances.</p>
  *
- * @param <A> the conceptual type of value this finder focuses on (often just Object
- *            since Dynamic values are dynamically typed)
+ * @param <A> the conceptual type of value this finder focuses on (often just Object since Dynamic values are
+ *            dynamically typed)
  * @author Erik Pförtner
  * @see Dynamic
  * @see Lens
@@ -127,13 +126,318 @@ import java.util.function.Function;
 public interface Finder<A> {
 
     /**
+     * Creates a finder that navigates to a field by name in a map/object structure.
+     *
+     * <p>The returned finder extracts and modifies the value associated with
+     * the given field name. If the field doesn't exist, {@link #get} returns null.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"name": "Alice", "age": 30}
+     * Finder<?> nameFinder = Finder.field("name");
+     *
+     * Dynamic<?> name = nameFinder.get(data);  // Dynamic("Alice")
+     * Dynamic<?> updated = nameFinder.set(data, data.createString("Bob"));
+     * // updated: {"name": "Bob", "age": 30}
+     * }</pre>
+     *
+     * @param fieldName the name of the field to focus on, must not be {@code null}
+     * @return a finder that navigates to the specified field, never {@code null}
+     * @throws NullPointerException if {@code fieldName} is {@code null}
+     */
+    @NotNull
+    static Finder<Object> field(@NotNull final String fieldName) {
+        Preconditions.checkNotNull(fieldName, "fieldName must not be null");
+        return new Finder<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return "field[" + fieldName + "]";
+            }
+
+            @Nullable
+            @Override
+            public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                return root.get(fieldName);
+            }
+
+            @NotNull
+            @Override
+            public Dynamic<?> set(@NotNull final Dynamic<?> root,
+                                  @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
+                @SuppressWarnings("unchecked") final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
+                @SuppressWarnings("unchecked") final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
+                return typedRoot.set(fieldName, typedNewValue);
+            }
+        };
+    }
+
+    /**
+     * Creates a finder that navigates to an element by index in a list/array structure.
+     *
+     * <p>The returned finder extracts and modifies the element at the specified
+     * index position. If the index is out of bounds (negative or beyond the list size), {@link #get} returns
+     * {@code null} and {@link #set} returns the root unchanged.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"scores": [85, 92, 78]}
+     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     *
+     * Finder<?> scoresFinder = Finder.field("scores");
+     * Finder<?> firstFinder = Finder.index(0);
+     * Finder<?> firstScoreFinder = scoresFinder.then(firstFinder);
+     *
+     * Dynamic<?> first = firstScoreFinder.get(data);  // Dynamic(85)
+     * Dynamic<?> updated = firstScoreFinder.set(data, data.createInt(100));
+     * // updated: {"scores": [100, 92, 78]}
+     *
+     * // Out of bounds access
+     * Finder<?> outOfBounds = scoresFinder.then(Finder.index(10));
+     * Dynamic<?> missing = outOfBounds.get(data);  // null
+     * }</pre>
+     *
+     * @param index the zero-based index of the element to focus on
+     * @return a finder that navigates to the element at the specified index, never {@code null}
+     */
+    @NotNull
+    static Finder<Object> index(final int index) {
+        return new Finder<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return "index[" + index + "]";
+            }
+
+            @Override
+            public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                return root.asListStream()
+                        .result()
+                        .flatMap(stream -> stream.skip(index).findFirst())
+                        .orElse(null);
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public @NotNull Dynamic<?> set(@NotNull final Dynamic<?> root,
+                                           @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
+                final var listResult = root.asListStream();
+                if (listResult.isError()) {
+                    return root;
+                }
+                final var list = listResult.result().orElseThrow().toList();
+                if (index < 0 || index >= list.size()) {
+                    return root;
+                }
+                final List<Dynamic<Object>> newList = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (i == index) {
+                        newList.add((Dynamic<Object>) newValue);
+                    } else {
+                        newList.add((Dynamic<Object>) list.get(i));
+                    }
+                }
+                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
+                return typedRoot.createList(newList.stream());
+            }
+        };
+    }
+
+    /**
+     * Creates an identity finder that focuses on the root dynamic value itself.
+     *
+     * <p>The identity finder is the simplest possible finder—it returns the entire
+     * root as its focus and replaces the entire root when set. This is useful as a starting point for composition or as
+     * a neutral element in finder chains.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"name": "Alice", "age": 30}
+     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     *
+     * Finder<?> identity = Finder.identity();
+     *
+     * // Get returns the entire structure
+     * Dynamic<?> same = identity.get(data);  // {"name": "Alice", "age": 30}
+     *
+     * // Set replaces the entire structure
+     * Dynamic<?> replacement = data.createString("replaced");
+     * Dynamic<?> updated = identity.set(data, replacement);  // "replaced"
+     *
+     * // Useful as composition base
+     * Finder<?> nameFinder = Finder.identity().then(Finder.field("name"));
+     * // Equivalent to: Finder.field("name")
+     * }</pre>
+     *
+     * <h4>Composition Property</h4>
+     * <p>Identity is the neutral element for finder composition:</p>
+     * <ul>
+     *   <li>{@code identity().then(f)} is equivalent to {@code f}</li>
+     *   <li>{@code f.then(identity())} is equivalent to {@code f}</li>
+     * </ul>
+     *
+     * @return an identity finder that focuses on the root itself, never {@code null}
+     */
+    @NotNull
+    static Finder<Object> identity() {
+        return new Finder<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return "identity";
+            }
+
+            @NotNull
+            @Override
+            public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                return root;
+            }
+
+            @NotNull
+            @Override
+            public Dynamic<?> set(@NotNull final Dynamic<?> root,
+                                  @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
+                return newValue;
+            }
+        };
+    }
+
+    /**
+     * Creates a finder that focuses on all fields except the specified ones.
+     *
+     * <p>The remainder finder is useful for preserving unknown or extra fields during
+     * data transformations. When you extract specific known fields from a map/object, the remainder finder captures
+     * everything else, allowing round-trip preservation of data you don't explicitly handle.</p>
+     *
+     * <p>This finder only works on map/object structures. For non-map values,
+     * {@link #get} returns {@code null}.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"name": "Alice", "age": 30, "city": "Boston", "country": "USA"}
+     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     *
+     * // Create a remainder finder that excludes "name" and "age"
+     * Finder<?> remainderFinder = Finder.remainder("name", "age");
+     *
+     * // Get returns all other fields
+     * Dynamic<?> remainder = remainderFinder.get(data);
+     * // remainder: {"city": "Boston", "country": "USA"}
+     *
+     * // Useful for data migration: extract known fields, preserve rest
+     * Finder<?> nameFinder = Finder.field("name");
+     * Finder<?> ageFinder = Finder.field("age");
+     * Finder<?> restFinder = Finder.remainder("name", "age");
+     *
+     * Dynamic<?> name = nameFinder.get(data);    // "Alice"
+     * Dynamic<?> age = ageFinder.get(data);      // 30
+     * Dynamic<?> rest = restFinder.get(data);    // {"city": "Boston", "country": "USA"}
+     * }</pre>
+     *
+     * <h4>Note on Set Operation</h4>
+     * <p>The {@link #set} operation for remainder finders is complex and not fully
+     * implemented. Currently, it returns the root unchanged. For full remainder manipulation, extract the remainder,
+     * modify it, and merge manually.</p>
+     *
+     * @param excludedFields the field names to exclude from the remainder; must not be {@code null}, but may be empty
+     * @return a finder that focuses on all fields except the excluded ones, never {@code null}
+     * @throws NullPointerException if {@code excludedFields} is {@code null}
+     */
+    @NotNull
+    static Finder<Object> remainder(@NotNull final String... excludedFields) {
+        Preconditions.checkNotNull(excludedFields, "excludedFields must not be null");
+        final java.util.Set<String> excluded = java.util.Set.of(excludedFields);
+        return new Finder<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return "remainder";
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                if (!root.isMap()) {
+                    return null;
+                }
+                final var mapResult = root.asMapStream();
+                if (mapResult.isError()) {
+                    return null;
+                }
+                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
+                final var filtered = mapResult.result().orElseThrow()
+                        .filter(pair -> {
+                            final var keyResult = Objects.requireNonNull(pair.first(), "pair.first() should be null").asString();
+                            return keyResult.isError() || !excluded.contains(keyResult.result().orElse(""));
+                        })
+                        .map(pair -> Pair.of(
+                                ((Dynamic<Object>) pair.first()).value(),
+                                ((Dynamic<Object>) Objects.requireNonNull(pair.second(), "pair.second() should not be null")).value()
+                        ));
+                return new Dynamic<>(typedRoot.ops(), typedRoot.ops().createMap(filtered));
+            }
+
+            @NotNull
+            @Override
+            @SuppressWarnings("unchecked")
+            public Dynamic<?> set(@NotNull final Dynamic<?> root,
+                                  @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
+                // Validation: root must be a map
+                if (!root.isMap()) {
+                    return root;
+                }
+
+                final var rootMapResult = root.asMapStream();
+                if (rootMapResult.isError()) {
+                    return root;
+                }
+
+                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
+                final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
+
+                // Filter root: keep only the excluded fields
+                final var excludedEntries = rootMapResult.result().orElseThrow()
+                        .filter(pair -> {
+                            final var keyResult = Objects.requireNonNull(pair.first()).asString();
+                            return keyResult.result().map(excluded::contains).orElse(false);
+                        })
+                        .map(pair -> Pair.of(
+                                ((Dynamic<Object>) pair.first()).value(),
+                                ((Dynamic<Object>) Objects.requireNonNull(pair.second())).value()
+                        ));
+
+                // Create map with only the excluded fields
+                final Object excludedMap = typedRoot.ops().createMap(excludedEntries);
+
+                // Merge: excluded fields + newValue (newValue overwrites on conflicts)
+                final var mergedResult = typedRoot.ops().mergeToMap(excludedMap, typedNewValue.value());
+
+                return mergedResult.result()
+                        .<Dynamic<?>>map(merged -> new Dynamic<>(typedRoot.ops(), merged))
+                        .orElse(root);
+            }
+        };
+    }
+
+    /**
      * Returns a unique identifier for this finder.
      *
      * <p>The identifier is used for debugging, logging, and constructing
      * composite path descriptions when finders are composed.</p>
      *
-     * @return a non-null string identifying this finder, such as "field[name]"
-     *         or "index[0]", never {@code null}
+     * @return a non-null string identifying this finder, such as "field[name]" or "index[0]", never {@code null}
      */
     @NotNull
     String id();
@@ -142,8 +446,8 @@ public interface Finder<A> {
      * Extracts the focused value from the root dynamic structure.
      *
      * <p>This operation navigates into the dynamic data structure and retrieves
-     * the value at the focused location. If the path doesn't exist (e.g., a
-     * missing field or out-of-bounds index), returns {@code null}.</p>
+     * the value at the focused location. If the path doesn't exist (e.g., a missing field or out-of-bounds index),
+     * returns {@code null}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -203,12 +507,12 @@ public interface Finder<A> {
      * }</pre>
      *
      * @param root the root dynamic value to navigate from, must not be {@code null}
-     * @return an Optional containing the focused value, or empty if not present;
-     *         never {@code null}
+     * @return an Optional containing the focused value, or empty if not present; never {@code null}
      * @throws NullPointerException if {@code root} is {@code null}
      */
     @NotNull
     default Optional<Dynamic<?>> getOptional(@NotNull final Dynamic<?> root) {
+        Preconditions.checkNotNull(root, "root must not be null");
         return Optional.ofNullable(get(root));
     }
 
@@ -232,13 +536,15 @@ public interface Finder<A> {
      *
      * @param root    the root dynamic value to modify, must not be {@code null}
      * @param updater the function to transform the focused value, must not be {@code null}
-     * @return a new dynamic structure with the transformed value, or the original
-     *         if the focus doesn't exist; never {@code null}
+     * @return a new dynamic structure with the transformed value, or the original if the focus doesn't exist; never
+     * {@code null}
      * @throws NullPointerException if {@code root} or {@code updater} is {@code null}
      */
     @NotNull
     default Dynamic<?> update(@NotNull final Dynamic<?> root,
                               @NotNull final Function<Dynamic<?>, Dynamic<?>> updater) {
+        Preconditions.checkNotNull(root, "root must not be null");
+        Preconditions.checkNotNull(updater, "updater must not be null");
         final Dynamic<?> current = get(root);
         if (current == null) {
             return root;
@@ -250,8 +556,7 @@ public interface Finder<A> {
      * Composes this finder with another finder to navigate deeper into the structure.
      *
      * <p>The composed finder first navigates using this finder, then applies
-     * the other finder to the intermediate result. This enables building paths
-     * through nested structures.</p>
+     * the other finder to the intermediate result. This enables building paths through nested structures.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -270,6 +575,7 @@ public interface Finder<A> {
      */
     @NotNull
     default <B> Finder<B> then(@NotNull final Finder<B> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
         final Finder<A> self = this;
         return new Finder<>() {
             @NotNull
@@ -281,6 +587,7 @@ public interface Finder<A> {
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                Preconditions.checkNotNull(root, "root must not be null");
                 final Dynamic<?> intermediate = self.get(root);
                 if (intermediate == null) {
                     return null;
@@ -292,306 +599,9 @@ public interface Finder<A> {
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
+                Preconditions.checkNotNull(root, "root must not be null");
+                Preconditions.checkNotNull(newValue, "newValue must not be null");
                 return self.update(root, intermediate -> other.set(intermediate, newValue));
-            }
-        };
-    }
-
-    /**
-     * Creates a finder that navigates to a field by name in a map/object structure.
-     *
-     * <p>The returned finder extracts and modifies the value associated with
-     * the given field name. If the field doesn't exist, {@link #get} returns null.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"name": "Alice", "age": 30}
-     * Finder<?> nameFinder = Finder.field("name");
-     *
-     * Dynamic<?> name = nameFinder.get(data);  // Dynamic("Alice")
-     * Dynamic<?> updated = nameFinder.set(data, data.createString("Bob"));
-     * // updated: {"name": "Bob", "age": 30}
-     * }</pre>
-     *
-     * @param fieldName the name of the field to focus on, must not be {@code null}
-     * @return a finder that navigates to the specified field, never {@code null}
-     * @throws NullPointerException if {@code fieldName} is {@code null}
-     */
-    @NotNull
-    static Finder<Object> field(@NotNull final String fieldName) {
-        return new Finder<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return "field[" + fieldName + "]";
-            }
-
-            @Nullable
-            @Override
-            public Dynamic<?> get(@NotNull final Dynamic<?> root) {
-                return root.get(fieldName);
-            }
-
-            @NotNull
-            @Override
-            public Dynamic<?> set(@NotNull final Dynamic<?> root,
-                                  @NotNull final Dynamic<?> newValue) {
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
-                return typedRoot.set(fieldName, typedNewValue);
-            }
-        };
-    }
-
-    /**
-     * Creates a finder that navigates to an element by index in a list/array structure.
-     *
-     * <p>The returned finder extracts and modifies the element at the specified
-     * index position. If the index is out of bounds (negative or beyond the list
-     * size), {@link #get} returns {@code null} and {@link #set} returns the
-     * root unchanged.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"scores": [85, 92, 78]}
-     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     *
-     * Finder<?> scoresFinder = Finder.field("scores");
-     * Finder<?> firstFinder = Finder.index(0);
-     * Finder<?> firstScoreFinder = scoresFinder.then(firstFinder);
-     *
-     * Dynamic<?> first = firstScoreFinder.get(data);  // Dynamic(85)
-     * Dynamic<?> updated = firstScoreFinder.set(data, data.createInt(100));
-     * // updated: {"scores": [100, 92, 78]}
-     *
-     * // Out of bounds access
-     * Finder<?> outOfBounds = scoresFinder.then(Finder.index(10));
-     * Dynamic<?> missing = outOfBounds.get(data);  // null
-     * }</pre>
-     *
-     * @param index the zero-based index of the element to focus on
-     * @return a finder that navigates to the element at the specified index,
-     *         never {@code null}
-     */
-    @NotNull
-    static Finder<Object> index(final int index) {
-        return new Finder<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return "index[" + index + "]";
-            }
-
-            @Override
-            public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
-                return root.asListStream()
-                        .result()
-                        .flatMap(stream -> stream.skip(index).findFirst())
-                        .orElse(null);
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public @NotNull Dynamic<?> set(@NotNull final Dynamic<?> root,
-                                           @NotNull final Dynamic<?> newValue) {
-                final var listResult = root.asListStream();
-                if (listResult.isError()) {
-                    return root;
-                }
-                final var list = listResult.result().orElseThrow().toList();
-                if (index < 0 || index >= list.size()) {
-                    return root;
-                }
-                final List<Dynamic<Object>> newList = new ArrayList<>();
-                for (int i = 0; i < list.size(); i++) {
-                    if (i == index) {
-                        newList.add((Dynamic<Object>) newValue);
-                    } else {
-                        newList.add((Dynamic<Object>) list.get(i));
-                    }
-                }
-                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
-                return typedRoot.createList(newList.stream());
-            }
-        };
-    }
-
-    /**
-     * Creates an identity finder that focuses on the root dynamic value itself.
-     *
-     * <p>The identity finder is the simplest possible finder—it returns the entire
-     * root as its focus and replaces the entire root when set. This is useful as
-     * a starting point for composition or as a neutral element in finder chains.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"name": "Alice", "age": 30}
-     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     *
-     * Finder<?> identity = Finder.identity();
-     *
-     * // Get returns the entire structure
-     * Dynamic<?> same = identity.get(data);  // {"name": "Alice", "age": 30}
-     *
-     * // Set replaces the entire structure
-     * Dynamic<?> replacement = data.createString("replaced");
-     * Dynamic<?> updated = identity.set(data, replacement);  // "replaced"
-     *
-     * // Useful as composition base
-     * Finder<?> nameFinder = Finder.identity().then(Finder.field("name"));
-     * // Equivalent to: Finder.field("name")
-     * }</pre>
-     *
-     * <h4>Composition Property</h4>
-     * <p>Identity is the neutral element for finder composition:</p>
-     * <ul>
-     *   <li>{@code identity().then(f)} is equivalent to {@code f}</li>
-     *   <li>{@code f.then(identity())} is equivalent to {@code f}</li>
-     * </ul>
-     *
-     * @return an identity finder that focuses on the root itself, never {@code null}
-     */
-    @NotNull
-    static Finder<Object> identity() {
-        return new Finder<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return "identity";
-            }
-
-            @NotNull
-            @Override
-            public Dynamic<?> get(@NotNull final Dynamic<?> root) {
-                return root;
-            }
-
-            @NotNull
-            @Override
-            public Dynamic<?> set(@NotNull final Dynamic<?> root,
-                                  @NotNull final Dynamic<?> newValue) {
-                return newValue;
-            }
-        };
-    }
-
-    /**
-     * Creates a finder that focuses on all fields except the specified ones.
-     *
-     * <p>The remainder finder is useful for preserving unknown or extra fields during
-     * data transformations. When you extract specific known fields from a map/object,
-     * the remainder finder captures everything else, allowing round-trip preservation
-     * of data you don't explicitly handle.</p>
-     *
-     * <p>This finder only works on map/object structures. For non-map values,
-     * {@link #get} returns {@code null}.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"name": "Alice", "age": 30, "city": "Boston", "country": "USA"}
-     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     *
-     * // Create a remainder finder that excludes "name" and "age"
-     * Finder<?> remainderFinder = Finder.remainder("name", "age");
-     *
-     * // Get returns all other fields
-     * Dynamic<?> remainder = remainderFinder.get(data);
-     * // remainder: {"city": "Boston", "country": "USA"}
-     *
-     * // Useful for data migration: extract known fields, preserve rest
-     * Finder<?> nameFinder = Finder.field("name");
-     * Finder<?> ageFinder = Finder.field("age");
-     * Finder<?> restFinder = Finder.remainder("name", "age");
-     *
-     * Dynamic<?> name = nameFinder.get(data);    // "Alice"
-     * Dynamic<?> age = ageFinder.get(data);      // 30
-     * Dynamic<?> rest = restFinder.get(data);    // {"city": "Boston", "country": "USA"}
-     * }</pre>
-     *
-     * <h4>Note on Set Operation</h4>
-     * <p>The {@link #set} operation for remainder finders is complex and not fully
-     * implemented. Currently, it returns the root unchanged. For full remainder
-     * manipulation, extract the remainder, modify it, and merge manually.</p>
-     *
-     * @param excludedFields the field names to exclude from the remainder;
-     *                       must not be {@code null}, but may be empty
-     * @return a finder that focuses on all fields except the excluded ones,
-     *         never {@code null}
-     * @throws NullPointerException if {@code excludedFields} is {@code null}
-     */
-    @NotNull
-    static Finder<Object> remainder(@NotNull final String... excludedFields) {
-        final java.util.Set<String> excluded = java.util.Set.of(excludedFields);
-        return new Finder<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return "remainder";
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
-                if (!root.isMap()) {
-                    return null;
-                }
-                final var mapResult = root.asMapStream();
-                if (mapResult.isError()) {
-                    return null;
-                }
-                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
-                final var filtered = mapResult.result().orElseThrow()
-                        .filter(pair -> {
-                            final var keyResult = Objects.requireNonNull(pair.first(), "pair.first() should be null").asString();
-                            return keyResult.isError() || !excluded.contains(keyResult.result().orElse(""));
-                        })
-                        .map(pair -> Pair.of(
-                                ((Dynamic<Object>) pair.first()).value(),
-                                ((Dynamic<Object>) Objects.requireNonNull(pair.second(), "pair.second() should not be null")).value()
-                        ));
-                return new Dynamic<>(typedRoot.ops(), typedRoot.ops().createMap(filtered));
-            }
-
-            @NotNull
-            @Override
-            @SuppressWarnings("unchecked")
-            public Dynamic<?> set(@NotNull final Dynamic<?> root,
-                                  @NotNull final Dynamic<?> newValue) {
-                // Validation: root must be a map
-                if (!root.isMap()) {
-                    return root;
-                }
-
-                final var rootMapResult = root.asMapStream();
-                if (rootMapResult.isError()) {
-                    return root;
-                }
-
-                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
-                final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
-
-                // Filter root: keep only the excluded fields
-                final var excludedEntries = rootMapResult.result().orElseThrow()
-                        .filter(pair -> {
-                            final var keyResult = Objects.requireNonNull(pair.first()).asString();
-                            return keyResult.result().map(excluded::contains).orElse(false);
-                        })
-                        .map(pair -> Pair.of(
-                                ((Dynamic<Object>) pair.first()).value(),
-                                ((Dynamic<Object>) Objects.requireNonNull(pair.second())).value()
-                        ));
-
-                // Create map with only the excluded fields
-                final Object excludedMap = typedRoot.ops().createMap(excludedEntries);
-
-                // Merge: excluded fields + newValue (newValue overwrites on conflicts)
-                final var mergedResult = typedRoot.ops().mergeToMap(excludedMap, typedNewValue.value());
-
-                return mergedResult.result()
-                        .<Dynamic<?>>map(merged -> new Dynamic<>(typedRoot.ops(), merged))
-                        .orElse(root);
             }
         };
     }

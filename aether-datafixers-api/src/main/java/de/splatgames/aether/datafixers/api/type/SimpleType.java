@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
  * A basic implementation of {@link Type} that pairs a reference with a codec.
  *
  * <p>{@code SimpleType} provides a straightforward way to create types by
- * combining a {@link TypeReference} identifier with a {@link Codec} for
- * serialization. This is the most common way to define types in the system.</p>
+ * combining a {@link TypeReference} identifier with a {@link Codec} for serialization. This is the most common way to
+ * define types in the system.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -78,8 +78,8 @@ public final class SimpleType<A> implements Type<A> {
      */
     public SimpleType(@NotNull final TypeReference reference,
                       @NotNull final Codec<A> codec) {
-        Preconditions.checkNotNull(reference, "TypeReference reference must not be null");
-        Preconditions.checkNotNull(codec, "Codec<A> codec must not be null");
+        Preconditions.checkNotNull(reference, "reference must not be null");
+        Preconditions.checkNotNull(codec, "codec must not be null");
 
         this.reference = reference;
         this.codec = codec;

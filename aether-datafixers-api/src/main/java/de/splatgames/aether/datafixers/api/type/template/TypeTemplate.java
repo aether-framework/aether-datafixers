@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.type.template;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.type.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,8 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * A template for creating types that can be instantiated with type parameters.
  *
  * <p>A {@code TypeTemplate} is a blueprint for constructing concrete {@link Type} instances.
- * Templates enable parameterized and recursive type definitions, allowing complex type
- * structures to be defined declaratively and instantiated with different parameters.</p>
+ * Templates enable parameterized and recursive type definitions, allowing complex type structures to be defined
+ * declaratively and instantiated with different parameters.</p>
  *
  * <h2>Purpose</h2>
  * <p>Type templates serve several key purposes in the data fixing system:</p>
@@ -99,8 +100,8 @@ public interface TypeTemplate {
      * Instantiates this template with the given type family to produce a concrete type.
      *
      * <p>This is the core operation of a type template. The template uses the type
-     * family to resolve any type parameters or recursive references, producing a
-     * fully instantiated {@link Type} that can be used in the data fixing system.</p>
+     * family to resolve any type parameters or recursive references, producing a fully instantiated {@link Type} that
+     * can be used in the data fixing system.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -123,12 +124,10 @@ public interface TypeTemplate {
      * Type<?> treeType = treeFamily.apply(0);
      * }</pre>
      *
-     * @param family the type family providing type parameters and recursive references,
-     *               must not be {@code null}
+     * @param family the type family providing type parameters and recursive references, must not be {@code null}
      * @return the fully instantiated type, never {@code null}
      * @throws NullPointerException      if {@code family} is {@code null}
-     * @throws IndexOutOfBoundsException if the template accesses a type index not
-     *                                   provided by the family
+     * @throws IndexOutOfBoundsException if the template accesses a type index not provided by the family
      */
     @NotNull
     Type<?> apply(@NotNull final TypeFamily family);
@@ -137,8 +136,8 @@ public interface TypeTemplate {
      * Returns a human-readable description of this template.
      *
      * <p>The description is used for debugging, logging, and error messages.
-     * By default, it returns the simple class name, but implementations can
-     * override this to provide more meaningful descriptions.</p>
+     * By default, it returns the simple class name, but implementations can override this to provide more meaningful
+     * descriptions.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -160,8 +159,8 @@ public interface TypeTemplate {
      * Binds a name to this template, enhancing its description.
      *
      * <p>The bound name becomes part of the template's description in the format
-     * {@code "name=originalDescription"}. This is primarily useful for debugging
-     * and logging, making it easier to identify templates in error messages.</p>
+     * {@code "name=originalDescription"}. This is primarily useful for debugging and logging, making it easier to
+     * identify templates in error messages.</p>
      *
      * <p>The template's behavior is unchanged—only its {@link #describe()} output
      * is affected.</p>
@@ -188,11 +187,13 @@ public interface TypeTemplate {
      */
     @NotNull
     default TypeTemplate bind(@NotNull final String name) {
+        Preconditions.checkNotNull(name, "name must not be null");
         final TypeTemplate self = this;
         return new TypeTemplate() {
             @NotNull
             @Override
             public Type<?> apply(@NotNull final TypeFamily family) {
+                Preconditions.checkNotNull(family, "family must not be null");
                 return self.apply(family);
             }
 

@@ -36,29 +36,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Affine")
 class AffineTest {
 
-    // Test data models with optional fields
-    record Person(String firstName, String middleName, String lastName) {}
-    record Address(String street, String city, String apartment) {}
-    record PersonWithAddress(String name, Address address) {}
-
     // Affines for optional fields
     private final Affine<Person, Person, String, String> middleNameAffine = Affine.of(
             "person.middleName",
             person -> Optional.ofNullable(person.middleName()),
             (person, middle) -> new Person(person.firstName(), middle, person.lastName())
     );
-
     private final Affine<Address, Address, String, String> apartmentAffine = Affine.of(
             "address.apartment",
             address -> Optional.ofNullable(address.apartment()),
             (address, apt) -> new Address(address.street(), address.city(), apt)
     );
-
     private final Affine<PersonWithAddress, PersonWithAddress, Address, Address> addressAffine = Affine.of(
             "person.address",
             person -> Optional.ofNullable(person.address()),
             (person, address) -> new PersonWithAddress(person.name(), address)
     );
+
+    // Test data models with optional fields
+    record Person(String firstName, String middleName, String lastName) {
+    }
+
+    record Address(String street, String city, String apartment) {
+    }
+
+    record PersonWithAddress(String name, Address address) {
+    }
 
     @Nested
     @DisplayName("Factory Method of()")

@@ -138,6 +138,9 @@ public final class QuickFix {
                     @NotNull final Dynamic<T> input,
                     @NotNull final DataFixerContext context
             ) {
+                Preconditions.checkNotNull(type, "type must not be null");
+                Preconditions.checkNotNull(input, "input must not be null");
+                Preconditions.checkNotNull(context, "context must not be null");
                 return transform.apply(input);
             }
         };
@@ -160,6 +163,10 @@ public final class QuickFix {
             @NotNull final DataVersion toVersion,
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
     ) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkNotNull(transform, "transform must not be null");
         return simple(name, fromVersion.getVersion(), toVersion.getVersion(), transform);
     }
 
@@ -187,6 +194,7 @@ public final class QuickFix {
             @NotNull final String newField
     ) {
         Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(oldField, "oldField must not be null");
         Preconditions.checkNotNull(newField, "newField must not be null");
 
@@ -223,6 +231,7 @@ public final class QuickFix {
             @NotNull final String defaultValue
     ) {
         Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
 
@@ -256,6 +265,7 @@ public final class QuickFix {
             final int defaultValue
     ) {
         Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
 
         return simple(name, fromVersion, toVersion, input -> {
@@ -288,6 +298,7 @@ public final class QuickFix {
             final boolean defaultValue
     ) {
         Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
 
         return simple(name, fromVersion, toVersion, input -> {
@@ -320,6 +331,7 @@ public final class QuickFix {
             @NotNull final String field
     ) {
         Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
 
         return simple(name, fromVersion, toVersion, input -> input.remove(field));
@@ -349,6 +361,7 @@ public final class QuickFix {
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
     ) {
         Preconditions.checkNotNull(ops, "ops must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
 
@@ -378,6 +391,7 @@ public final class QuickFix {
             final int fromVersion,
             final int toVersion
     ) {
+        Preconditions.checkNotNull(name, "name must not be null");
         return simple(name, fromVersion, toVersion, Function.identity());
     }
 
@@ -402,6 +416,7 @@ public final class QuickFix {
             @NotNull final Predicate<Dynamic<T>> condition,
             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
     ) {
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(condition, "condition must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
 
@@ -433,6 +448,7 @@ public final class QuickFix {
             final int toVersion,
             @NotNull final Function<Dynamic<T>, Dynamic<T>>... transforms
     ) {
+        Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(transforms, "transforms must not be null");
 
         return simple(name, fromVersion, toVersion, input -> {

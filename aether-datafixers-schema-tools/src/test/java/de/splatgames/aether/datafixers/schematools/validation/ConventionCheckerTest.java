@@ -26,6 +26,7 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.dsl.DSL;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.type.Type;
+import de.splatgames.aether.datafixers.api.type.template.TypeFamily;
 import de.splatgames.aether.datafixers.testkit.factory.MockSchemas;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -101,7 +102,7 @@ class ConventionCheckerTest {
             // Note: MockSchemas stores types directly without registering them through the
             // schema's type registry in a way that allows field extraction.
             // Field name validation requires the schema to properly register FieldTypes.
-            final Type<?> typeWithField = DSL.field("playerName", DSL.string()).apply(null);
+            final Type<?> typeWithField = DSL.field("playerName", DSL.string()).apply(TypeFamily.empty());
             final Schema schema = MockSchemas.builder(100)
                     .withType(new TypeReference("player"), typeWithField)
                     .build();
@@ -115,7 +116,7 @@ class ConventionCheckerTest {
         @Test
         @DisplayName("valid field names produce no issues")
         void validFieldNamesProduceNoIssues() {
-            final Type<?> typeWithField = DSL.field("player_name", DSL.string()).apply(null);
+            final Type<?> typeWithField = DSL.field("player_name", DSL.string()).apply(TypeFamily.empty());
             final Schema schema = MockSchemas.builder(100)
                     .withType(new TypeReference("player"), typeWithField)
                     .build();
@@ -180,7 +181,7 @@ class ConventionCheckerTest {
         void fieldNameIssueContextNotAvailableFromMockSchemas() {
             // Field extraction from MockSchemas doesn't work as expected,
             // so no field name issues are generated
-            final Type<?> typeWithField = DSL.field("BadField", DSL.string()).apply(null);
+            final Type<?> typeWithField = DSL.field("BadField", DSL.string()).apply(TypeFamily.empty());
             final Schema schema = MockSchemas.builder(100)
                     .withType(new TypeReference("player"), typeWithField)
                     .build();
@@ -231,7 +232,7 @@ class ConventionCheckerTest {
             final Type<?> type = DSL.and(
                     DSL.field("BadField1", DSL.string()),
                     DSL.field("BadField2", DSL.intType())
-            ).apply(null);
+            ).apply(TypeFamily.empty());
             final Schema schema = MockSchemas.builder(100)
                     .withType(new TypeReference("player"), type)
                     .build();
@@ -245,7 +246,7 @@ class ConventionCheckerTest {
         @Test
         @DisplayName("reports type violations but not field violations from MockSchemas")
         void reportsTypeButNotFieldViolationsFromMockSchemas() {
-            final Type<?> type = DSL.field("BadField", DSL.string()).apply(null);
+            final Type<?> type = DSL.field("BadField", DSL.string()).apply(TypeFamily.empty());
             final Schema schema = MockSchemas.builder(100)
                     .withType(new TypeReference("BadType"), type)
                     .build();
@@ -283,7 +284,7 @@ class ConventionCheckerTest {
             final Type<?> nestedType = DSL.and(
                     DSL.field("outer_field", DSL.string()),
                     DSL.field("inner_field", DSL.intType())
-            ).apply(null);
+            ).apply(TypeFamily.empty());
             final Schema schema = MockSchemas.builder(100)
                     .withType(new TypeReference("nested"), nestedType)
                     .build();

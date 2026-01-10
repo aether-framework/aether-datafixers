@@ -24,10 +24,9 @@
  * Type system for data definitions and serialization.
  *
  * <p>This package provides the type abstraction that bridges
- * {@link de.splatgames.aether.datafixers.api.TypeReference} identifiers with
- * their associated {@link de.splatgames.aether.datafixers.api.codec.Codec}
- * implementations. Types are the runtime representation of data structures
- * defined in schemas.</p>
+ * {@link de.splatgames.aether.datafixers.api.TypeReference} identifiers with their associated
+ * {@link de.splatgames.aether.datafixers.api.codec.Codec} implementations. Types are the runtime representation of data
+ * structures defined in schemas.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>

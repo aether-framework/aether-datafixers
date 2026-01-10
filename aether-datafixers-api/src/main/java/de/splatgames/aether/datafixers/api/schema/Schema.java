@@ -37,9 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * A versioned collection of type definitions for a specific data version.
  *
  * <p>A {@code Schema} represents the structure of data at a specific {@link DataVersion}.
- * It pairs a version number with a {@link TypeRegistry} containing all type definitions
- * valid for that version. Schemas are used by the data fixing system to understand
- * the expected structure of data at different points in time.</p>
+ * It pairs a version number with a {@link TypeRegistry} containing all type definitions valid for that version. Schemas
+ * are used by the data fixing system to understand the expected structure of data at different points in time.</p>
  *
  * <h2>Schema Evolution</h2>
  * <p>Schemas can be extended to define versioned data structures. Each schema version
@@ -109,8 +108,8 @@ public class Schema {
      */
     public Schema(@NotNull final DataVersion version,
                   @NotNull final TypeRegistry types) {
-        Preconditions.checkNotNull(version, "DataVersion version must not be null");
-        Preconditions.checkNotNull(types, "TypeRegistry types must not be null");
+        Preconditions.checkNotNull(version, "version must not be null");
+        Preconditions.checkNotNull(types, "types must not be null");
 
         this.version = version;
         this.types = types;
@@ -232,7 +231,7 @@ public class Schema {
      * @param type the type to register
      */
     protected final void registerType(@NotNull final Type<?> type) {
-        Preconditions.checkNotNull(type, "Type<?> type must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
         this.types.register(type);
     }
@@ -241,8 +240,7 @@ public class Schema {
      * Registers a type defined by a DSL template with this schema.
      *
      * <p>This method enables DFU-style schema definitions using the DSL. The template
-     * is instantiated with an empty {@link TypeFamily} and wrapped with the given
-     * {@link TypeReference}.</p>
+     * is instantiated with an empty {@link TypeFamily} and wrapped with the given {@link TypeReference}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -266,9 +264,9 @@ public class Schema {
      * @throws NullPointerException if reference or template is {@code null}
      */
     protected final void registerType(@NotNull final TypeReference reference,
-                                       @NotNull final TypeTemplate template) {
-        Preconditions.checkNotNull(reference, "TypeReference reference must not be null");
-        Preconditions.checkNotNull(template, "TypeTemplate template must not be null");
+                                      @NotNull final TypeTemplate template) {
+        Preconditions.checkNotNull(reference, "reference must not be null");
+        Preconditions.checkNotNull(template, "template must not be null");
         Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
 
         // Apply the template with an empty family to get the concrete type
@@ -276,33 +274,6 @@ public class Schema {
 
         // Wrap the template type with the reference
         this.types.register(new TemplateBasedType<>(reference, templateType));
-    }
-
-    /**
-     * Internal type implementation that wraps a DSL-generated type with a TypeReference.
-     *
-     * @param <A> the value type
-     */
-    private static final class TemplateBasedType<A> implements Type<A> {
-        private final TypeReference reference;
-        private final Type<A> delegate;
-
-        TemplateBasedType(final TypeReference reference, final Type<A> delegate) {
-            this.reference = reference;
-            this.delegate = delegate;
-        }
-
-        @NotNull
-        @Override
-        public TypeReference reference() {
-            return this.reference;
-        }
-
-        @NotNull
-        @Override
-        public Codec<A> codec() {
-            return this.delegate.codec();
-        }
     }
 
     /**
@@ -317,8 +288,35 @@ public class Schema {
      */
     @NotNull
     public Type<?> require(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
 
         return this.types().require(ref);
+    }
+
+    /**
+     * Internal type implementation that wraps a DSL-generated type with a TypeReference.
+     *
+     * @param <A> the value type
+     */
+    private static final class TemplateBasedType<A> implements Type<A> {
+        private final TypeReference reference;
+        private final Type<A> delegate;
+
+        TemplateBasedType(@NotNull final TypeReference reference, @NotNull final Type<A> delegate) {
+            this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
+            this.delegate = Preconditions.checkNotNull(delegate, "delegate must not be null");
+        }
+
+        @NotNull
+        @Override
+        public TypeReference reference() {
+            return this.reference;
+        }
+
+        @NotNull
+        @Override
+        public Codec<A> codec() {
+            return this.delegate.codec();
+        }
     }
 }

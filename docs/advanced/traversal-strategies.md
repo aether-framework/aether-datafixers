@@ -38,11 +38,11 @@ TypeRewriteRule everywhere = Rules.everywhere(
 
 ## When to Use Each
 
-| Strategy | Use Case |
-|----------|----------|
-| TopDown | Parent determines how to process children |
-| BottomUp | Result depends on transformed children |
-| Everywhere | Normalize all nodes uniformly |
+| Strategy   | Use Case                                  |
+|------------|-------------------------------------------|
+| TopDown    | Parent determines how to process children |
+| BottomUp   | Result depends on transformed children    |
+| Everywhere | Normalize all nodes uniformly             |
 
 ## Example: Normalize IDs
 

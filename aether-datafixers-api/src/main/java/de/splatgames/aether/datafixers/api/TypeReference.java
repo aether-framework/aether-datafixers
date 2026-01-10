@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
  * A unique identifier for a data type in the data fixing system.
  *
  * <p>{@code TypeReference} serves as a key for looking up {@link Type} definitions
- * in a {@link TypeRegistry} and for associating {@link DataFix} instances with
- * specific data types in a {@link FixRegistrar}.</p>
+ * in a {@link TypeRegistry} and for associating {@link DataFix} instances with specific data types in a
+ * {@link FixRegistrar}.</p>
  *
  * <h2>Naming Convention</h2>
  * <p>Type references are typically defined as constants using descriptive,
@@ -84,7 +84,7 @@ public final class TypeReference {
      * @throws IllegalArgumentException if id is empty
      */
     public TypeReference(@NotNull final String id) {
-        Preconditions.checkNotNull(id, "TypeReference id cannot be null");
+        Preconditions.checkNotNull(id, "id must not be null");
         Preconditions.checkArgument(!id.isEmpty(), "TypeReference id cannot be empty");
 
         this.id = id;

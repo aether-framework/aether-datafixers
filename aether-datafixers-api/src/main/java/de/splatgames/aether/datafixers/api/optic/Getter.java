@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -30,9 +31,9 @@ import java.util.function.Function;
  * A getter is a read-only optic that extracts a value from a source without modification capability.
  *
  * <p>A {@code Getter} represents the most basic form of optic: a simple function from a
- * source type to a focus type. Unlike a {@link Lens}, a getter provides no way to modify
- * the source—it is purely for extraction. This makes getters ideal when you want to
- * explicitly communicate that a transformation is one-way and read-only.</p>
+ * source type to a focus type. Unlike a {@link Lens}, a getter provides no way to modify the source—it is purely for
+ * extraction. This makes getters ideal when you want to explicitly communicate that a transformation is one-way and
+ * read-only.</p>
  *
  * <h2>When to Use a Getter</h2>
  * <p>Use a getter when you need to:</p>
@@ -106,90 +107,10 @@ import java.util.function.Function;
 public interface Getter<S, A> {
 
     /**
-     * Returns a unique identifier for this getter.
-     *
-     * <p>The identifier is used for debugging, logging, and constructing
-     * composite identifiers when getters are composed.</p>
-     *
-     * @return a non-null string identifying this getter, never {@code null}
-     */
-    @NotNull
-    String id();
-
-    /**
-     * Extracts the focused value from the source structure.
-     *
-     * <p>This is the core operation of a getter. It applies the extraction
-     * function to retrieve the focused value from the source. The operation
-     * always succeeds as the focused value is guaranteed to exist.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * record Person(String name, int age) {}
-     * Getter<Person, String> nameGetter = Getter.of("person.name", Person::name);
-     *
-     * Person alice = new Person("Alice", 30);
-     * String name = nameGetter.get(alice); // Returns "Alice"
-     * }</pre>
-     *
-     * @param source the source structure to extract from, must not be {@code null}
-     * @return the focused value extracted from the source, never {@code null}
-     * @throws NullPointerException if {@code source} is {@code null}
-     */
-    @NotNull
-    A get(@NotNull final S source);
-
-    /**
-     * Composes this getter with another getter to extract from nested structures.
-     *
-     * <p>Composition chains the extraction: this getter extracts from S to A,
-     * and the other getter extracts from A to B, resulting in a getter that
-     * directly extracts from S to B.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * record Address(String city, String street) {}
-     * record Person(String name, Address address) {}
-     *
-     * Getter<Person, Address> addressGetter = Getter.of("person.address", Person::address);
-     * Getter<Address, String> cityGetter = Getter.of("address.city", Address::city);
-     *
-     * // Compose to get city directly from Person
-     * Getter<Person, String> personCityGetter = addressGetter.compose(cityGetter);
-     *
-     * Person alice = new Person("Alice", new Address("Boston", "Main St"));
-     * String city = personCityGetter.get(alice); // Returns "Boston"
-     * }</pre>
-     *
-     * @param other the getter to compose with, extracting from A to B, must not be {@code null}
-     * @param <B>   the new focus type (the type that {@code other} extracts)
-     * @return a composed getter that extracts from S directly to B, never {@code null}
-     * @throws NullPointerException if {@code other} is {@code null}
-     */
-    @NotNull
-    default <B> Getter<S, B> compose(@NotNull final Getter<A, B> other) {
-        final Getter<S, A> self = this;
-        return new Getter<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return self.id() + "." + other.id();
-            }
-
-            @NotNull
-            @Override
-            public B get(@NotNull final S source) {
-                return other.get(self.get(source));
-            }
-        };
-    }
-
-    /**
      * Creates a getter from a lens by discarding the modification capability.
      *
      * <p>This factory method allows using a {@link Lens} in contexts that only
-     * require read access. The resulting getter uses the lens's {@link Lens#get}
-     * method for extraction.</p>
+     * require read access. The resulting getter uses the lens's {@link Lens#get} method for extraction.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -214,6 +135,7 @@ public interface Getter<S, A> {
      */
     @NotNull
     static <S, T, A, B> Getter<S, A> fromLens(@NotNull final Lens<S, T, A, B> lens) {
+        Preconditions.checkNotNull(lens, "lens must not be null");
         return new Getter<>() {
             @NotNull
             @Override
@@ -224,6 +146,7 @@ public interface Getter<S, A> {
             @NotNull
             @Override
             public A get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return lens.get(source);
             }
         };
@@ -233,8 +156,7 @@ public interface Getter<S, A> {
      * Creates a getter from an extraction function.
      *
      * <p>This is the primary factory method for creating getters. It wraps
-     * a simple extraction function with an identifier for debugging and
-     * composition purposes.</p>
+     * a simple extraction function with an identifier for debugging and composition purposes.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -253,10 +175,8 @@ public interface Getter<S, A> {
      * double dist = distanceGetter.get(p); // 5.0
      * }</pre>
      *
-     * @param id     a unique identifier for this getter (used for debugging and
-     *               composition), must not be {@code null}
-     * @param getter the extraction function that retrieves the focus from the source,
-     *               must not be {@code null}
+     * @param id     a unique identifier for this getter (used for debugging and composition), must not be {@code null}
+     * @param getter the extraction function that retrieves the focus from the source, must not be {@code null}
      * @param <S>    the source type (the structure to extract from)
      * @param <A>    the focus type (the type of the extracted value)
      * @return a new getter wrapping the provided function, never {@code null}
@@ -265,6 +185,8 @@ public interface Getter<S, A> {
     @NotNull
     static <S, A> Getter<S, A> of(@NotNull final String id,
                                   @NotNull final Function<S, A> getter) {
+        Preconditions.checkNotNull(id, "id must not be null");
+        Preconditions.checkNotNull(getter, "getter must not be null");
         return new Getter<>() {
             @NotNull
             @Override
@@ -275,7 +197,88 @@ public interface Getter<S, A> {
             @NotNull
             @Override
             public A get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
                 return getter.apply(source);
+            }
+        };
+    }
+
+    /**
+     * Returns a unique identifier for this getter.
+     *
+     * <p>The identifier is used for debugging, logging, and constructing
+     * composite identifiers when getters are composed.</p>
+     *
+     * @return a non-null string identifying this getter, never {@code null}
+     */
+    @NotNull
+    String id();
+
+    /**
+     * Extracts the focused value from the source structure.
+     *
+     * <p>This is the core operation of a getter. It applies the extraction
+     * function to retrieve the focused value from the source. The operation always succeeds as the focused value is
+     * guaranteed to exist.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * record Person(String name, int age) {}
+     * Getter<Person, String> nameGetter = Getter.of("person.name", Person::name);
+     *
+     * Person alice = new Person("Alice", 30);
+     * String name = nameGetter.get(alice); // Returns "Alice"
+     * }</pre>
+     *
+     * @param source the source structure to extract from, must not be {@code null}
+     * @return the focused value extracted from the source, never {@code null}
+     * @throws NullPointerException if {@code source} is {@code null}
+     */
+    @NotNull
+    A get(@NotNull final S source);
+
+    /**
+     * Composes this getter with another getter to extract from nested structures.
+     *
+     * <p>Composition chains the extraction: this getter extracts from S to A,
+     * and the other getter extracts from A to B, resulting in a getter that directly extracts from S to B.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * record Address(String city, String street) {}
+     * record Person(String name, Address address) {}
+     *
+     * Getter<Person, Address> addressGetter = Getter.of("person.address", Person::address);
+     * Getter<Address, String> cityGetter = Getter.of("address.city", Address::city);
+     *
+     * // Compose to get city directly from Person
+     * Getter<Person, String> personCityGetter = addressGetter.compose(cityGetter);
+     *
+     * Person alice = new Person("Alice", new Address("Boston", "Main St"));
+     * String city = personCityGetter.get(alice); // Returns "Boston"
+     * }</pre>
+     *
+     * @param other the getter to compose with, extracting from A to B, must not be {@code null}
+     * @param <B>   the new focus type (the type that {@code other} extracts)
+     * @return a composed getter that extracts from S directly to B, never {@code null}
+     * @throws NullPointerException if {@code other} is {@code null}
+     */
+    @NotNull
+    default <B> Getter<S, B> compose(@NotNull final Getter<A, B> other) {
+        Preconditions.checkNotNull(other, "other must not be null");
+        final Getter<S, A> self = this;
+        return new Getter<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return self.id() + "." + other.id();
+            }
+
+            @NotNull
+            @Override
+            public B get(@NotNull final S source) {
+                Preconditions.checkNotNull(source, "source must not be null");
+                return other.get(self.get(source));
             }
         };
     }

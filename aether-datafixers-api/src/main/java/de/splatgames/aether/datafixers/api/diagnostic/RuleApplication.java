@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.diagnostic;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,12 +31,11 @@ import java.time.Instant;
 import java.util.Optional;
 
 /**
- * Details about a single {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}
- * application during a migration.
+ * Details about a single {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule} application during a
+ * migration.
  *
  * <p>{@code RuleApplication} captures diagnostic information about each rule
- * that is evaluated during a data fix, including whether the rule matched
- * and how long it took to execute.</p>
+ * that is evaluated during a data fix, including whether the rule matched and how long it took to execute.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -81,18 +81,10 @@ public record RuleApplication(
      * @throws NullPointerException if any required parameter is {@code null}
      */
     public RuleApplication {
-        if (ruleName == null) {
-            throw new NullPointerException("ruleName must not be null");
-        }
-        if (typeName == null) {
-            throw new NullPointerException("typeName must not be null");
-        }
-        if (timestamp == null) {
-            throw new NullPointerException("timestamp must not be null");
-        }
-        if (duration == null) {
-            throw new NullPointerException("duration must not be null");
-        }
+        Preconditions.checkNotNull(ruleName, "ruleName must not be null");
+        Preconditions.checkNotNull(typeName, "typeName must not be null");
+        Preconditions.checkNotNull(timestamp, "timestamp must not be null");
+        Preconditions.checkNotNull(duration, "duration must not be null");
     }
 
     /**

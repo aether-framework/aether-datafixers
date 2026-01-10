@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
  * Bootstrap interface for initializing a {@link DataFixer} with schemas and fixes.
  *
  * <p>{@code DataFixerBootstrap} provides a standardized way to populate
- * a data fixer during initialization. Implementations define the schemas
- * for different data versions and the fixes that migrate between them.</p>
+ * a data fixer during initialization. Implementations define the schemas for different data versions and the fixes that
+ * migrate between them.</p>
  *
  * <h2>Implementation Pattern</h2>
  * <pre>{@code
@@ -88,8 +88,7 @@ public interface DataFixerBootstrap {
      * Registers all schemas with the schema registry.
      *
      * <p>This method is called during data fixer initialization to populate
-     * the schema registry with {@link Schema} instances for each supported
-     * data version.</p>
+     * the schema registry with {@link Schema} instances for each supported data version.</p>
      *
      * @param schemas the schema registry to populate, must not be {@code null}
      */

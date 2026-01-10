@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
  * A registry for collecting {@link DataFix} instances during fixer construction.
  *
  * <p>{@code FixRegistrar} provides a simple interface for registering data fixes
- * with a {@link DataFixer} during its construction phase. Fixes are associated
- * with {@link TypeReference} values to indicate what type of data they transform.</p>
+ * with a {@link DataFixer} during its construction phase. Fixes are associated with {@link TypeReference} values to
+ * indicate what type of data they transform.</p>
  *
  * <h2>Usage Pattern</h2>
  * <p>Registrars are typically provided to bootstrap code that populates fixes:</p>
@@ -52,8 +52,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h2>Fix Ordering</h2>
  * <p>Fixes are applied in version order (determined by {@link DataFix#fromVersion()}
- * and {@link DataFix#toVersion()}), not registration order. Implementations may
- * sort fixes after all registrations are complete.</p>
+ * and {@link DataFix#toVersion()}), not registration order. Implementations may sort fixes after all registrations are
+ * complete.</p>
  *
  * @author Erik Pförtner
  * @see DataFix
@@ -79,8 +79,7 @@ public interface FixRegistrar {
      * Registers multiple data fixes for a type.
      *
      * <p>This is a convenience method for bulk registration. Each fix in the
-     * iterable is registered as if {@link #register(TypeReference, DataFix)}
-     * were called individually.</p>
+     * iterable is registered as if {@link #register(TypeReference, DataFix)} were called individually.</p>
      *
      * @param type  the type reference these fixes apply to, must not be {@code null}
      * @param fixes the data fixes to register, must not be {@code null}

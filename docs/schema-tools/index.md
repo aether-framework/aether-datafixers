@@ -36,11 +36,11 @@ ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
 
 ## Module Contents
 
-| Package | Description |
-|---------|-------------|
-| `schematools.diff` | Schema comparison and diff generation |
-| `schematools.analysis` | Migration path analysis and fix coverage |
-| `schematools.validation` | Schema validation and convention checking |
+| Package                     | Description                                    |
+|-----------------------------|------------------------------------------------|
+| `schematools.diff`          | Schema comparison and diff generation          |
+| `schematools.analysis`      | Migration path analysis and fix coverage       |
+| `schematools.validation`    | Schema validation and convention checking      |
 | `schematools.introspection` | Type structure inspection and field extraction |
 
 ## Installation

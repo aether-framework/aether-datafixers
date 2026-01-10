@@ -11,13 +11,13 @@ Schema diffing helps you understand what changed between two schema versions:
 
 ## Core Components
 
-| Class | Description |
-|-------|-------------|
-| `SchemaDiffer` | Entry point with fluent API for schema comparison |
-| `SchemaDiff` | Immutable result containing all differences |
-| `TypeDiff` | Field-level changes for a specific type |
-| `FieldDiff` | Individual field change with diff kind |
-| `DiffKind` | Enumeration: `ADDED`, `REMOVED`, `MODIFIED`, `UNCHANGED` |
+| Class          | Description                                              |
+|----------------|----------------------------------------------------------|
+| `SchemaDiffer` | Entry point with fluent API for schema comparison        |
+| `SchemaDiff`   | Immutable result containing all differences              |
+| `TypeDiff`     | Field-level changes for a specific type                  |
+| `FieldDiff`    | Individual field change with diff kind                   |
+| `DiffKind`     | Enumeration: `ADDED`, `REMOVED`, `MODIFIED`, `UNCHANGED` |
 
 ## Basic Usage
 
@@ -160,12 +160,12 @@ boolean isChange = fieldDiff.isChanged();  // true for ADDED, REMOVED, MODIFIED
 
 ### DiffKind Values
 
-| Kind | Description | `source()` | `target()` |
-|------|-------------|-----------|-----------|
-| `ADDED` | Field exists only in target | `null` | Present |
-| `REMOVED` | Field exists only in source | Present | `null` |
-| `MODIFIED` | Field exists in both but differs | Present | Present |
-| `UNCHANGED` | Field is identical in both | Present | Present |
+| Kind        | Description                      | `source()` | `target()` |
+|-------------|----------------------------------|------------|------------|
+| `ADDED`     | Field exists only in target      | `null`     | Present    |
+| `REMOVED`   | Field exists only in source      | Present    | `null`     |
+| `MODIFIED`  | Field exists in both but differs | Present    | Present    |
+| `UNCHANGED` | Field is identical in both       | Present    | Present    |
 
 ## FieldInfo
 

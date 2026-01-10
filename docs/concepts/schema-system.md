@@ -7,18 +7,18 @@ The schema system is the foundation of Aether Datafixers. It defines what data t
 A **Schema** represents the state of your data model at a specific version. It associates a `DataVersion` with a `TypeRegistry` containing type definitions.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────┐
 │                         Schema                               │
-│  ┌─────────────────┐    ┌─────────────────────────────────┐ │
-│  │  DataVersion    │    │         TypeRegistry            │ │
-│  │     (100)       │    │  ┌───────────────────────────┐  │ │
-│  └─────────────────┘    │  │ TypeReference → Type      │  │ │
-│                         │  │ "player"    → PlayerType  │  │ │
-│  ┌─────────────────┐    │  │ "world"     → WorldType   │  │ │
-│  │  Parent Schema  │    │  └───────────────────────────┘  │ │
-│  │   (optional)    │    └─────────────────────────────────┘ │
-│  └─────────────────┘                                        │
-└─────────────────────────────────────────────────────────────┘
+│  ┌─────────────────┐    ┌─────────────────────────────────┐  │
+│  │  DataVersion    │    │         TypeRegistry            │  │
+│  │     (100)       │    │  ┌───────────────────────────┐  │  │
+│  └─────────────────┘    │  │ TypeReference → Type      │  │  │
+│                         │  │ "player"    → PlayerType  │  │  │
+│  ┌─────────────────┐    │  │ "world"     → WorldType   │  │  │
+│  │  Parent Schema  │    │  └───────────────────────────┘  │  │
+│  │   (optional)    │    └─────────────────────────────────┘  │
+│  └─────────────────┘                                         │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Components
@@ -455,13 +455,13 @@ Schema definitions should never change after release. If you need to modify a ty
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Schema` | Defines types at a specific version |
-| `SchemaRegistry` | Manages all schemas |
-| `TypeRegistry` | Maps TypeReference → Type within a schema |
-| `DSL` | Factory for type templates |
-| Parent Schema | Enables inheritance of unchanged types |
+| Component        | Purpose                                   |
+|------------------|-------------------------------------------|
+| `Schema`         | Defines types at a specific version       |
+| `SchemaRegistry` | Manages all schemas                       |
+| `TypeRegistry`   | Maps TypeReference → Type within a schema |
+| `DSL`            | Factory for type templates                |
+| Parent Schema    | Enables inheritance of unchanged types    |
 
 ---
 

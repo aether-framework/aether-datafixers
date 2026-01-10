@@ -64,8 +64,8 @@ public final class SimpleCodecRegistry implements CodecRegistry {
 
     @Override
     public void register(@NotNull final TypeReference ref, @NotNull final Codec<?> codec) {
-        Preconditions.checkNotNull(ref, "TypeReference ref cannot be null");
-        Preconditions.checkNotNull(codec, "Codec<?> codec cannot be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
+        Preconditions.checkNotNull(codec, "codec must not be null");
         Preconditions.checkState(!this.frozen, "Registry is frozen and cannot be modified");
 
         this.codecs.put(ref, codec);
@@ -74,14 +74,14 @@ public final class SimpleCodecRegistry implements CodecRegistry {
     @Override
     @Nullable
     public Codec<?> get(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref cannot be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
 
         return this.codecs.get(ref);
     }
 
     @Override
     public boolean has(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref cannot be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
 
         return this.codecs.containsKey(ref);
     }

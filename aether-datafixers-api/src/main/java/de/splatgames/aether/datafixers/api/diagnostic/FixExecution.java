@@ -22,23 +22,22 @@
 
 package de.splatgames.aether.datafixers.api.diagnostic;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Details about a single {@link de.splatgames.aether.datafixers.api.fix.DataFix}
- * execution during a migration.
+ * Details about a single {@link de.splatgames.aether.datafixers.api.fix.DataFix} execution during a migration.
  *
  * <p>{@code FixExecution} captures comprehensive diagnostic information about
- * each data fix that is applied during a migration, including timing,
- * rule applications, and optional before/after snapshots.</p>
+ * each data fix that is applied during a migration, including timing, rule applications, and optional before/after
+ * snapshots.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -92,24 +91,12 @@ public record FixExecution(
      * @throws NullPointerException if any required parameter is {@code null}
      */
     public FixExecution {
-        if (fixName == null) {
-            throw new NullPointerException("fixName must not be null");
-        }
-        if (fromVersion == null) {
-            throw new NullPointerException("fromVersion must not be null");
-        }
-        if (toVersion == null) {
-            throw new NullPointerException("toVersion must not be null");
-        }
-        if (startTime == null) {
-            throw new NullPointerException("startTime must not be null");
-        }
-        if (duration == null) {
-            throw new NullPointerException("duration must not be null");
-        }
-        if (ruleApplications == null) {
-            throw new NullPointerException("ruleApplications must not be null");
-        }
+        Preconditions.checkNotNull(fixName, "fixName must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkNotNull(startTime, "startTime must not be null");
+        Preconditions.checkNotNull(duration, "duration must not be null");
+        Preconditions.checkNotNull(ruleApplications, "ruleApplications must not be null");
         // Defensive copy to ensure immutability
         ruleApplications = List.copyOf(ruleApplications);
     }

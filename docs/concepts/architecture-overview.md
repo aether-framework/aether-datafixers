@@ -8,20 +8,20 @@ Aether Datafixers follows a **forward patching** model: data is migrated sequent
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                              DataFixer                                    │
+│                              DataFixer                                   │
 │  ┌────────────────────────────────────────────────────────────────────┐  │
-│  │                        SchemaRegistry                               │  │
-│  │  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐     │  │
-│  │  │Schema100 │───▶│Schema110 │───▶│Schema200 │───▶│Schema210 │     │  │
-│  │  │ (v1.0.0) │    │ (v1.1.0) │    │ (v2.0.0) │    │ (v2.1.0) │     │  │
-│  │  └──────────┘    └──────────┘    └──────────┘    └──────────┘     │  │
+│  │                        SchemaRegistry                              │  │
+│  │  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐      │  │
+│  │  │Schema100 │───▶│Schema110 │───▶│Schema200 │───▶│Schema210 │      │  │
+│  │  │ (v1.0.0) │    │ (v1.1.0) │    │ (v2.0.0) │    │ (v2.1.0) │      │  │
+│  │  └──────────┘    └──────────┘    └──────────┘    └──────────┘      │  │
 │  └────────────────────────────────────────────────────────────────────┘  │
 │                                                                          │
 │  ┌────────────────────────────────────────────────────────────────────┐  │
-│  │                         FixRegistrar                                │  │
-│  │  ┌────────────┐    ┌────────────┐    ┌────────────┐               │  │
-│  │  │Fix 100→110 │    │Fix 110→200 │    │Fix 200→210 │               │  │
-│  │  └────────────┘    └────────────┘    └────────────┘               │  │
+│  │                         FixRegistrar                               │  │
+│  │  ┌────────────┐    ┌────────────┐    ┌────────────┐                │  │
+│  │  │Fix 100→110 │    │Fix 110→200 │    │Fix 200→210 │                │  │
+│  │  └────────────┘    └────────────┘    └────────────┘                │  │
 │  └────────────────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
@@ -36,17 +36,17 @@ Contains all interfaces, abstract classes, and API contracts. This module define
 
 **Key packages:**
 
-| Package | Contents |
-|---------|----------|
-| `api` | Core types: `DataVersion`, `TypeReference` |
-| `api.schema` | `Schema`, `SchemaRegistry` interfaces |
-| `api.fix` | `DataFix`, `DataFixer`, `FixRegistrar` |
-| `api.dynamic` | `Dynamic`, `DynamicOps`, `TaggedDynamic` |
-| `api.codec` | `Codec`, `Encoder`, `Decoder` |
-| `api.dsl` | `DSL` for type template definitions |
-| `api.optic` | Optics: `Lens`, `Prism`, `Finder`, etc. |
-| `api.rewrite` | `TypeRewriteRule`, `Rules` |
-| `api.result` | `DataResult` for error handling |
+| Package       | Contents                                   |
+|---------------|--------------------------------------------|
+| `api`         | Core types: `DataVersion`, `TypeReference` |
+| `api.schema`  | `Schema`, `SchemaRegistry` interfaces      |
+| `api.fix`     | `DataFix`, `DataFixer`, `FixRegistrar`     |
+| `api.dynamic` | `Dynamic`, `DynamicOps`, `TaggedDynamic`   |
+| `api.codec`   | `Codec`, `Encoder`, `Decoder`              |
+| `api.dsl`     | `DSL` for type template definitions        |
+| `api.optic`   | Optics: `Lens`, `Prism`, `Finder`, etc.    |
+| `api.rewrite` | `TypeRewriteRule`, `Rules`                 |
+| `api.result`  | `DataResult` for error handling            |
 
 ### aether-datafixers-core
 
@@ -54,14 +54,14 @@ Provides default implementations of the API interfaces.
 
 **Key packages:**
 
-| Package | Contents |
-|---------|----------|
-| `core` | `AetherDataFixer` main implementation |
-| `core.bootstrap` | `DataFixerRuntimeFactory` |
-| `core.schema` | Schema base implementations |
-| `core.fix` | `SchemaDataFix` base class |
-| `core.type` | `SimpleType`, `SimpleTypeRegistry` |
-| `core.codec` | Codec implementations |
+| Package          | Contents                              |
+|------------------|---------------------------------------|
+| `core`           | `AetherDataFixer` main implementation |
+| `core.bootstrap` | `DataFixerRuntimeFactory`             |
+| `core.schema`    | Schema base implementations           |
+| `core.fix`       | `SchemaDataFix` base class            |
+| `core.type`      | `SimpleType`, `SimpleTypeRegistry`    |
+| `core.codec`     | Codec implementations                 |
 
 ### aether-datafixers-codec
 
@@ -69,9 +69,9 @@ Codec implementations for common serialization formats.
 
 **Key classes:**
 
-| Class | Purpose |
-|-------|---------|
-| `GsonOps` | `DynamicOps` for Gson's `JsonElement` |
+| Class            | Purpose                               |
+|------------------|---------------------------------------|
+| `GsonOps`        | `DynamicOps` for Gson's `JsonElement` |
 | `JacksonJsonOps` | `DynamicOps` for Jackson's `JsonNode` |
 
 ### aether-datafixers-bom
@@ -199,7 +199,7 @@ A `DataFix` uses `TypeRewriteRule` to define transformations:
 ┌───────────────────────────────────────────────────────────┐
 │                     SchemaDataFix                         │
 │  ┌─────────────────────────────────────────────────────┐  │
-│  │                 TypeRewriteRule                      │  │
+│  │                 TypeRewriteRule                     │  │
 │  │  ┌─────────────────────────────────────────────┐    │  │
 │  │  │  Rules.seq(                                 │    │  │
 │  │  │    Rules.renameField(PLAYER, "xp", "exp"),  │    │  │
@@ -221,7 +221,7 @@ The `Dynamic<T>` wrapper decouples data manipulation from the underlying format:
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│                        Dynamic<JsonElement>                     │
+│                        Dynamic<JsonElement>                    │
 │  ┌────────────────────┐    ┌─────────────────────────────────┐ │
 │  │   DynamicOps<T>    │    │         T value                 │ │
 │  │    (GsonOps)       │    │    (JsonElement)                │ │
@@ -312,14 +312,14 @@ Dynamic<?> nameValue = nameFinder.find(rootDynamic);
 
 Aether Datafixers is designed for thread-safe usage:
 
-| Component | Thread Safety |
-|-----------|---------------|
-| `DataVersion` | Immutable, thread-safe |
-| `TypeReference` | Immutable, thread-safe |
-| `Schema` | Immutable after construction |
-| `DataFixer` | Thread-safe for concurrent updates |
-| `Dynamic` | Immutable, operations return new instances |
-| `DataResult` | Immutable, thread-safe |
+| Component       | Thread Safety                              |
+|-----------------|--------------------------------------------|
+| `DataVersion`   | Immutable, thread-safe                     |
+| `TypeReference` | Immutable, thread-safe                     |
+| `Schema`        | Immutable after construction               |
+| `DataFixer`     | Thread-safe for concurrent updates         |
+| `Dynamic`       | Immutable, operations return new instances |
+| `DataResult`    | Immutable, thread-safe                     |
 
 ---
 

@@ -5,17 +5,17 @@ The Dynamic system is the core abstraction that allows Aether Datafixers to work
 ## Overview
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                       Dynamic<T>                                  │
-│  ┌────────────────────────┐    ┌─────────────────────────────┐   │
-│  │     DynamicOps<T>      │    │         T value             │   │
-│  │   (format operations)  │    │   (underlying data)         │   │
-│  └────────────────────────┘    └─────────────────────────────┘   │
-│                                                                   │
-│  Example: Dynamic<JsonElement>                                    │
-│  ├── ops: GsonOps.INSTANCE                                        │
-│  └── value: {"name": "Steve", "level": 10}                        │
-└──────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                       Dynamic<T>                                │
+│  ┌────────────────────────┐    ┌─────────────────────────────┐  │
+│  │     DynamicOps<T>      │    │         T value             │  │
+│  │   (format operations)  │    │   (underlying data)         │  │
+│  └────────────────────────┘    └─────────────────────────────┘  │
+│                                                                 │
+│  Example: Dynamic<JsonElement>                                  │
+│  ├── ops: GsonOps.INSTANCE                                      │
+│  └── value: {"name": "Steve", "level": 10}                      │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 The key insight is that **all data manipulation happens through `Dynamic`**, which delegates to the appropriate `DynamicOps` for the underlying format. This means the same fix code works with JSON, NBT, YAML, or any other format.
@@ -493,23 +493,23 @@ fixer.update(tagged, fromVersion, toVersion);
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| `Dynamic<T>` | Format-agnostic data wrapper |
-| `DynamicOps<T>` | Format-specific operations |
-| `OptionalDynamic` | Safe nested access |
-| `TaggedDynamic` | Associates data with type |
+| Component         | Purpose                      |
+|-------------------|------------------------------|
+| `Dynamic<T>`      | Format-agnostic data wrapper |
+| `DynamicOps<T>`   | Format-specific operations   |
+| `OptionalDynamic` | Safe nested access           |
+| `TaggedDynamic`   | Associates data with type    |
 
 ## Available DynamicOps Implementations
 
-| Implementation | Format | Data Type | Package |
-|----------------|--------|-----------|---------|
-| `GsonOps` | JSON | `JsonElement` | `codec.json.gson` |
-| `JacksonJsonOps` | JSON | `JsonNode` | `codec.json.jackson` |
-| `SnakeYamlOps` | YAML | `Object` | `codec.yaml.snakeyaml` |
-| `JacksonYamlOps` | YAML | `JsonNode` | `codec.yaml.jackson` |
-| `JacksonTomlOps` | TOML | `JsonNode` | `codec.toml.jackson` |
-| `JacksonXmlOps` | XML | `JsonNode` | `codec.xml.jackson` |
+| Implementation   | Format | Data Type     | Package                |
+|------------------|--------|---------------|------------------------|
+| `GsonOps`        | JSON   | `JsonElement` | `codec.json.gson`      |
+| `JacksonJsonOps` | JSON   | `JsonNode`    | `codec.json.jackson`   |
+| `SnakeYamlOps`   | YAML   | `Object`      | `codec.yaml.snakeyaml` |
+| `JacksonYamlOps` | YAML   | `JsonNode`    | `codec.yaml.jackson`   |
+| `JacksonTomlOps` | TOML   | `JsonNode`    | `codec.toml.jackson`   |
+| `JacksonXmlOps`  | XML    | `JsonNode`    | `codec.xml.jackson`    |
 
 See [Codec Module Documentation](../codec/index.md) for detailed usage of each implementation.
 

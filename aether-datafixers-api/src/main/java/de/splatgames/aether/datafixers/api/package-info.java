@@ -24,13 +24,12 @@
  * Core API for the Aether Datafixers data migration framework.
  *
  * <p>This package provides the foundational types for the data fixing system,
- * including version identifiers and type references that form the basis for
- * all data migrations.</p>
+ * including version identifiers and type references that form the basis for all data migrations.</p>
  *
  * <h2>Overview</h2>
  * <p>Aether Datafixers is a lightweight data migration framework inspired by
- * Minecraft's DataFixer Upper (DFU). It enables forward patching of serialized
- * data through schema definitions and versioned fixers.</p>
+ * Minecraft's DataFixer Upper (DFU). It enables forward patching of serialized data through schema definitions and
+ * versioned fixers.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>
