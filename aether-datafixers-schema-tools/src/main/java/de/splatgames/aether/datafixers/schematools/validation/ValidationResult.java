@@ -174,7 +174,7 @@ public final class ValidationResult {
     public List<ValidationIssue> errors() {
         return this.issues.stream()
                 .filter(ValidationIssue::isError)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -186,7 +186,7 @@ public final class ValidationResult {
     public List<ValidationIssue> warnings() {
         return this.issues.stream()
                 .filter(ValidationIssue::isWarning)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -198,7 +198,7 @@ public final class ValidationResult {
     public List<ValidationIssue> infos() {
         return this.issues.stream()
                 .filter(ValidationIssue::isInfo)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -212,7 +212,7 @@ public final class ValidationResult {
         Preconditions.checkNotNull(code, "code must not be null");
         return this.issues.stream()
                 .filter(issue -> issue.code().equals(code))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -226,7 +226,7 @@ public final class ValidationResult {
         Preconditions.checkNotNull(location, "location must not be null");
         return this.issues.stream()
                 .filter(issue -> issue.location().map(loc -> loc.equals(location)).orElse(false))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -413,6 +413,8 @@ public final class ValidationResult {
          */
         @NotNull
         public Builder error(@NotNull final String code, @NotNull final String message) {
+            Preconditions.checkNotNull(code, "code must not be null");
+            Preconditions.checkNotNull(message, "message must not be null");
             return add(ValidationIssue.error(code, message));
         }
 
@@ -425,6 +427,8 @@ public final class ValidationResult {
          */
         @NotNull
         public Builder warning(@NotNull final String code, @NotNull final String message) {
+            Preconditions.checkNotNull(code, "code must not be null");
+            Preconditions.checkNotNull(message, "message must not be null");
             return add(ValidationIssue.warning(code, message));
         }
 
@@ -437,6 +441,8 @@ public final class ValidationResult {
          */
         @NotNull
         public Builder info(@NotNull final String code, @NotNull final String message) {
+            Preconditions.checkNotNull(code, "code must not be null");
+            Preconditions.checkNotNull(message, "message must not be null");
             return add(ValidationIssue.info(code, message));
         }
 
