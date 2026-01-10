@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.cli.command;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
@@ -34,6 +35,7 @@ import de.splatgames.aether.datafixers.cli.report.ReportFormatter;
 import de.splatgames.aether.datafixers.cli.util.VersionExtractor;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -529,12 +531,18 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #writeOutput(File, String)
      */
     private <T> MigrationResult processFile(
-            final File inputFile,
-            final AetherDataFixer fixer,
-            final FormatHandler<T> handler,
-            final TypeReference typeRef,
-            final DataVersion targetVersion
+            @NotNull final File inputFile,
+            @NotNull final AetherDataFixer fixer,
+            @NotNull final FormatHandler<T> handler,
+            @NotNull final TypeReference typeRef,
+            @NotNull final DataVersion targetVersion
     ) throws IOException {
+        Preconditions.checkNotNull(inputFile, "inputFile must not be null");
+        Preconditions.checkNotNull(fixer, "fixer must not be null");
+        Preconditions.checkNotNull(handler, "handler must not be null");
+        Preconditions.checkNotNull(typeRef, "typeRef must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
+
         final Instant startTime = Instant.now();
 
         // Read input
@@ -626,7 +634,9 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #backup
      * @see #inputFiles
      */
-    private void writeOutput(final File inputFile, final String content) throws IOException {
+    private void writeOutput(@NotNull final File inputFile, @NotNull final String content) throws IOException {
+        Preconditions.checkNotNull(inputFile, "inputFile must not be null");
+        Preconditions.checkNotNull(content, "content must not be null");
         if (this.output != null) {
             // Write to specified output
             if (this.output.isDirectory()) {
