@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -101,7 +102,7 @@ public final class StructureValidator {
     @NotNull
     public static ValidationResult validate(
             @NotNull final Schema schema,
-            final SchemaRegistry registry
+            @Nullable final SchemaRegistry registry
     ) {
         Preconditions.checkNotNull(schema, "schema must not be null");
 
@@ -176,7 +177,7 @@ public final class StructureValidator {
      */
     private static void validateParentChain(
             @NotNull final Schema schema,
-            final SchemaRegistry registry,
+            @Nullable final SchemaRegistry registry,
             @NotNull final ValidationResult.Builder result,
             @NotNull final String location
     ) {
