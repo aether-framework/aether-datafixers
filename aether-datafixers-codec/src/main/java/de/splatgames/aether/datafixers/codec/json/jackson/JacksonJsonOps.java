@@ -135,7 +135,7 @@ import java.util.stream.StreamSupport;
  *
  * <h2>Type Mapping</h2>
  * <p>The following table shows how Java/abstract types map to Jackson JSON node types:</p>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Type Mapping between Java and Jackson</caption>
  *   <tr><th>Java Type</th><th>Jackson Type</th><th>Notes</th></tr>
  *   <tr><td>{@code boolean}</td><td>{@link BooleanNode}</td><td>Created via {@link BooleanNode#valueOf(boolean)}</td></tr>
@@ -200,7 +200,7 @@ import java.util.stream.StreamSupport;
  * </ul>
  *
  * <h2>Comparison with GsonOps</h2>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Feature Comparison between JacksonJsonOps and GsonOps</caption>
  *   <tr><th>Feature</th><th>JacksonJsonOps</th><th>GsonOps</th></tr>
  *   <tr><td>Singleton only</td><td>No (supports custom ObjectMapper)</td><td>Yes</td></tr>
@@ -234,7 +234,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *   <li>Thread-safe read operations</li>
      * </ul>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Direct usage
      * JsonNode json = JacksonJsonOps.INSTANCE.createString("hello");
@@ -300,7 +300,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *   <li>Feature flags (e.g., FAIL_ON_UNKNOWN_PROPERTIES)</li>
      * </ul>
      *
-     * <h3>Example</h3>
+     * <p><b>Example</b></p>
      * <pre>{@code
      * // Create mapper with custom settings
      * ObjectMapper mapper = new ObjectMapper()
@@ -336,7 +336,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *   <li>Converting between POJOs and JsonNode: {@code mapper().valueToTree(pojo)}</li>
      * </ul>
      *
-     * <h3>Example</h3>
+     * <p><b>Example</b></p>
      * <pre>{@code
      * // Serialize JsonNode to string
      * String json = JacksonJsonOps.INSTANCE.mapper().writeValueAsString(node);
@@ -691,12 +691,12 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Extracts the string value from a JSON node. This operation succeeds only if
      * the input is a {@link TextNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link TextNode} (i.e., {@link JsonNode#isTextual()} returns {@code true})</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link TextNode} (e.g., array, object, null, numeric, boolean)</li>
      * </ul>
@@ -721,7 +721,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Extracts the numeric value from a JSON node. This operation succeeds only if
      * the input is a numeric node (any of the numeric node types in Jackson's hierarchy).</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is any numeric node type ({@link IntNode}, {@link LongNode},
      *       {@link FloatNode}, {@link DoubleNode}, {@link ShortNode},
@@ -729,7 +729,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *       {@link com.fasterxml.jackson.databind.node.DecimalNode})</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a numeric node (e.g., array, object, null, string, boolean)</li>
      * </ul>
@@ -758,12 +758,12 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Extracts the boolean value from a JSON node. This operation succeeds only if
      * the input is a {@link BooleanNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link BooleanNode} (i.e., {@link JsonNode#isBoolean()} returns {@code true})</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link BooleanNode} (e.g., array, object, null, string, numeric)</li>
      * </ul>
@@ -833,12 +833,12 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Returns the elements of a JSON array as a stream. This operation succeeds only
      * if the input is an {@link ArrayNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is an {@link ArrayNode} (including empty arrays)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not an {@link ArrayNode} (e.g., object, value node, null)</li>
      * </ul>
@@ -872,13 +872,13 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Creates a new array by appending a value to an existing array. This operation
      * creates a deep copy of the input array to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input list is an {@link ArrayNode}</li>
      *   <li>Input list is {@link NullNode} (treated as empty array)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input list is not an array or null (e.g., object, value node)</li>
      * </ul>
@@ -929,14 +929,14 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Creates a new JSON object from a stream of key-value pairs. Keys must be
      * JSON text nodes; entries with {@code null} keys are skipped.</p>
      *
-     * <h3>Key Handling</h3>
+     * <p><b>Key Handling</b></p>
      * <ul>
      *   <li>Keys are converted to strings via {@link JsonNode#asText()}</li>
      *   <li>Entries with {@code null} keys are silently skipped</li>
      *   <li>Duplicate keys result in the last value being retained</li>
      * </ul>
      *
-     * <h3>Value Handling</h3>
+     * <p><b>Value Handling</b></p>
      * <ul>
      *   <li>{@code null} values are converted to {@link NullNode#getInstance()}</li>
      *   <li>All other values are added as-is</li>
@@ -970,12 +970,12 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Returns the entries of a JSON object as a stream of key-value pairs. This
      * operation succeeds only if the input is an {@link ObjectNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is an {@link ObjectNode} (including empty objects)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not an {@link ObjectNode} (e.g., array, value node, null)</li>
      * </ul>
@@ -1012,14 +1012,14 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object by adding or updating a key-value pair in an existing map.
      * This operation creates a deep copy of the input map to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input map is an {@link ObjectNode}</li>
      *   <li>Input map is {@link NullNode} (treated as empty object)</li>
      *   <li>Key is a {@link TextNode} (i.e., {@link JsonNode#isTextual()} returns {@code true})</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input map is not an object or null (e.g., array, value node)</li>
      *   <li>Key is not a text node</li>
@@ -1061,19 +1061,19 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * of the first object. This operation creates a deep copy of the first map to
      * preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Both inputs are {@link ObjectNode} instances</li>
      *   <li>Either input may be {@link NullNode} (treated as empty object)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>First input is not an object or null</li>
      *   <li>Second input is not an object or null</li>
      * </ul>
      *
-     * <h3>Merge Behavior</h3>
+     * <p><b>Merge Behavior</b></p>
      * <ul>
      *   <li>Entries from the second object override entries with the same key in the first</li>
      *   <li>Entries unique to either object are included in the result</li>
@@ -1118,7 +1118,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Retrieves a field value from a JSON object by key. Returns {@code null} if
      * the input is not an object or the key does not exist.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns the field value if the input is an {@link ObjectNode} containing the key</li>
      *   <li>Returns {@code null} if the input is not an {@link ObjectNode}</li>
@@ -1153,7 +1153,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object with a field set to the specified value. This operation
      * creates a deep copy of the input to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is an {@link ObjectNode}: creates a deep copy and sets the field</li>
      *   <li>If input is not an {@link ObjectNode}: creates a new object with just the field</li>
@@ -1191,7 +1191,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object with a field removed. This operation creates a deep copy
      * of the input to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is an {@link ObjectNode}: creates a deep copy and removes the field</li>
      *   <li>If input is not an {@link ObjectNode}: returns the input unchanged</li>
@@ -1225,7 +1225,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *
      * <p>Checks whether a JSON object contains a field with the specified key.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns {@code true} if input is an {@link ObjectNode} and contains the key</li>
      *   <li>Returns {@code false} if input is not an {@link ObjectNode}</li>
@@ -1259,7 +1259,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * This method recursively converts all nested structures, handling primitives, lists,
      * and maps appropriately.</p>
      *
-     * <h3>Conversion Process</h3>
+     * <p><b>Conversion Process</b></p>
      * <p>The conversion attempts to identify the input type in the following order:</p>
      * <ol>
      *   <li><strong>Boolean:</strong> If {@link DynamicOps#getBooleanValue} succeeds,
@@ -1275,7 +1275,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *   <li><strong>Fallback:</strong> Returns {@link NullNode#getInstance()} if no type matches</li>
      * </ol>
      *
-     * <h3>Edge Cases</h3>
+     * <p><b>Edge Cases</b></p>
      * <ul>
      *   <li>Map entries with {@code null} keys are skipped</li>
      *   <li>Map entries with {@code null} values are converted to {@link NullNode}</li>

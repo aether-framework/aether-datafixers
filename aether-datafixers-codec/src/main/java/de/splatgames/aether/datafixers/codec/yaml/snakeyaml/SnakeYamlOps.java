@@ -107,7 +107,7 @@ import java.util.stream.Stream;
  *
  * <h2>Type Mapping</h2>
  * <p>The following table shows how abstract/Java types map to SnakeYAML's native representation:</p>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Type Mapping between Abstract Types and SnakeYAML Native Types</caption>
  *   <tr><th>Abstract Type</th><th>SnakeYAML Native Type</th><th>Notes</th></tr>
  *   <tr><td>{@code boolean}</td><td>{@link Boolean}</td><td>Java boxed boolean</td></tr>
@@ -209,7 +209,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * It is immutable, stateless, and thread-safe, making it suitable for use in any context
      * including multi-threaded environments and dependency injection containers.</p>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Direct usage
      * Object yamlString = SnakeYamlOps.INSTANCE.createString("hello");
@@ -527,12 +527,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Extracts the string value from a SnakeYAML native type. This operation succeeds
      * only if the input is a {@link String} instance.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link String} instance</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link String} (e.g., Map, List, Number, Boolean, null)</li>
      * </ul>
@@ -558,12 +558,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * only if the input is a {@link Number} instance (including {@link Integer}, {@link Long},
      * {@link Double}, {@link Float}, {@link Byte}, {@link Short}, and other Number subclasses).</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link Number} instance (any subclass)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link Number} (e.g., Map, List, String, Boolean, null)</li>
      * </ul>
@@ -592,12 +592,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Extracts the boolean value from a SnakeYAML native type. This operation succeeds
      * only if the input is a {@link Boolean} instance.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link Boolean} instance</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link Boolean} (e.g., Map, List, String, Number, null)</li>
      * </ul>
@@ -665,12 +665,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Returns the elements of a list as a stream. This operation succeeds only if the
      * input is a {@link List} instance.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link List} instance (including empty lists)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link List} (e.g., Map, primitive, null)</li>
      * </ul>
@@ -699,13 +699,13 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Creates a new list by appending a value to an existing list. This operation creates
      * a shallow copy of the input list and a deep copy of the value to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input list is a {@link List} instance</li>
      *   <li>Input list is {@code null} (treated as empty list)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input list is not a list or null (e.g., Map, primitive)</li>
      * </ul>
@@ -761,14 +761,14 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Creates a new map from a stream of key-value pairs. Keys are converted to strings
      * via {@link Object#toString()}; entries with {@code null} keys are skipped.</p>
      *
-     * <h3>Key Handling</h3>
+     * <p><b>Key Handling</b></p>
      * <ul>
      *   <li>Keys are converted to strings via {@link Object#toString()}</li>
      *   <li>Entries with {@code null} keys are silently skipped</li>
      *   <li>Duplicate keys result in the last value being retained</li>
      * </ul>
      *
-     * <h3>Value Handling</h3>
+     * <p><b>Value Handling</b></p>
      * <ul>
      *   <li>Values are added as-is without modification</li>
      *   <li>{@code null} values are valid and preserved</li>
@@ -803,12 +803,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Returns the entries of a map as a stream of key-value pairs. This operation succeeds
      * only if the input is a {@link Map} instance.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link Map} instance (including empty maps)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link Map} (e.g., List, primitive, null)</li>
      * </ul>
@@ -845,14 +845,14 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * operation creates a shallow copy of the input map and a deep copy of the value to
      * preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input map is a {@link Map} instance</li>
      *   <li>Input map is {@code null} (treated as empty map)</li>
      *   <li>Key is a {@link String}</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input map is not a map or null (e.g., List, primitive)</li>
      *   <li>Key is not a {@link String}</li>
@@ -897,19 +897,19 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Creates a new map by merging all entries from a second map into a copy of the first
      * map. This operation creates deep copies of all values to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Both inputs are {@link Map} instances</li>
      *   <li>Either input may be {@code null} (treated as empty map)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>First input is not a map or null</li>
      *   <li>Second input is not a map or null</li>
      * </ul>
      *
-     * <h3>Merge Behavior</h3>
+     * <p><b>Merge Behavior</b></p>
      * <ul>
      *   <li>Entries from the second map override entries with the same key in the first</li>
      *   <li>Entries unique to either map are included in the result</li>
@@ -957,7 +957,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Retrieves a field value from a map by key. Returns {@code null} if the input is
      * not a map or the key does not exist.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns the field value if the input is a {@link Map} containing the key</li>
      *   <li>Returns {@code null} if the input is not a {@link Map}</li>
@@ -994,7 +994,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * a shallow copy of the input map (if it is a map) and a deep copy of the value to
      * preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is a {@link Map}: creates a copy and sets/updates the field</li>
      *   <li>If input is not a {@link Map}: creates a new map with just the field</li>
@@ -1035,7 +1035,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p>Creates a new map with a field removed. This operation creates a shallow copy of
      * the input map to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is a {@link Map}: creates a copy and removes the field</li>
      *   <li>If input is not a {@link Map}: returns the input unchanged</li>
@@ -1071,7 +1071,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *
      * <p>Checks whether a map contains a field with the specified key.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns {@code true} if input is a {@link Map} and contains the key</li>
      *   <li>Returns {@code false} if input is not a {@link Map}</li>
@@ -1108,7 +1108,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * types. This method recursively converts all nested structures, handling primitives,
      * lists, and maps appropriately.</p>
      *
-     * <h3>Conversion Process</h3>
+     * <p><b>Conversion Process</b></p>
      * <p>The conversion attempts to identify the input type in the following order:</p>
      * <ol>
      *   <li><strong>Boolean:</strong> If {@link DynamicOps#getBooleanValue} succeeds,
@@ -1124,14 +1124,14 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *   <li><strong>Fallback:</strong> Returns {@code null} if no type matches</li>
      * </ol>
      *
-     * <h3>Edge Cases</h3>
+     * <p><b>Edge Cases</b></p>
      * <ul>
      *   <li>Map entries with {@code null} keys are skipped</li>
      *   <li>Map entries with {@code null} values are converted to {@code null}</li>
      *   <li>Empty collections are preserved as empty ArrayList/LinkedHashMap</li>
      * </ul>
      *
-     * <h3>Format-Specific Notes</h3>
+     * <p><b>Format-Specific Notes</b></p>
      * <ul>
      *   <li>Gson's {@code JsonNull} is converted to Java {@code null}</li>
      *   <li>Jackson's {@code NullNode} is converted to Java {@code null}</li>
@@ -1207,7 +1207,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * is essential for maintaining the immutability contract because SnakeYAML uses mutable
      * Java collections.</p>
      *
-     * <h3>Copy Behavior by Type</h3>
+     * <p><b>Copy Behavior by Type</b></p>
      * <ul>
      *   <li><strong>null:</strong> Returns {@code null}</li>
      *   <li><strong>Map:</strong> Creates a new {@link LinkedHashMap} with recursively
@@ -1218,7 +1218,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *       are immutable in Java)</li>
      * </ul>
      *
-     * <h3>Performance Note</h3>
+     * <p><b>Performance Note</b></p>
      * <p>Deep copying has O(n) time and space complexity where n is the total number of
      * elements in the structure. For large data structures, this can be significant.
      * Consider using batch operations ({@link #createMap(Stream)}, {@link #createList(Stream)})

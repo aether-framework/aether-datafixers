@@ -178,7 +178,7 @@ import java.util.stream.StreamSupport;
  *
  * <h2>Type Mapping</h2>
  * <p>The following table shows how Java/abstract types map to Jackson XML node types:</p>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Type Mapping between Java and Jackson XML Nodes</caption>
  *   <tr><th>Java Type</th><th>Jackson Node Type</th><th>XML Representation</th></tr>
  *   <tr><td>{@code boolean}</td><td>{@link BooleanNode}</td><td>{@code <field>true</field>}</td></tr>
@@ -258,7 +258,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * It uses a standard {@link XmlMapper} with default settings, which is suitable for
      * typical XML processing scenarios.</p>
      *
-     * <h3>Default Configuration</h3>
+     * <p><b>Default Configuration</b></p>
      * <p>The default {@link XmlMapper} uses:</p>
      * <ul>
      *   <li>Standard XML element naming (property names become element names)</li>
@@ -267,7 +267,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *   <li>UTF-8 encoding</li>
      * </ul>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Direct usage
      * JsonNode xml = JacksonXmlOps.INSTANCE.createString("hello");
@@ -318,7 +318,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *   <li>Custom serialization features</li>
      * </ul>
      *
-     * <h3>Example</h3>
+     * <p><b>Example</b></p>
      * <pre>{@code
      * XmlMapper customMapper = XmlMapper.builder()
      *     .defaultUseWrapper(false)
@@ -355,7 +355,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *   <li>Working with XML namespaces</li>
      * </ul>
      *
-     * <h3>Example</h3>
+     * <p><b>Example</b></p>
      * <pre>{@code
      * // Serialize to XML string
      * String xml = JacksonXmlOps.INSTANCE.mapper().writeValueAsString(node);
@@ -413,7 +413,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * terminology, this corresponds to an {@link ObjectNode} which contains key-value pairs
      * where keys are always strings. In XML, this represents an element with child elements.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>In XML, object nodes correspond to elements containing child elements:</p>
      * <pre>{@code
      * <parent>
@@ -439,7 +439,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * terminology, this corresponds to an {@link ArrayNode} which contains an ordered
      * sequence of elements.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>XML has no native array type. Arrays are represented as repeated elements or wrapped
      * in container elements. When parsed, Jackson's {@link XmlMapper} converts these to
      * {@link ArrayNode} instances:</p>
@@ -467,7 +467,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Determines whether the given node represents a string value. In Jackson
      * terminology, this corresponds to a {@link TextNode}.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>In XML, string values are typically represented as text content within elements:</p>
      * <pre>{@code
      * <name>John Doe</name>
@@ -490,7 +490,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * numeric node types: {@link IntNode}, {@link LongNode}, {@link FloatNode},
      * {@link DoubleNode}, and {@link ShortNode}.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>XML has no native numeric types; numbers are represented as text. Jackson parses
      * numeric text content into appropriate node types based on the value:</p>
      * <pre>{@code
@@ -514,7 +514,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Determines whether the given node represents a boolean value. In Jackson
      * terminology, this corresponds to a {@link BooleanNode}.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>XML has no native boolean type. Boolean values are typically represented as
      * the text "true" or "false":</p>
      * <pre>{@code
@@ -540,7 +540,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new text node from the given string value. The resulting {@link TextNode}
      * will return {@code true} for {@link JsonNode#isTextual()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, text nodes become element text content:</p>
      * <pre>{@code
      * <element>string value here</element>
@@ -562,7 +562,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new integer node from the given value. The resulting {@link IntNode}
      * will return {@code true} for {@link JsonNode#isNumber()} and {@link JsonNode#isInt()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, integer nodes become numeric text content:</p>
      * <pre>{@code
      * <count>42</count>
@@ -583,7 +583,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new long node from the given value. The resulting {@link LongNode}
      * will return {@code true} for {@link JsonNode#isNumber()} and {@link JsonNode#isLong()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, long nodes become numeric text content:</p>
      * <pre>{@code
      * <timestamp>1609459200000</timestamp>
@@ -608,7 +608,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new float node from the given value. The resulting {@link FloatNode}
      * will return {@code true} for {@link JsonNode#isNumber()} and {@link JsonNode#isFloat()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, float nodes become numeric text content:</p>
      * <pre>{@code
      * <price>19.99</price>
@@ -634,7 +634,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new double node from the given value. The resulting {@link DoubleNode}
      * will return {@code true} for {@link JsonNode#isNumber()} and {@link JsonNode#isDouble()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, double nodes become numeric text content:</p>
      * <pre>{@code
      * <latitude>52.520008</latitude>
@@ -660,7 +660,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new numeric node from the given byte value. The value is stored as a
      * {@link ShortNode} because Jackson does not have a dedicated byte node type.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, byte values become numeric text content:</p>
      * <pre>{@code
      * <flags>127</flags>
@@ -685,7 +685,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new short node from the given value. The resulting {@link ShortNode}
      * will return {@code true} for {@link JsonNode#isNumber()} and {@link JsonNode#isShort()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, short nodes become numeric text content:</p>
      * <pre>{@code
      * <port>8080</port>
@@ -710,7 +710,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new boolean node from the given value. The resulting {@link BooleanNode}
      * will return {@code true} for {@link JsonNode#isBoolean()}.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, boolean nodes become text content "true" or "false":</p>
      * <pre>{@code
      * <enabled>true</enabled>
@@ -742,7 +742,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *   <li>Other -> {@link DoubleNode} (fallback)</li>
      * </ul>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, all numeric types become numeric text content:</p>
      * <pre>{@code
      * <value>42</value>
@@ -785,17 +785,17 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Extracts the string value from a JSON node. This operation succeeds only if
      * the input is a {@link TextNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link TextNode}</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link TextNode} (e.g., array, object, null, numeric, boolean)</li>
      * </ul>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>This method extracts text content from XML elements that were parsed as text nodes:</p>
      * <pre>{@code
      * <name>John Doe</name>  <!-- getStringValue returns "John Doe" -->
@@ -822,12 +822,12 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * the input is a numeric node ({@link IntNode}, {@link LongNode}, {@link FloatNode},
      * {@link DoubleNode}, or {@link ShortNode}).</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is any numeric node type</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a numeric node (e.g., array, object, null, text, boolean)</li>
      * </ul>
@@ -836,7 +836,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * allowing callers to use type-specific accessors like {@link Number#intValue()} or
      * {@link Number#doubleValue()}.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>This method extracts numeric content from XML elements that were parsed as numbers:</p>
      * <pre>{@code
      * <count>42</count>  <!-- getNumberValue returns Integer(42) -->
@@ -863,17 +863,17 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Extracts the boolean value from a JSON node. This operation succeeds only if
      * the input is a {@link BooleanNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link BooleanNode}</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link BooleanNode} (e.g., array, object, null, text, numeric)</li>
      * </ul>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>This method extracts boolean content from XML elements that were parsed as booleans:</p>
      * <pre>{@code
      * <enabled>true</enabled>  <!-- getBooleanValue returns true -->
@@ -902,7 +902,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new empty array node. This is the canonical way to create an empty
      * list structure in the Jackson XML format.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, empty arrays may be represented as empty wrapper elements
      * or omitted entirely depending on the {@link XmlMapper} configuration:</p>
      * <pre>{@code
@@ -925,7 +925,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * Elements are added to the array in encounter order. The stream is consumed
      * completely by this operation.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, arrays become repeated elements or wrapped arrays:</p>
      * <pre>{@code
      * <items>
@@ -958,12 +958,12 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Returns the elements of an array node as a stream. This operation succeeds only
      * if the input is an {@link ArrayNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is an {@link ArrayNode} (including empty arrays)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not an {@link ArrayNode} (e.g., object, primitive, null)</li>
      * </ul>
@@ -996,13 +996,13 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new array by appending a value to an existing array. This operation
      * creates a deep copy of the input array to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input list is an {@link ArrayNode}</li>
      *   <li>Input list is a {@link NullNode} (treated as empty array)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input list is not an array or null (e.g., object, primitive)</li>
      * </ul>
@@ -1010,7 +1010,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p><strong>Immutability:</strong> The original list is never modified. A deep copy
      * is created via {@link ArrayNode#deepCopy()} before the new element is appended.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>When the result is serialized to XML, the appended element becomes an additional
      * repeated element:</p>
      * <pre>{@code
@@ -1046,7 +1046,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new empty object node. This is the canonical way to create an empty
      * map structure in the Jackson XML format.</p>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, empty objects become empty elements:</p>
      * <pre>{@code
      * <element></element>  <!-- or <element/> -->
@@ -1067,20 +1067,20 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object node from a stream of key-value pairs. Keys must be
      * JSON nodes that can be converted to strings; entries with {@code null} keys are skipped.</p>
      *
-     * <h3>Key Handling</h3>
+     * <p><b>Key Handling</b></p>
      * <ul>
      *   <li>Keys are converted to strings via {@link JsonNode#asText()}</li>
      *   <li>Entries with {@code null} keys are silently skipped</li>
      *   <li>Duplicate keys result in the last value being retained</li>
      * </ul>
      *
-     * <h3>Value Handling</h3>
+     * <p><b>Value Handling</b></p>
      * <ul>
      *   <li>{@code null} values are converted to {@link NullNode}</li>
      *   <li>All other values are added as-is</li>
      * </ul>
      *
-     * <h3>XML Representation</h3>
+     * <p><b>XML Representation</b></p>
      * <p>When serialized to XML, object entries become child elements:</p>
      * <pre>{@code
      * <parent>
@@ -1115,12 +1115,12 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Returns the entries of an object node as a stream of key-value pairs. This
      * operation succeeds only if the input is an {@link ObjectNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is an {@link ObjectNode} (including empty objects)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not an {@link ObjectNode} (e.g., array, primitive, null)</li>
      * </ul>
@@ -1131,7 +1131,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *   <li>Value: the field's {@link JsonNode} value</li>
      * </ul>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>For XML data, object entries correspond to child elements:</p>
      * <pre>{@code
      * <parent>
@@ -1166,14 +1166,14 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object by adding or updating a key-value pair in an existing map.
      * This operation creates a deep copy of the input map to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input map is an {@link ObjectNode}</li>
      *   <li>Input map is a {@link NullNode} (treated as empty object)</li>
      *   <li>Key is a text node (string)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input map is not an object or null (e.g., array, primitive)</li>
      *   <li>Key is not a text node</li>
@@ -1182,7 +1182,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p><strong>Immutability:</strong> The original map is never modified. A deep copy
      * is created via {@link ObjectNode#deepCopy()} before the entry is added.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>The added entry becomes a child element in XML:</p>
      * <pre>{@code
      * <!-- Before: <parent><name>John</name></parent> -->
@@ -1222,19 +1222,19 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * of the first object. This operation creates a deep copy of the first map to
      * preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Both inputs are {@link ObjectNode} instances</li>
      *   <li>Either input may be a {@link NullNode} (treated as empty object)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>First input is not an object or null</li>
      *   <li>Second input is not an object or null</li>
      * </ul>
      *
-     * <h3>Merge Behavior</h3>
+     * <p><b>Merge Behavior</b></p>
      * <ul>
      *   <li>Entries from the second object override entries with the same key in the first</li>
      *   <li>Entries unique to either object are included in the result</li>
@@ -1244,7 +1244,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p><strong>Immutability:</strong> Neither input object is modified. A deep copy
      * of the first map is created via {@link ObjectNode#deepCopy()} before merging.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>Merged entries become combined child elements:</p>
      * <pre>{@code
      * <!-- Map 1: <obj><a>1</a><b>2</b></obj> -->
@@ -1287,7 +1287,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Retrieves a field value from an object node by key. Returns {@code null} if
      * the input is not an object or the key does not exist.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns the field value if the input is an {@link ObjectNode} containing the key</li>
      *   <li>Returns {@code null} if the input is not an {@link ObjectNode}</li>
@@ -1298,7 +1298,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * and a key mapped to {@link NullNode}. Use {@link #has(JsonNode, String)} to check
      * for key existence when this distinction matters.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>For XML data, this retrieves child elements by name:</p>
      * <pre>{@code
      * <parent>
@@ -1330,7 +1330,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object with a field set to the specified value. This operation
      * creates a deep copy of the input to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is an {@link ObjectNode}: creates a deep copy and sets the field</li>
      *   <li>If input is not an {@link ObjectNode}: creates a new object with just the field</li>
@@ -1339,7 +1339,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p><strong>Immutability:</strong> The original input is never modified. When the
      * input is an object, {@link ObjectNode#deepCopy()} is used to create the copy.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>The set field becomes a child element:</p>
      * <pre>{@code
      * <!-- Input: <parent><a>1</a></parent> -->
@@ -1376,7 +1376,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object with a field removed. This operation creates a deep copy
      * of the input to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is an {@link ObjectNode}: creates a deep copy and removes the field</li>
      *   <li>If input is not an {@link ObjectNode}: returns the input unchanged</li>
@@ -1386,7 +1386,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p><strong>Immutability:</strong> The original input is never modified. When the
      * input is an object, {@link ObjectNode#deepCopy()} is used to create the copy.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>The removed field is omitted from the result:</p>
      * <pre>{@code
      * <!-- Input: <parent><a>1</a><b>2</b></parent> -->
@@ -1418,7 +1418,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *
      * <p>Checks whether an object node contains a field with the specified key.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns {@code true} if input is an {@link ObjectNode} and contains the key</li>
      *   <li>Returns {@code false} if input is not an {@link ObjectNode}</li>
@@ -1428,7 +1428,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * <p><strong>Note:</strong> This method returns {@code true} even if the key is
      * mapped to {@link NullNode}. It only checks for key existence, not value validity.</p>
      *
-     * <h3>XML Context</h3>
+     * <p><b>XML Context</b></p>
      * <p>For XML data, this checks for the existence of child elements:</p>
      * <pre>{@code
      * <parent>
@@ -1462,7 +1462,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * for XML processing. This method recursively converts all nested structures, handling
      * primitives, lists, and maps appropriately.</p>
      *
-     * <h3>Conversion Process</h3>
+     * <p><b>Conversion Process</b></p>
      * <p>The conversion attempts to identify the input type in the following order:</p>
      * <ol>
      *   <li><strong>Boolean:</strong> If {@link DynamicOps#getBooleanValue} succeeds,
@@ -1478,14 +1478,14 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *   <li><strong>Fallback:</strong> Returns {@link NullNode} if no type matches</li>
      * </ol>
      *
-     * <h3>Edge Cases</h3>
+     * <p><b>Edge Cases</b></p>
      * <ul>
      *   <li>Map entries with {@code null} keys are skipped</li>
      *   <li>Map entries with {@code null} values are converted to {@link NullNode}</li>
      *   <li>Empty collections are preserved as empty arrays/objects</li>
      * </ul>
      *
-     * <h3>XML Considerations</h3>
+     * <p><b>XML Considerations</b></p>
      * <p>When converting to XML format, be aware that:</p>
      * <ul>
      *   <li>The converted data should have a single root element for valid XML serialization</li>

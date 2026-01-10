@@ -190,7 +190,7 @@ public class DataFixerDomainProperties {
      *   <li>Any relevant context for operators</li>
      * </ul>
      *
-     * <h3>Example Descriptions</h3>
+     * <p><b>Example Descriptions</b></p>
      * <ul>
      *   <li>"Game save data migrations for player progress"</li>
      *   <li>"User profile schema evolution"</li>

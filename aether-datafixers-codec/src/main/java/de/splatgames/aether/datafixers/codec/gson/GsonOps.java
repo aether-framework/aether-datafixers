@@ -85,7 +85,7 @@ public class GsonOps implements DynamicOps<JsonElement> {
      * and provides full backwards compatibility. It is thread-safe and can be shared across
      * the entire application.</p>
      *
-     * <h3>Migration</h3>
+     * <p><b>Migration</b></p>
      * <p>Replace usages with:</p>
      * <pre>{@code
      * // Old usage (deprecated)

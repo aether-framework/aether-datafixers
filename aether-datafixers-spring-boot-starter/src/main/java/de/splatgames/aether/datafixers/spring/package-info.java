@@ -40,7 +40,7 @@
  * </ul>
  *
  * <h2>Package Structure</h2>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Sub-packages</caption>
  *   <tr>
  *     <th>Package</th>

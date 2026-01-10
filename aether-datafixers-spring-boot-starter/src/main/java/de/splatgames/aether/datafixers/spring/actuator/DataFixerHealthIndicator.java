@@ -156,7 +156,7 @@ public class DataFixerHealthIndicator implements HealthIndicator {
      * is accessed. It iterates through all registered domains and verifies that
      * each DataFixer can successfully report its current version.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns {@code UNKNOWN} if no DataFixers are registered</li>
      *   <li>Returns {@code UP} with domain details if all DataFixers are healthy</li>

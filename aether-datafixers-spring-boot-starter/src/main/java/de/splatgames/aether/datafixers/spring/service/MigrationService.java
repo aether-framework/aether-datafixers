@@ -376,7 +376,7 @@ public interface MigrationService {
          * This method never throws exceptions for migration errors; instead, errors
          * are captured in the {@link MigrationResult}.</p>
          *
-         * <h3>Validation</h3>
+         * <p><b>Validation</b></p>
          * <p>Before execution, this method validates that all required configuration
          * has been provided. It will throw {@link IllegalStateException} if:</p>
          * <ul>
@@ -399,12 +399,12 @@ public interface MigrationService {
          * will complete when the migration finishes. The migration runs on a
          * background thread (typically from the common ForkJoinPool).</p>
          *
-         * <h3>Error Handling</h3>
+         * <p><b>Error Handling</b></p>
          * <p>Migration errors are captured in the {@link MigrationResult}, not as
          * exceptions in the future. However, validation errors (missing configuration)
          * will cause the future to complete exceptionally.</p>
          *
-         * <h3>Example</h3>
+         * <p><b>Example</b></p>
          * <pre>{@code
          * migrationService.migrate(data)
          *     .from(100)

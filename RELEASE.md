@@ -1,19 +1,19 @@
-# Aether Datafixers v0.4.0 — Spring Boot Integration & Multi-Format DynamicOps
+# 🚀 **Aether Datafixers v0.4.0 — Spring Boot Integration & Multi-Format DynamicOps**
 
 Spring Boot auto-configuration with fluent MigrationService API, Actuator integration, and comprehensive multi-format support for YAML, TOML, and XML.
 
 ---
 
-## Highlights in v0.4.0
+## 🎯 Highlights in v0.4.0
 
-- **Spring Boot Starter** — New `aether-datafixers-spring-boot-starter` module with auto-configuration, fluent `MigrationService` API, multi-domain support, Actuator health/info/endpoints, and Micrometer metrics
-- **Multi-Format DynamicOps** — New DynamicOps implementations for YAML (SnakeYAML, Jackson), TOML (Jackson), and XML (Jackson)
-- **Package Restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
-- **Comprehensive Documentation** — New Spring Boot integration docs and codec format guides
+- ✅ **Spring Boot Starter** — New `aether-datafixers-spring-boot-starter` module with auto-configuration, fluent `MigrationService` API, multi-domain support, Actuator health/info/endpoints, and Micrometer metrics
+- ✅ **Multi-Format DynamicOps** — New DynamicOps implementations for YAML (SnakeYAML, Jackson), TOML (Jackson), and XML (Jackson)
+- ✅ **Package Restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
+- ✅ **Comprehensive Documentation** — New Spring Boot integration docs and codec format guides
 
 ---
 
-## Installation
+## 📦 Installation
 
 > [!TIP]
 > All Aether artifacts are available on **Maven Central** — no extra repository required.
@@ -76,9 +76,9 @@ dependencies {
 
 ---
 
-## What's New
+## 🆕 What's New
 
-### Spring Boot Starter Module
+### 🍃 Spring Boot Starter Module
 
 New module `aether-datafixers-spring-boot-starter` for seamless Spring Boot 3.x integration:
 
@@ -92,14 +92,14 @@ New module `aether-datafixers-spring-boot-starter` for seamless Spring Boot 3.x 
 
 **Key Features:**
 
-| Feature | Description |
-|---------|-------------|
-| Auto-Configuration | Automatic DataFixer bean creation from `DataFixerBootstrap` beans |
-| MigrationService | Fluent API: `.migrate(data).from(100).to(200).execute()` |
-| Multi-Domain | Multiple DataFixers with `@Qualifier` and `.usingDomain("game")` |
-| Actuator | Health indicator, info contributor, `/actuator/datafixers` endpoint |
-| Metrics | Micrometer counters, timers, and distribution summaries |
-| Async | `CompletableFuture` support via `.executeAsync()` |
+| Feature               | Description                                                         |
+|-----------------------|---------------------------------------------------------------------|
+| 🔧 Auto-Configuration | Automatic DataFixer bean creation from `DataFixerBootstrap` beans   |
+| 🔄 MigrationService   | Fluent API: `.migrate(data).from(100).to(200).execute()`            |
+| 🏷️ Multi-Domain      | Multiple DataFixers with `@Qualifier` and `.usingDomain("game")`    |
+| 💚 Actuator           | Health indicator, info contributor, `/actuator/datafixers` endpoint |
+| 📊 Metrics            | Micrometer counters, timers, and distribution summaries             |
+| ⚡ Async               | `CompletableFuture` support via `.executeAsync()`                   |
 
 **Quick Start:**
 
@@ -146,7 +146,7 @@ aether:
       counting: true
 ```
 
-### Multi-Format DynamicOps
+### 🔌 Multi-Format DynamicOps
 
 New DynamicOps implementations in the codec module:
 
@@ -172,7 +172,7 @@ Dynamic<JsonNode> toml = new Dynamic<>(JacksonTomlOps.INSTANCE, tomlData);
 Dynamic<JsonElement> json = yaml.convert(GsonOps.INSTANCE);
 ```
 
-### Breaking Change: Package Restructuring
+### ⚠️ Breaking Change: Package Restructuring
 
 The codec module now uses format-first package organization:
 
@@ -194,7 +194,7 @@ import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
 
 ---
 
-## Changelog
+## 📝 Changelog
 
 **New in 0.4.0**
 
@@ -213,7 +213,7 @@ import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
 
 ---
 
-## Roadmap (next)
+## 🗺️ Roadmap (next)
 
 - **v0.5.0** (API freeze candidate)
   - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
@@ -223,6 +223,6 @@ import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
 
 ---
 
-## License
+## 📜 License
 
 **MIT** — see `LICENSE`.

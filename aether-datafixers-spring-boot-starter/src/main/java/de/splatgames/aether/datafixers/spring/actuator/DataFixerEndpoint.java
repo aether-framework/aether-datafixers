@@ -42,7 +42,7 @@ import java.util.Map;
  * It is accessible at {@code /actuator/datafixers} when properly configured.</p>
  *
  * <h2>Available Operations</h2>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Endpoint Operations</caption>
  *   <tr>
  *     <th>HTTP Method</th>
@@ -180,7 +180,7 @@ public class DataFixerEndpoint {
      * including their current schema version and operational status. It is useful
      * for quick health checks and monitoring dashboards.</p>
      *
-     * <h3>Response Structure</h3>
+     * <p><b>Response Structure</b></p>
      * <p>The response includes a map of domain names to their summaries, where each
      * summary contains:</p>
      * <ul>
@@ -221,12 +221,12 @@ public class DataFixerEndpoint {
      * identified by its name. If the domain is not registered, Spring Boot
      * returns a 404 Not Found response.</p>
      *
-     * <h3>Path Parameter</h3>
+     * <p><b>Path Parameter</b></p>
      * <p>The {@code domain} parameter is extracted from the URL path using the
      * {@link Selector} annotation. For example, {@code /actuator/datafixers/game}
      * would query the "game" domain.</p>
      *
-     * <h3>Response Structure</h3>
+     * <p><b>Response Structure</b></p>
      * <ul>
      *   <li>{@code domain} - The domain name (echoed back for clarity)</li>
      *   <li>{@code currentVersion} - The current schema version (or -1 on error)</li>
@@ -267,7 +267,7 @@ public class DataFixerEndpoint {
      * operation. It wraps a map of domain names to their respective summary objects,
      * providing a complete overview of all registered DataFixers.</p>
      *
-     * <h3>JSON Serialization</h3>
+     * <p><b>JSON Serialization</b></p>
      * <p>When serialized to JSON, this record produces:</p>
      * <pre>{@code
      * {
@@ -293,13 +293,13 @@ public class DataFixerEndpoint {
      * its current schema version and operational status. It is used as the value
      * type in the {@link DataFixersSummary#domains()} map.</p>
      *
-     * <h3>Status Values</h3>
+     * <p><b>Status Values</b></p>
      * <ul>
      *   <li>{@code "UP"} - The DataFixer is operational and responding normally</li>
      *   <li>{@code "DOWN: {message}"} - The DataFixer failed with the given error message</li>
      * </ul>
      *
-     * <h3>Version Semantics</h3>
+     * <p><b>Version Semantics</b></p>
      * <ul>
      *   <li>Positive values: Valid schema version</li>
      *   <li>{@code -1}: Indicates an error occurred while reading the version</li>
@@ -320,7 +320,7 @@ public class DataFixerEndpoint {
      * returned by the {@link #domainDetails(String)} operation. It includes
      * the domain name for clarity, along with version and status information.</p>
      *
-     * <h3>JSON Serialization</h3>
+     * <p><b>JSON Serialization</b></p>
      * <p>When serialized to JSON, this record produces:</p>
      * <pre>{@code
      * {

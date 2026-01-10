@@ -74,14 +74,14 @@ public enum DynamicOpsFormat {
      * This format is provided by the {@code aether-datafixers-codec} module's
      * {@code GsonOps} implementation.</p>
      *
-     * <h3>Characteristics</h3>
+     * <p><b>Characteristics</b></p>
      * <ul>
      *   <li>Lightweight and simple API</li>
      *   <li>No external dependencies beyond Gson itself</li>
      *   <li>Good performance for most use cases</li>
      * </ul>
      *
-     * <h3>Required Dependency</h3>
+     * <p><b>Required Dependency</b></p>
      * <pre>{@code
      * <dependency>
      *     <groupId>com.google.code.gson</groupId>
@@ -100,7 +100,7 @@ public enum DynamicOpsFormat {
      * data type. This format is provided by the {@code aether-datafixers-codec}
      * module's {@code JacksonJsonOps} implementation.</p>
      *
-     * <h3>Characteristics</h3>
+     * <p><b>Characteristics</b></p>
      * <ul>
      *   <li>Feature-rich with extensive customization options</li>
      *   <li>Supports streaming and incremental parsing</li>
@@ -108,7 +108,7 @@ public enum DynamicOpsFormat {
      *   <li>Can reuse Spring's configured {@code ObjectMapper}</li>
      * </ul>
      *
-     * <h3>Required Dependency</h3>
+     * <p><b>Required Dependency</b></p>
      * <pre>{@code
      * <dependency>
      *     <groupId>com.fasterxml.jackson.core</groupId>
@@ -116,7 +116,7 @@ public enum DynamicOpsFormat {
      * </dependency>
      * }</pre>
      *
-     * <h3>Spring Integration</h3>
+     * <p><b>Spring Integration</b></p>
      * <p>When using Jackson with Spring, the auto-configured {@code JacksonJsonOps}
      * will automatically use Spring's {@code ObjectMapper} if available, ensuring
      * consistent JSON handling across the application.</p>
@@ -132,7 +132,7 @@ public enum DynamicOpsFormat {
      * data type with YAML serialization. This format is provided by the
      * {@code aether-datafixers-codec} module's {@code JacksonYamlOps} implementation.</p>
      *
-     * <h3>Required Dependency</h3>
+     * <p><b>Required Dependency</b></p>
      * <pre>{@code
      * <dependency>
      *     <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -151,14 +151,14 @@ public enum DynamicOpsFormat {
      * underlying data representation. This format is provided by the
      * {@code aether-datafixers-codec} module's {@code SnakeYamlOps} implementation.</p>
      *
-     * <h3>Characteristics</h3>
+     * <p><b>Characteristics</b></p>
      * <ul>
      *   <li>Lightweight YAML processing</li>
      *   <li>Works with native Java types</li>
      *   <li>No Jackson dependency required</li>
      * </ul>
      *
-     * <h3>Required Dependency</h3>
+     * <p><b>Required Dependency</b></p>
      * <pre>{@code
      * <dependency>
      *     <groupId>org.yaml</groupId>
@@ -177,13 +177,13 @@ public enum DynamicOpsFormat {
      * data type with TOML serialization. This format is provided by the
      * {@code aether-datafixers-codec} module's {@code JacksonTomlOps} implementation.</p>
      *
-     * <h3>TOML Limitations</h3>
+     * <p><b>TOML Limitations</b></p>
      * <ul>
      *   <li>Top-level value must be a table (object)</li>
      *   <li>Null values are not natively supported</li>
      * </ul>
      *
-     * <h3>Required Dependency</h3>
+     * <p><b>Required Dependency</b></p>
      * <pre>{@code
      * <dependency>
      *     <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -202,13 +202,13 @@ public enum DynamicOpsFormat {
      * data type with XML serialization. This format is provided by the
      * {@code aether-datafixers-codec} module's {@code JacksonXmlOps} implementation.</p>
      *
-     * <h3>XML Considerations</h3>
+     * <p><b>XML Considerations</b></p>
      * <ul>
      *   <li>XML requires a root element</li>
      *   <li>XML attributes may be represented differently than elements</li>
      * </ul>
      *
-     * <h3>Required Dependency</h3>
+     * <p><b>Required Dependency</b></p>
      * <pre>{@code
      * <dependency>
      *     <groupId>com.fasterxml.jackson.dataformat</groupId>

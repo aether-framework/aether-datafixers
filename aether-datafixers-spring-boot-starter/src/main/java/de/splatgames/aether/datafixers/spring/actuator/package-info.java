@@ -28,7 +28,7 @@
  * information, and detailed configuration through standard Actuator endpoints.</p>
  *
  * <h2>Package Contents</h2>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Actuator Components</caption>
  *   <tr>
  *     <th>Class</th>

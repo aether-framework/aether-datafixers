@@ -317,7 +317,7 @@ public final class MigrationResult {
      * <p>This provides a null-safe way to access the migrated data without
      * risking an exception. The Optional will be empty for failed migrations.</p>
      *
-     * <h3>Example Usage</h3>
+     * <p><b>Example Usage</b></p>
      * <pre>{@code
      * result.getDataOptional()
      *     .ifPresent(data -> processData(data));
@@ -396,7 +396,7 @@ public final class MigrationResult {
      * be empty for successful migrations. Use this for error logging, metrics,
      * or exception chaining.</p>
      *
-     * <h3>Example Usage</h3>
+     * <p><b>Example Usage</b></p>
      * <pre>{@code
      * result.getError().ifPresent(error -> {
      *     log.error("Migration failed: {}", error.getMessage(), error);

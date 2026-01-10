@@ -35,7 +35,7 @@
  * </ul>
  *
  * <h2>Available Metrics</h2>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Metrics Overview</caption>
  *   <tr>
  *     <th>Metric Name</th>

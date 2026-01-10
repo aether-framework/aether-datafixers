@@ -57,7 +57,7 @@ import org.springframework.context.annotation.Primary;
  *
  * <h2>Automatic Format Detection</h2>
  * <p>The configuration uses classpath scanning to detect available JSON libraries:</p>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Library Detection</caption>
  *   <tr>
  *     <th>Library</th>

@@ -223,7 +223,7 @@ public class DataFixerAutoConfiguration {
      * in the application context (detected by {@code @ConditionalOnSingleCandidate}).
      * The fixer is marked as {@code @Primary} and registered under the default domain.</p>
      *
-     * <h3>Activation Conditions</h3>
+     * <p><b>Activation Conditions</b></p>
      * <ul>
      *   <li>Exactly one DataFixerBootstrap bean in context</li>
      *   <li>No AetherDataFixer bean already defined</li>
@@ -262,7 +262,7 @@ public class DataFixerAutoConfiguration {
      * when setting up multi-domain DataFixer configurations. It handles version resolution,
      * fixer creation, and registry registration in a single operation.</p>
      *
-     * <h3>Usage Example</h3>
+     * <p><b>Usage Example</b></p>
      * <pre>{@code
      * @Configuration
      * public class MultiDomainConfig {
@@ -331,7 +331,7 @@ public class DataFixerAutoConfiguration {
      * multiple sources in priority order. This allows for flexible version configuration
      * from properties while supporting convention-based defaults.</p>
      *
-     * <h3>Resolution Order</h3>
+     * <p><b>Resolution Order</b></p>
      * <ol>
      *   <li><strong>Domain Properties:</strong> {@code aether.datafixers.domains.<domain>.current-version}
      *       - Highest priority, allows per-domain override</li>
@@ -341,7 +341,7 @@ public class DataFixerAutoConfiguration {
      *       - Fallback for all domains</li>
      * </ol>
      *
-     * <h3>Error Handling</h3>
+     * <p><b>Error Handling</b></p>
      * <p>If none of the sources provide a version, this method throws an {@link IllegalStateException}
      * with a detailed message explaining the available configuration options.</p>
      *

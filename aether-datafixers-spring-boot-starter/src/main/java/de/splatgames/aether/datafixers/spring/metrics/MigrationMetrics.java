@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <h2>Recorded Metrics</h2>
  * <p>The following metrics are recorded with the prefix {@code aether.datafixers.migrations}:</p>
  *
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Migration Metrics</caption>
  *   <tr>
  *     <th>Metric Name</th>
@@ -206,7 +206,7 @@ public class MigrationMetrics {
      * this is the auto-configured registry from Spring Boot Actuator, which handles
      * export to various monitoring backends (Prometheus, Datadog, etc.).</p>
      *
-     * <h3>Example Usage</h3>
+     * <p><b>Example Usage</b></p>
      * <pre>{@code
      * // Manual instantiation (typically done by auto-configuration)
      * MeterRegistry registry = new SimpleMeterRegistry();
@@ -238,7 +238,7 @@ public class MigrationMetrics {
      * <p>The version span is calculated as the absolute difference between the target
      * and source versions, providing insight into how far data was migrated.</p>
      *
-     * <h3>Example</h3>
+     * <p><b>Example</b></p>
      * <pre>{@code
      * // After a successful migration
      * metrics.recordSuccess("game", 100, 200, Duration.ofMillis(150));
@@ -284,7 +284,7 @@ public class MigrationMetrics {
      * "IllegalStateException", "MigrationException"). This allows for fine-grained
      * failure analysis and alerting based on error categories.</p>
      *
-     * <h3>Example</h3>
+     * <p><b>Example</b></p>
      * <pre>{@code
      * try {
      *     // Perform migration
@@ -294,7 +294,7 @@ public class MigrationMetrics {
      * }
      * }</pre>
      *
-     * <h3>Note on Duration Recording</h3>
+     * <p><b>Note on Duration Recording</b></p>
      * <p>Duration is recorded even for failures to provide complete timing statistics.
      * This helps identify whether failures are correlated with long-running migrations
      * (e.g., timeouts) or occur quickly (e.g., validation errors).</p>

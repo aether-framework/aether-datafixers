@@ -96,7 +96,7 @@ public class JacksonOps implements DynamicOps<JsonNode> {
      * compatibility. It uses a default {@link ObjectMapper} with standard configuration.
      * The instance is thread-safe and can be shared across the entire application.</p>
      *
-     * <h3>Migration</h3>
+     * <p><b>Migration</b></p>
      * <p>Replace usages with:</p>
      * <pre>{@code
      * // Old usage (deprecated)
@@ -126,7 +126,7 @@ public class JacksonOps implements DynamicOps<JsonNode> {
      * <p>This constructor allows wrapping any {@link JacksonJsonOps} instance, enabling use
      * of custom configurations while maintaining backwards compatibility.</p>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Typically use the singleton instead
      * JacksonOps ops = JacksonOps.INSTANCE;
@@ -152,7 +152,7 @@ public class JacksonOps implements DynamicOps<JsonNode> {
      * <p>This constructor provides backwards compatibility for code that creates custom
      * {@code JacksonOps} instances with a specific mapper configuration.</p>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Old usage (deprecated)
      * ObjectMapper customMapper = new ObjectMapper()
@@ -178,7 +178,7 @@ public class JacksonOps implements DynamicOps<JsonNode> {
      * <p>This method provides access to the underlying Jackson mapper, which can be
      * useful for advanced configuration or direct JSON serialization/deserialization.</p>
      *
-     * <h3>Migration</h3>
+     * <p><b>Migration</b></p>
      * <pre>{@code
      * // Old usage (deprecated)
      * ObjectMapper mapper = jacksonOps.mapper();

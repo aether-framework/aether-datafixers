@@ -54,7 +54,7 @@ import org.springframework.context.annotation.Configuration;
  * </ul>
  *
  * <h2>Provided Components</h2>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Actuator Components</caption>
  *   <tr>
  *     <th>Component</th>

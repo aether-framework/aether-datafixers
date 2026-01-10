@@ -134,7 +134,7 @@ import java.util.stream.StreamSupport;
  *
  * <h2>Type Mapping</h2>
  * <p>The following table shows how Java/abstract types map to Jackson TOML node types:</p>
- * <table border="1" cellpadding="5">
+ * <table class="striped">
  *   <caption>Type Mapping between Java and Jackson TOML Nodes</caption>
  *   <tr><th>Java Type</th><th>Jackson Node Type</th><th>TOML Type</th><th>Notes</th></tr>
  *   <tr><td>{@code boolean}</td><td>{@link BooleanNode}</td><td>Boolean</td><td>Native TOML type</td></tr>
@@ -222,7 +222,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * specific serialization features, or custom modules), create a new instance using
      * {@link #JacksonTomlOps(TomlMapper)}.</p>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Direct usage for creating nodes
      * JsonNode stringNode = JacksonTomlOps.INSTANCE.createString("hello");
@@ -268,7 +268,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * all nodes. This allows customization of node creation behavior and ensures
      * consistency with the mapper's configuration.</p>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Create with custom mapper configuration
      * TomlMapper customMapper = TomlMapper.builder()
@@ -305,7 +305,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *   <li>Writing TOML to files or streams</li>
      * </ul>
      *
-     * <h3>Usage</h3>
+     * <p><b>Usage</b></p>
      * <pre>{@code
      * // Serialize to TOML string
      * String tomlString = JacksonTomlOps.INSTANCE.mapper().writeValueAsString(objectNode);
@@ -337,7 +337,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * using the {@link TomlMapper}. Consider using optional fields or sentinel values
      * when the data will be serialized to TOML.</p>
      *
-     * <h3>Use Cases</h3>
+     * <p><b>Use Cases</b></p>
      * <ul>
      *   <li>Representing absent optional values in the internal tree model</li>
      *   <li>Fallback return value when conversion cannot determine the type</li>
@@ -361,7 +361,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * In TOML terminology, this corresponds to a "table" which contains key-value
      * pairs where keys are always strings.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>Tables are the fundamental structured type in TOML. They can be defined
      * using bracket notation {@code [table]} or inline notation {@code {key = value}}.
      * In the Jackson tree model, both representations are stored as {@link ObjectNode}.</p>
@@ -384,7 +384,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * In TOML terminology, this corresponds to an "array" which contains an ordered
      * sequence of values.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML arrays can be defined using bracket notation {@code [1, 2, 3]} and
      * support both inline and multiline formats. Standard TOML requires arrays to
      * contain homogeneous types (except for arrays of tables). While the internal
@@ -409,7 +409,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * In TOML, strings can be basic (with escapes), literal (no escapes),
      * or multiline variants of either.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML supports four string types:</p>
      * <ul>
      *   <li>Basic strings: {@code "hello\nworld"} (with escape sequences)</li>
@@ -435,7 +435,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Determines whether the given node represents a numeric value.
      * In TOML, this includes both integers and floating-point numbers.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML distinguishes between integers and floats:</p>
      * <ul>
      *   <li>Integers: {@code 42}, {@code 0xDEADBEEF}, {@code 0o755}, {@code 0b1010}</li>
@@ -461,7 +461,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Determines whether the given node represents a boolean value.
      * TOML booleans are native types with lowercase literals.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML booleans must be lowercase: {@code true} or {@code false}.
      * The Jackson parser handles this automatically, storing the result
      * as a {@link BooleanNode}.</p>
@@ -484,7 +484,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new text node from the given string value. The resulting
      * {@link TextNode} represents a TOML string value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>When serialized to TOML, the string will be written using appropriate
      * quoting based on content (basic or literal, single or multiline) as
      * determined by the {@link TomlMapper}'s configuration.</p>
@@ -505,7 +505,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new integer node from the given int value. The resulting
      * {@link IntNode} represents a TOML integer value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML integers support 64-bit signed values. When serialized, the
      * value will be written in decimal format by default. The mapper may
      * be configured to use underscores for readability (e.g., {@code 1_000_000}).</p>
@@ -525,7 +525,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new long node from the given long value. The resulting
      * {@link LongNode} represents a TOML integer value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML integers are 64-bit signed, so all Java long values are
      * representable. Very large values will be serialized without loss
      * of precision, unlike JSON which may have precision issues with
@@ -546,7 +546,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new float node from the given float value. The resulting
      * {@link FloatNode} represents a TOML float value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML floats follow IEEE 754 binary64 representation. Special values
      * are supported:</p>
      * <ul>
@@ -571,7 +571,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new double node from the given double value. The resulting
      * {@link DoubleNode} represents a TOML float value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML floats follow IEEE 754 binary64 representation, which matches
      * Java's double precision. Special values ({@code inf}, {@code -inf},
      * {@code nan}) are valid TOML and will be serialized correctly.</p>
@@ -591,7 +591,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new short node from the given byte value. The value is
      * widened to short for storage in a {@link ShortNode}.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML does not have a dedicated byte type. The value is stored as
      * a short internally and will be serialized as a regular TOML integer.
      * Type information may be lost during round-trips through TOML text
@@ -613,7 +613,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new short node from the given short value. The resulting
      * {@link ShortNode} represents a TOML integer value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML does not have a dedicated short type. The value will be
      * serialized as a regular TOML integer. Type information may be lost
      * during round-trips through TOML text serialization.</p>
@@ -633,7 +633,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new boolean node from the given boolean value. The resulting
      * {@link BooleanNode} represents a TOML boolean value.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML booleans are serialized as lowercase {@code true} or {@code false}.
      * Unlike JSON, TOML does not allow numeric representations (0/1) for booleans.</p>
      *
@@ -652,7 +652,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new numeric node from the given {@link Number} value. This method
      * selects the appropriate node type based on the runtime type of the number.</p>
      *
-     * <h3>Type Selection</h3>
+     * <p><b>Type Selection</b></p>
      * <p>The following mapping is used based on the number's runtime type:</p>
      * <ul>
      *   <li>{@link Integer} -> {@link IntNode}</li>
@@ -664,7 +664,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *   <li>Other {@link Number} subclasses -> {@link DoubleNode} (via {@link Number#doubleValue()})</li>
      * </ul>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML distinguishes between integers and floats but does not have
      * type-specific variants. The specific node type primarily affects internal
      * representation; serialization to TOML will produce appropriate integer
@@ -706,12 +706,12 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Extracts the string value from a node. This operation succeeds only if
      * the input is a {@link TextNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link TextNode} (textual node)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link TextNode} (e.g., array, object, null, number, boolean)</li>
      * </ul>
@@ -739,12 +739,12 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * the input is a numeric node ({@link IntNode}, {@link LongNode}, {@link FloatNode},
      * {@link DoubleNode}, or {@link ShortNode}).</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is any numeric node type</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a numeric node (e.g., array, object, null, string, boolean)</li>
      * </ul>
@@ -773,12 +773,12 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Extracts the boolean value from a node. This operation succeeds only if
      * the input is a {@link BooleanNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is a {@link BooleanNode}</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not a {@link BooleanNode} (e.g., array, object, null, string, number)</li>
      * </ul>
@@ -808,7 +808,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new empty array node. This is the canonical way to create an empty
      * list structure in the Jackson TOML format.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>Empty arrays are valid TOML and serialize as {@code []}. The array can be
      * populated with elements of any type, though standard TOML requires type
      * homogeneity for serialization.</p>
@@ -828,7 +828,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * Elements are added to the array in encounter order. The stream is consumed
      * completely by this operation.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>When serializing to TOML, ensure all elements are of the same type
      * (or all are tables) to comply with TOML's homogeneous array requirement.
      * The internal representation allows heterogeneous arrays, but serialization
@@ -854,12 +854,12 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Returns the elements of an array node as a stream. This operation succeeds
      * only if the input is an {@link ArrayNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is an {@link ArrayNode} (including empty arrays)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not an {@link ArrayNode} (e.g., object, primitive, null)</li>
      * </ul>
@@ -892,13 +892,13 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new array by appending a value to an existing array. This operation
      * creates a deep copy of the input array to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input list is an {@link ArrayNode}</li>
      *   <li>Input list is a {@link NullNode} (treated as empty array)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input list is not an array or null (e.g., object, primitive)</li>
      * </ul>
@@ -906,7 +906,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p><strong>Immutability:</strong> The original list is never modified. A deep copy
      * is created via {@link ArrayNode#deepCopy()} before the new element is appended.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>When building arrays for TOML serialization, ensure type consistency
      * by only appending elements of the same type as existing elements.</p>
      *
@@ -938,7 +938,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new empty object node. This is the canonical way to create an empty
      * map/table structure in the Jackson TOML format.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>Empty tables are valid TOML. When serialized as the root document, an empty
      * table produces an empty TOML file. As a nested table, it may be omitted or
      * represented as an empty inline table {@code {}} depending on mapper configuration.</p>
@@ -957,20 +957,20 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object node from a stream of key-value pairs. Keys must be
      * convertible to strings; entries with {@code null} keys are skipped.</p>
      *
-     * <h3>Key Handling</h3>
+     * <p><b>Key Handling</b></p>
      * <ul>
      *   <li>Keys are converted to strings via {@link JsonNode#asText()}</li>
      *   <li>Entries with {@code null} keys are silently skipped</li>
      *   <li>Duplicate keys result in the last value being retained</li>
      * </ul>
      *
-     * <h3>Value Handling</h3>
+     * <p><b>Value Handling</b></p>
      * <ul>
      *   <li>{@code null} values are converted to {@link NullNode#getInstance()}</li>
      *   <li>All other values are added as-is</li>
      * </ul>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>TOML table keys can be bare (unquoted) if they contain only alphanumeric
      * characters, underscores, and dashes. Other keys must be quoted. The mapper
      * handles this automatically during serialization.</p>
@@ -1001,12 +1001,12 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Returns the entries of an object node as a stream of key-value pairs. This
      * operation succeeds only if the input is an {@link ObjectNode}.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input is an {@link ObjectNode} (including empty objects)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input is not an {@link ObjectNode} (e.g., array, primitive, null)</li>
      * </ul>
@@ -1043,14 +1043,14 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object by adding or updating a key-value pair in an existing map.
      * This operation creates a deep copy of the input map to preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input map is an {@link ObjectNode}</li>
      *   <li>Input map is a {@link NullNode} (treated as empty object)</li>
      *   <li>Key is a {@link TextNode} (textual node)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>Input map is not an object or null (e.g., array, primitive)</li>
      *   <li>Key is not a textual node</li>
@@ -1092,19 +1092,19 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * of the first object. This operation creates a deep copy of the first map to
      * preserve immutability.</p>
      *
-     * <h3>Success Conditions</h3>
+     * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Both inputs are {@link ObjectNode} instances</li>
      *   <li>Either input may be a {@link NullNode} (treated as empty object)</li>
      * </ul>
      *
-     * <h3>Failure Conditions</h3>
+     * <p><b>Failure Conditions</b></p>
      * <ul>
      *   <li>First input is not an object or null</li>
      *   <li>Second input is not an object or null</li>
      * </ul>
      *
-     * <h3>Merge Behavior</h3>
+     * <p><b>Merge Behavior</b></p>
      * <ul>
      *   <li>Entries from the second object override entries with the same key in the first</li>
      *   <li>Entries unique to either object are included in the result</li>
@@ -1149,7 +1149,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Retrieves a field value from an object node by key. Returns {@code null} if
      * the input is not an object or the key does not exist.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns the field value if the input is an {@link ObjectNode} containing the key</li>
      *   <li>Returns {@code null} if the input is not an {@link ObjectNode}</li>
@@ -1160,7 +1160,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * and a key mapped to {@link NullNode}. Use {@link #has(JsonNode, String)} to
      * check for key existence when this distinction matters.</p>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>Field access uses the exact key string. TOML dotted keys (e.g., {@code a.b.c})
      * are expanded into nested tables during parsing, so use this method to access
      * each level individually.</p>
@@ -1189,7 +1189,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object with a field set to the specified value. This operation
      * creates a deep copy of the input to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is an {@link ObjectNode}: creates a deep copy and sets the field</li>
      *   <li>If input is not an {@link ObjectNode}: creates a new object with just the field</li>
@@ -1227,7 +1227,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * <p>Creates a new object with a field removed. This operation creates a deep copy
      * of the input to preserve immutability.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>If input is an {@link ObjectNode}: creates a deep copy and removes the field</li>
      *   <li>If input is not an {@link ObjectNode}: returns the input unchanged</li>
@@ -1261,7 +1261,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *
      * <p>Checks whether an object node contains a field with the specified key.</p>
      *
-     * <h3>Behavior</h3>
+     * <p><b>Behavior</b></p>
      * <ul>
      *   <li>Returns {@code true} if input is an {@link ObjectNode} and contains the key</li>
      *   <li>Returns {@code false} if input is not an {@link ObjectNode}</li>
@@ -1295,7 +1295,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * This method recursively converts all nested structures, handling primitives, lists,
      * and maps appropriately.</p>
      *
-     * <h3>Conversion Process</h3>
+     * <p><b>Conversion Process</b></p>
      * <p>The conversion attempts to identify the input type in the following order:</p>
      * <ol>
      *   <li><strong>Boolean:</strong> If {@link DynamicOps#getBooleanValue} succeeds,
@@ -1311,14 +1311,14 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *   <li><strong>Fallback:</strong> Returns {@link NullNode#getInstance()} if no type matches</li>
      * </ol>
      *
-     * <h3>Edge Cases</h3>
+     * <p><b>Edge Cases</b></p>
      * <ul>
      *   <li>Map entries with {@code null} keys are skipped</li>
      *   <li>Map entries with {@code null} values are converted to {@link NullNode}</li>
      *   <li>Empty collections are preserved as empty arrays/objects</li>
      * </ul>
      *
-     * <h3>TOML Context</h3>
+     * <p><b>TOML Context</b></p>
      * <p>When converting data intended for TOML serialization, ensure the root element
      * is an object (table) and arrays contain homogeneous types. Null values will be
      * omitted during TOML serialization.</p>

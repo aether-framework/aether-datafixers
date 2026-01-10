@@ -145,7 +145,7 @@ public class DataFixerInfoContributor implements InfoContributor {
      * endpoint response. It adds a structured {@code aether-datafixers} section
      * containing domain count and per-domain version details.</p>
      *
-     * <h3>Contributed Information</h3>
+     * <p><b>Contributed Information</b></p>
      * <ul>
      *   <li>{@code domains} - Total number of registered DataFixer domains</li>
      *   <li>{@code domainDetails} - Map of domain names to their details</li>
