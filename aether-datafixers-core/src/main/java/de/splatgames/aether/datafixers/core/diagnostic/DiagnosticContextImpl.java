@@ -62,9 +62,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      * @throws NullPointerException if options is {@code null}
      */
     public DiagnosticContextImpl(@NotNull final DiagnosticOptions options) {
-        if (options == null) {
-            throw new NullPointerException("options must not be null");
-        }
+        Preconditions.checkNotNull(options, "options must not be null");
 
         this.options = options;
         this.reportBuilder = MigrationReportImpl.builder();
@@ -152,6 +150,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      * @return {@code true} if any log contains the substring
      */
     public boolean hasLog(@NotNull final String substring) {
+        Preconditions.checkNotNull(substring, "substring must not be null");
         return this.logs.stream()
                 .anyMatch(entry -> entry.formattedMessage().contains(substring));
     }
@@ -163,6 +162,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      * @return {@code true} if any INFO log contains the substring
      */
     public boolean hasInfo(@NotNull final String substring) {
+        Preconditions.checkNotNull(substring, "substring must not be null");
         return this.infoLogs().stream()
                 .anyMatch(entry -> entry.formattedMessage().contains(substring));
     }
@@ -174,6 +174,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      * @return {@code true} if any WARN log contains the substring
      */
     public boolean hasWarn(@NotNull final String substring) {
+        Preconditions.checkNotNull(substring, "substring must not be null");
         return this.warnLogs().stream()
                 .anyMatch(entry -> entry.formattedMessage().contains(substring));
     }
@@ -219,6 +220,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
             @NotNull final String message,
             @Nullable final Object... args
     ) {
+        Preconditions.checkNotNull(message, "message must not be null");
         if (args == null || args.length == 0) {
             return message;
         }

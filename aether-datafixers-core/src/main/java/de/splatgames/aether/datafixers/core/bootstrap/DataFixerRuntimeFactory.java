@@ -81,8 +81,8 @@ public final class DataFixerRuntimeFactory {
             @NotNull final DataVersion currentVersion,
             @NotNull final DataFixerBootstrap bootstrap
     ) {
-        Preconditions.checkNotNull(currentVersion, "DataVersion currentVersion must not be null");
-        Preconditions.checkNotNull(bootstrap, "DataFixerBootstrap bootstrap must not be null");
+        Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
+        Preconditions.checkNotNull(bootstrap, "bootstrap must not be null");
 
         final SimpleSchemaRegistry schemas = new SimpleSchemaRegistry();
         bootstrap.registerSchemas(schemas);

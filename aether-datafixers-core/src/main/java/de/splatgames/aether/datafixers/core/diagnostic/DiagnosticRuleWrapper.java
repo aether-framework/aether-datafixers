@@ -73,8 +73,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
             @NotNull final TypeRewriteRule delegate,
             @NotNull final DiagnosticContext context
     ) {
-        Preconditions.checkNotNull(delegate, "TypeRewriteRule delegate must not be null");
-        Preconditions.checkNotNull(context, "DiagnosticContext context must not be null");
+        Preconditions.checkNotNull(delegate, "delegate must not be null");
+        Preconditions.checkNotNull(context, "context must not be null");
 
         this.delegate = delegate;
         this.context = context;
@@ -86,8 +86,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
             @NotNull final Type<?> type,
             @NotNull final Typed<?> input
     ) {
-        Preconditions.checkNotNull(type, "Type<?> must not be null");
-        Preconditions.checkNotNull(input, "Typed<?> input must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         // Only capture details if configured to do so
         if (!this.context.options().captureRuleDetails()) {
             return this.delegate.rewrite(type, input);
@@ -114,7 +114,7 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
     @Override
     @NotNull
     public Typed<?> apply(@NotNull final Typed<?> input) {
-        Preconditions.checkNotNull(input, "Typed<?> input must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         // Delegate to rewrite to capture diagnostics
         return this.rewrite(input.type(), input).orElse(input);
     }
@@ -122,7 +122,7 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
     @Override
     @NotNull
     public Typed<?> applyOrThrow(@NotNull final Typed<?> input) {
-        Preconditions.checkNotNull(input, "Typed<?> input must not be null");
+        Preconditions.checkNotNull(input, "input must not be null");
         return this.rewrite(input.type(), input)
                 .orElseThrow(() -> new IllegalStateException(
                         "Rule did not match: " + input.type().describe()
@@ -132,7 +132,7 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
     @Override
     @NotNull
     public TypeRewriteRule andThen(@NotNull final TypeRewriteRule next) {
-        Preconditions.checkNotNull(next, "TypeRewriteRule next must not be null");
+        Preconditions.checkNotNull(next, "next must not be null");
         // Wrap the composition result to maintain diagnostics
         return new DiagnosticRuleWrapper(this.delegate.andThen(unwrap(next)), this.context);
     }
@@ -140,7 +140,7 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
     @Override
     @NotNull
     public TypeRewriteRule orElse(@NotNull final TypeRewriteRule fallback) {
-        Preconditions.checkNotNull(fallback, "TypeRewriteRule fallback must not be null");
+        Preconditions.checkNotNull(fallback, "fallback must not be null");
         return new DiagnosticRuleWrapper(this.delegate.orElse(unwrap(fallback)), this.context);
     }
 
@@ -153,14 +153,14 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
     @Override
     @NotNull
     public TypeRewriteRule ifType(@NotNull final Type<?> targetType) {
-        Preconditions.checkNotNull(targetType, "Type<?> targetType must not be null");
+        Preconditions.checkNotNull(targetType, "targetType must not be null");
         return new DiagnosticRuleWrapper(this.delegate.ifType(targetType), this.context);
     }
 
     @Override
     @NotNull
     public TypeRewriteRule named(@NotNull final String name) {
-        Preconditions.checkNotNull(name, "String name must not be null");
+        Preconditions.checkNotNull(name, "name must not be null");
         return new DiagnosticRuleWrapper(this.delegate.named(name), this.context);
     }
 
@@ -181,8 +181,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
             @NotNull final TypeRewriteRule rule,
             @NotNull final DiagnosticContext context
     ) {
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
-        Preconditions.checkNotNull(context, "DiagnosticContext context must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
+        Preconditions.checkNotNull(context, "context must not be null");
         if (rule instanceof DiagnosticRuleWrapper) {
             return rule;
         }
@@ -197,7 +197,7 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
      */
     @NotNull
     private static TypeRewriteRule unwrap(@NotNull final TypeRewriteRule rule) {
-        Preconditions.checkNotNull(rule, "TypeRewriteRule rule must not be null");
+        Preconditions.checkNotNull(rule, "rule must not be null");
         if (rule instanceof DiagnosticRuleWrapper wrapper) {
             return wrapper.delegate;
         }

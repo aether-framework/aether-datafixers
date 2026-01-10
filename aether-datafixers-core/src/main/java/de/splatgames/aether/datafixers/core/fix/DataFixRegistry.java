@@ -76,8 +76,8 @@ public final class DataFixRegistry {
      * @throws IllegalArgumentException if fix.fromVersion &gt; fix.toVersion
      */
     public void register(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
-        Preconditions.checkNotNull(type, "TypeReference type cannot be null");
-        Preconditions.checkNotNull(fix, "DataFix<?> fix cannot be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fix, "fix must not be null");
         Preconditions.checkState(!this.frozen, "Registry is frozen and cannot be modified");
         // Validate fix version ordering once at registration (avoids repeated checks during migration)
         Preconditions.checkArgument(
@@ -102,8 +102,8 @@ public final class DataFixRegistry {
      */
     @NotNull
     public List<DataFix<?>> getStepFixes(@NotNull final TypeReference type, @NotNull final DataVersion fromVersion) {
-        Preconditions.checkNotNull(type, "TypeReference type cannot be null");
-        Preconditions.checkNotNull(fromVersion, "DataVersion fromVersion cannot be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
 
         final NavigableMap<DataVersion, List<DataFix<?>>> fixesByVersion = this.fixesByType.get(type);
         if (fixesByVersion == null) {
@@ -138,9 +138,9 @@ public final class DataFixRegistry {
             @NotNull final DataVersion fromInclusive,
             @NotNull final DataVersion toInclusive
     ) {
-        Preconditions.checkNotNull(type, "TypeReference type cannot be null");
-        Preconditions.checkNotNull(fromInclusive, "DataVersion fromInclusive cannot be null");
-        Preconditions.checkNotNull(toInclusive, "DataVersion toInclusive cannot be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fromInclusive, "fromInclusive must not be null");
+        Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");
 
         final NavigableMap<DataVersion, List<DataFix<?>>> fixesByVersion = this.fixesByType.get(type);
         if (fixesByVersion == null) {
@@ -196,9 +196,9 @@ public final class DataFixRegistry {
             @NotNull final DataVersion fromExclusive,
             @NotNull final DataVersion toInclusive
     ) {
-        Preconditions.checkNotNull(type, "TypeReference type cannot be null");
-        Preconditions.checkNotNull(fromExclusive, "DataVersion fromExclusive cannot be null");
-        Preconditions.checkNotNull(toInclusive, "DataVersion toInclusive cannot be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fromExclusive, "fromExclusive must not be null");
+        Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");
 
         final NavigableMap<DataVersion, List<DataFix<?>>> fixesByVersion = this.fixesByType.get(type);
         if (fixesByVersion == null) {

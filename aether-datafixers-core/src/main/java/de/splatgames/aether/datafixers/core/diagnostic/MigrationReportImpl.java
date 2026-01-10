@@ -189,9 +189,9 @@ public final class MigrationReportImpl implements MigrationReport {
                 @NotNull final DataVersion fromVersion,
                 @NotNull final DataVersion toVersion
         ) {
-            Preconditions.checkNotNull(type, "TypeReference type must not be null");
-            Preconditions.checkNotNull(fromVersion, "DataVersion fromVersion must not be null");
-            Preconditions.checkNotNull(toVersion, "DataVersion toVersion must not be null");
+            Preconditions.checkNotNull(type, "type must not be null");
+            Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+            Preconditions.checkNotNull(toVersion, "toVersion must not be null");
 
             this.type = type;
             this.fromVersion = fromVersion;
@@ -211,7 +211,7 @@ public final class MigrationReportImpl implements MigrationReport {
         @Override
         @NotNull
         public Builder startFix(@NotNull final DataFix<?> fix) {
-            Preconditions.checkNotNull(fix, "DataFix<?> fix must not be null");
+            Preconditions.checkNotNull(fix, "fix must not be null");
             this.currentFixName = fix.name();
             this.currentFixFromVersion = fix.fromVersion();
             this.currentFixToVersion = fix.toVersion();
@@ -231,7 +231,7 @@ public final class MigrationReportImpl implements MigrationReport {
         @Override
         @NotNull
         public Builder recordRuleApplication(@NotNull final RuleApplication application) {
-            Preconditions.checkNotNull(application, "RuleApplication application must not be null");
+            Preconditions.checkNotNull(application, "application must not be null");
             this.currentRuleApplications.add(application);
             return this;
         }
@@ -243,8 +243,8 @@ public final class MigrationReportImpl implements MigrationReport {
                 @NotNull final Duration duration,
                 @Nullable final String afterSnapshot
         ) {
-            Preconditions.checkNotNull(fix, "DataFix<?> fix must not be null");
-            Preconditions.checkNotNull(duration, "Duration duration must not be null");
+            Preconditions.checkNotNull(fix, "fix must not be null");
+            Preconditions.checkNotNull(duration, "duration must not be null");
 
             final FixExecution execution = new FixExecution(
                     this.currentFixName,
@@ -273,7 +273,7 @@ public final class MigrationReportImpl implements MigrationReport {
         @Override
         @NotNull
         public Builder addTouchedType(@NotNull final TypeReference type) {
-            Preconditions.checkNotNull(type, "TypeReference type must not be null");
+            Preconditions.checkNotNull(type, "type must not be null");
             this.touchedTypes.add(type);
             return this;
         }
@@ -281,7 +281,7 @@ public final class MigrationReportImpl implements MigrationReport {
         @Override
         @NotNull
         public Builder addWarning(@NotNull final String message) {
-            Preconditions.checkNotNull(message, "String message must not be null");
+            Preconditions.checkNotNull(message, "message must not be null");
             this.warnings.add(message);
             return this;
         }

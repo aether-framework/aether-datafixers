@@ -65,7 +65,7 @@ public final class SimpleTypeRegistry implements TypeRegistry {
 
     @Override
     public void register(@NotNull final Type<?> type) {
-        Preconditions.checkNotNull(type, "Type<?> type must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkState(!this.frozen, "Registry is frozen and cannot be modified");
 
         this.types.put(type.reference(), type);
@@ -74,14 +74,14 @@ public final class SimpleTypeRegistry implements TypeRegistry {
     @Override
     @Nullable
     public Type<?> get(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
 
         return this.types.get(ref);
     }
 
     @Override
     public boolean has(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
+        Preconditions.checkNotNull(ref, "ref must not be null");
 
         return this.types.containsKey(ref);
     }

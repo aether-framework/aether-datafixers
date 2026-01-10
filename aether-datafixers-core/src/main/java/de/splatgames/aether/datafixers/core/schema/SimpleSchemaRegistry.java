@@ -76,15 +76,15 @@ public final class SimpleSchemaRegistry implements SchemaRegistry {
 
     @Override
     public void register(@NotNull final Schema schema) {
-        Preconditions.checkNotNull(schema, "Schema schema must not be null");
+        Preconditions.checkNotNull(schema, "schema must not be null");
         Preconditions.checkState(!this.frozen, "Registry is frozen and cannot be modified");
         this.schemas.put(schema.version(), schema);
     }
 
     @Override
     public void register(@NotNull final DataVersion version, @NotNull final Schema schema) {
-        Preconditions.checkNotNull(version, "DataVersion version must not be null");
-        Preconditions.checkNotNull(schema, "Schema schema must not be null");
+        Preconditions.checkNotNull(version, "version must not be null");
+        Preconditions.checkNotNull(schema, "schema must not be null");
         Preconditions.checkState(!this.frozen, "Registry is frozen and cannot be modified");
         Preconditions.checkArgument(
                 version.equals(schema.version()),
@@ -98,7 +98,7 @@ public final class SimpleSchemaRegistry implements SchemaRegistry {
     @Override
     @Nullable
     public Schema get(@NotNull final DataVersion version) {
-        Preconditions.checkNotNull(version, "DataVersion version must not be null");
+        Preconditions.checkNotNull(version, "version must not be null");
 
         final Map.Entry<DataVersion, Schema> entry = this.schemas.floorEntry(version);
         return entry == null ? null : entry.getValue();
@@ -107,7 +107,7 @@ public final class SimpleSchemaRegistry implements SchemaRegistry {
     @Override
     @NotNull
     public Schema require(@NotNull final DataVersion version) {
-        Preconditions.checkNotNull(version, "DataVersion version must not be null");
+        Preconditions.checkNotNull(version, "version must not be null");
 
         final Schema schema = this.get(version);
         Preconditions.checkState(schema != null, "No schema found for version: %s", version);

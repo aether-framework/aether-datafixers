@@ -83,7 +83,7 @@ public final class DataFixerBuilder implements FixRegistrar {
      * @throws NullPointerException if currentVersion is {@code null}
      */
     public DataFixerBuilder(@NotNull final DataVersion currentVersion) {
-        Preconditions.checkNotNull(currentVersion, "DataVersion currentVersion must not be null");
+        Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
 
         this.currentVersion = currentVersion;
         this.registry = new DataFixRegistry();
@@ -99,7 +99,7 @@ public final class DataFixerBuilder implements FixRegistrar {
      */
     @NotNull
     public DataFixerBuilder withDefaultContext(@NotNull final DataFixerContext context) {
-        Preconditions.checkNotNull(context, "DataFixerContext context must not be null");
+        Preconditions.checkNotNull(context, "context must not be null");
         this.defaultContext = context;
         return this;
     }
@@ -116,6 +116,8 @@ public final class DataFixerBuilder implements FixRegistrar {
      */
     @Override
     public void register(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fix, "fix must not be null");
         this.addFix(type, fix);
     }
 
@@ -131,11 +133,11 @@ public final class DataFixerBuilder implements FixRegistrar {
      */
     @Override
     public void registerAll(@NotNull final TypeReference type, @NotNull final Iterable<? extends DataFix<?>> fixes) {
-        Preconditions.checkNotNull(type, "TypeReference type must not be null");
-        Preconditions.checkNotNull(fixes, "Iterable<? extends DataFix<?>> fixes must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fixes, "fixes must not be null");
 
         for (final DataFix<?> fix : fixes) {
-            Preconditions.checkNotNull(fix, "DataFix<?> fix must not be null");
+            Preconditions.checkNotNull(fix, "fix must not be null");
             this.registry.register(type, fix);
         }
     }
@@ -151,8 +153,8 @@ public final class DataFixerBuilder implements FixRegistrar {
      */
     @NotNull
     public DataFixerBuilder addFix(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
-        Preconditions.checkNotNull(type, "TypeReference type must not be null");
-        Preconditions.checkNotNull(fix, "DataFix<?> fix must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fix, "fix must not be null");
         Preconditions.checkArgument(
                 fix.fromVersion().compareTo(fix.toVersion()) <= 0,
                 "fix.fromVersion must be <= fix.toVersion"
@@ -179,11 +181,11 @@ public final class DataFixerBuilder implements FixRegistrar {
             @NotNull final TypeReference type,
             @NotNull final List<? extends DataFix<?>> fixes
     ) {
-        Preconditions.checkNotNull(type, "TypeReference type must not be null");
-        Preconditions.checkNotNull(fixes, "List<? extends DataFix<?>> fixes must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(fixes, "fixes must not be null");
 
         for (final DataFix<?> fix : fixes) {
-            Preconditions.checkNotNull(fix, "DataFix<?> fix must not be null");
+            Preconditions.checkNotNull(fix, "fix must not be null");
             this.registry.register(type, fix);
         }
         return this;
