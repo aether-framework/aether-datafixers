@@ -161,6 +161,9 @@ public final class FieldInfo {
             @NotNull final Type<?> fieldType,
             @NotNull final String path
     ) {
+        Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(fieldType, "fieldType must not be null");
+        Preconditions.checkNotNull(path, "path must not be null");
         return new FieldInfo(name, optional, fieldType, path);
     }
 

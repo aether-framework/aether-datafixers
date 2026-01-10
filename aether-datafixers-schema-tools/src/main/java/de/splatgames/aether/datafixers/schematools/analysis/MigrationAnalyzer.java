@@ -166,6 +166,8 @@ public final class MigrationAnalyzer {
             @NotNull final SchemaRegistry schemaRegistry,
             @NotNull final DataFixRegistry fixRegistry
     ) {
+        Preconditions.checkNotNull(schemaRegistry, "schemaRegistry must not be null");
+        Preconditions.checkNotNull(fixRegistry, "fixRegistry must not be null");
         return new MigrationAnalyzer(schemaRegistry, fixRegistry);
     }
 
@@ -344,6 +346,9 @@ public final class MigrationAnalyzer {
             @NotNull final Schema sourceSchema,
             @NotNull final Schema targetSchema
     ) {
+        Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
+        Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
+
         // Diff the schemas
         final SchemaDiff diff = SchemaDiffer.compare(sourceSchema, targetSchema)
                 .includeFieldLevel(this.includeFieldLevel)
@@ -400,6 +405,10 @@ public final class MigrationAnalyzer {
             @NotNull final Schema targetSchema,
             @NotNull final FixCoverage.Builder coverageBuilder
     ) {
+        Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
+        Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
+        Preconditions.checkNotNull(coverageBuilder, "coverageBuilder must not be null");
+
         // Diff the schemas to find changes
         final SchemaDiff diff = SchemaDiffer.compare(sourceSchema, targetSchema)
                 .includeFieldLevel(true)
@@ -433,9 +442,7 @@ public final class MigrationAnalyzer {
 
         // Check coverage for modified types (field changes)
         for (final TypeReference commonType : diff.commonTypes()) {
-            diff.typeDiff(commonType).ifPresent(typeDiff -> {
-                checkTypeDiffCoverage(commonType, sourceSchema, targetSchema, typeDiff, coverageBuilder);
-            });
+            diff.typeDiff(commonType).ifPresent(typeDiff -> checkTypeDiffCoverage(commonType, sourceSchema, targetSchema, typeDiff, coverageBuilder));
         }
     }
 
@@ -463,6 +470,12 @@ public final class MigrationAnalyzer {
             @NotNull final TypeDiff typeDiff,
             @NotNull final FixCoverage.Builder coverageBuilder
     ) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
+        Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
+        Preconditions.checkNotNull(typeDiff, "typeDiff must not be null");
+        Preconditions.checkNotNull(coverageBuilder, "coverageBuilder must not be null");
+
         if (!typeDiff.hasFieldChanges()) {
             return;
         }

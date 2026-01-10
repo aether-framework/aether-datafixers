@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.schematools.introspection;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -184,6 +185,7 @@ public final class TypeStructure {
      */
     @NotNull
     public static Builder builder(@NotNull final TypeReference reference) {
+        Preconditions.checkNotNull(reference, "reference must not be null");
         return new Builder(reference);
     }
 
@@ -263,7 +265,7 @@ public final class TypeStructure {
      * @param other the other structure to compare, may be {@code null}
      * @return {@code true} if structurally equal, {@code false} otherwise
      */
-    public boolean structurallyEquals(final TypeStructure other) {
+    public boolean structurallyEquals(@Nullable final TypeStructure other) {
         if (other == null) {
             return false;
         }

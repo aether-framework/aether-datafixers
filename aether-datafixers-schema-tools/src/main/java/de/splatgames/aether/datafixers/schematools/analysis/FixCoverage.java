@@ -166,6 +166,8 @@ public final class FixCoverage {
             @NotNull final DataVersion sourceVersion,
             @NotNull final DataVersion targetVersion
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new FixCoverage(sourceVersion, targetVersion, List.of(), List.of());
     }
 
@@ -181,6 +183,8 @@ public final class FixCoverage {
             @NotNull final DataVersion sourceVersion,
             @NotNull final DataVersion targetVersion
     ) {
+        Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
+        Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
     }
 
@@ -225,7 +229,7 @@ public final class FixCoverage {
         Preconditions.checkNotNull(type, "type must not be null");
         return this.gaps.stream()
                 .filter(gap -> gap.type().equals(type))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -239,7 +243,7 @@ public final class FixCoverage {
         Preconditions.checkNotNull(reason, "reason must not be null");
         return this.gaps.stream()
                 .filter(gap -> gap.reason() == reason)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
