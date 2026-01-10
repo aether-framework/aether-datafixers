@@ -24,8 +24,8 @@
  * Data fix interfaces and the main DataFixer entry point.
  *
  * <p>This package contains the core interfaces for defining and applying data
- * migrations. It provides the primary API that applications use to update
- * serialized data from older versions to newer versions.</p>
+ * migrations. It provides the primary API that applications use to update serialized data from older versions to newer
+ * versions.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>

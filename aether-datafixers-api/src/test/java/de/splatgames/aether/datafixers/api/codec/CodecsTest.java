@@ -319,8 +319,7 @@ class CodecsTest {
 
             assertThat(result.isSuccess()).isTrue();
             assertThat(result.result().orElseThrow()).isInstanceOf(List.class);
-            @SuppressWarnings("unchecked")
-            final List<Object> encoded = (List<Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final List<Object> encoded = (List<Object>) result.result().orElseThrow();
             assertThat(encoded).containsExactly("Alice", "Bob", "Charlie");
         }
 
@@ -332,8 +331,7 @@ class CodecsTest {
             final DataResult<Object> result = listCodec.encodeStart(ops, List.of());
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final List<Object> encoded = (List<Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final List<Object> encoded = (List<Object>) result.result().orElseThrow();
             assertThat(encoded).isEmpty();
         }
 

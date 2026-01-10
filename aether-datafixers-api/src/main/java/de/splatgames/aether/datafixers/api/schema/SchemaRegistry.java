@@ -35,8 +35,8 @@ import java.util.stream.Stream;
  * A registry for managing {@link Schema} instances across data versions.
  *
  * <p>{@code SchemaRegistry} provides version-indexed storage and retrieval of
- * schemas. It is typically populated during {@link DataFixerBootstrap} initialization
- * and consulted by the {@link DataFixer} during data migration.</p>
+ * schemas. It is typically populated during {@link DataFixerBootstrap} initialization and consulted by the
+ * {@link DataFixer} during data migration.</p>
  *
  * <h2>Registration</h2>
  * <p>Schemas can be registered using either the schema's inherent version or
@@ -172,8 +172,7 @@ public interface SchemaRegistry {
      * Returns the set of all registered versions.
      *
      * <p>The returned set is a snapshot of the registered versions at the time
-     * of the call. Modifications to the registry after this call will not be
-     * reflected in the returned set.</p>
+     * of the call. Modifications to the registry after this call will not be reflected in the returned set.</p>
      *
      * @return an unmodifiable set of all registered versions, never {@code null}
      * @since 0.3.0

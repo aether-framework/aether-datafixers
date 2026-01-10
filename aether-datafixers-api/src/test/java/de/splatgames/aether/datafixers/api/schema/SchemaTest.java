@@ -28,7 +28,6 @@ import de.splatgames.aether.datafixers.api.codec.Codec;
 import de.splatgames.aether.datafixers.api.dsl.DSL;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.TypeRegistry;
-import de.splatgames.aether.datafixers.api.type.template.TypeTemplate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +49,133 @@ class SchemaTest {
     private static final TypeReference PLAYER = new TypeReference("player");
     private static final TypeReference ENTITY = new TypeReference("entity");
     private static final TypeReference WORLD = new TypeReference("world");
+
+    private static <A> Type<A> createType(TypeReference ref, Codec<A> codec) {
+        return new Type<>() {
+            @NotNull
+            @Override
+            public TypeReference reference() {
+                return ref;
+            }
+
+            @NotNull
+            @Override
+            public Codec<A> codec() {
+                return codec;
+            }
+        };
+    }
+
+    private static class SimpleTypeRegistry implements TypeRegistry {
+        private final Map<TypeReference, Type<?>> types = new HashMap<>();
+
+        @Override
+        public void register(@NotNull Type<?> type) {
+            types.put(type.reference(), type);
+        }
+
+        @Nullable
+        @Override
+        public Type<?> get(@NotNull TypeReference ref) {
+            return types.get(ref);
+        }
+
+        @Override
+        public boolean has(@NotNull TypeReference ref) {
+            return types.containsKey(ref);
+        }
+
+        @NotNull
+        @Override
+        public java.util.Set<TypeReference> references() {
+            return java.util.Set.copyOf(types.keySet());
+        }
+    }
+
+    private static class TestSchema extends Schema {
+        protected TestSchema(int versionId, @Nullable Schema parent) {
+            super(versionId, parent);
+        }
+
+        @NotNull
+        @Override
+        protected TypeRegistry createTypeRegistry() {
+            return new SimpleTypeRegistry();
+        }
+    }
+
+    private static class TypeRegisteringSchema extends Schema {
+        protected TypeRegisteringSchema(int versionId) {
+            super(versionId, null);
+        }
+
+        @NotNull
+        @Override
+        protected TypeRegistry createTypeRegistry() {
+            return new SimpleTypeRegistry();
+        }
+
+        @Override
+        protected void registerTypes() {
+            registerType(createType(PLAYER, Type.STRING.codec()));
+        }
+    }
+
+    private static class TemplateRegisteringSchema extends Schema {
+        protected TemplateRegisteringSchema(int versionId) {
+            super(versionId, null);
+        }
+
+        @NotNull
+        @Override
+        protected TypeRegistry createTypeRegistry() {
+            return new SimpleTypeRegistry();
+        }
+
+        @Override
+        protected void registerTypes() {
+            registerType(ENTITY, DSL.and(
+                    DSL.field("id", DSL.intType()),
+                    DSL.field("name", DSL.string())
+            ));
+        }
+    }
+
+    private static class ChildSchema extends Schema {
+        protected ChildSchema(int versionId, @Nullable Schema parent) {
+            super(versionId, parent);
+        }
+
+        @NotNull
+        @Override
+        protected TypeRegistry createTypeRegistry() {
+            return new SimpleTypeRegistry();
+        }
+
+        @Override
+        protected void registerTypes() {
+            registerType(createType(WORLD, Type.STRING.codec()));
+        }
+    }
+
+    private static class MultiTypeSchema extends Schema {
+        protected MultiTypeSchema(int versionId) {
+            super(versionId, null);
+        }
+
+        @NotNull
+        @Override
+        protected TypeRegistry createTypeRegistry() {
+            return new SimpleTypeRegistry();
+        }
+
+        @Override
+        protected void registerTypes() {
+            registerType(createType(PLAYER, Type.STRING.codec()));
+            registerType(createType(ENTITY, Type.INT.codec()));
+            registerType(createType(WORLD, Type.BOOL.codec()));
+        }
+    }
 
     @Nested
     @DisplayName("Constructor with TypeRegistry")
@@ -128,6 +254,8 @@ class SchemaTest {
             assertThat(new Schema(new DataVersion(200), new SimpleTypeRegistry()).version().getVersion()).isEqualTo(200);
         }
     }
+
+    // Test Helpers
 
     @Nested
     @DisplayName("parent()")
@@ -306,135 +434,6 @@ class SchemaTest {
             assertThat(schema.types().has(PLAYER)).isTrue();
             assertThat(schema.types().has(ENTITY)).isTrue();
             assertThat(schema.types().has(WORLD)).isTrue();
-        }
-    }
-
-    // Test Helpers
-
-    private static <A> Type<A> createType(TypeReference ref, Codec<A> codec) {
-        return new Type<>() {
-            @NotNull
-            @Override
-            public TypeReference reference() {
-                return ref;
-            }
-
-            @NotNull
-            @Override
-            public Codec<A> codec() {
-                return codec;
-            }
-        };
-    }
-
-    private static class SimpleTypeRegistry implements TypeRegistry {
-        private final Map<TypeReference, Type<?>> types = new HashMap<>();
-
-        @Override
-        public void register(@NotNull Type<?> type) {
-            types.put(type.reference(), type);
-        }
-
-        @Nullable
-        @Override
-        public Type<?> get(@NotNull TypeReference ref) {
-            return types.get(ref);
-        }
-
-        @Override
-        public boolean has(@NotNull TypeReference ref) {
-            return types.containsKey(ref);
-        }
-
-        @NotNull
-        @Override
-        public java.util.Set<TypeReference> references() {
-            return java.util.Set.copyOf(types.keySet());
-        }
-    }
-
-    private static class TestSchema extends Schema {
-        protected TestSchema(int versionId, @Nullable Schema parent) {
-            super(versionId, parent);
-        }
-
-        @NotNull
-        @Override
-        protected TypeRegistry createTypeRegistry() {
-            return new SimpleTypeRegistry();
-        }
-    }
-
-    private static class TypeRegisteringSchema extends Schema {
-        protected TypeRegisteringSchema(int versionId) {
-            super(versionId, null);
-        }
-
-        @NotNull
-        @Override
-        protected TypeRegistry createTypeRegistry() {
-            return new SimpleTypeRegistry();
-        }
-
-        @Override
-        protected void registerTypes() {
-            registerType(createType(PLAYER, Type.STRING.codec()));
-        }
-    }
-
-    private static class TemplateRegisteringSchema extends Schema {
-        protected TemplateRegisteringSchema(int versionId) {
-            super(versionId, null);
-        }
-
-        @NotNull
-        @Override
-        protected TypeRegistry createTypeRegistry() {
-            return new SimpleTypeRegistry();
-        }
-
-        @Override
-        protected void registerTypes() {
-            registerType(ENTITY, DSL.and(
-                    DSL.field("id", DSL.intType()),
-                    DSL.field("name", DSL.string())
-            ));
-        }
-    }
-
-    private static class ChildSchema extends Schema {
-        protected ChildSchema(int versionId, @Nullable Schema parent) {
-            super(versionId, parent);
-        }
-
-        @NotNull
-        @Override
-        protected TypeRegistry createTypeRegistry() {
-            return new SimpleTypeRegistry();
-        }
-
-        @Override
-        protected void registerTypes() {
-            registerType(createType(WORLD, Type.STRING.codec()));
-        }
-    }
-
-    private static class MultiTypeSchema extends Schema {
-        protected MultiTypeSchema(int versionId) {
-            super(versionId, null);
-        }
-
-        @NotNull
-        @Override
-        protected TypeRegistry createTypeRegistry() {
-            return new SimpleTypeRegistry();
-        }
-
-        @Override
-        protected void registerTypes() {
-            registerType(createType(PLAYER, Type.STRING.codec()));
-            registerType(createType(ENTITY, Type.INT.codec()));
-            registerType(createType(WORLD, Type.BOOL.codec()));
         }
     }
 }

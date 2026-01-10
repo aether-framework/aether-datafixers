@@ -31,9 +31,8 @@ import org.jetbrains.annotations.NotNull;
  * A single data fix that transforms data from one version to another.
  *
  * <p>A {@code DataFix} represents a migration step that upgrades (or downgrades) data
- * between two specific {@link DataVersion versions}. Fixes are typically registered with a
- * {@link FixRegistrar} and executed by a {@link DataFixer} when updating data across
- * version boundaries.</p>
+ * between two specific {@link DataVersion versions}. Fixes are typically registered with a {@link FixRegistrar} and
+ * executed by a {@link DataFixer} when updating data across version boundaries.</p>
  *
  * <h2>Implementing a DataFix</h2>
  * <p>Each fix should:</p>
@@ -117,8 +116,7 @@ public interface DataFix<T> {
      * <p>This method performs the actual data transformation. The implementation
      * should handle all data of the specified type that requires migration.</p>
      *
-     * @param type    the type reference identifying what kind of data is being fixed,
-     *                must not be {@code null}
+     * @param type    the type reference identifying what kind of data is being fixed, must not be {@code null}
      * @param input   the input data to transform, must not be {@code null}
      * @param context the fixer context for logging and diagnostics, must not be {@code null}
      * @return the transformed data at the new version, never {@code null}

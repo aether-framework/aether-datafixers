@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.rewrite;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.optic.Finder;
@@ -29,8 +30,6 @@ import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
 import org.jetbrains.annotations.NotNull;
-
-import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,9 +44,9 @@ import java.util.function.Predicate;
  * Factory class providing common combinators for building {@link TypeRewriteRule} instances.
  *
  * <p>The {@code Rules} class is a comprehensive toolkit for constructing data migration rules.
- * It provides a rich set of combinators that allow complex migration logic to be built from
- * simple, composable primitives. These combinators follow functional programming patterns
- * and enable declarative specification of data transformations.</p>
+ * It provides a rich set of combinators that allow complex migration logic to be built from simple, composable
+ * primitives. These combinators follow functional programming patterns and enable declarative specification of data
+ * transformations.</p>
  *
  * <h2>Combinator Categories</h2>
  * <ul>
@@ -108,8 +107,7 @@ import java.util.function.Predicate;
 public final class Rules {
 
     /**
-     * Cache for parsed path finders to avoid repeated regex parsing.
-     * Thread-safe via ConcurrentHashMap.
+     * Cache for parsed path finders to avoid repeated regex parsing. Thread-safe via ConcurrentHashMap.
      *
      * @since 0.2.0
      */
@@ -125,8 +123,8 @@ public final class Rules {
      * Creates a sequence of rules that are applied in order (strict AND composition).
      *
      * <p>All rules in the sequence must match for the combined rule to succeed.
-     * If any rule returns empty, the entire sequence fails immediately. This is
-     * useful when you have a pipeline of transformations that must all complete.</p>
+     * If any rule returns empty, the entire sequence fails immediately. This is useful when you have a pipeline of
+     * transformations that must all complete.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -179,8 +177,8 @@ public final class Rules {
      * Creates a sequence of rules that applies all rules, ignoring non-matching ones.
      *
      * <p>Unlike {@link #seq}, this combinator continues even when rules don't match.
-     * Each rule is tried against the current result, and non-matching rules are
-     * simply skipped. The final result is always returned (never empty).</p>
+     * Each rule is tried against the current result, and non-matching rules are simply skipped. The final result is
+     * always returned (never empty).</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -224,8 +222,8 @@ public final class Rules {
      * Creates a rule that tries each rule in order until one succeeds (OR composition).
      *
      * <p>The choice combinator implements "first match wins" semantics. Rules are
-     * tried in order, and the first rule that returns a non-empty result is used.
-     * If no rule matches, the combined rule returns empty.</p>
+     * tried in order, and the first rule that returns a non-empty result is used. If no rule matches, the combined rule
+     * returns empty.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -271,8 +269,8 @@ public final class Rules {
      * Creates a rule that requires the wrapped rule to match exactly once.
      *
      * <p>This is a strict wrapper that passes through the rule's result unchanged.
-     * It serves as documentation and a point for adding validation in the future.
-     * The rule fails (returns empty) if the wrapped rule doesn't match.</p>
+     * It serves as documentation and a point for adding validation in the future. The rule fails (returns empty) if the
+     * wrapped rule doesn't match.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -309,8 +307,8 @@ public final class Rules {
      * Creates a rule that tries to apply another rule, returning the input unchanged on failure.
      *
      * <p>This is a convenience wrapper equivalent to {@code rule.orKeep()}. It makes
-     * any rule "optional" - if it matches, its result is used; if not, the input
-     * passes through unchanged. The resulting rule always succeeds.</p>
+     * any rule "optional" - if it matches, its result is used; if not, the input passes through unchanged. The
+     * resulting rule always succeeds.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -337,9 +335,8 @@ public final class Rules {
      * Creates a rule that applies a rule to all immediate children.
      *
      * <p>This combinator iterates over all child values of a typed value and
-     * applies the given rule to each. If all children are successfully transformed,
-     * the result is reconstructed with the new children. If any child transformation
-     * fails, the entire operation fails.</p>
+     * applies the given rule to each. If all children are successfully transformed, the result is reconstructed with
+     * the new children. If any child transformation fails, the entire operation fails.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -410,8 +407,8 @@ public final class Rules {
      * Creates a rule that applies a rule to all immediate children (without DynamicOps).
      *
      * <p>This is a convenience overload that returns a no-op rule, as child traversal
-     * requires DynamicOps for encoding/decoding. Use {@link #all(DynamicOps, TypeRewriteRule)}
-     * for actual child traversal.</p>
+     * requires DynamicOps for encoding/decoding. Use {@link #all(DynamicOps, TypeRewriteRule)} for actual child
+     * traversal.</p>
      *
      * @param rule the rule to apply to children
      * @return a rule that does nothing (no children without DynamicOps), never {@code null}
@@ -440,8 +437,8 @@ public final class Rules {
      * Creates a rule that applies a rule to the first matching child.
      *
      * <p>This combinator iterates over child values and applies the rule to each
-     * until one succeeds. The successful transformation is used and remaining
-     * children keep their original values. If no child matches, the operation fails.</p>
+     * until one succeeds. The successful transformation is used and remaining children keep their original values. If
+     * no child matches, the operation fails.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -540,9 +537,8 @@ public final class Rules {
      * Creates a rule that recursively applies a rule everywhere in a structure.
      *
      * <p>This combinator applies the rule to the current node, then recursively
-     * applies {@code everywhere(rule)} to each child. The rule is applied at
-     * every level of the structure. If the rule doesn't match at a particular
-     * node, traversal continues to children.</p>
+     * applies {@code everywhere(rule)} to each child. The rule is applied at every level of the structure. If the rule
+     * doesn't match at a particular node, traversal continues to children.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -636,8 +632,8 @@ public final class Rules {
      * Creates a rule that applies a rule bottom-up (children first, then parent).
      *
      * <p>This combinator first recursively applies itself to all children,
-     * then applies the rule to the parent node. This is useful when the
-     * parent transformation depends on child values being already transformed.</p>
+     * then applies the rule to the parent node. This is useful when the parent transformation depends on child values
+     * being already transformed.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -728,8 +724,8 @@ public final class Rules {
      * Creates a rule that applies a rule top-down (parent first, then children).
      *
      * <p>This combinator first applies the rule to the parent node,
-     * then recursively applies itself to all children. This is useful when
-     * child transformations depend on the parent being already transformed.</p>
+     * then recursively applies itself to all children. This is useful when child transformations depend on the parent
+     * being already transformed.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -886,8 +882,7 @@ public final class Rules {
      * Creates a rule that renames a field in the data structure.
      *
      * <p>This rule encodes the typed value to dynamic form, renames the field
-     * if present, and decodes back. If the old field doesn't exist, the data
-     * is returned unchanged.</p>
+     * if present, and decodes back. If the old field doesn't exist, the data is returned unchanged.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -943,8 +938,7 @@ public final class Rules {
      * Creates a rule that removes a field from the data structure.
      *
      * <p>This rule encodes the typed value to dynamic form, removes the specified
-     * field if present, and decodes back. Useful for cleaning up deprecated fields
-     * during migration.</p>
+     * field if present, and decodes back. Useful for cleaning up deprecated fields during migration.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -991,8 +985,8 @@ public final class Rules {
      * Creates a rule that adds a field with a default value if it doesn't exist.
      *
      * <p>This rule encodes the typed value to dynamic form, adds the field with
-     * the default value only if the field doesn't already exist, and decodes back.
-     * Existing field values are preserved.</p>
+     * the default value only if the field doesn't already exist, and decodes back. Existing field values are
+     * preserved.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1052,8 +1046,7 @@ public final class Rules {
      * Creates a rule that transforms the value of a specific field.
      *
      * <p>This rule uses a {@link Finder} to locate the field and applies the
-     * transformation function to its value. The transformation is only applied
-     * if the field exists.</p>
+     * transformation function to its value. The transformation is only applied if the field exists.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1100,8 +1093,8 @@ public final class Rules {
      * Creates a rule that applies multiple field operations in a single pass.
      *
      * <p>This is significantly more efficient than chaining multiple individual rules
-     * (e.g., via {@link #seq}) because it performs all operations in a single
-     * encode/decode cycle instead of one cycle per operation.</p>
+     * (e.g., via {@link #seq}) because it performs all operations in a single encode/decode cycle instead of one cycle
+     * per operation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1144,8 +1137,7 @@ public final class Rules {
         }
 
         return dynamicTransform("batch[" + batch.size() + " ops]", ops, dynamic -> {
-            @SuppressWarnings("unchecked")
-            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             return batch.apply(typedDynamic);
         });
     }
@@ -1156,8 +1148,8 @@ public final class Rules {
      * Creates a rule that applies a custom transformation function to the dynamic representation.
      *
      * <p>This is the general-purpose combinator for custom transformations. It encodes the
-     * typed value to dynamic form, applies the transformation function, and decodes back.
-     * Use this when the built-in combinators don't cover your use case.</p>
+     * typed value to dynamic form, applies the transformation function, and decodes back. Use this when the built-in
+     * combinators don't cover your use case.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1213,8 +1205,7 @@ public final class Rules {
      * Creates a rule that sets a field to a value, regardless of whether it exists.
      *
      * <p>Unlike {@link #addField} which only adds the field if it doesn't exist,
-     * this method always sets the field to the specified value, overwriting any
-     * existing value.</p>
+     * this method always sets the field to the specified value, overwriting any existing value.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1396,8 +1387,7 @@ public final class Rules {
      * Creates a rule that groups multiple fields into a nested object.
      *
      * <p>This is useful when restructuring flat data into nested structures.
-     * The source fields are removed from the root and placed into a new
-     * nested object with the specified name.</p>
+     * The source fields are removed from the root and placed into a new nested object with the specified name.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1506,8 +1496,7 @@ public final class Rules {
             for (final var entry : entries) {
                 final String key = entry.first().asString().result().orElse(null);
                 if (key != null) {
-                    @SuppressWarnings("unchecked")
-                    final Dynamic<T> value = (Dynamic<T>) entry.second();
+                    @SuppressWarnings("unchecked") final Dynamic<T> value = (Dynamic<T>) entry.second();
                     result = result.set(key, value);
                 }
             }
@@ -1709,10 +1698,8 @@ public final class Rules {
                 return dynamic;
             }
 
-            @SuppressWarnings("unchecked")
-            final Dynamic<Object> typedParent = (Dynamic<Object>) parent;
-            @SuppressWarnings("unchecked")
-            final Dynamic<Object> typedValue = (Dynamic<Object>) value;
+            @SuppressWarnings("unchecked") final Dynamic<Object> typedParent = (Dynamic<Object>) parent;
+            @SuppressWarnings("unchecked") final Dynamic<Object> typedValue = (Dynamic<Object>) value;
 
             final Dynamic<?> updatedParent = typedParent.remove(oldName).set(newName, typedValue);
             return parentFinder.set(dynamic, updatedParent);
@@ -1994,8 +1981,7 @@ public final class Rules {
      * Creates a rule that conditionally applies a transformation based on a predicate.
      *
      * <p>This is the most efficient conditional combinator as it performs the condition check
-     * and transformation in a single encode/decode cycle. Use this when you need custom
-     * condition logic.</p>
+     * and transformation in a single encode/decode cycle. Use this when you need custom condition logic.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -2025,8 +2011,7 @@ public final class Rules {
         Preconditions.checkNotNull(transform, "Function transform must not be null");
 
         return dynamicTransform("conditionalTransform", ops, dynamic -> {
-            @SuppressWarnings("unchecked")
-            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             if (condition.test(typedDynamic)) {
                 return transform.apply(typedDynamic);
             }
@@ -2038,8 +2023,8 @@ public final class Rules {
      * Creates a rule that applies a transformation if a field exists (single-pass version).
      *
      * <p>This is more efficient than {@link #ifFieldExists(DynamicOps, String, TypeRewriteRule)}
-     * when the nested rule would perform another encode/decode cycle. This version performs
-     * the condition check and transformation in a single encode/decode cycle.</p>
+     * when the nested rule would perform another encode/decode cycle. This version performs the condition check and
+     * transformation in a single encode/decode cycle.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -2071,8 +2056,7 @@ public final class Rules {
         Preconditions.checkNotNull(transform, "Function transform must not be null");
 
         return dynamicTransform("ifFieldExists(" + fieldName + ")", ops, dynamic -> {
-            @SuppressWarnings("unchecked")
-            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             if (typedDynamic.get(fieldName) != null) {
                 return transform.apply(typedDynamic);
             }
@@ -2084,8 +2068,8 @@ public final class Rules {
      * Creates a rule that applies a transformation if a field is missing (single-pass version).
      *
      * <p>This is more efficient than {@link #ifFieldMissing(DynamicOps, String, TypeRewriteRule)}
-     * when the nested rule would perform another encode/decode cycle. This version performs
-     * the condition check and transformation in a single encode/decode cycle.</p>
+     * when the nested rule would perform another encode/decode cycle. This version performs the condition check and
+     * transformation in a single encode/decode cycle.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -2117,8 +2101,7 @@ public final class Rules {
         Preconditions.checkNotNull(transform, "Function transform must not be null");
 
         return dynamicTransform("ifFieldMissing(" + fieldName + ")", ops, dynamic -> {
-            @SuppressWarnings("unchecked")
-            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             if (typedDynamic.get(fieldName) == null) {
                 return transform.apply(typedDynamic);
             }
@@ -2130,8 +2113,8 @@ public final class Rules {
      * Creates a rule that applies a transformation if a field equals a specific value (single-pass version).
      *
      * <p>This is more efficient than {@link #ifFieldEquals(DynamicOps, String, Object, TypeRewriteRule)}
-     * when the nested rule would perform another encode/decode cycle. This version performs
-     * the condition check and transformation in a single encode/decode cycle.</p>
+     * when the nested rule would perform another encode/decode cycle. This version performs the condition check and
+     * transformation in a single encode/decode cycle.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -2168,8 +2151,7 @@ public final class Rules {
         Preconditions.checkNotNull(transform, "Function transform must not be null");
 
         return dynamicTransform("ifFieldEquals(" + fieldName + " == " + value + ")", ops, dynamic -> {
-            @SuppressWarnings("unchecked")
-            final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
+            @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             final Dynamic<T> field = typedDynamic.get(fieldName);
 
             if (field == null) {
@@ -2186,8 +2168,8 @@ public final class Rules {
     }
 
     /**
-     * Checks if a Dynamic field value matches the expected value.
-     * Supports Integer, Long, Double, Float, Boolean, and String comparisons.
+     * Checks if a Dynamic field value matches the expected value. Supports Integer, Long, Double, Float, Boolean, and
+     * String comparisons.
      *
      * @param field the dynamic field to check
      * @param value the expected value
@@ -2236,8 +2218,8 @@ public final class Rules {
     }
 
     /**
-     * Internal method that parses a path without caching.
-     * Uses character-based parsing for better performance than regex.
+     * Internal method that parses a path without caching. Uses character-based parsing for better performance than
+     * regex.
      *
      * @param path the dot-notation path, must not be {@code null}
      * @return a composed Finder for the path, never {@code null}
@@ -2263,8 +2245,7 @@ public final class Rules {
     }
 
     /**
-     * Checks if a string contains only digit characters.
-     * More efficient than regex for simple numeric checks.
+     * Checks if a string contains only digit characters. More efficient than regex for simple numeric checks.
      *
      * @param s the string to check, must not be {@code null}
      * @return {@code true} if the string is non-empty and all characters are digits
@@ -2336,8 +2317,7 @@ public final class Rules {
     }
 
     /**
-     * Splits a path by dots without using regex.
-     * More efficient than String.split("\\\\.")
+     * Splits a path by dots without using regex. More efficient than String.split("\\\\.")
      *
      * @param path the dot-notation path, must not be {@code null}
      * @return an array of path segments

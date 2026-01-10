@@ -36,31 +36,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Prism")
 class PrismTest {
 
-    // Test sum types
-    sealed interface JsonValue permits JsonString, JsonNumber, JsonNull, JsonArray {}
-    record JsonString(String value) implements JsonValue {}
-    record JsonNumber(double value) implements JsonValue {}
-    record JsonNull() implements JsonValue {}
-    record JsonArray(java.util.List<JsonValue> values) implements JsonValue {}
-
     // Prisms for each case
     private final Prism<JsonValue, JsonValue, String, String> stringPrism = Prism.of(
             "json.string",
             json -> json instanceof JsonString js ? Optional.of(js.value()) : Optional.empty(),
             JsonString::new
     );
-
     private final Prism<JsonValue, JsonValue, Double, Double> numberPrism = Prism.of(
             "json.number",
             json -> json instanceof JsonNumber jn ? Optional.of(jn.value()) : Optional.empty(),
             JsonNumber::new
     );
-
     private final Prism<JsonValue, JsonValue, java.util.List<JsonValue>, java.util.List<JsonValue>> arrayPrism = Prism.of(
             "json.array",
             json -> json instanceof JsonArray ja ? Optional.of(ja.values()) : Optional.empty(),
             JsonArray::new
     );
+
+    // Test sum types
+    sealed interface JsonValue permits JsonString, JsonNumber, JsonNull, JsonArray {
+    }
+
+    record JsonString(String value) implements JsonValue {
+    }
+
+    record JsonNumber(double value) implements JsonValue {
+    }
+
+    record JsonNull() implements JsonValue {
+    }
+
+    record JsonArray(java.util.List<JsonValue> values) implements JsonValue {
+    }
 
     @Nested
     @DisplayName("Factory Method")
@@ -208,11 +215,6 @@ class PrismTest {
     @DisplayName("compose()")
     class ComposeOperation {
 
-        // Nested sum type for testing
-        sealed interface Result permits Success, Failure {}
-        record Success(JsonValue data) implements Result {}
-        record Failure(String error) implements Result {}
-
         private final Prism<Result, Result, JsonValue, JsonValue> successPrism = Prism.of(
                 "result.success",
                 r -> r instanceof Success s ? Optional.of(s.data()) : Optional.empty(),
@@ -271,16 +273,21 @@ class PrismTest {
 
             assertThat(result).isEqualTo(new Success(new JsonString("hello")));
         }
+
+        // Nested sum type for testing
+        sealed interface Result permits Success, Failure {
+        }
+
+        record Success(JsonValue data) implements Result {
+        }
+
+        record Failure(String error) implements Result {
+        }
     }
 
     @Nested
     @DisplayName("Prism Laws")
     class PrismLaws {
-
-        // Moved outside method because sealed interfaces cannot be local
-        sealed interface Container permits Wrapped, Empty {}
-        record Wrapped(JsonValue value) implements Container {}
-        record Empty() implements Container {}
 
         @Test
         @DisplayName("PartialPutGet: getOption(reverseGet(a)) == Optional.of(a)")
@@ -337,6 +344,16 @@ class PrismTest {
             assertThat(extracted).isPresent();
             assertThat(composedPrism.reverseGet(extracted.get())).isEqualTo(wrapped);
         }
+
+        // Moved outside method because sealed interfaces cannot be local
+        sealed interface Container permits Wrapped, Empty {
+        }
+
+        record Wrapped(JsonValue value) implements Container {
+        }
+
+        record Empty() implements Container {
+        }
     }
 
     @Nested
@@ -368,7 +385,8 @@ class PrismTest {
         @DisplayName("works with unit/singleton variant")
         void worksWithUnitSingletonVariant() {
             // Use a marker record for unit type instead of Void
-            record Unit() {}
+            record Unit() {
+            }
             final Unit UNIT = new Unit();
 
             final Prism<JsonValue, JsonValue, Unit, Unit> nullPrism = Prism.of(

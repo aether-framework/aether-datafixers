@@ -30,12 +30,11 @@ import java.time.Instant;
 import java.util.Optional;
 
 /**
- * Details about a single {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}
- * application during a migration.
+ * Details about a single {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule} application during a
+ * migration.
  *
  * <p>{@code RuleApplication} captures diagnostic information about each rule
- * that is evaluated during a data fix, including whether the rule matched
- * and how long it took to execute.</p>
+ * that is evaluated during a data fix, including whether the rule matched and how long it took to execute.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code

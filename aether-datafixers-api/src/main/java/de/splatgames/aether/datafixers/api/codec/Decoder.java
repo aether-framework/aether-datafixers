@@ -32,14 +32,14 @@ import org.jetbrains.annotations.NotNull;
  * A functional interface for decoding typed values from dynamic representations.
  *
  * <p>A {@code Decoder} transforms format-agnostic dynamic data into typed Java objects
- * of type {@code A} using {@link DynamicOps}. This enables deserialization from various
- * formats (JSON, NBT, etc.) without coupling the decoding logic to a specific format.</p>
+ * of type {@code A} using {@link DynamicOps}. This enables deserialization from various formats (JSON, NBT, etc.)
+ * without coupling the decoding logic to a specific format.</p>
  *
  * <h2>Decoding with Remaining Input</h2>
  * <p>The primary {@link #decode(DynamicOps, Object)} method returns a {@link Pair} containing
- * both the decoded value and any remaining unconsumed input. This pattern enables streaming
- * decoders and sequential parsing. For most use cases, the {@link #parse(DynamicOps, Object)}
- * method is more convenient as it discards the remaining input.</p>
+ * both the decoded value and any remaining unconsumed input. This pattern enables streaming decoders and sequential
+ * parsing. For most use cases, the {@link #parse(DynamicOps, Object)} method is more convenient as it discards the
+ * remaining input.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -74,14 +74,13 @@ public interface Decoder<A> {
      * Decodes a value from a dynamic representation.
      *
      * <p>The result includes both the decoded value and any remaining unconsumed input.
-     * This pattern supports streaming and sequential parsing. For most use cases,
-     * {@link #parse(DynamicOps, Object)} is more convenient.</p>
+     * This pattern supports streaming and sequential parsing. For most use cases, {@link #parse(DynamicOps, Object)} is
+     * more convenient.</p>
      *
      * @param ops   the dynamic operations for the source format, must not be {@code null}
      * @param input the input to decode, must not be {@code null}
      * @param <T>   the type of the dynamic representation (e.g., JsonElement)
-     * @return a {@link DataResult} containing a pair of the decoded value and remaining input,
-     *         or an error message
+     * @return a {@link DataResult} containing a pair of the decoded value and remaining input, or an error message
      */
     @NotNull
     <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops, @NotNull final T input);

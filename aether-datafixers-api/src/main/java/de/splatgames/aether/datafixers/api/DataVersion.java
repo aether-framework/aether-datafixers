@@ -34,13 +34,12 @@ import java.util.Objects;
  * Represents a version number for data schemas in the data fixing system.
  *
  * <p>{@code DataVersion} is used to track the version of serialized data,
- * enabling the {@link DataFixer} to determine which {@link DataFix} instances
- * need to be applied when migrating data between versions.</p>
+ * enabling the {@link DataFixer} to determine which {@link DataFix} instances need to be applied when migrating data
+ * between versions.</p>
  *
  * <h2>Version Ordering</h2>
  * <p>Versions are ordered numerically. A higher version number represents
- * newer data. The {@link #compareTo(DataVersion)} method enables natural
- * ordering for version comparisons.</p>
+ * newer data. The {@link #compareTo(DataVersion)} method enables natural ordering for version comparisons.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code

@@ -137,6 +137,25 @@ public class DecodeException extends DataFixerException {
         this.path = path;
     }
 
+    @Nullable
+    private static String buildContext(@Nullable final TypeReference typeReference,
+                                       @Nullable final String path) {
+        if (typeReference == null && path == null) {
+            return null;
+        }
+        final StringBuilder sb = new StringBuilder();
+        if (typeReference != null) {
+            sb.append("type=").append(typeReference.getId());
+        }
+        if (path != null) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("path=").append(path);
+        }
+        return sb.toString();
+    }
+
     /**
      * Returns the type reference that was being decoded when the error occurred.
      *
@@ -158,24 +177,5 @@ public class DecodeException extends DataFixerException {
     @Nullable
     public String getPath() {
         return this.path;
-    }
-
-    @Nullable
-    private static String buildContext(@Nullable final TypeReference typeReference,
-                                        @Nullable final String path) {
-        if (typeReference == null && path == null) {
-            return null;
-        }
-        final StringBuilder sb = new StringBuilder();
-        if (typeReference != null) {
-            sb.append("type=").append(typeReference.getId());
-        }
-        if (path != null) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("path=").append(path);
-        }
-        return sb.toString();
     }
 }

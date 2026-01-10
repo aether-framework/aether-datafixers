@@ -24,10 +24,9 @@
  * Type template definitions for schema construction.
  *
  * <p>This package provides the template abstraction for defining type structures
- * declaratively. Templates are blueprints that describe the shape of data without
- * being tied to a specific schema version. They are instantiated into concrete
- * {@link de.splatgames.aether.datafixers.api.type.Type} instances when a schema
- * is built.</p>
+ * declaratively. Templates are blueprints that describe the shape of data without being tied to a specific schema
+ * version. They are instantiated into concrete {@link de.splatgames.aether.datafixers.api.type.Type} instances when a
+ * schema is built.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>

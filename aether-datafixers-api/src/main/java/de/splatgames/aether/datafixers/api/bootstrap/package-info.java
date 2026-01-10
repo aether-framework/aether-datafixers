@@ -24,9 +24,8 @@
  * Bootstrap interfaces for initializing the data fixer system.
  *
  * <p>This package provides the contract for setting up a complete data fixer
- * instance with all required schemas and fixes. The bootstrap pattern separates
- * the definition of schemas and fixes from the runtime construction of the
- * data fixer.</p>
+ * instance with all required schemas and fixes. The bootstrap pattern separates the definition of schemas and fixes
+ * from the runtime construction of the data fixer.</p>
  *
  * <h2>Key Interface</h2>
  * <ul>

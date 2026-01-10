@@ -28,17 +28,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Details about a single {@link de.splatgames.aether.datafixers.api.fix.DataFix}
- * execution during a migration.
+ * Details about a single {@link de.splatgames.aether.datafixers.api.fix.DataFix} execution during a migration.
  *
  * <p>{@code FixExecution} captures comprehensive diagnostic information about
- * each data fix that is applied during a migration, including timing,
- * rule applications, and optional before/after snapshots.</p>
+ * each data fix that is applied during a migration, including timing, rule applications, and optional before/after
+ * snapshots.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code

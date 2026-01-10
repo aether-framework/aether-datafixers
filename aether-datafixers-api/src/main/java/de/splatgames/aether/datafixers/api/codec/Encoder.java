@@ -30,8 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * A functional interface for encoding typed values into dynamic representations.
  *
  * <p>An {@code Encoder} transforms Java objects of type {@code A} into a format-agnostic
- * dynamic representation using {@link DynamicOps}. This enables serialization to various
- * formats (JSON, NBT, etc.) without coupling the encoding logic to a specific format.</p>
+ * dynamic representation using {@link DynamicOps}. This enables serialization to various formats (JSON, NBT, etc.)
+ * without coupling the encoding logic to a specific format.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -65,8 +65,7 @@ public interface Encoder<A> {
      * Encodes a value to a dynamic representation, merging with the given prefix.
      *
      * <p>The prefix parameter allows the encoded value to be merged into an existing
-     * structure. For most use cases, use {@link #encodeStart(DynamicOps, Object)} which
-     * passes an empty prefix.</p>
+     * structure. For most use cases, use {@link #encodeStart(DynamicOps, Object)} which passes an empty prefix.</p>
      *
      * @param input  the value to encode, must not be {@code null}
      * @param ops    the dynamic operations for the target format, must not be {@code null}

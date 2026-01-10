@@ -166,6 +166,31 @@ public class FixException extends DataFixerException {
         this.typeReference = typeReference;
     }
 
+    @Nullable
+    private static String buildContext(@Nullable final String fixName,
+                                       @Nullable final DataVersion fromVersion,
+                                       @Nullable final DataVersion toVersion,
+                                       @Nullable final TypeReference typeReference) {
+        final StringBuilder sb = new StringBuilder();
+        if (fixName != null) {
+            sb.append("fix=").append(fixName);
+        }
+        if (fromVersion != null && toVersion != null) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("version=").append(fromVersion.getVersion())
+                    .append("->").append(toVersion.getVersion());
+        }
+        if (typeReference != null) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("type=").append(typeReference.getId());
+        }
+        return sb.length() > 0 ? sb.toString() : null;
+    }
+
     /**
      * Returns the name of the fix that failed.
      *
@@ -204,30 +229,5 @@ public class FixException extends DataFixerException {
     @Nullable
     public TypeReference getTypeReference() {
         return this.typeReference;
-    }
-
-    @Nullable
-    private static String buildContext(@Nullable final String fixName,
-                                        @Nullable final DataVersion fromVersion,
-                                        @Nullable final DataVersion toVersion,
-                                        @Nullable final TypeReference typeReference) {
-        final StringBuilder sb = new StringBuilder();
-        if (fixName != null) {
-            sb.append("fix=").append(fixName);
-        }
-        if (fromVersion != null && toVersion != null) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("version=").append(fromVersion.getVersion())
-              .append("->").append(toVersion.getVersion());
-        }
-        if (typeReference != null) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("type=").append(typeReference.getId());
-        }
-        return sb.length() > 0 ? sb.toString() : null;
     }
 }

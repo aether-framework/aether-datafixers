@@ -29,9 +29,8 @@ import org.jetbrains.annotations.Nullable;
  * Base exception class for all data fixer related errors.
  *
  * <p>{@code DataFixerException} serves as the root of the exception hierarchy
- * for the Aether Datafixers framework. All specific exceptions (encoding,
- * decoding, fixing, registry) extend this class, allowing callers to catch
- * all data fixer errors with a single handler if desired.</p>
+ * for the Aether Datafixers framework. All specific exceptions (encoding, decoding, fixing, registry) extend this
+ * class, allowing callers to catch all data fixer errors with a single handler if desired.</p>
  *
  * <h2>Exception Hierarchy</h2>
  * <pre>
@@ -44,8 +43,8 @@ import org.jetbrains.annotations.Nullable;
  *
  * <h2>Context Information</h2>
  * <p>This exception optionally carries a context string that provides
- * additional information about where the error occurred (e.g., field path,
- * type name, version). Use {@link #getContext()} to retrieve it.</p>
+ * additional information about where the error occurred (e.g., field path, type name, version). Use
+ * {@link #getContext()} to retrieve it.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code

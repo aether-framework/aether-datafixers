@@ -23,7 +23,6 @@
 package de.splatgames.aether.datafixers.api.optic;
 
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
-import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +37,8 @@ import java.util.function.Function;
  * A finder locates and manipulates specific parts of dynamic data structures.
  *
  * <p>A {@code Finder} is a specialized optic designed to work with {@link Dynamic} values,
- * enabling navigation and transformation of data without coupling to any specific format
- * (JSON, NBT, YAML, etc.). Finders are the bridge between the typed optics world and
- * the dynamic data world used in the data fixing system.</p>
+ * enabling navigation and transformation of data without coupling to any specific format (JSON, NBT, YAML, etc.).
+ * Finders are the bridge between the typed optics world and the dynamic data world used in the data fixing system.</p>
  *
  * <h2>When to Use a Finder</h2>
  * <p>Use a finder when you need to:</p>
@@ -116,8 +114,8 @@ import java.util.function.Function;
  * <p>Finder implementations should be stateless and thread-safe. The built-in
  * factory methods return immutable finder instances.</p>
  *
- * @param <A> the conceptual type of value this finder focuses on (often just Object
- *            since Dynamic values are dynamically typed)
+ * @param <A> the conceptual type of value this finder focuses on (often just Object since Dynamic values are
+ *            dynamically typed)
  * @author Erik Pförtner
  * @see Dynamic
  * @see Lens
@@ -125,177 +123,6 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public interface Finder<A> {
-
-    /**
-     * Returns a unique identifier for this finder.
-     *
-     * <p>The identifier is used for debugging, logging, and constructing
-     * composite path descriptions when finders are composed.</p>
-     *
-     * @return a non-null string identifying this finder, such as "field[name]"
-     *         or "index[0]", never {@code null}
-     */
-    @NotNull
-    String id();
-
-    /**
-     * Extracts the focused value from the root dynamic structure.
-     *
-     * <p>This operation navigates into the dynamic data structure and retrieves
-     * the value at the focused location. If the path doesn't exist (e.g., a
-     * missing field or out-of-bounds index), returns {@code null}.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"name": "Alice", "age": 30}
-     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     *
-     * Finder<?> nameFinder = Finder.field("name");
-     * Dynamic<?> name = nameFinder.get(data);   // Dynamic containing "Alice"
-     *
-     * Finder<?> missingFinder = Finder.field("address");
-     * Dynamic<?> missing = missingFinder.get(data); // null
-     * }</pre>
-     *
-     * @param root the root dynamic value to navigate from, must not be {@code null}
-     * @return the focused value if present, or {@code null} if the path doesn't exist
-     * @throws NullPointerException if {@code root} is {@code null}
-     */
-    @Nullable
-    Dynamic<?> get(@NotNull final Dynamic<?> root);
-
-    /**
-     * Sets a new value at the focused location, returning an updated structure.
-     *
-     * <p>This creates a new dynamic structure with the value at the focused
-     * location replaced. The original structure is not modified.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"name": "Alice", "age": 30}
-     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     *
-     * Finder<?> nameFinder = Finder.field("name");
-     * Dynamic<?> updated = nameFinder.set(data, data.createString("Bob"));
-     * // updated is {"name": "Bob", "age": 30}
-     * }</pre>
-     *
-     * @param root     the root dynamic value to modify, must not be {@code null}
-     * @param newValue the new value to place at the focus, must not be {@code null}
-     * @return a new dynamic structure with the focused value replaced, never {@code null}
-     * @throws NullPointerException if {@code root} or {@code newValue} is {@code null}
-     */
-    @NotNull
-    Dynamic<?> set(@NotNull final Dynamic<?> root,
-                   @NotNull final Dynamic<?> newValue);
-
-    /**
-     * Extracts the focused value wrapped in an Optional.
-     *
-     * <p>This is a null-safe alternative to {@link #get(Dynamic)}. Instead of
-     * returning {@code null} for missing paths, it returns {@link Optional#empty()}.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Finder<?> nameFinder = Finder.field("name");
-     * Optional<Dynamic<?>> name = nameFinder.getOptional(data);
-     * name.ifPresent(d -> System.out.println(d.asString()));
-     * }</pre>
-     *
-     * @param root the root dynamic value to navigate from, must not be {@code null}
-     * @return an Optional containing the focused value, or empty if not present;
-     *         never {@code null}
-     * @throws NullPointerException if {@code root} is {@code null}
-     */
-    @NotNull
-    default Optional<Dynamic<?>> getOptional(@NotNull final Dynamic<?> root) {
-        return Optional.ofNullable(get(root));
-    }
-
-    /**
-     * Transforms the focused value using the given function.
-     *
-     * <p>If the focus exists, applies the updater function and sets the result.
-     * If the focus doesn't exist (get returns null), returns the root unchanged.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"score": 85}
-     * Finder<?> scoreFinder = Finder.field("score");
-     *
-     * Dynamic<?> updated = scoreFinder.update(data, d -> {
-     *     int score = d.asInt().orElse(0);
-     *     return d.createInt(score + 10);
-     * });
-     * // updated is {"score": 95}
-     * }</pre>
-     *
-     * @param root    the root dynamic value to modify, must not be {@code null}
-     * @param updater the function to transform the focused value, must not be {@code null}
-     * @return a new dynamic structure with the transformed value, or the original
-     *         if the focus doesn't exist; never {@code null}
-     * @throws NullPointerException if {@code root} or {@code updater} is {@code null}
-     */
-    @NotNull
-    default Dynamic<?> update(@NotNull final Dynamic<?> root,
-                              @NotNull final Function<Dynamic<?>, Dynamic<?>> updater) {
-        final Dynamic<?> current = get(root);
-        if (current == null) {
-            return root;
-        }
-        return set(root, updater.apply(current));
-    }
-
-    /**
-     * Composes this finder with another finder to navigate deeper into the structure.
-     *
-     * <p>The composed finder first navigates using this finder, then applies
-     * the other finder to the intermediate result. This enables building paths
-     * through nested structures.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Navigate: root -> "user" -> "address" -> "city"
-     * Finder<?> cityFinder = Finder.field("user")
-     *     .then(Finder.field("address"))
-     *     .then(Finder.field("city"));
-     *
-     * Dynamic<?> city = cityFinder.get(data);
-     * }</pre>
-     *
-     * @param other the finder to apply after this one, must not be {@code null}
-     * @param <B>   the new conceptual focus type
-     * @return a composed finder that navigates through both paths, never {@code null}
-     * @throws NullPointerException if {@code other} is {@code null}
-     */
-    @NotNull
-    default <B> Finder<B> then(@NotNull final Finder<B> other) {
-        final Finder<A> self = this;
-        return new Finder<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return self.id() + "." + other.id();
-            }
-
-            @Nullable
-            @Override
-            public Dynamic<?> get(@NotNull final Dynamic<?> root) {
-                final Dynamic<?> intermediate = self.get(root);
-                if (intermediate == null) {
-                    return null;
-                }
-                return other.get(intermediate);
-            }
-
-            @NotNull
-            @Override
-            public Dynamic<?> set(@NotNull final Dynamic<?> root,
-                                  @NotNull final Dynamic<?> newValue) {
-                return self.update(root, intermediate -> other.set(intermediate, newValue));
-            }
-        };
-    }
 
     /**
      * Creates a finder that navigates to a field by name in a map/object structure.
@@ -336,10 +163,8 @@ public interface Finder<A> {
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
                                   @NotNull final Dynamic<?> newValue) {
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
+                @SuppressWarnings("unchecked") final Dynamic<Object> typedRoot = (Dynamic<Object>) root;
+                @SuppressWarnings("unchecked") final Dynamic<Object> typedNewValue = (Dynamic<Object>) newValue;
                 return typedRoot.set(fieldName, typedNewValue);
             }
         };
@@ -349,9 +174,8 @@ public interface Finder<A> {
      * Creates a finder that navigates to an element by index in a list/array structure.
      *
      * <p>The returned finder extracts and modifies the element at the specified
-     * index position. If the index is out of bounds (negative or beyond the list
-     * size), {@link #get} returns {@code null} and {@link #set} returns the
-     * root unchanged.</p>
+     * index position. If the index is out of bounds (negative or beyond the list size), {@link #get} returns
+     * {@code null} and {@link #set} returns the root unchanged.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -372,8 +196,7 @@ public interface Finder<A> {
      * }</pre>
      *
      * @param index the zero-based index of the element to focus on
-     * @return a finder that navigates to the element at the specified index,
-     *         never {@code null}
+     * @return a finder that navigates to the element at the specified index, never {@code null}
      */
     @NotNull
     static Finder<Object> index(final int index) {
@@ -422,8 +245,8 @@ public interface Finder<A> {
      * Creates an identity finder that focuses on the root dynamic value itself.
      *
      * <p>The identity finder is the simplest possible finder—it returns the entire
-     * root as its focus and replaces the entire root when set. This is useful as
-     * a starting point for composition or as a neutral element in finder chains.</p>
+     * root as its focus and replaces the entire root when set. This is useful as a starting point for composition or as
+     * a neutral element in finder chains.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -481,9 +304,8 @@ public interface Finder<A> {
      * Creates a finder that focuses on all fields except the specified ones.
      *
      * <p>The remainder finder is useful for preserving unknown or extra fields during
-     * data transformations. When you extract specific known fields from a map/object,
-     * the remainder finder captures everything else, allowing round-trip preservation
-     * of data you don't explicitly handle.</p>
+     * data transformations. When you extract specific known fields from a map/object, the remainder finder captures
+     * everything else, allowing round-trip preservation of data you don't explicitly handle.</p>
      *
      * <p>This finder only works on map/object structures. For non-map values,
      * {@link #get} returns {@code null}.</p>
@@ -512,13 +334,11 @@ public interface Finder<A> {
      *
      * <h4>Note on Set Operation</h4>
      * <p>The {@link #set} operation for remainder finders is complex and not fully
-     * implemented. Currently, it returns the root unchanged. For full remainder
-     * manipulation, extract the remainder, modify it, and merge manually.</p>
+     * implemented. Currently, it returns the root unchanged. For full remainder manipulation, extract the remainder,
+     * modify it, and merge manually.</p>
      *
-     * @param excludedFields the field names to exclude from the remainder;
-     *                       must not be {@code null}, but may be empty
-     * @return a finder that focuses on all fields except the excluded ones,
-     *         never {@code null}
+     * @param excludedFields the field names to exclude from the remainder; must not be {@code null}, but may be empty
+     * @return a finder that focuses on all fields except the excluded ones, never {@code null}
      * @throws NullPointerException if {@code excludedFields} is {@code null}
      */
     @NotNull
@@ -592,6 +412,174 @@ public interface Finder<A> {
                 return mergedResult.result()
                         .<Dynamic<?>>map(merged -> new Dynamic<>(typedRoot.ops(), merged))
                         .orElse(root);
+            }
+        };
+    }
+
+    /**
+     * Returns a unique identifier for this finder.
+     *
+     * <p>The identifier is used for debugging, logging, and constructing
+     * composite path descriptions when finders are composed.</p>
+     *
+     * @return a non-null string identifying this finder, such as "field[name]" or "index[0]", never {@code null}
+     */
+    @NotNull
+    String id();
+
+    /**
+     * Extracts the focused value from the root dynamic structure.
+     *
+     * <p>This operation navigates into the dynamic data structure and retrieves
+     * the value at the focused location. If the path doesn't exist (e.g., a missing field or out-of-bounds index),
+     * returns {@code null}.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"name": "Alice", "age": 30}
+     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     *
+     * Finder<?> nameFinder = Finder.field("name");
+     * Dynamic<?> name = nameFinder.get(data);   // Dynamic containing "Alice"
+     *
+     * Finder<?> missingFinder = Finder.field("address");
+     * Dynamic<?> missing = missingFinder.get(data); // null
+     * }</pre>
+     *
+     * @param root the root dynamic value to navigate from, must not be {@code null}
+     * @return the focused value if present, or {@code null} if the path doesn't exist
+     * @throws NullPointerException if {@code root} is {@code null}
+     */
+    @Nullable
+    Dynamic<?> get(@NotNull final Dynamic<?> root);
+
+    /**
+     * Sets a new value at the focused location, returning an updated structure.
+     *
+     * <p>This creates a new dynamic structure with the value at the focused
+     * location replaced. The original structure is not modified.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"name": "Alice", "age": 30}
+     * Dynamic<?> data = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     *
+     * Finder<?> nameFinder = Finder.field("name");
+     * Dynamic<?> updated = nameFinder.set(data, data.createString("Bob"));
+     * // updated is {"name": "Bob", "age": 30}
+     * }</pre>
+     *
+     * @param root     the root dynamic value to modify, must not be {@code null}
+     * @param newValue the new value to place at the focus, must not be {@code null}
+     * @return a new dynamic structure with the focused value replaced, never {@code null}
+     * @throws NullPointerException if {@code root} or {@code newValue} is {@code null}
+     */
+    @NotNull
+    Dynamic<?> set(@NotNull final Dynamic<?> root,
+                   @NotNull final Dynamic<?> newValue);
+
+    /**
+     * Extracts the focused value wrapped in an Optional.
+     *
+     * <p>This is a null-safe alternative to {@link #get(Dynamic)}. Instead of
+     * returning {@code null} for missing paths, it returns {@link Optional#empty()}.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Finder<?> nameFinder = Finder.field("name");
+     * Optional<Dynamic<?>> name = nameFinder.getOptional(data);
+     * name.ifPresent(d -> System.out.println(d.asString()));
+     * }</pre>
+     *
+     * @param root the root dynamic value to navigate from, must not be {@code null}
+     * @return an Optional containing the focused value, or empty if not present; never {@code null}
+     * @throws NullPointerException if {@code root} is {@code null}
+     */
+    @NotNull
+    default Optional<Dynamic<?>> getOptional(@NotNull final Dynamic<?> root) {
+        return Optional.ofNullable(get(root));
+    }
+
+    /**
+     * Transforms the focused value using the given function.
+     *
+     * <p>If the focus exists, applies the updater function and sets the result.
+     * If the focus doesn't exist (get returns null), returns the root unchanged.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"score": 85}
+     * Finder<?> scoreFinder = Finder.field("score");
+     *
+     * Dynamic<?> updated = scoreFinder.update(data, d -> {
+     *     int score = d.asInt().orElse(0);
+     *     return d.createInt(score + 10);
+     * });
+     * // updated is {"score": 95}
+     * }</pre>
+     *
+     * @param root    the root dynamic value to modify, must not be {@code null}
+     * @param updater the function to transform the focused value, must not be {@code null}
+     * @return a new dynamic structure with the transformed value, or the original if the focus doesn't exist; never
+     * {@code null}
+     * @throws NullPointerException if {@code root} or {@code updater} is {@code null}
+     */
+    @NotNull
+    default Dynamic<?> update(@NotNull final Dynamic<?> root,
+                              @NotNull final Function<Dynamic<?>, Dynamic<?>> updater) {
+        final Dynamic<?> current = get(root);
+        if (current == null) {
+            return root;
+        }
+        return set(root, updater.apply(current));
+    }
+
+    /**
+     * Composes this finder with another finder to navigate deeper into the structure.
+     *
+     * <p>The composed finder first navigates using this finder, then applies
+     * the other finder to the intermediate result. This enables building paths through nested structures.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Navigate: root -> "user" -> "address" -> "city"
+     * Finder<?> cityFinder = Finder.field("user")
+     *     .then(Finder.field("address"))
+     *     .then(Finder.field("city"));
+     *
+     * Dynamic<?> city = cityFinder.get(data);
+     * }</pre>
+     *
+     * @param other the finder to apply after this one, must not be {@code null}
+     * @param <B>   the new conceptual focus type
+     * @return a composed finder that navigates through both paths, never {@code null}
+     * @throws NullPointerException if {@code other} is {@code null}
+     */
+    @NotNull
+    default <B> Finder<B> then(@NotNull final Finder<B> other) {
+        final Finder<A> self = this;
+        return new Finder<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return self.id() + "." + other.id();
+            }
+
+            @Nullable
+            @Override
+            public Dynamic<?> get(@NotNull final Dynamic<?> root) {
+                final Dynamic<?> intermediate = self.get(root);
+                if (intermediate == null) {
+                    return null;
+                }
+                return other.get(intermediate);
+            }
+
+            @NotNull
+            @Override
+            public Dynamic<?> set(@NotNull final Dynamic<?> root,
+                                  @NotNull final Dynamic<?> newValue) {
+                return self.update(root, intermediate -> other.set(intermediate, newValue));
             }
         };
     }

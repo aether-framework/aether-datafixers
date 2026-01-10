@@ -41,12 +41,23 @@ class RecordCodecBuilderTest {
     private final TestOps ops = TestOps.INSTANCE;
 
     // Test record types
-    record Single(String value) {}
-    record Person(String name, int age) {}
-    record Point3D(double x, double y, double z) {}
-    record Rectangle(double x, double y, double width, double height) {}
-    record FullRecord(String a, int b, double c, boolean d, String e) {}
-    record MaxRecord(String a, int b, double c, boolean d, String e, long f) {}
+    record Single(String value) {
+    }
+
+    record Person(String name, int age) {
+    }
+
+    record Point3D(double x, double y, double z) {
+    }
+
+    record Rectangle(double x, double y, double width, double height) {
+    }
+
+    record FullRecord(String a, int b, double c, boolean d, String e) {
+    }
+
+    record MaxRecord(String a, int b, double c, boolean d, String e, long f) {
+    }
 
     @Nested
     @DisplayName("create() Factory")
@@ -102,8 +113,7 @@ class RecordCodecBuilderTest {
             final DataResult<Object> result = codec.encodeStart(ops, record);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("value", "hello");
         }
 
@@ -138,8 +148,7 @@ class RecordCodecBuilderTest {
             final DataResult<Object> result = codec.encodeStart(ops, person);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("name", "Alice");
             assertThat(encoded).containsEntry("age", 30);
         }
@@ -189,8 +198,7 @@ class RecordCodecBuilderTest {
             final DataResult<Object> result = codec.encodeStart(ops, point);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("x", 1.0);
             assertThat(encoded).containsEntry("y", 2.0);
             assertThat(encoded).containsEntry("z", 3.0);
@@ -232,8 +240,7 @@ class RecordCodecBuilderTest {
             final DataResult<Object> result = codec.encodeStart(ops, rect);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("x", 10.0);
             assertThat(encoded).containsEntry("y", 20.0);
             assertThat(encoded).containsEntry("width", 100.0);
@@ -278,8 +285,7 @@ class RecordCodecBuilderTest {
             final DataResult<Object> result = codec.encodeStart(ops, record);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("a", "first");
             assertThat(encoded).containsEntry("b", 2);
             assertThat(encoded).containsEntry("c", 3.0);
@@ -333,8 +339,7 @@ class RecordCodecBuilderTest {
             final DataResult<Object> result = codec.encodeStart(ops, record);
 
             assertThat(result.isSuccess()).isTrue();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encoded = (Map<String, Object>) result.result().orElseThrow();
             assertThat(encoded).containsEntry("a", "A");
             assertThat(encoded).containsEntry("b", 1);
             assertThat(encoded).containsEntry("c", 2.0);
@@ -372,8 +377,6 @@ class RecordCodecBuilderTest {
     @DisplayName("Optional Fields")
     class OptionalFields {
 
-        record Config(String name, int timeout) {}
-
         private final Codec<Config> codec = RecordCodecBuilder.create(instance ->
                 instance.group(
                         Codecs.STRING.fieldOf("name").forGetter(Config::name),
@@ -404,6 +407,9 @@ class RecordCodecBuilderTest {
             assertThat(result.isSuccess()).isTrue();
             final Config config = result.result().orElseThrow();
             assertThat(config.timeout()).isEqualTo(60);
+        }
+
+        record Config(String name, int timeout) {
         }
     }
 
@@ -480,9 +486,6 @@ class RecordCodecBuilderTest {
     @DisplayName("Nested Records")
     class NestedRecords {
 
-        record Address(String street, String city) {}
-        record PersonWithAddress(String name, Address address) {}
-
         @Test
         @DisplayName("handles nested record codecs")
         void handlesNestedRecordCodecs() {
@@ -505,11 +508,16 @@ class RecordCodecBuilderTest {
             final DataResult<Object> encoded = personCodec.encodeStart(ops, person);
             assertThat(encoded.isSuccess()).isTrue();
 
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> encodedMap = (Map<String, Object>) encoded.result().orElseThrow();
+            @SuppressWarnings("unchecked") final Map<String, Object> encodedMap = (Map<String, Object>) encoded.result().orElseThrow();
             assertThat(encodedMap).containsEntry("name", "Alice");
             assertThat(encodedMap).containsEntry("street", "Main St");
             assertThat(encodedMap).containsEntry("city", "Boston");
+        }
+
+        record Address(String street, String city) {
+        }
+
+        record PersonWithAddress(String name, Address address) {
         }
     }
 }

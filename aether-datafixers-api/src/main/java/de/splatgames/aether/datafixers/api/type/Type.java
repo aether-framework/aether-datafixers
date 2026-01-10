@@ -27,7 +27,6 @@ import de.splatgames.aether.datafixers.api.codec.Codec;
 import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
-import de.splatgames.aether.datafixers.api.optic.Finder;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Either;
 import de.splatgames.aether.datafixers.api.util.Pair;
@@ -37,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,8 +43,8 @@ import java.util.stream.Stream;
  * Represents a type in the data fixing system.
  *
  * <p>Types define the structure of data and provide codecs for serialization.
- * They are the building blocks of schemas used for data migration, enabling
- * type-safe transformations of persisted data across versions.</p>
+ * They are the building blocks of schemas used for data migration, enabling type-safe transformations of persisted data
+ * across versions.</p>
  *
  * <h2>Type Categories</h2>
  * <ul>
@@ -95,8 +93,8 @@ public interface Type<A> {
      * Returns the type reference that uniquely identifies this type.
      *
      * <p>The type reference serves as the type's identity in the data fixing system.
-     * Two types with equal references are considered the same type for matching
-     * purposes in {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}.</p>
+     * Two types with equal references are considered the same type for matching purposes in
+     * {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -119,8 +117,8 @@ public interface Type<A> {
      * Returns the codec used for serializing and deserializing values of this type.
      *
      * <p>The codec handles conversion between Java objects of type {@code A} and
-     * their serialized representations. It is used by {@link #read(Dynamic)} and
-     * {@link #write(Object, DynamicOps)} for data transformation.</p>
+     * their serialized representations. It is used by {@link #read(Dynamic)} and {@link #write(Object, DynamicOps)} for
+     * data transformation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -143,8 +141,8 @@ public interface Type<A> {
      * Returns a human-readable description of this type for debugging and logging.
      *
      * <p>The description provides a textual representation of the type structure,
-     * useful for error messages, logs, and debugging. By default, it returns the
-     * type reference ID, but complex types override this to show their structure.</p>
+     * useful for error messages, logs, and debugging. By default, it returns the type reference ID, but complex types
+     * override this to show their structure.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -169,8 +167,8 @@ public interface Type<A> {
      * Returns the child types that this type contains.
      *
      * <p>Child types are used by traversal combinators to recursively transform
-     * nested data structures. Primitive types have no children (return an empty list),
-     * while composite types return their component types.</p>
+     * nested data structures. Primitive types have no children (return an empty list), while composite types return
+     * their component types.</p>
      *
      * <h4>Child Types by Type Category</h4>
      * <ul>
@@ -212,8 +210,7 @@ public interface Type<A> {
      * Reads (deserializes) a value of this type from a dynamic representation.
      *
      * <p>This method uses the type's codec to parse the dynamic value into a
-     * typed Java object. If parsing fails (e.g., missing fields, wrong format),
-     * an error result is returned.</p>
+     * typed Java object. If parsing fails (e.g., missing fields, wrong format), an error result is returned.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -234,8 +231,7 @@ public interface Type<A> {
      *
      * @param dynamic the dynamic value to read from, must not be {@code null}
      * @param <T>     the underlying data format type (e.g., JsonElement)
-     * @return a {@link DataResult} containing the parsed value or an error,
-     *         never {@code null}
+     * @return a {@link DataResult} containing the parsed value or an error, never {@code null}
      * @throws NullPointerException if {@code dynamic} is {@code null}
      */
     @NotNull
@@ -247,8 +243,8 @@ public interface Type<A> {
      * Writes (serializes) a value of this type to a dynamic representation.
      *
      * <p>This method uses the type's codec to encode the Java object into the
-     * target format specified by the {@link DynamicOps}. The result is wrapped
-     * in a {@link Dynamic} for convenient manipulation.</p>
+     * target format specified by the {@link DynamicOps}. The result is wrapped in a {@link Dynamic} for convenient
+     * manipulation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -270,8 +266,7 @@ public interface Type<A> {
      * @param value the value to serialize, must not be {@code null}
      * @param ops   the dynamic operations for the target format, must not be {@code null}
      * @param <T>   the underlying data format type (e.g., JsonElement, Tag)
-     * @return a {@link DataResult} containing the encoded dynamic or an error,
-     *         never {@code null}
+     * @return a {@link DataResult} containing the encoded dynamic or an error, never {@code null}
      * @throws NullPointerException if {@code value} or {@code ops} is {@code null}
      */
     @NotNull
@@ -284,8 +279,8 @@ public interface Type<A> {
      * Reads a value from dynamic data and wraps it as a {@link Typed} value.
      *
      * <p>This method combines parsing with type tagging, producing a {@link Typed}
-     * that carries both the value and its type information. This is the primary
-     * entry point for reading data into the type-safe data fixing system.</p>
+     * that carries both the value and its type information. This is the primary entry point for reading data into the
+     * type-safe data fixing system.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -306,8 +301,7 @@ public interface Type<A> {
      *
      * @param dynamic the dynamic value to read from, must not be {@code null}
      * @param <T>     the underlying data format type (e.g., JsonElement)
-     * @return a {@link DataResult} containing the typed value or an error,
-     *         never {@code null}
+     * @return a {@link DataResult} containing the typed value or an error, never {@code null}
      * @throws NullPointerException if {@code dynamic} is {@code null}
      * @see Typed
      */
@@ -402,8 +396,8 @@ public interface Type<A> {
      * Creates a primitive type from a name and codec.
      *
      * <p>Primitive types are the building blocks for more complex types. They
-     * represent simple, atomic values like integers, strings, or booleans.
-     * The name becomes the type's reference ID.</p>
+     * represent simple, atomic values like integers, strings, or booleans. The name becomes the type's reference
+     * ID.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -509,8 +503,8 @@ public interface Type<A> {
      * Creates an optional type that may or may not contain a value.
      *
      * <p>Optional types represent nullable or absent values. When reading, a missing
-     * value results in {@link Optional#empty()}. When writing, empty optionals are
-     * typically omitted from the output.</p>
+     * value results in {@link Optional#empty()}. When writing, empty optionals are typically omitted from the
+     * output.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -564,8 +558,8 @@ public interface Type<A> {
      * Creates a product type (pair) combining two types.
      *
      * <p>Product types represent "AND" combinations - values that contain both
-     * a first component and a second component. They are the algebraic dual of
-     * sum types and correspond to tuples or pairs in most languages.</p>
+     * a first component and a second component. They are the algebraic dual of sum types and correspond to tuples or
+     * pairs in most languages.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -627,8 +621,8 @@ public interface Type<A> {
      * Creates a sum type (either) representing one of two alternatives.
      *
      * <p>Sum types represent "OR" combinations - values that are either of the
-     * left type or the right type, but not both. They are the algebraic dual of
-     * product types and correspond to tagged unions or discriminated unions.</p>
+     * left type or the right type, but not both. They are the algebraic dual of product types and correspond to tagged
+     * unions or discriminated unions.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -694,8 +688,8 @@ public interface Type<A> {
      * Creates a required field type that reads/writes a named field from a map structure.
      *
      * <p>Field types wrap another type to read from a specific field in a map/object.
-     * The field must be present when reading; otherwise, parsing fails. Use
-     * {@link #optionalField(String, Type)} for optional fields.</p>
+     * The field must be present when reading; otherwise, parsing fails. Use {@link #optionalField(String, Type)} for
+     * optional fields.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -728,8 +722,8 @@ public interface Type<A> {
      * Creates an optional field type that may or may not be present in a map structure.
      *
      * <p>Optional field types wrap another type to read from a specific field that
-     * may be absent. When the field is missing, the result is {@link Optional#empty()}.
-     * This is ideal for fields that were added in later versions or have defaults.</p>
+     * may be absent. When the field is missing, the result is {@link Optional#empty()}. This is ideal for fields that
+     * were added in later versions or have defaults.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -789,8 +783,8 @@ public interface Type<A> {
      * Creates a named alias for another type, useful for recursive definitions.
      *
      * <p>Named types give an alias to another type, primarily for enabling recursive
-     * type definitions where a type needs to reference itself. The name becomes the
-     * type's reference ID while delegating to the target type's codec.</p>
+     * type definitions where a type needs to reference itself. The name becomes the type's reference ID while
+     * delegating to the target type's codec.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -845,13 +839,12 @@ public interface Type<A> {
      * Creates a tagged choice type (discriminated union) with the specified tag field.
      *
      * <p>Tagged choice types represent polymorphic data where a discriminator field
-     * determines the structure of the remaining data. This is the primary way to
-     * model inheritance, variants, or "oneOf" patterns in serialized data.</p>
+     * determines the structure of the remaining data. This is the primary way to model inheritance, variants, or
+     * "oneOf" patterns in serialized data.</p>
      *
      * <p>When reading, the codec first extracts the tag field value, looks up the
-     * corresponding type from the choices map, and then parses the rest of the data
-     * using that type. When writing, the tag value is included alongside the serialized
-     * content.</p>
+     * corresponding type from the choices map, and then parses the rest of the data using that type. When writing, the
+     * tag value is included alongside the serialized content.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -893,12 +886,9 @@ public interface Type<A> {
      *   <li>Polymorphic configuration entries</li>
      * </ul>
      *
-     * @param tagField the name of the discriminator field (e.g., "type", "kind"),
-     *                 must not be {@code null}
-     * @param choices  a map from tag values to their corresponding types,
-     *                 must not be {@code null} or empty
-     * @return a new tagged choice type that decodes based on the tag field,
-     *         never {@code null}
+     * @param tagField the name of the discriminator field (e.g., "type", "kind"), must not be {@code null}
+     * @param choices  a map from tag values to their corresponding types, must not be {@code null} or empty
+     * @return a new tagged choice type that decodes based on the tag field, never {@code null}
      * @throws NullPointerException if {@code tagField} or {@code choices} is {@code null}
      * @see TaggedChoiceType
      */
@@ -914,13 +904,13 @@ public interface Type<A> {
      * A type that extracts a named field from a map/object structure.
      *
      * <p>{@code FieldType} wraps another type and configures it to read from or
-     * write to a specific field in a map-like structure. This enables building
-     * complex record types by combining multiple field types using products.</p>
+     * write to a specific field in a map-like structure. This enables building complex record types by combining
+     * multiple field types using products.</p>
      *
      * <h2>Purpose</h2>
      * <p>Field types bridge between positional type composition (products) and
-     * named fields in serialized data. They translate field access operations
-     * into the appropriate map get/put operations.</p>
+     * named fields in serialized data. They translate field access operations into the appropriate map get/put
+     * operations.</p>
      *
      * <h2>Usage Example</h2>
      * <pre>{@code
@@ -1080,9 +1070,8 @@ public interface Type<A> {
      * A discriminated union type where a tag field determines the variant's structure.
      *
      * <p>{@code TaggedChoiceType} implements polymorphic serialization by using a
-     * discriminator field to identify which variant the data represents. The tag
-     * value is looked up in a choices map to determine the type to use for
-     * parsing the remaining data.</p>
+     * discriminator field to identify which variant the data represents. The tag value is looked up in a choices map to
+     * determine the type to use for parsing the remaining data.</p>
      *
      * <h2>Serialization Format</h2>
      * <p>The serialized form includes the tag field alongside the variant's data:</p>
@@ -1145,8 +1134,8 @@ public interface Type<A> {
          * }</pre>
          *
          * @param tagField the name of the discriminator field, must not be {@code null}
-         * @param choices  mapping from tag values to their corresponding types,
-         *                 must not be {@code null}; the map is defensively copied
+         * @param choices  mapping from tag values to their corresponding types, must not be {@code null}; the map is
+         *                 defensively copied
          */
         TaggedChoiceType(final String tagField,
                          final Map<String, Type<?>> choices) {
@@ -1168,8 +1157,7 @@ public interface Type<A> {
          * {@inheritDoc}
          *
          * <p>The codec reads the tag field to determine the variant, then parses
-         * the remaining data accordingly. When encoding, it includes the tag field
-         * alongside the variant's data.</p>
+         * the remaining data accordingly. When encoding, it includes the tag field alongside the variant's data.</p>
          */
         @NotNull
         @Override

@@ -151,7 +151,7 @@ public final class Fixes {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
-                                                       @NotNull final Typed<?> input) {
+                                              @NotNull final Typed<?> input) {
                 if (!inputType.reference().equals(type.reference())) {
                     return Optional.empty();
                 }

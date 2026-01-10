@@ -33,8 +33,8 @@ import java.util.function.IntFunction;
  * A type family provides type parameters for instantiating {@link TypeTemplate} instances.
  *
  * <p>A {@code TypeFamily} acts as a context for type instantiation, mapping indices to
- * concrete {@link Type} instances. This enables parameterized and recursive type definitions
- * where types can reference other types by index, including themselves.</p>
+ * concrete {@link Type} instances. This enables parameterized and recursive type definitions where types can reference
+ * other types by index, including themselves.</p>
  *
  * <h2>Purpose</h2>
  * <p>Type families serve several key purposes:</p>
@@ -108,45 +108,10 @@ import java.util.function.IntFunction;
 public interface TypeFamily {
 
     /**
-     * Gets the type at the given index in this family.
-     *
-     * <p>Type families provide type parameters by index. The valid indices depend
-     * on how the family was created: array-based families have indices from 0 to
-     * length-1, function-based families may support any indices, and recursive
-     * families typically only support index 0.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Array-based family with two types
-     * TypeFamily pair = TypeFamily.of(Type.STRING, Type.INT);
-     * Type<?> first = pair.apply(0);   // Type.STRING
-     * Type<?> second = pair.apply(1);  // Type.INT
-     * pair.apply(2);  // throws IndexOutOfBoundsException
-     *
-     * // Recursive family for self-reference
-     * TypeFamily recursive = TypeFamily.recursive(self -> {
-     *     Type<?> listElement = self.apply(0);  // References the type being defined
-     *     return Type.product(
-     *         Type.field("value", Type.INT),
-     *         Type.field("next", Type.optional(listElement))
-     *     );
-     * });
-     * }</pre>
-     *
-     * @param index the zero-based index of the type parameter to retrieve
-     * @return the type at the specified index, never {@code null}
-     * @throws IndexOutOfBoundsException if the index is outside the valid range
-     *                                   for this family
-     */
-    @NotNull
-    Type<?> apply(final int index);
-
-    /**
      * Creates a type family from a fixed array of types.
      *
      * <p>This is the simplest way to create a type family. The array elements
-     * become the type parameters accessible by index. This is commonly used
-     * for parameterized types like generics.</p>
+     * become the type parameters accessible by index. This is commonly used for parameterized types like generics.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -181,8 +146,7 @@ public interface TypeFamily {
      * Creates a type family from a function that computes types on demand.
      *
      * <p>This factory allows dynamic type computation based on the requested
-     * index. It's useful for infinite or computed type families where the
-     * types are determined at access time.</p>
+     * index. It's useful for infinite or computed type families where the types are determined at access time.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -208,12 +172,12 @@ public interface TypeFamily {
      * Creates a type family for recursive types that reference themselves.
      *
      * <p>The provided function receives a type family that can be used to reference
-     * the type being defined at index 0, enabling recursive definitions like linked
-     * lists, trees, or nested structures.</p>
+     * the type being defined at index 0, enabling recursive definitions like linked lists, trees, or nested
+     * structures.</p>
      *
      * <p><strong>Important:</strong> The self-reference family must not be accessed
-     * during the definition function's initial call—it's only valid after the
-     * definition returns. Accessing index 0 before initialization throws an exception.</p>
+     * during the definition function's initial call—it's only valid after the definition returns. Accessing index 0
+     * before initialization throws an exception.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -237,12 +201,11 @@ public interface TypeFamily {
      * ));
      * }</pre>
      *
-     * @param definition the function defining the recursive type; receives a family
-     *                   that provides self-reference at index 0, must not be {@code null}
+     * @param definition the function defining the recursive type; receives a family that provides self-reference at
+     *                   index 0, must not be {@code null}
      * @return a type family where index 0 is the recursive type, never {@code null}
      * @throws NullPointerException  if {@code definition} is {@code null}
-     * @throws IllegalStateException if the self-reference is accessed before
-     *                               initialization completes
+     * @throws IllegalStateException if the self-reference is accessed before initialization completes
      */
     @NotNull
     static TypeFamily recursive(@NotNull final Function<TypeFamily, Type<?>> definition) {
@@ -265,8 +228,7 @@ public interface TypeFamily {
      * Creates an empty type family that has no type parameters.
      *
      * <p>The empty family is used for non-parameterized types that don't require
-     * any type arguments. Any attempt to access a type by index will throw an
-     * exception.</p>
+     * any type arguments. Any attempt to access a type by index will throw an exception.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -288,4 +250,36 @@ public interface TypeFamily {
             throw new IndexOutOfBoundsException("Empty type family has no types");
         };
     }
+
+    /**
+     * Gets the type at the given index in this family.
+     *
+     * <p>Type families provide type parameters by index. The valid indices depend
+     * on how the family was created: array-based families have indices from 0 to length-1, function-based families may
+     * support any indices, and recursive families typically only support index 0.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Array-based family with two types
+     * TypeFamily pair = TypeFamily.of(Type.STRING, Type.INT);
+     * Type<?> first = pair.apply(0);   // Type.STRING
+     * Type<?> second = pair.apply(1);  // Type.INT
+     * pair.apply(2);  // throws IndexOutOfBoundsException
+     *
+     * // Recursive family for self-reference
+     * TypeFamily recursive = TypeFamily.recursive(self -> {
+     *     Type<?> listElement = self.apply(0);  // References the type being defined
+     *     return Type.product(
+     *         Type.field("value", Type.INT),
+     *         Type.field("next", Type.optional(listElement))
+     *     );
+     * });
+     * }</pre>
+     *
+     * @param index the zero-based index of the type parameter to retrieve
+     * @return the type at the specified index, never {@code null}
+     * @throws IndexOutOfBoundsException if the index is outside the valid range for this family
+     */
+    @NotNull
+    Type<?> apply(final int index);
 }

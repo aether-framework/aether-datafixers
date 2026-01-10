@@ -37,9 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * A versioned collection of type definitions for a specific data version.
  *
  * <p>A {@code Schema} represents the structure of data at a specific {@link DataVersion}.
- * It pairs a version number with a {@link TypeRegistry} containing all type definitions
- * valid for that version. Schemas are used by the data fixing system to understand
- * the expected structure of data at different points in time.</p>
+ * It pairs a version number with a {@link TypeRegistry} containing all type definitions valid for that version. Schemas
+ * are used by the data fixing system to understand the expected structure of data at different points in time.</p>
  *
  * <h2>Schema Evolution</h2>
  * <p>Schemas can be extended to define versioned data structures. Each schema version
@@ -241,8 +240,7 @@ public class Schema {
      * Registers a type defined by a DSL template with this schema.
      *
      * <p>This method enables DFU-style schema definitions using the DSL. The template
-     * is instantiated with an empty {@link TypeFamily} and wrapped with the given
-     * {@link TypeReference}.</p>
+     * is instantiated with an empty {@link TypeFamily} and wrapped with the given {@link TypeReference}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -266,7 +264,7 @@ public class Schema {
      * @throws NullPointerException if reference or template is {@code null}
      */
     protected final void registerType(@NotNull final TypeReference reference,
-                                       @NotNull final TypeTemplate template) {
+                                      @NotNull final TypeTemplate template) {
         Preconditions.checkNotNull(reference, "TypeReference reference must not be null");
         Preconditions.checkNotNull(template, "TypeTemplate template must not be null");
         Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
@@ -276,6 +274,23 @@ public class Schema {
 
         // Wrap the template type with the reference
         this.types.register(new TemplateBasedType<>(reference, templateType));
+    }
+
+    /**
+     * Retrieves a type by its reference, throwing if not found.
+     *
+     * <p>This is a convenience method equivalent to {@code types().require(ref)}.</p>
+     *
+     * @param ref the type reference to look up, must not be {@code null}
+     * @return the type for the given reference, never {@code null}
+     * @throws IllegalStateException if the type is not registered
+     * @throws NullPointerException  if ref is {@code null}
+     */
+    @NotNull
+    public Type<?> require(@NotNull final TypeReference ref) {
+        Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
+
+        return this.types().require(ref);
     }
 
     /**
@@ -303,22 +318,5 @@ public class Schema {
         public Codec<A> codec() {
             return this.delegate.codec();
         }
-    }
-
-    /**
-     * Retrieves a type by its reference, throwing if not found.
-     *
-     * <p>This is a convenience method equivalent to {@code types().require(ref)}.</p>
-     *
-     * @param ref the type reference to look up, must not be {@code null}
-     * @return the type for the given reference, never {@code null}
-     * @throws IllegalStateException if the type is not registered
-     * @throws NullPointerException  if ref is {@code null}
-     */
-    @NotNull
-    public Type<?> require(@NotNull final TypeReference ref) {
-        Preconditions.checkNotNull(ref, "TypeReference ref must not be null");
-
-        return this.types().require(ref);
     }
 }

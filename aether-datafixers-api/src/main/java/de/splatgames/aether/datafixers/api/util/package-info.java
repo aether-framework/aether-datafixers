@@ -24,8 +24,8 @@
  * Utility types for functional programming patterns.
  *
  * <p>This package provides fundamental algebraic data types used throughout
- * the Aether Datafixers framework. These types enable functional programming
- * patterns and are used extensively in the codec and optics APIs.</p>
+ * the Aether Datafixers framework. These types enable functional programming patterns and are used extensively in the
+ * codec and optics APIs.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>

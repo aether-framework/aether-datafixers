@@ -38,9 +38,8 @@ import java.util.Set;
  * A comprehensive report of a data migration operation.
  *
  * <p>{@code MigrationReport} contains all diagnostic information captured during
- * a migration, including timing, applied fixes, touched types, and optional
- * before/after snapshots. It provides a complete view of what happened during
- * the migration for debugging, logging, and analysis purposes.</p>
+ * a migration, including timing, applied fixes, touched types, and optional before/after snapshots. It provides a
+ * complete view of what happened during the migration for debugging, logging, and analysis purposes.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -249,8 +248,8 @@ public interface MigrationReport {
      * Builder for constructing {@link MigrationReport} instances incrementally.
      *
      * <p>The builder is used internally by {@link DiagnosticContext} to capture
-     * migration events as they occur. After the migration completes,
-     * {@link #build()} produces an immutable report.</p>
+     * migration events as they occur. After the migration completes, {@link #build()} produces an immutable
+     * report.</p>
      *
      * <h2>Usage Pattern</h2>
      * <pre>{@code

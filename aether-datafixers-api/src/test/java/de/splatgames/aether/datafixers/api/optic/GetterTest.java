@@ -34,16 +34,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Getter")
 class GetterTest {
 
-    // Test data models
-    record Point(int x, int y) {}
-    record Line(Point start, Point end) {}
-    record Person(String name, int age) {}
-
     // Basic getters
     private final Getter<Point, Integer> xGetter = Getter.of("point.x", Point::x);
     private final Getter<Point, Integer> yGetter = Getter.of("point.y", Point::y);
     private final Getter<Line, Point> startGetter = Getter.of("line.start", Line::start);
     private final Getter<Person, String> nameGetter = Getter.of("person.name", Person::name);
+
+    // Test data models
+    record Point(int x, int y) {
+    }
+
+    record Line(Point start, Point end) {
+    }
+
+    record Person(String name, int age) {
+    }
 
     @Nested
     @DisplayName("Factory Method of()")
@@ -133,7 +138,8 @@ class GetterTest {
         @Test
         @DisplayName("compose() is associative")
         void composeIsAssociative() {
-            record Container(Line line) {}
+            record Container(Line line) {
+            }
             final Getter<Container, Line> lineGetter = Getter.of("container.line", Container::line);
 
             final Getter<Container, Integer> composed1 =
@@ -149,7 +155,8 @@ class GetterTest {
         @Test
         @DisplayName("compose() works with multiple levels")
         void composeWorksWithMultipleLevels() {
-            record Container(Line line) {}
+            record Container(Line line) {
+            }
             final Getter<Container, Line> lineGetter = Getter.of("container.line", Container::line);
 
             final Getter<Container, Integer> deepGetter = lineGetter

@@ -25,8 +25,8 @@
  *
  * <p>This package provides the codec abstraction that enables encoding and decoding
  * of typed Java objects to and from format-agnostic {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}
- * representations. Codecs are central to the type system, allowing type-safe
- * serialization without coupling to specific formats like JSON or NBT.</p>
+ * representations. Codecs are central to the type system, allowing type-safe serialization without coupling to specific
+ * formats like JSON or NBT.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>

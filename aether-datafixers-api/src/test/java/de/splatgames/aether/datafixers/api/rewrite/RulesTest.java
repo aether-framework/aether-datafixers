@@ -22,9 +22,8 @@
 
 package de.splatgames.aether.datafixers.api.rewrite;
 
-import de.splatgames.aether.datafixers.api.optic.TestOps;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
-import de.splatgames.aether.datafixers.api.optic.Finder;
+import de.splatgames.aether.datafixers.api.optic.TestOps;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
 import org.junit.jupiter.api.DisplayName;
@@ -107,7 +106,9 @@ class RulesTest {
         void failsFastOnFirstFailure() {
             final TypeRewriteRule fail = TypeRewriteRule.fail();
             final TypeRewriteRule shouldNotRun = TypeRewriteRule.forType("never", Type.STRING,
-                    s -> { throw new AssertionError("Should not be called"); });
+                    s -> {
+                        throw new AssertionError("Should not be called");
+                    });
             final TypeRewriteRule seq = Rules.seq(fail, shouldNotRun);
             final Typed<String> input = new Typed<>(Type.STRING, "hello");
 
@@ -639,7 +640,8 @@ class RulesTest {
         @Test
         @DisplayName("has descriptive toString")
         void hasDescriptiveToString() {
-            final TypeRewriteRule rule = Rules.log("message", TypeRewriteRule.identity(), s -> {});
+            final TypeRewriteRule rule = Rules.log("message", TypeRewriteRule.identity(), s -> {
+            });
 
             assertThat(rule.toString()).startsWith("log(");
             assertThat(rule.toString()).contains("message");
@@ -750,8 +752,7 @@ class RulesTest {
             final Optional<Typed<?>> result = rule.rewrite(listType, input);
 
             assertThat(result).isPresent();
-            @SuppressWarnings("unchecked")
-            final List<Integer> resultList = (List<Integer>) result.get().value();
+            @SuppressWarnings("unchecked") final List<Integer> resultList = (List<Integer>) result.get().value();
             assertThat(resultList).containsExactly(2, 4, 6);
         }
 
@@ -781,8 +782,7 @@ class RulesTest {
             final Optional<Typed<?>> result = rule.rewrite(listType, input);
 
             assertThat(result).isPresent();
-            @SuppressWarnings("unchecked")
-            final List<Integer> resultList = (List<Integer>) result.get().value();
+            @SuppressWarnings("unchecked") final List<Integer> resultList = (List<Integer>) result.get().value();
             // Only first element is doubled
             assertThat(resultList).containsExactly(2, 2, 3);
         }
@@ -812,8 +812,7 @@ class RulesTest {
             final Optional<Typed<?>> result = rule.rewrite(listType, input);
 
             assertThat(result).isPresent();
-            @SuppressWarnings("unchecked")
-            final List<Integer> resultList = (List<Integer>) result.get().value();
+            @SuppressWarnings("unchecked") final List<Integer> resultList = (List<Integer>) result.get().value();
             assertThat(resultList).containsExactly(2, 4, 6);
         }
 
@@ -1005,8 +1004,7 @@ class RulesTest {
             final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
             assertThat(result).isPresent();
-            @SuppressWarnings("unchecked")
-            final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+            @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
             assertThat(resultDynamic.get("name")).isNotNull();
             assertThat(resultDynamic.get("oldName")).isNull();
             assertThat(resultDynamic.get("toRemove")).isNull();
@@ -1016,7 +1014,8 @@ class RulesTest {
         @Test
         @DisplayName("returns identity for empty batch")
         void returnsIdentityForEmptyBatch() {
-            final TypeRewriteRule rule = Rules.batch(OPS, b -> {});
+            final TypeRewriteRule rule = Rules.batch(OPS, b -> {
+            });
 
             final Typed<String> input = new Typed<>(Type.STRING, "test");
             final Optional<Typed<?>> result = rule.rewrite(Type.STRING, input);
@@ -1057,8 +1056,7 @@ class RulesTest {
             final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
             assertThat(result).isPresent();
-            @SuppressWarnings("unchecked")
-            final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+            @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
             assertThat(resultDynamic.get("migrated")).isNotNull();
         }
 
@@ -1077,8 +1075,7 @@ class RulesTest {
             final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
             assertThat(result).isPresent();
-            @SuppressWarnings("unchecked")
-            final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+            @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
             assertThat(resultDynamic.get("migrated")).isNull();
         }
     }
@@ -1106,8 +1103,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("legacyField")).isNull();
                 assertThat(resultDynamic.get("newField")).isNotNull();
             }
@@ -1127,8 +1123,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("transformed")).isNull();
             }
         }
@@ -1152,8 +1147,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("version")).isNotNull();
             }
 
@@ -1172,8 +1166,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 // Should not be overwritten - original value should still be 5
                 assertThat(resultDynamic.get("version").asInt().result()).contains(5);
             }
@@ -1199,8 +1192,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("migrated")).isNotNull();
             }
 
@@ -1220,8 +1212,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("type").asString().result()).contains("modern");
             }
 
@@ -1241,8 +1232,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("migrated")).isNull();
             }
 
@@ -1262,8 +1252,7 @@ class RulesTest {
                 final Optional<Typed<?>> result = rule.rewrite(Type.PASSTHROUGH, input);
 
                 assertThat(result).isPresent();
-                @SuppressWarnings("unchecked")
-                final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
+                @SuppressWarnings("unchecked") final Dynamic<Object> resultDynamic = (Dynamic<Object>) result.get().value();
                 assertThat(resultDynamic.get("migrated")).isNull();
             }
         }

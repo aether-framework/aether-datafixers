@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
  * A basic implementation of {@link Type} that pairs a reference with a codec.
  *
  * <p>{@code SimpleType} provides a straightforward way to create types by
- * combining a {@link TypeReference} identifier with a {@link Codec} for
- * serialization. This is the most common way to define types in the system.</p>
+ * combining a {@link TypeReference} identifier with a {@link Codec} for serialization. This is the most common way to
+ * define types in the system.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code

@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 /**
  * An immutable wrapper that pairs a value with its {@link Type} information.
@@ -445,9 +444,8 @@ public final class Typed<A> {
      * Returns the child typed values of this typed value.
      *
      * <p>The children are extracted based on the type's structure. This method
-     * is used by traversal combinators to recursively transform nested data
-     * structures. Each child value is paired with its corresponding child type
-     * from {@link Type#children()}.</p>
+     * is used by traversal combinators to recursively transform nested data structures. Each child value is paired with
+     * its corresponding child type from {@link Type#children()}.</p>
      *
      * <h4>Children by Type</h4>
      * <ul>
@@ -551,8 +549,8 @@ public final class Typed<A> {
      * Creates a new typed value by replacing child values.
      *
      * <p>This method reconstructs the typed value with new child values,
-     * preserving the type structure. It is the inverse of {@link #children(DynamicOps)}
-     * and is used by traversal combinators to reassemble transformed data.</p>
+     * preserving the type structure. It is the inverse of {@link #children(DynamicOps)} and is used by traversal
+     * combinators to reassemble transformed data.</p>
      *
      * <h4>Constraints</h4>
      * <ul>
@@ -589,7 +587,7 @@ public final class Typed<A> {
     @NotNull
     @SuppressWarnings("unchecked")
     public <T> DataResult<Typed<A>> withChildren(@NotNull final DynamicOps<T> ops,
-                                                  @NotNull final List<Typed<?>> newChildren) {
+                                                 @NotNull final List<Typed<?>> newChildren) {
         Preconditions.checkNotNull(ops, "DynamicOps<T> ops must not be null");
         Preconditions.checkNotNull(newChildren, "List<Typed<?>> newChildren must not be null");
 

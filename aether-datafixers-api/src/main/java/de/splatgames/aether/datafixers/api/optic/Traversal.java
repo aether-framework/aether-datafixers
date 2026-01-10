@@ -32,9 +32,9 @@ import java.util.stream.Stream;
  * A traversal focuses on zero or more parts of a data structure simultaneously.
  *
  * <p>A {@code Traversal} generalizes a {@link Lens} to focus on multiple elements instead
- * of exactly one. While a lens always targets a single field, a traversal can target
- * all elements of a list, all values matching a predicate, or any number of locations
- * within a data structure. This makes traversals ideal for bulk transformations.</p>
+ * of exactly one. While a lens always targets a single field, a traversal can target all elements of a list, all values
+ * matching a predicate, or any number of locations within a data structure. This makes traversals ideal for bulk
+ * transformations.</p>
  *
  * <h2>When to Use a Traversal</h2>
  * <p>Use a traversal when you need to:</p>
@@ -112,167 +112,11 @@ import java.util.stream.Stream;
 public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
 
     /**
-     * Extracts all focused values from the source as a stream.
-     *
-     * <p>This operation returns a lazy stream of all elements that this traversal
-     * focuses on. The stream may contain zero, one, or many elements depending
-     * on the traversal's nature.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * List<String> names = List.of("Alice", "Bob", "Charlie");
-     * Stream<String> stream = listTraversal.getAll(names);
-     * // Stream contains: "Alice", "Bob", "Charlie"
-     * }</pre>
-     *
-     * @param source the source structure to extract from, must not be {@code null}
-     * @return a stream of all focused values (may be empty), never {@code null}
-     * @throws NullPointerException if {@code source} is {@code null}
-     */
-    @NotNull
-    Stream<A> getAll(@NotNull final S source);
-
-    /**
-     * Transforms all focused values using the given function.
-     *
-     * <p>This applies the modifier function to each focused element and returns
-     * a new source structure with all modifications applied. The order of
-     * modifications follows the traversal order.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * List<String> names = List.of("alice", "bob");
-     * List<String> upper = listTraversal.modify(names, String::toUpperCase);
-     * // upper contains: ["ALICE", "BOB"]
-     * }</pre>
-     *
-     * @param source   the source structure to modify, must not be {@code null}
-     * @param modifier the function to apply to each focused element, must not be {@code null}
-     * @return a new source with all focused values transformed, never {@code null}
-     * @throws NullPointerException if {@code source} or {@code modifier} is {@code null}
-     */
-    @NotNull
-    T modify(@NotNull final S source,
-             @NotNull final Function<A, B> modifier);
-
-    /**
-     * Replaces all focused values with the given value.
-     *
-     * <p>This is equivalent to {@code modify(source, a -> value)}, setting
-     * every focused element to the same value.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * List<String> names = List.of("Alice", "Bob", "Charlie");
-     * List<String> replaced = listTraversal.set(names, "X");
-     * // replaced contains: ["X", "X", "X"]
-     * }</pre>
-     *
-     * @param source the source structure to modify, must not be {@code null}
-     * @param value  the value to set for all focused elements, must not be {@code null}
-     * @return a new source with all focused values replaced, never {@code null}
-     * @throws NullPointerException if {@code source} or {@code value} is {@code null}
-     */
-    @NotNull
-    default T set(@NotNull final S source,
-                  @NotNull final B value) {
-        return modify(source, a -> value);
-    }
-
-    /**
-     * Collects all focused values into an immutable list.
-     *
-     * <p>This is a convenience method equivalent to {@code getAll(source).toList()}.
-     * It eagerly evaluates the stream and returns a collected list.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * List<String> names = List.of("Alice", "Bob");
-     * List<String> collected = listTraversal.toList(names);
-     * // collected is ["Alice", "Bob"]
-     * }</pre>
-     *
-     * @param source the source structure to extract from, must not be {@code null}
-     * @return an immutable list of all focused values, never {@code null}
-     * @throws NullPointerException if {@code source} is {@code null}
-     */
-    @NotNull
-    default List<A> toList(@NotNull final S source) {
-        return getAll(source).toList();
-    }
-
-    /**
-     * Composes this traversal with another traversal for nested iteration.
-     *
-     * <p>The resulting traversal focuses on all combinations: for each element
-     * focused by this traversal, it applies the other traversal to get nested
-     * elements. This is similar to a nested flatMap operation.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // companyEmployees: Company -> Stream<Employee>
-     * // employeeSkills: Employee -> Stream<String>
-     * Traversal<Company, Company, String, String> allSkills =
-     *     companyEmployees.compose(employeeSkills);
-     *
-     * // allSkills focuses on every skill of every employee
-     * Company company = ...;
-     * List<String> skills = allSkills.toList(company);
-     * }</pre>
-     *
-     * @param other the traversal to compose with, must not be {@code null}
-     * @param <C>   the new focus type (the element type of the nested traversal)
-     * @param <D>   the new modified focus type
-     * @return a composed traversal focusing on all nested elements, never {@code null}
-     * @throws NullPointerException if {@code other} is {@code null}
-     */
-    @NotNull
-    default <C, D> Traversal<S, T, C, D> compose(@NotNull final Traversal<A, B, C, D> other) {
-        final Traversal<S, T, A, B> self = this;
-        return new Traversal<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return self.id() + "." + other.id();
-            }
-
-            @NotNull
-            @Override
-            public Stream<C> getAll(@NotNull final S source) {
-                return self.getAll(source).flatMap(other::getAll);
-            }
-
-            @NotNull
-            @Override
-            public T modify(@NotNull final S source,
-                            @NotNull final Function<C, D> modifier) {
-                return self.modify(source, a -> other.modify(a, modifier));
-            }
-
-            @Override
-            public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
-                if (next instanceof Traversal<C, D, E, F> traversal) {
-                    return this.compose(traversal);
-                }
-                throw new UnsupportedOperationException("Cannot compose Traversal with " + next.getClass().getSimpleName());
-            }
-        };
-    }
-
-    @Override
-    default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
-        if (other instanceof Traversal<A, B, C, D> traversal) {
-            return compose(traversal);
-        }
-        throw new UnsupportedOperationException("Cannot compose Traversal with " + other.getClass().getSimpleName());
-    }
-
-    /**
      * Creates a traversal from a lens, treating it as a single-element traversal.
      *
      * <p>Since a {@link Lens} always focuses on exactly one element, it can be
-     * viewed as a traversal with a single focus. The resulting traversal's
-     * {@link #getAll} returns a stream containing exactly that one element.</p>
+     * viewed as a traversal with a single focus. The resulting traversal's {@link #getAll} returns a stream containing
+     * exactly that one element.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -348,8 +192,7 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      *
      * @param id     a unique identifier for this traversal, must not be {@code null}
      * @param getAll the function to extract all focused elements as a stream, must not be {@code null}
-     * @param modify the function to apply a modifier to all elements and return a new source,
-     *               must not be {@code null}
+     * @param modify the function to apply a modifier to all elements and return a new source, must not be {@code null}
      * @param <S>    the source type
      * @param <A>    the focus/element type
      * @return a new monomorphic traversal, never {@code null}
@@ -382,12 +225,166 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
     }
 
     /**
+     * Extracts all focused values from the source as a stream.
+     *
+     * <p>This operation returns a lazy stream of all elements that this traversal
+     * focuses on. The stream may contain zero, one, or many elements depending on the traversal's nature.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * List<String> names = List.of("Alice", "Bob", "Charlie");
+     * Stream<String> stream = listTraversal.getAll(names);
+     * // Stream contains: "Alice", "Bob", "Charlie"
+     * }</pre>
+     *
+     * @param source the source structure to extract from, must not be {@code null}
+     * @return a stream of all focused values (may be empty), never {@code null}
+     * @throws NullPointerException if {@code source} is {@code null}
+     */
+    @NotNull
+    Stream<A> getAll(@NotNull final S source);
+
+    /**
+     * Transforms all focused values using the given function.
+     *
+     * <p>This applies the modifier function to each focused element and returns
+     * a new source structure with all modifications applied. The order of modifications follows the traversal
+     * order.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * List<String> names = List.of("alice", "bob");
+     * List<String> upper = listTraversal.modify(names, String::toUpperCase);
+     * // upper contains: ["ALICE", "BOB"]
+     * }</pre>
+     *
+     * @param source   the source structure to modify, must not be {@code null}
+     * @param modifier the function to apply to each focused element, must not be {@code null}
+     * @return a new source with all focused values transformed, never {@code null}
+     * @throws NullPointerException if {@code source} or {@code modifier} is {@code null}
+     */
+    @NotNull
+    T modify(@NotNull final S source,
+             @NotNull final Function<A, B> modifier);
+
+    /**
+     * Replaces all focused values with the given value.
+     *
+     * <p>This is equivalent to {@code modify(source, a -> value)}, setting
+     * every focused element to the same value.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * List<String> names = List.of("Alice", "Bob", "Charlie");
+     * List<String> replaced = listTraversal.set(names, "X");
+     * // replaced contains: ["X", "X", "X"]
+     * }</pre>
+     *
+     * @param source the source structure to modify, must not be {@code null}
+     * @param value  the value to set for all focused elements, must not be {@code null}
+     * @return a new source with all focused values replaced, never {@code null}
+     * @throws NullPointerException if {@code source} or {@code value} is {@code null}
+     */
+    @NotNull
+    default T set(@NotNull final S source,
+                  @NotNull final B value) {
+        return modify(source, a -> value);
+    }
+
+    /**
+     * Collects all focused values into an immutable list.
+     *
+     * <p>This is a convenience method equivalent to {@code getAll(source).toList()}.
+     * It eagerly evaluates the stream and returns a collected list.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * List<String> names = List.of("Alice", "Bob");
+     * List<String> collected = listTraversal.toList(names);
+     * // collected is ["Alice", "Bob"]
+     * }</pre>
+     *
+     * @param source the source structure to extract from, must not be {@code null}
+     * @return an immutable list of all focused values, never {@code null}
+     * @throws NullPointerException if {@code source} is {@code null}
+     */
+    @NotNull
+    default List<A> toList(@NotNull final S source) {
+        return getAll(source).toList();
+    }
+
+    /**
+     * Composes this traversal with another traversal for nested iteration.
+     *
+     * <p>The resulting traversal focuses on all combinations: for each element
+     * focused by this traversal, it applies the other traversal to get nested elements. This is similar to a nested
+     * flatMap operation.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // companyEmployees: Company -> Stream<Employee>
+     * // employeeSkills: Employee -> Stream<String>
+     * Traversal<Company, Company, String, String> allSkills =
+     *     companyEmployees.compose(employeeSkills);
+     *
+     * // allSkills focuses on every skill of every employee
+     * Company company = ...;
+     * List<String> skills = allSkills.toList(company);
+     * }</pre>
+     *
+     * @param other the traversal to compose with, must not be {@code null}
+     * @param <C>   the new focus type (the element type of the nested traversal)
+     * @param <D>   the new modified focus type
+     * @return a composed traversal focusing on all nested elements, never {@code null}
+     * @throws NullPointerException if {@code other} is {@code null}
+     */
+    @NotNull
+    default <C, D> Traversal<S, T, C, D> compose(@NotNull final Traversal<A, B, C, D> other) {
+        final Traversal<S, T, A, B> self = this;
+        return new Traversal<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return self.id() + "." + other.id();
+            }
+
+            @NotNull
+            @Override
+            public Stream<C> getAll(@NotNull final S source) {
+                return self.getAll(source).flatMap(other::getAll);
+            }
+
+            @NotNull
+            @Override
+            public T modify(@NotNull final S source,
+                            @NotNull final Function<C, D> modifier) {
+                return self.modify(source, a -> other.modify(a, modifier));
+            }
+
+            @Override
+            public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
+                if (next instanceof Traversal<C, D, E, F> traversal) {
+                    return this.compose(traversal);
+                }
+                throw new UnsupportedOperationException("Cannot compose Traversal with " + next.getClass().getSimpleName());
+            }
+        };
+    }
+
+    @Override
+    default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
+        if (other instanceof Traversal<A, B, C, D> traversal) {
+            return compose(traversal);
+        }
+        throw new UnsupportedOperationException("Cannot compose Traversal with " + other.getClass().getSimpleName());
+    }
+
+    /**
      * Functional interface for applying a modification function to all focused elements.
      *
      * <p>This interface is used by {@link #of(String, Function, ModifyFunction)} to define
-     * how a modifier should be applied to all elements of a traversal. Implementations
-     * receive the source structure and a modifier function, and must return a new source
-     * with all focused elements transformed.</p>
+     * how a modifier should be applied to all elements of a traversal. Implementations receive the source structure and
+     * a modifier function, and must return a new source with all focused elements transformed.</p>
      *
      * <p><b>Example Implementation</b></p>
      * <pre>{@code

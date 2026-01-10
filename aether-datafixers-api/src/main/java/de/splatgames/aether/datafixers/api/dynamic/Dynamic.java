@@ -37,9 +37,8 @@ import java.util.stream.Stream;
  * An immutable wrapper pairing a value with its associated {@link DynamicOps}.
  *
  * <p>{@code Dynamic} provides a convenient, fluent API for working with dynamic
- * data structures. It encapsulates both the underlying value and the operations
- * needed to manipulate it, enabling chained operations without repeatedly
- * passing the ops instance.</p>
+ * data structures. It encapsulates both the underlying value and the operations needed to manipulate it, enabling
+ * chained operations without repeatedly passing the ops instance.</p>
  *
  * <h2>Key Features</h2>
  * <ul>

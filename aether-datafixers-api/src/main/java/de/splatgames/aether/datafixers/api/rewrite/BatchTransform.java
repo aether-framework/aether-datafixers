@@ -35,9 +35,8 @@ import java.util.function.Function;
  * A builder for batching multiple field operations into a single transformation pass.
  *
  * <p>When performing multiple field operations (rename, remove, set, transform),
- * using separate rules causes each operation to perform its own encode/decode cycle.
- * {@code BatchTransform} collects all operations and applies them in a single pass,
- * significantly improving performance for complex migrations.</p>
+ * using separate rules causes each operation to perform its own encode/decode cycle. {@code BatchTransform} collects
+ * all operations and applies them in a single pass, significantly improving performance for complex migrations.</p>
  *
  * <h2>Performance Comparison</h2>
  * <pre>{@code
@@ -132,7 +131,7 @@ public final class BatchTransform<T> {
      * <p>The value function receives the current Dynamic and should return
      * the value to set. This always overwrites any existing value.</p>
      *
-     * @param field       the field name to set, must not be {@code null}
+     * @param field         the field name to set, must not be {@code null}
      * @param valueSupplier function that computes the value from the current dynamic, must not be {@code null}
      * @return this builder for chaining
      * @throws NullPointerException if any argument is {@code null}
@@ -310,7 +309,8 @@ public final class BatchTransform<T> {
     /**
      * Transform operation: transforms an existing field value.
      */
-    private record TransformOp<T>(String field, Function<Dynamic<T>, Dynamic<T>> transform) implements FieldOperation<T> {
+    private record TransformOp<T>(String field,
+                                  Function<Dynamic<T>, Dynamic<T>> transform) implements FieldOperation<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {
@@ -325,7 +325,8 @@ public final class BatchTransform<T> {
     /**
      * Add if missing operation: sets a field only if it doesn't exist.
      */
-    private record AddIfMissingOp<T>(String field, Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements FieldOperation<T> {
+    private record AddIfMissingOp<T>(String field,
+                                     Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements FieldOperation<T> {
         @Override
         @NotNull
         public Dynamic<T> apply(@NotNull final Dynamic<T> dynamic) {

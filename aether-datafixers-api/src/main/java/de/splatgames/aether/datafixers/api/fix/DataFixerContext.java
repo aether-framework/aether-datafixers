@@ -29,9 +29,8 @@ import org.jetbrains.annotations.Nullable;
  * A context for logging and diagnostics during data fix operations.
  *
  * <p>{@code DataFixerContext} provides a simple logging abstraction that allows
- * {@link DataFix} implementations to report progress, warnings, and diagnostic
- * information during data migration. This enables integrating data fixing with
- * the host application's logging infrastructure.</p>
+ * {@link DataFix} implementations to report progress, warnings, and diagnostic information during data migration. This
+ * enables integrating data fixing with the host application's logging infrastructure.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -70,10 +69,8 @@ public interface DataFixerContext {
      * <p>Use this for progress updates, successful operations, and general
      * diagnostic information that may be useful during debugging.</p>
      *
-     * @param message the message format string (may contain {} placeholders),
-     *                must not be {@code null}
-     * @param args    optional arguments to substitute into the message placeholders,
-     *                may be {@code null} or empty
+     * @param message the message format string (may contain {} placeholders), must not be {@code null}
+     * @param args    optional arguments to substitute into the message placeholders, may be {@code null} or empty
      */
     void info(@NotNull final String message,
               @Nullable final Object... args);
@@ -82,13 +79,10 @@ public interface DataFixerContext {
      * Logs a warning message.
      *
      * <p>Use this for non-fatal issues that indicate potential problems,
-     * such as missing optional fields, deprecated data formats, or
-     * recoverable errors.</p>
+     * such as missing optional fields, deprecated data formats, or recoverable errors.</p>
      *
-     * @param message the message format string (may contain {} placeholders),
-     *                must not be {@code null}
-     * @param args    optional arguments to substitute into the message placeholders,
-     *                may be {@code null} or empty
+     * @param message the message format string (may contain {} placeholders), must not be {@code null}
+     * @param args    optional arguments to substitute into the message placeholders, may be {@code null} or empty
      */
     void warn(@NotNull final String message,
               @Nullable final Object... args);

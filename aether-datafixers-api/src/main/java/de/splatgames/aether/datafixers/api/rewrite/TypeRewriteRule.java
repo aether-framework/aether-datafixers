@@ -33,9 +33,8 @@ import java.util.function.Function;
  * A composable rule for rewriting typed values during data migration.
  *
  * <p>A {@code TypeRewriteRule} is the fundamental building block of the data fixing system.
- * It represents a transformation that may or may not apply to a given typed value. Rules
- * can be composed, chained, and filtered to build complex migration logic from simple,
- * reusable pieces.</p>
+ * It represents a transformation that may or may not apply to a given typed value. Rules can be composed, chained, and
+ * filtered to build complex migration logic from simple, reusable pieces.</p>
  *
  * <h2>Core Concept</h2>
  * <p>A rewrite rule takes a typed value and either:</p>
@@ -122,262 +121,11 @@ import java.util.function.Function;
 public interface TypeRewriteRule {
 
     /**
-     * Attempts to rewrite a typed value according to this rule.
-     *
-     * <p>This is the core operation of the rewrite system. The rule examines
-     * the input and either transforms it (returning a non-empty {@link Optional})
-     * or indicates that it doesn't apply (returning {@link Optional#empty()}).</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule rule = TypeRewriteRule.forType("double_age", personType,
-     *     person -> person.withAge(person.age() * 2)
-     * );
-     *
-     * Typed<?> person = new Typed<>(personType, new Person("Alice", 30));
-     * Optional<Typed<?>> result = rule.rewrite(personType, person);
-     * // result.get().value() is Person("Alice", 60)
-     * }</pre>
-     *
-     * @param type  the type descriptor of the input, must not be {@code null}
-     * @param input the typed value to potentially rewrite, must not be {@code null}
-     * @return an {@link Optional} containing the rewritten value if this rule applies,
-     *         or {@link Optional#empty()} if the rule doesn't match; never {@code null}
-     * @throws NullPointerException if {@code type} or {@code input} is {@code null}
-     */
-    @NotNull
-    Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
-                               @NotNull final Typed<?> input);
-
-    /**
-     * Applies this rule to a typed value, returning the original if the rule doesn't match.
-     *
-     * <p>This is a safe, convenient method for applying rules where non-matching
-     * rules should be treated as no-ops. It's the most commonly used application
-     * method in data migration pipelines.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule rule = TypeRewriteRule.forType("fix", playerType, Player::migrate);
-     *
-     * // Safe application - returns original if rule doesn't match
-     * Typed<?> result = rule.apply(anyTypedValue);
-     * // result is either migrated (if it was a player) or unchanged
-     * }</pre>
-     *
-     * @param input the typed value to transform, must not be {@code null}
-     * @return the rewritten result if the rule matched, or the original input
-     *         unchanged if the rule didn't apply; never {@code null}
-     * @throws NullPointerException if {@code input} is {@code null}
-     */
-    @NotNull
-    default Typed<?> apply(@NotNull final Typed<?> input) {
-        return rewrite(input.type(), input).orElse(input);
-    }
-
-    /**
-     * Applies this rule, throwing an exception if it doesn't match.
-     *
-     * <p>Use this method when the rule is expected to always match and a non-match
-     * indicates a programming error or corrupt data. This is stricter than
-     * {@link #apply(Typed)} and should be used in critical migration paths.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule criticalFix = TypeRewriteRule.forType("fix", playerType, Player::migrate);
-     *
-     * // Strict application - fails if rule doesn't match
-     * try {
-     *     Typed<?> result = criticalFix.applyOrThrow(playerData);
-     * } catch (IllegalStateException e) {
-     *     // Handle unexpected type mismatch
-     *     logger.error("Player migration failed: " + e.getMessage());
-     * }
-     * }</pre>
-     *
-     * @param input the typed value to transform, must not be {@code null}
-     * @return the rewritten result, never {@code null}
-     * @throws IllegalStateException if the rule doesn't match the input type
-     * @throws NullPointerException  if {@code input} is {@code null}
-     */
-    @NotNull
-    default Typed<?> applyOrThrow(@NotNull final Typed<?> input) {
-        return rewrite(input.type(), input)
-                .orElseThrow(() -> new IllegalStateException("Rule did not match: " + input.type().describe()));
-    }
-
-    /**
-     * Composes this rule with another rule in sequence.
-     *
-     * <p>Creates a new rule that first applies this rule, then applies the next rule
-     * to the result. The composed rule only succeeds if both rules succeed. This is
-     * an AND-like composition where all rules in the chain must match.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule renameField = TypeRewriteRule.forType("rename", playerType,
-     *     p -> p.withName(p.playerName())
-     * );
-     * TypeRewriteRule addScore = TypeRewriteRule.forType("add_score", playerType,
-     *     p -> p.withScore(0)
-     * );
-     *
-     * // Both rules must match for the composition to succeed
-     * TypeRewriteRule migration = renameField.andThen(addScore);
-     * Typed<?> result = migration.apply(playerData);
-     * }</pre>
-     *
-     * @param next the rule to apply after this rule succeeds, must not be {@code null}
-     * @return a composed rule that applies both rules in sequence, never {@code null}
-     * @throws NullPointerException if {@code next} is {@code null}
-     */
-    @NotNull
-    default TypeRewriteRule andThen(@NotNull final TypeRewriteRule next) {
-        final TypeRewriteRule self = this;
-        return (type, input) -> self.rewrite(type, input)
-                .flatMap(result -> next.rewrite(result.type(), result));
-    }
-
-    /**
-     * Creates a rule that tries this rule first, falling back to another on failure.
-     *
-     * <p>Creates an OR-like composition where the first matching rule wins. If this
-     * rule matches, its result is used. If this rule doesn't match, the fallback
-     * rule is tried instead.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule v1Fix = TypeRewriteRule.forType("v1", v1Type, this::migrateV1);
-     * TypeRewriteRule v2Fix = TypeRewriteRule.forType("v2", v2Type, this::migrateV2);
-     *
-     * // Try v1 migration first, fall back to v2
-     * TypeRewriteRule migration = v1Fix.orElse(v2Fix);
-     * Typed<?> result = migration.apply(data);
-     * }</pre>
-     *
-     * @param fallback the rule to try if this rule doesn't match, must not be {@code null}
-     * @return a rule that tries this rule first, then the fallback, never {@code null}
-     * @throws NullPointerException if {@code fallback} is {@code null}
-     */
-    @NotNull
-    default TypeRewriteRule orElse(@NotNull final TypeRewriteRule fallback) {
-        final TypeRewriteRule self = this;
-        return (type, input) -> {
-            final Optional<Typed<?>> result = self.rewrite(type, input);
-            if (result.isPresent()) {
-                return result;
-            }
-            return fallback.rewrite(type, input);
-        };
-    }
-
-    /**
-     * Creates a rule that always succeeds, returning the input unchanged if this rule doesn't match.
-     *
-     * <p>This converts a potentially-failing rule into an always-succeeding rule.
-     * It's equivalent to {@code this.orElse(TypeRewriteRule.identity())} and is
-     * useful for optional transformations in pipelines.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule optionalFix = TypeRewriteRule.forType("fix", oldType, this::migrate);
-     *
-     * // Make the fix optional - non-matching types pass through unchanged
-     * TypeRewriteRule safeFix = optionalFix.orKeep();
-     *
-     * // safeFix.rewrite() always returns Optional.of(...), never Optional.empty()
-     * Typed<?> result = safeFix.apply(anyData);  // Always succeeds
-     * }</pre>
-     *
-     * @return a rule that always succeeds (never returns empty), never {@code null}
-     */
-    @NotNull
-    default TypeRewriteRule orKeep() {
-        final TypeRewriteRule self = this;
-        return (type, input) -> Optional.of(self.rewrite(type, input).orElse(input));
-    }
-
-    /**
-     * Creates a rule that only applies if the input type matches a target type.
-     *
-     * <p>This adds a type filter to an existing rule. The resulting rule only
-     * attempts to apply the original rule when the input's type reference matches
-     * the target type reference. For non-matching types, it returns empty.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // A generic transformation rule
-     * TypeRewriteRule genericFix = TypeRewriteRule.simple("fix",
-     *     typed -> typed.update(d -> d.createInt(d.asInt().orElse(0) + 1))
-     * );
-     *
-     * // Restrict it to only apply to score types
-     * TypeRewriteRule scoreFix = genericFix.ifType(scoreType);
-     *
-     * scoreFix.apply(scoreData);   // Applies the fix
-     * scoreFix.apply(playerData);  // Returns playerData unchanged
-     * }</pre>
-     *
-     * @param targetType the type that must match for the rule to apply, must not be {@code null}
-     * @return a filtered rule that only applies to the specified type, never {@code null}
-     * @throws NullPointerException if {@code targetType} is {@code null}
-     */
-    @NotNull
-    default TypeRewriteRule ifType(@NotNull final Type<?> targetType) {
-        final TypeRewriteRule self = this;
-        return (type, input) -> {
-            if (!type.reference().equals(targetType.reference())) {
-                return Optional.empty();
-            }
-            return self.rewrite(type, input);
-        };
-    }
-
-    /**
-     * Creates a named wrapper around this rule for debugging and logging purposes.
-     *
-     * <p>The name is used in the rule's {@link Object#toString()} representation,
-     * making it easier to identify rules in logs, error messages, and debugging
-     * sessions. The rule's behavior is unchanged.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * TypeRewriteRule anonymous = (type, input) -> Optional.of(input);
-     * TypeRewriteRule named = anonymous.named("identity_rule");
-     *
-     * System.out.println(named);  // Prints: "identity_rule"
-     * }</pre>
-     *
-     * @param name a descriptive name for this rule, must not be {@code null}
-     * @return a named rule with the same behavior, never {@code null}
-     * @throws NullPointerException if {@code name} is {@code null}
-     */
-    @NotNull
-    default TypeRewriteRule named(@NotNull final String name) {
-        final TypeRewriteRule self = this;
-        return new TypeRewriteRule() {
-            @NotNull
-            @Override
-            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
-                                              @NotNull final Typed<?> input) {
-                return self.rewrite(type, input);
-            }
-
-            @Override
-            public String toString() {
-                return name;
-            }
-        };
-    }
-
-    // ==================== Static Factory Methods ====================
-
-    /**
      * Creates an identity rule that always succeeds and returns the input unchanged.
      *
      * <p>The identity rule is the neutral element for rule composition. It matches
-     * any type and any input, returning the input exactly as given. This is useful
-     * as a default or placeholder in rule chains.</p>
+     * any type and any input, returning the input exactly as given. This is useful as a default or placeholder in rule
+     * chains.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -401,8 +149,7 @@ public interface TypeRewriteRule {
      * Creates a rule that never matches any input.
      *
      * <p>The fail rule always returns {@link Optional#empty()}, indicating that
-     * it doesn't apply. This is useful as a fallback sentinel or for testing
-     * rule composition behavior.</p>
+     * it doesn't apply. This is useful as a fallback sentinel or for testing rule composition behavior.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -426,8 +173,8 @@ public interface TypeRewriteRule {
      * Creates a rule from a simple transformation function that always matches.
      *
      * <p>This factory creates a rule that applies to any type without type filtering.
-     * The transformer function receives the typed input and must return a typed output.
-     * The rule always succeeds (never returns empty).</p>
+     * The transformer function receives the typed input and must return a typed output. The rule always succeeds (never
+     * returns empty).</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -474,9 +221,8 @@ public interface TypeRewriteRule {
      * Creates a type-specific rule that only applies to values of a particular type.
      *
      * <p>This is the most commonly used factory method for data migration rules.
-     * It creates a rule that matches only when the input's type reference equals
-     * the target type reference. The transformer receives the unwrapped value (not
-     * the Typed wrapper) and returns the transformed value.</p>
+     * It creates a rule that matches only when the input's type reference equals the target type reference. The
+     * transformer receives the unwrapped value (not the Typed wrapper) and returns the transformed value.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -494,8 +240,7 @@ public interface TypeRewriteRule {
      *
      * @param name        a descriptive name for this rule, must not be {@code null}
      * @param targetType  the type this rule applies to, must not be {@code null}
-     * @param transformer the function to transform values of the target type,
-     *                    must not be {@code null}
+     * @param transformer the function to transform values of the target type, must not be {@code null}
      * @param <A>         the Java type of values this rule transforms
      * @return a new type-specific rule, never {@code null}
      * @throws NullPointerException if any argument is {@code null}
@@ -519,6 +264,256 @@ public interface TypeRewriteRule {
             @Override
             public String toString() {
                 return name + "[" + targetType.describe() + "]";
+            }
+        };
+    }
+
+    /**
+     * Attempts to rewrite a typed value according to this rule.
+     *
+     * <p>This is the core operation of the rewrite system. The rule examines
+     * the input and either transforms it (returning a non-empty {@link Optional}) or indicates that it doesn't apply
+     * (returning {@link Optional#empty()}).</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule rule = TypeRewriteRule.forType("double_age", personType,
+     *     person -> person.withAge(person.age() * 2)
+     * );
+     *
+     * Typed<?> person = new Typed<>(personType, new Person("Alice", 30));
+     * Optional<Typed<?>> result = rule.rewrite(personType, person);
+     * // result.get().value() is Person("Alice", 60)
+     * }</pre>
+     *
+     * @param type  the type descriptor of the input, must not be {@code null}
+     * @param input the typed value to potentially rewrite, must not be {@code null}
+     * @return an {@link Optional} containing the rewritten value if this rule applies, or {@link Optional#empty()} if
+     * the rule doesn't match; never {@code null}
+     * @throws NullPointerException if {@code type} or {@code input} is {@code null}
+     */
+    @NotNull
+    Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                               @NotNull final Typed<?> input);
+
+    /**
+     * Applies this rule to a typed value, returning the original if the rule doesn't match.
+     *
+     * <p>This is a safe, convenient method for applying rules where non-matching
+     * rules should be treated as no-ops. It's the most commonly used application method in data migration
+     * pipelines.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule rule = TypeRewriteRule.forType("fix", playerType, Player::migrate);
+     *
+     * // Safe application - returns original if rule doesn't match
+     * Typed<?> result = rule.apply(anyTypedValue);
+     * // result is either migrated (if it was a player) or unchanged
+     * }</pre>
+     *
+     * @param input the typed value to transform, must not be {@code null}
+     * @return the rewritten result if the rule matched, or the original input unchanged if the rule didn't apply; never
+     * {@code null}
+     * @throws NullPointerException if {@code input} is {@code null}
+     */
+    @NotNull
+    default Typed<?> apply(@NotNull final Typed<?> input) {
+        return rewrite(input.type(), input).orElse(input);
+    }
+
+    /**
+     * Applies this rule, throwing an exception if it doesn't match.
+     *
+     * <p>Use this method when the rule is expected to always match and a non-match
+     * indicates a programming error or corrupt data. This is stricter than {@link #apply(Typed)} and should be used in
+     * critical migration paths.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule criticalFix = TypeRewriteRule.forType("fix", playerType, Player::migrate);
+     *
+     * // Strict application - fails if rule doesn't match
+     * try {
+     *     Typed<?> result = criticalFix.applyOrThrow(playerData);
+     * } catch (IllegalStateException e) {
+     *     // Handle unexpected type mismatch
+     *     logger.error("Player migration failed: " + e.getMessage());
+     * }
+     * }</pre>
+     *
+     * @param input the typed value to transform, must not be {@code null}
+     * @return the rewritten result, never {@code null}
+     * @throws IllegalStateException if the rule doesn't match the input type
+     * @throws NullPointerException  if {@code input} is {@code null}
+     */
+    @NotNull
+    default Typed<?> applyOrThrow(@NotNull final Typed<?> input) {
+        return rewrite(input.type(), input)
+                .orElseThrow(() -> new IllegalStateException("Rule did not match: " + input.type().describe()));
+    }
+
+    /**
+     * Composes this rule with another rule in sequence.
+     *
+     * <p>Creates a new rule that first applies this rule, then applies the next rule
+     * to the result. The composed rule only succeeds if both rules succeed. This is an AND-like composition where all
+     * rules in the chain must match.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule renameField = TypeRewriteRule.forType("rename", playerType,
+     *     p -> p.withName(p.playerName())
+     * );
+     * TypeRewriteRule addScore = TypeRewriteRule.forType("add_score", playerType,
+     *     p -> p.withScore(0)
+     * );
+     *
+     * // Both rules must match for the composition to succeed
+     * TypeRewriteRule migration = renameField.andThen(addScore);
+     * Typed<?> result = migration.apply(playerData);
+     * }</pre>
+     *
+     * @param next the rule to apply after this rule succeeds, must not be {@code null}
+     * @return a composed rule that applies both rules in sequence, never {@code null}
+     * @throws NullPointerException if {@code next} is {@code null}
+     */
+    @NotNull
+    default TypeRewriteRule andThen(@NotNull final TypeRewriteRule next) {
+        final TypeRewriteRule self = this;
+        return (type, input) -> self.rewrite(type, input)
+                .flatMap(result -> next.rewrite(result.type(), result));
+    }
+
+    // ==================== Static Factory Methods ====================
+
+    /**
+     * Creates a rule that tries this rule first, falling back to another on failure.
+     *
+     * <p>Creates an OR-like composition where the first matching rule wins. If this
+     * rule matches, its result is used. If this rule doesn't match, the fallback rule is tried instead.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule v1Fix = TypeRewriteRule.forType("v1", v1Type, this::migrateV1);
+     * TypeRewriteRule v2Fix = TypeRewriteRule.forType("v2", v2Type, this::migrateV2);
+     *
+     * // Try v1 migration first, fall back to v2
+     * TypeRewriteRule migration = v1Fix.orElse(v2Fix);
+     * Typed<?> result = migration.apply(data);
+     * }</pre>
+     *
+     * @param fallback the rule to try if this rule doesn't match, must not be {@code null}
+     * @return a rule that tries this rule first, then the fallback, never {@code null}
+     * @throws NullPointerException if {@code fallback} is {@code null}
+     */
+    @NotNull
+    default TypeRewriteRule orElse(@NotNull final TypeRewriteRule fallback) {
+        final TypeRewriteRule self = this;
+        return (type, input) -> {
+            final Optional<Typed<?>> result = self.rewrite(type, input);
+            if (result.isPresent()) {
+                return result;
+            }
+            return fallback.rewrite(type, input);
+        };
+    }
+
+    /**
+     * Creates a rule that always succeeds, returning the input unchanged if this rule doesn't match.
+     *
+     * <p>This converts a potentially-failing rule into an always-succeeding rule.
+     * It's equivalent to {@code this.orElse(TypeRewriteRule.identity())} and is useful for optional transformations in
+     * pipelines.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule optionalFix = TypeRewriteRule.forType("fix", oldType, this::migrate);
+     *
+     * // Make the fix optional - non-matching types pass through unchanged
+     * TypeRewriteRule safeFix = optionalFix.orKeep();
+     *
+     * // safeFix.rewrite() always returns Optional.of(...), never Optional.empty()
+     * Typed<?> result = safeFix.apply(anyData);  // Always succeeds
+     * }</pre>
+     *
+     * @return a rule that always succeeds (never returns empty), never {@code null}
+     */
+    @NotNull
+    default TypeRewriteRule orKeep() {
+        final TypeRewriteRule self = this;
+        return (type, input) -> Optional.of(self.rewrite(type, input).orElse(input));
+    }
+
+    /**
+     * Creates a rule that only applies if the input type matches a target type.
+     *
+     * <p>This adds a type filter to an existing rule. The resulting rule only
+     * attempts to apply the original rule when the input's type reference matches the target type reference. For
+     * non-matching types, it returns empty.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // A generic transformation rule
+     * TypeRewriteRule genericFix = TypeRewriteRule.simple("fix",
+     *     typed -> typed.update(d -> d.createInt(d.asInt().orElse(0) + 1))
+     * );
+     *
+     * // Restrict it to only apply to score types
+     * TypeRewriteRule scoreFix = genericFix.ifType(scoreType);
+     *
+     * scoreFix.apply(scoreData);   // Applies the fix
+     * scoreFix.apply(playerData);  // Returns playerData unchanged
+     * }</pre>
+     *
+     * @param targetType the type that must match for the rule to apply, must not be {@code null}
+     * @return a filtered rule that only applies to the specified type, never {@code null}
+     * @throws NullPointerException if {@code targetType} is {@code null}
+     */
+    @NotNull
+    default TypeRewriteRule ifType(@NotNull final Type<?> targetType) {
+        final TypeRewriteRule self = this;
+        return (type, input) -> {
+            if (!type.reference().equals(targetType.reference())) {
+                return Optional.empty();
+            }
+            return self.rewrite(type, input);
+        };
+    }
+
+    /**
+     * Creates a named wrapper around this rule for debugging and logging purposes.
+     *
+     * <p>The name is used in the rule's {@link Object#toString()} representation,
+     * making it easier to identify rules in logs, error messages, and debugging sessions. The rule's behavior is
+     * unchanged.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule anonymous = (type, input) -> Optional.of(input);
+     * TypeRewriteRule named = anonymous.named("identity_rule");
+     *
+     * System.out.println(named);  // Prints: "identity_rule"
+     * }</pre>
+     *
+     * @param name a descriptive name for this rule, must not be {@code null}
+     * @return a named rule with the same behavior, never {@code null}
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    @NotNull
+    default TypeRewriteRule named(@NotNull final String name) {
+        final TypeRewriteRule self = this;
+        return new TypeRewriteRule() {
+            @NotNull
+            @Override
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                              @NotNull final Typed<?> input) {
+                return self.rewrite(type, input);
+            }
+
+            @Override
+            public String toString() {
+                return name;
             }
         };
     }

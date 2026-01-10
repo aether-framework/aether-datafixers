@@ -46,6 +46,35 @@ class RulesExtendedTest {
 
     // ==================== dynamicTransform Tests ====================
 
+    private static Typed<?> createTyped(final Map<String, Object> map) {
+        final Dynamic<Object> dynamic = new Dynamic<>(OPS, new LinkedHashMap<>(map));
+        return new Typed<>(Type.PASSTHROUGH, dynamic);
+    }
+
+    // ==================== setField Tests ====================
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getResultMap(final Typed<?> typed) {
+        final Dynamic<?> dynamic = (Dynamic<?>) typed.value();
+        return (Map<String, Object>) dynamic.value();
+    }
+
+    // ==================== renameFields Tests ====================
+
+    private static void assertResultHasField(final Typed<?> typed, final String field, final Object expected) {
+        final Map<String, Object> map = getResultMap(typed);
+        assertThat(map).containsEntry(field, expected);
+    }
+
+    // ==================== removeFields Tests ====================
+
+    private static void assertResultDoesNotHaveField(final Typed<?> typed, final String field) {
+        final Map<String, Object> map = getResultMap(typed);
+        assertThat(map).doesNotContainKey(field);
+    }
+
+    // ==================== groupFields Tests ====================
+
     @Nested
     @DisplayName("dynamicTransform")
     class DynamicTransformTests {
@@ -53,8 +82,7 @@ class RulesExtendedTest {
         @Test
         @DisplayName("should apply custom transformation")
         void shouldApplyCustomTransformation() {
-            @SuppressWarnings("unchecked")
-            final TypeRewriteRule rule = Rules.dynamicTransform("addField", OPS, dynamic -> {
+            @SuppressWarnings("unchecked") final TypeRewriteRule rule = Rules.dynamicTransform("addField", OPS, dynamic -> {
                 final Dynamic<Object> d = (Dynamic<Object>) dynamic;
                 return d.set("newField", d.createString("added"));
             });
@@ -71,8 +99,7 @@ class RulesExtendedTest {
         @Test
         @DisplayName("should compute derived field")
         void shouldComputeDerivedField() {
-            @SuppressWarnings("unchecked")
-            final TypeRewriteRule rule = Rules.dynamicTransform("computeLevel", OPS, dynamic -> {
+            @SuppressWarnings("unchecked") final TypeRewriteRule rule = Rules.dynamicTransform("computeLevel", OPS, dynamic -> {
                 final Dynamic<Object> d = (Dynamic<Object>) dynamic;
                 final int xp = d.get("xp").asInt().result().orElse(0);
                 final int level = Math.max(1, (int) Math.sqrt(xp / 100.0));
@@ -88,7 +115,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== setField Tests ====================
+    // ==================== flattenField Tests ====================
 
     @Nested
     @DisplayName("setField")
@@ -126,7 +153,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== renameFields Tests ====================
+    // ==================== moveField Tests ====================
 
     @Nested
     @DisplayName("renameFields")
@@ -163,7 +190,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== removeFields Tests ====================
+    // ==================== copyField Tests ====================
 
     @Nested
     @DisplayName("removeFields")
@@ -197,7 +224,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== groupFields Tests ====================
+    // ==================== transformFieldAt Tests ====================
 
     @Nested
     @DisplayName("groupFields")
@@ -226,8 +253,7 @@ class RulesExtendedTest {
             final Map<String, Object> resultMap = getResultMap(result.get());
             assertThat(resultMap).containsKey("position");
 
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> position = (Map<String, Object>) resultMap.get("position");
+            @SuppressWarnings("unchecked") final Map<String, Object> position = (Map<String, Object>) resultMap.get("position");
             assertThat(position).containsEntry("x", 100.5);
             assertThat(position).containsEntry("y", 64.0);
             assertThat(position).containsEntry("z", -200.25);
@@ -242,7 +268,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== flattenField Tests ====================
+    // ==================== renameFieldAt Tests ====================
 
     @Nested
     @DisplayName("flattenField")
@@ -287,7 +313,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== moveField Tests ====================
+    // ==================== removeFieldAt Tests ====================
 
     @Nested
     @DisplayName("moveField")
@@ -313,8 +339,7 @@ class RulesExtendedTest {
             assertResultDoesNotHaveField(result.get(), "x");
 
             final Map<String, Object> resultMap = getResultMap(result.get());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
+            @SuppressWarnings("unchecked") final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
             assertThat(resultPosition).containsEntry("x", 100.5);
             assertThat(resultPosition).containsEntry("y", 64.0);
         }
@@ -333,7 +358,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== copyField Tests ====================
+    // ==================== addFieldAt Tests ====================
 
     @Nested
     @DisplayName("copyField")
@@ -358,7 +383,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== transformFieldAt Tests ====================
+    // ==================== ifFieldExists Tests ====================
 
     @Nested
     @DisplayName("transformFieldAt")
@@ -382,13 +407,12 @@ class RulesExtendedTest {
 
             assertThat(result).isPresent();
             final Map<String, Object> resultMap = getResultMap(result.get());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
+            @SuppressWarnings("unchecked") final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
             assertThat(resultPosition.get("x")).isEqualTo(200.0);
         }
     }
 
-    // ==================== renameFieldAt Tests ====================
+    // ==================== ifFieldMissing Tests ====================
 
     @Nested
     @DisplayName("renameFieldAt")
@@ -411,8 +435,7 @@ class RulesExtendedTest {
 
             assertThat(result).isPresent();
             final Map<String, Object> resultMap = getResultMap(result.get());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
+            @SuppressWarnings("unchecked") final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
             assertThat(resultPosition).containsEntry("x", 100.0);
             assertThat(resultPosition).doesNotContainKey("posX");
         }
@@ -432,7 +455,7 @@ class RulesExtendedTest {
         }
     }
 
-    // ==================== removeFieldAt Tests ====================
+    // ==================== ifFieldEquals Tests ====================
 
     @Nested
     @DisplayName("removeFieldAt")
@@ -456,14 +479,13 @@ class RulesExtendedTest {
 
             assertThat(result).isPresent();
             final Map<String, Object> resultMap = getResultMap(result.get());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> resultMetadata = (Map<String, Object>) resultMap.get("metadata");
+            @SuppressWarnings("unchecked") final Map<String, Object> resultMetadata = (Map<String, Object>) resultMap.get("metadata");
             assertThat(resultMetadata).doesNotContainKey("deprecated");
             assertThat(resultMetadata).containsEntry("version", 1);
         }
     }
 
-    // ==================== addFieldAt Tests ====================
+    // ==================== Helper Methods ====================
 
     @Nested
     @DisplayName("addFieldAt")
@@ -487,8 +509,7 @@ class RulesExtendedTest {
 
             assertThat(result).isPresent();
             final Map<String, Object> resultMap = getResultMap(result.get());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
+            @SuppressWarnings("unchecked") final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
             assertThat(resultPosition).containsEntry("w", 0.0);
         }
 
@@ -509,13 +530,10 @@ class RulesExtendedTest {
 
             assertThat(result).isPresent();
             final Map<String, Object> resultMap = getResultMap(result.get());
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
+            @SuppressWarnings("unchecked") final Map<String, Object> resultPosition = (Map<String, Object>) resultMap.get("position");
             assertThat(resultPosition.get("x")).isEqualTo(100.0);
         }
     }
-
-    // ==================== ifFieldExists Tests ====================
 
     @Nested
     @DisplayName("ifFieldExists")
@@ -552,8 +570,6 @@ class RulesExtendedTest {
             assertResultHasField(result.get(), "name", "Alice");
         }
     }
-
-    // ==================== ifFieldMissing Tests ====================
 
     @Nested
     @DisplayName("ifFieldMissing")
@@ -592,8 +608,6 @@ class RulesExtendedTest {
             assertResultHasField(result.get(), "version", 1);
         }
     }
-
-    // ==================== ifFieldEquals Tests ====================
 
     @Nested
     @DisplayName("ifFieldEquals")
@@ -665,28 +679,5 @@ class RulesExtendedTest {
             assertThat(result).isPresent();
             assertResultDoesNotHaveField(result.get(), "active");
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private static Typed<?> createTyped(final Map<String, Object> map) {
-        final Dynamic<Object> dynamic = new Dynamic<>(OPS, new LinkedHashMap<>(map));
-        return new Typed<>(Type.PASSTHROUGH, dynamic);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, Object> getResultMap(final Typed<?> typed) {
-        final Dynamic<?> dynamic = (Dynamic<?>) typed.value();
-        return (Map<String, Object>) dynamic.value();
-    }
-
-    private static void assertResultHasField(final Typed<?> typed, final String field, final Object expected) {
-        final Map<String, Object> map = getResultMap(typed);
-        assertThat(map).containsEntry(field, expected);
-    }
-
-    private static void assertResultDoesNotHaveField(final Typed<?> typed, final String field) {
-        final Map<String, Object> map = getResultMap(typed);
-        assertThat(map).doesNotContainKey(field);
     }
 }

@@ -290,7 +290,8 @@ class DataResultTest {
         void resultOrPartialThrowsWhenNoPartial() {
             DataResult<String> result = DataResult.error("no data");
 
-            assertThatThrownBy(() -> result.resultOrPartial(err -> {}))
+            assertThatThrownBy(() -> result.resultOrPartial(err -> {
+            }))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("no data");
         }

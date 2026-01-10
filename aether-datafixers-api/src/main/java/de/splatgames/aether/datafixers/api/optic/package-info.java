@@ -24,9 +24,8 @@
  * Profunctor optics for composable, type-safe data access and transformation.
  *
  * <p>This package provides a comprehensive optics library that enables focusing on
- * and manipulating parts of data structures in a composable way. Optics are central
- * to the data fixer system, enabling type-safe transformations of nested data
- * without manual traversal code.</p>
+ * and manipulating parts of data structures in a composable way. Optics are central to the data fixer system, enabling
+ * type-safe transformations of nested data without manual traversal code.</p>
  *
  * <h2>Optic Hierarchy</h2>
  * <p>Different optic types have different capabilities, forming a hierarchy from

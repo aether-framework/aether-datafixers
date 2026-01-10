@@ -30,14 +30,13 @@ import org.jetbrains.annotations.NotNull;
  * A {@link Dynamic} value paired with a {@link TypeReference} identifier.
  *
  * <p>{@code TaggedDynamic} associates a dynamic value with a type reference,
- * which is useful in data migration scenarios where the type of data needs
- * to be tracked alongside the data itself. This enables type-aware
- * transformations and fixes.</p>
+ * which is useful in data migration scenarios where the type of data needs to be tracked alongside the data itself.
+ * This enables type-aware transformations and fixes.</p>
  *
  * <h2>Usage Context</h2>
  * <p>TaggedDynamic is primarily used in the data fixer system where different
- * types of data (entities, block entities, chunks, etc.) need to be migrated
- * using type-specific transformation rules.</p>
+ * types of data (entities, block entities, chunks, etc.) need to be migrated using type-specific transformation
+ * rules.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -60,19 +59,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TaggedDynamic {
 
-    /** The type reference identifying the kind of data. */
+    /**
+     * The type reference identifying the kind of data.
+     */
     private final TypeReference type;
 
-    /** The dynamic value containing the actual data. */
+    /**
+     * The dynamic value containing the actual data.
+     */
     private final Dynamic<?> value;
 
     /**
      * Creates a new TaggedDynamic with the specified type and value.
      *
-     * @param type  the type reference identifying the kind of data,
-     *              must not be {@code null}
-     * @param value the dynamic value containing the data,
-     *              must not be {@code null}
+     * @param type  the type reference identifying the kind of data, must not be {@code null}
+     * @param value the dynamic value containing the data, must not be {@code null}
      * @throws NullPointerException if {@code type} or {@code value} is {@code null}
      */
     public TaggedDynamic(@NotNull final TypeReference type, @NotNull final Dynamic<?> value) {

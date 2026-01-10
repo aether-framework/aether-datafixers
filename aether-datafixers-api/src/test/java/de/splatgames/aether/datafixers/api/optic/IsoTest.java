@@ -37,27 +37,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Iso")
 class IsoTest {
 
-    // Test wrapper type
-    record Wrapper<T>(T value) {}
-
     // Isomorphisms for testing
     private final Iso<String, String, String, String> reverseIso = Iso.of(
             "string.reverse",
             s -> new StringBuilder(s).reverse().toString(),
             s -> new StringBuilder(s).reverse().toString()
     );
-
     private final Iso<Wrapper<String>, Wrapper<String>, String, String> unwrapIso = Iso.of(
             "wrapper.unwrap",
             Wrapper::value,
             Wrapper::new
     );
-
     private final Iso<String, String, List<Character>, List<Character>> stringToCharsIso = Iso.of(
             "string.chars",
             s -> s.chars().mapToObj(c -> (char) c).toList(),
             chars -> chars.stream().map(String::valueOf).collect(Collectors.joining())
     );
+
+    // Test wrapper type
+    record Wrapper<T>(T value) {
+    }
 
     @Nested
     @DisplayName("Factory Method of()")

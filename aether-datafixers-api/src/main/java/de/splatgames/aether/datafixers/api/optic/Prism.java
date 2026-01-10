@@ -31,10 +31,9 @@ import java.util.function.Function;
  * A prism focuses on one case of a sum type, providing partial access that may or may not match.
  *
  * <p>A {@code Prism} is an optic that targets one variant of a sum type (also known as
- * tagged union, coproduct, or algebraic data type). Unlike a {@link Lens} which always
- * succeeds, a prism's focus may not exist in the source value. This makes prisms ideal
- * for working with optional values, enum-like structures, or any type where a value
- * might be one of several possible forms.</p>
+ * tagged union, coproduct, or algebraic data type). Unlike a {@link Lens} which always succeeds, a prism's focus may
+ * not exist in the source value. This makes prisms ideal for working with optional values, enum-like structures, or any
+ * type where a value might be one of several possible forms.</p>
  *
  * <h2>When to Use a Prism</h2>
  * <p>Use a prism when you need to:</p>
@@ -139,11 +138,72 @@ import java.util.function.Function;
 public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
 
     /**
+     * Creates a monomorphic prism from extraction and construction functions.
+     *
+     * <p>This factory method is the primary way to create prisms. It constructs
+     * a prism where the types don't change during updates (S=T and A=B), which covers the vast majority of use
+     * cases.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Prism for extracting the 'Left' case of an Either
+     * Prism<Either<String, Integer>, Either<String, Integer>, String, String> leftPrism =
+     *     Prism.of(
+     *         "either.left",
+     *         either -> either.left(),  // Returns Optional<String>
+     *         value -> Either.left(value)
+     *     );
+     *
+     * // Prism for parsing integers from strings
+     * Prism<String, String, Integer, Integer> intPrism = Prism.of(
+     *     "string.int",
+     *     str -> {
+     *         try { return Optional.of(Integer.parseInt(str)); }
+     *         catch (NumberFormatException e) { return Optional.empty(); }
+     *     },
+     *     num -> num.toString()
+     * );
+     * }</pre>
+     *
+     * @param id         a unique identifier for this prism (used for debugging), must not be {@code null}
+     * @param getOption  the function to attempt extracting the focus from the source, must not be {@code null}
+     * @param reverseGet the function to construct a source from a focus value, must not be {@code null}
+     * @param <S>        the source/whole type
+     * @param <A>        the focus/part type
+     * @return a new monomorphic prism, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    @NotNull
+    static <S, A> Prism<S, S, A, A> of(@NotNull final String id,
+                                       @NotNull final Function<S, Optional<A>> getOption,
+                                       @NotNull final Function<A, S> reverseGet) {
+        return new Prism<>() {
+            @NotNull
+            @Override
+            public String id() {
+                return id;
+            }
+
+            @NotNull
+            @Override
+            public Optional<A> getOption(@NotNull final S source) {
+                return getOption.apply(source);
+            }
+
+            @NotNull
+            @Override
+            public S reverseGet(@NotNull final A value) {
+                return reverseGet.apply(value);
+            }
+        };
+    }
+
+    /**
      * Attempts to extract the focused value from the source.
      *
      * <p>This is the defining operation of a prism. Unlike {@link Lens#get}, this
-     * operation may fail if the source doesn't match the prism's target case.
-     * The result is wrapped in an {@link Optional} to represent this possibility.</p>
+     * operation may fail if the source doesn't match the prism's target case. The result is wrapped in an
+     * {@link Optional} to represent this possibility.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -155,8 +215,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      * }</pre>
      *
      * @param source the source value to examine, must not be {@code null}
-     * @return an {@link Optional} containing the focused value if this case matches,
-     *         or {@link Optional#empty()} if it doesn't match; never {@code null}
+     * @return an {@link Optional} containing the focused value if this case matches, or {@link Optional#empty()} if it
+     * doesn't match; never {@code null}
      * @throws NullPointerException if {@code source} is {@code null}
      */
     @NotNull
@@ -166,8 +226,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      * Constructs a source value from the focused value.
      *
      * <p>This is the reverse direction of the prism. Given a value of the focus type,
-     * it creates a source value representing that case. This operation always succeeds,
-     * unlike {@link #getOption} which may return empty.</p>
+     * it creates a source value representing that case. This operation always succeeds, unlike {@link #getOption} which
+     * may return empty.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -186,8 +246,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      * Transforms the focused value if this prism matches, otherwise returns the source unchanged.
      *
      * <p>If {@link #getOption} returns a value, the modifier function is applied
-     * and the result is wrapped using {@link #reverseGet}. If it doesn't match,
-     * the original source is returned unchanged.</p>
+     * and the result is wrapped using {@link #reverseGet}. If it doesn't match, the original source is returned
+     * unchanged.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -200,8 +260,7 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      *
      * @param source   the source value to potentially modify, must not be {@code null}
      * @param modifier the function to apply to the focused value, must not be {@code null}
-     * @return a new source with the modified focus, or the original source if not matching;
-     *         never {@code null}
+     * @return a new source with the modified focus, or the original source if not matching; never {@code null}
      * @throws NullPointerException if {@code source} or {@code modifier} is {@code null}
      */
     @NotNull
@@ -230,8 +289,7 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      *
      * @param source the source value to potentially modify, must not be {@code null}
      * @param value  the new value to set at the focus, must not be {@code null}
-     * @return a new source with the replaced focus, or the original source if not matching;
-     *         never {@code null}
+     * @return a new source with the replaced focus, or the original source if not matching; never {@code null}
      * @throws NullPointerException if {@code source} or {@code value} is {@code null}
      */
     @NotNull
@@ -302,69 +360,5 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
             return compose(prism);
         }
         throw new UnsupportedOperationException("Cannot compose Prism with " + other.getClass().getSimpleName());
-    }
-
-    /**
-     * Creates a monomorphic prism from extraction and construction functions.
-     *
-     * <p>This factory method is the primary way to create prisms. It constructs
-     * a prism where the types don't change during updates (S=T and A=B), which
-     * covers the vast majority of use cases.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Prism for extracting the 'Left' case of an Either
-     * Prism<Either<String, Integer>, Either<String, Integer>, String, String> leftPrism =
-     *     Prism.of(
-     *         "either.left",
-     *         either -> either.left(),  // Returns Optional<String>
-     *         value -> Either.left(value)
-     *     );
-     *
-     * // Prism for parsing integers from strings
-     * Prism<String, String, Integer, Integer> intPrism = Prism.of(
-     *     "string.int",
-     *     str -> {
-     *         try { return Optional.of(Integer.parseInt(str)); }
-     *         catch (NumberFormatException e) { return Optional.empty(); }
-     *     },
-     *     num -> num.toString()
-     * );
-     * }</pre>
-     *
-     * @param id         a unique identifier for this prism (used for debugging),
-     *                   must not be {@code null}
-     * @param getOption  the function to attempt extracting the focus from the source,
-     *                   must not be {@code null}
-     * @param reverseGet the function to construct a source from a focus value,
-     *                   must not be {@code null}
-     * @param <S>        the source/whole type
-     * @param <A>        the focus/part type
-     * @return a new monomorphic prism, never {@code null}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NotNull
-    static <S, A> Prism<S, S, A, A> of(@NotNull final String id,
-                                       @NotNull final Function<S, Optional<A>> getOption,
-                                       @NotNull final Function<A, S> reverseGet) {
-        return new Prism<>() {
-            @NotNull
-            @Override
-            public String id() {
-                return id;
-            }
-
-            @NotNull
-            @Override
-            public Optional<A> getOption(@NotNull final S source) {
-                return getOption.apply(source);
-            }
-
-            @NotNull
-            @Override
-            public S reverseGet(@NotNull final A value) {
-                return reverseGet.apply(value);
-            }
-        };
     }
 }

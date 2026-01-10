@@ -28,9 +28,9 @@ import org.jetbrains.annotations.NotNull;
  * A singleton type representing the absence of a meaningful value.
  *
  * <p>The {@code Unit} type is used when a type parameter is required but no actual
- * value is needed. It is similar to {@link Void} but can be instantiated (there is
- * exactly one instance: {@link #INSTANCE}). This is useful in generic contexts where
- * a type must be specified but the value is irrelevant.</p>
+ * value is needed. It is similar to {@link Void} but can be instantiated (there is exactly one instance:
+ * {@link #INSTANCE}). This is useful in generic contexts where a type must be specified but the value is
+ * irrelevant.</p>
  *
  * <h2>Common Use Cases</h2>
  * <ul>
@@ -111,8 +111,7 @@ public final class Unit {
      * Compares this Unit to the specified object for equality.
      *
      * <p>Returns {@code true} if the specified object is also a Unit.
-     * Since Unit is a singleton, this effectively checks if the object
-     * is an instance of the Unit class.</p>
+     * Since Unit is a singleton, this effectively checks if the object is an instance of the Unit class.</p>
      *
      * @param obj the object to compare with
      * @return {@code true} if the specified object is a Unit, {@code false} otherwise

@@ -24,14 +24,12 @@ package de.splatgames.aether.datafixers.api.optic;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-
 /**
  * Base interface for all optic types in the profunctor optics system.
  *
  * <p>Optics provide a composable way to focus on and manipulate parts of data
- * structures. They are central to the data fixer system, enabling type-safe
- * transformations of nested data without manual traversal code.</p>
+ * structures. They are central to the data fixer system, enabling type-safe transformations of nested data without
+ * manual traversal code.</p>
  *
  * <h2>Optic Hierarchy</h2>
  * <p>Different optic types have different capabilities, forming a hierarchy:</p>
@@ -83,46 +81,11 @@ import java.util.function.Function;
 public interface Optic<S, T, A, B> {
 
     /**
-     * Returns a unique identifier for this optic.
-     *
-     * <p>The identifier is used for debugging, logging, and potentially
-     * for optic lookup in registries.</p>
-     *
-     * @return the optic identifier, never {@code null}
-     */
-    @NotNull
-    String id();
-
-    /**
-     * Composes this optic with another optic to focus deeper into the structure.
-     *
-     * <p>The composition chains the focus: this optic focuses from S to A,
-     * and the other optic focuses from A to C, resulting in an optic that
-     * focuses from S to C.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // this: S -> A
-     * // other: A -> C
-     * // result: S -> C
-     * Optic<S, T, C, D> composed = this.compose(other);
-     * }</pre>
-     *
-     * @param other the optic to compose with, focusing from A to C
-     * @param <C>   the new focus type
-     * @param <D>   the new modified focus type
-     * @return a composed optic focusing from S to C, never {@code null}
-     * @throws NullPointerException if {@code other} is {@code null}
-     */
-    @NotNull
-    <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other);
-
-    /**
      * Creates an identity optic that focuses on the entire value unchanged.
      *
      * <p>The identity optic acts as a no-op: it focuses on the whole value
-     * and any modification returns the modified value as-is. It serves as
-     * the identity element for optic composition.</p>
+     * and any modification returns the modified value as-is. It serves as the identity element for optic
+     * composition.</p>
      *
      * @param <S> the type of the value
      * @return an identity optic where S=T=A=B, never {@code null}
@@ -142,4 +105,38 @@ public interface Optic<S, T, A, B> {
             }
         };
     }
+
+    /**
+     * Returns a unique identifier for this optic.
+     *
+     * <p>The identifier is used for debugging, logging, and potentially
+     * for optic lookup in registries.</p>
+     *
+     * @return the optic identifier, never {@code null}
+     */
+    @NotNull
+    String id();
+
+    /**
+     * Composes this optic with another optic to focus deeper into the structure.
+     *
+     * <p>The composition chains the focus: this optic focuses from S to A,
+     * and the other optic focuses from A to C, resulting in an optic that focuses from S to C.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // this: S -> A
+     * // other: A -> C
+     * // result: S -> C
+     * Optic<S, T, C, D> composed = this.compose(other);
+     * }</pre>
+     *
+     * @param other the optic to compose with, focusing from A to C
+     * @param <C>   the new focus type
+     * @param <D>   the new modified focus type
+     * @return a composed optic focusing from S to C, never {@code null}
+     * @throws NullPointerException if {@code other} is {@code null}
+     */
+    @NotNull
+    <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other);
 }
