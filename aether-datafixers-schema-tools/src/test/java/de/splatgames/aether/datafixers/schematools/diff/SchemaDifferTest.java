@@ -26,6 +26,7 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.dsl.DSL;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.type.Type;
+import de.splatgames.aether.datafixers.api.type.template.TypeFamily;
 import de.splatgames.aether.datafixers.testkit.factory.MockSchemas;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -187,8 +188,8 @@ class SchemaDifferTest {
         @Test
         @DisplayName("includes type diffs when enabled")
         void includesTypeDiffsWhenEnabled() {
-            final Type<?> sourceType = DSL.field("name", DSL.string()).apply(null);
-            final Type<?> targetType = DSL.field("name", DSL.string()).apply(null);
+            final Type<?> sourceType = DSL.field("name", DSL.string()).apply(TypeFamily.empty());
+            final Type<?> targetType = DSL.field("name", DSL.string()).apply(TypeFamily.empty());
 
             final Schema source = MockSchemas.builder(100)
                     .withType(PLAYER, sourceType)
@@ -208,11 +209,11 @@ class SchemaDifferTest {
         @Test
         @DisplayName("detects added fields")
         void detectsAddedFields() {
-            final Type<?> sourceType = DSL.field("name", DSL.string()).apply(null);
+            final Type<?> sourceType = DSL.field("name", DSL.string()).apply(TypeFamily.empty());
             final Type<?> targetType = DSL.and(
                     DSL.field("name", DSL.string()),
                     DSL.field("level", DSL.intType())
-            ).apply(null);
+            ).apply(TypeFamily.empty());
 
             final Schema source = MockSchemas.builder(100)
                     .withType(PLAYER, sourceType)
@@ -240,8 +241,8 @@ class SchemaDifferTest {
             final Type<?> sourceType = DSL.and(
                     DSL.field("name", DSL.string()),
                     DSL.field("level", DSL.intType())
-            ).apply(null);
-            final Type<?> targetType = DSL.field("name", DSL.string()).apply(null);
+            ).apply(TypeFamily.empty());
+            final Type<?> targetType = DSL.field("name", DSL.string()).apply(TypeFamily.empty());
 
             final Schema source = MockSchemas.builder(100)
                     .withType(PLAYER, sourceType)
@@ -264,8 +265,8 @@ class SchemaDifferTest {
         @DisplayName("field-level diff returns empty for MockSchemas types")
         void fieldLevelDiffReturnsEmptyForMockSchemasTypes() {
             // Field extraction doesn't work as expected with MockSchemas
-            final Type<?> sourceType = DSL.field("name", DSL.string()).apply(null);
-            final Type<?> targetType = DSL.optionalField("name", DSL.string()).apply(null);
+            final Type<?> sourceType = DSL.field("name", DSL.string()).apply(TypeFamily.empty());
+            final Type<?> targetType = DSL.optionalField("name", DSL.string()).apply(TypeFamily.empty());
 
             final Schema source = MockSchemas.builder(100)
                     .withType(PLAYER, sourceType)
@@ -288,7 +289,7 @@ class SchemaDifferTest {
         @DisplayName("unchanged fields empty for MockSchemas types")
         void unchangedFieldsEmptyForMockSchemasTypes() {
             // Field extraction from MockSchemas doesn't work
-            final Type<?> type = DSL.field("name", DSL.string()).apply(null);
+            final Type<?> type = DSL.field("name", DSL.string()).apply(TypeFamily.empty());
 
             final Schema source = MockSchemas.builder(100)
                     .withType(PLAYER, type)
@@ -512,7 +513,7 @@ class SchemaDifferTest {
                             DSL.field("x", DSL.intType()),
                             DSL.field("y", DSL.intType())
                     ))
-            ).apply(null);
+            ).apply(TypeFamily.empty());
             final Type<?> targetType = DSL.and(
                     DSL.field("name", DSL.string()),
                     DSL.field("position", DSL.and(
@@ -520,7 +521,7 @@ class SchemaDifferTest {
                             DSL.field("y", DSL.intType()),
                             DSL.field("z", DSL.intType())
                     ))
-            ).apply(null);
+            ).apply(TypeFamily.empty());
 
             final Schema source = MockSchemas.builder(100)
                     .withType(PLAYER, sourceType)

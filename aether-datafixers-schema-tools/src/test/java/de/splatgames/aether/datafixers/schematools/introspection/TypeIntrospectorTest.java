@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.schematools.introspection;
 
 import de.splatgames.aether.datafixers.api.dsl.DSL;
 import de.splatgames.aether.datafixers.api.type.Type;
+import de.splatgames.aether.datafixers.api.type.template.TypeFamily;
 import de.splatgames.aether.datafixers.api.type.template.TypeTemplate;
 import de.splatgames.aether.datafixers.schematools.introspection.TypeStructure.TypeKind;
 import org.junit.jupiter.api.DisplayName;
@@ -95,7 +96,7 @@ class TypeIntrospectorTest {
         @DisplayName("extracts fields from field type template")
         void extractsFieldsFromFieldTypeTemplate() {
             final TypeTemplate template = DSL.field("name", DSL.string());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             final List<FieldInfo> fields = TypeIntrospector.extractFields(type);
 
@@ -110,7 +111,7 @@ class TypeIntrospectorTest {
             // DSL.optionalField creates an optional wrapper, not a direct FieldType
             // The field extraction only extracts direct FieldType instances
             final TypeTemplate template = DSL.optionalField("health", DSL.intType());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             final List<FieldInfo> fields = TypeIntrospector.extractFields(type);
 
@@ -125,7 +126,7 @@ class TypeIntrospectorTest {
                     DSL.field("name", DSL.string()),
                     DSL.field("level", DSL.intType())
             );
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             final List<FieldInfo> fields = TypeIntrospector.extractFields(type);
 
@@ -150,7 +151,7 @@ class TypeIntrospectorTest {
         @DisplayName("returns true when field exists")
         void returnsTrueWhenFieldExists() {
             final TypeTemplate template = DSL.field("name", DSL.string());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             assertThat(TypeIntrospector.hasField(type, "name")).isTrue();
         }
@@ -159,7 +160,7 @@ class TypeIntrospectorTest {
         @DisplayName("returns false when field does not exist")
         void returnsFalseWhenFieldDoesNotExist() {
             final TypeTemplate template = DSL.field("name", DSL.string());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             assertThat(TypeIntrospector.hasField(type, "age")).isFalse();
         }
@@ -235,7 +236,7 @@ class TypeIntrospectorTest {
         @DisplayName("returns FIELD for field type")
         void returnsFieldForFieldType() {
             final TypeTemplate template = DSL.field("test", DSL.string());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             assertThat(TypeIntrospector.determineKind(type))
                     .isEqualTo(TypeKind.FIELD);
@@ -245,7 +246,7 @@ class TypeIntrospectorTest {
         @DisplayName("returns LIST for list type")
         void returnsListForListType() {
             final TypeTemplate template = DSL.list(DSL.string());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             assertThat(TypeIntrospector.determineKind(type))
                     .isEqualTo(TypeKind.LIST);
@@ -274,7 +275,7 @@ class TypeIntrospectorTest {
                     DSL.field("name", DSL.string()),
                     DSL.field("position", inner)
             );
-            final Type<?> type = outer.apply(null);
+            final Type<?> type = outer.apply(TypeFamily.empty());
 
             final List<FieldInfo> fields = TypeIntrospector.extractFields(type);
 
@@ -287,7 +288,7 @@ class TypeIntrospectorTest {
         @DisplayName("handles optional field types")
         void handlesOptionalFieldTypes() {
             final TypeTemplate template = DSL.optionalField("optional", DSL.string());
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             final TypeStructure structure = TypeIntrospector.introspect(type);
 
@@ -299,7 +300,7 @@ class TypeIntrospectorTest {
         void handlesListOfComplexTypes() {
             final TypeTemplate element = DSL.field("name", DSL.string());
             final TypeTemplate template = DSL.list(element);
-            final Type<?> type = template.apply(null);
+            final Type<?> type = template.apply(TypeFamily.empty());
 
             final TypeStructure structure = TypeIntrospector.introspect(type);
 
