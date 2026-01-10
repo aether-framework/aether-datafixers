@@ -112,6 +112,7 @@ public final class DataFixTester<T> {
      */
     @NotNull
     public static <T> DataFixTester<T> forFix(@NotNull final DataFix<T> fix) {
+        Preconditions.checkNotNull(fix, "fix must not be null");
         return new DataFixTester<>(fix);
     }
 
@@ -152,6 +153,7 @@ public final class DataFixTester<T> {
      */
     @NotNull
     public DataFixTester<T> forType(@NotNull final String typeId) {
+        Preconditions.checkNotNull(typeId, "typeId must not be null");
         return this.forType(new TypeReference(typeId));
     }
 
@@ -298,7 +300,7 @@ public final class DataFixTester<T> {
                 @Nullable final RecordingContext context,
                 final boolean passed
         ) {
-            this.result = result;
+            this.result = Preconditions.checkNotNull(result, "result must not be null");
             this.context = context;
             this.passed = passed;
         }

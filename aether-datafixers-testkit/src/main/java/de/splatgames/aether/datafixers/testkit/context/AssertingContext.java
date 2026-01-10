@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.testkit.context;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,6 +112,7 @@ public final class AssertingContext implements DataFixerContext {
 
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
+        Preconditions.checkNotNull(message, "message must not be null");
         final String formatted = formatMessage(message, args);
 
         switch (this.mode) {

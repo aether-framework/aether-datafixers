@@ -151,6 +151,7 @@ public final class MigrationTester<T> {
      */
     @NotNull
     public MigrationTester<T> forType(@NotNull final String typeId) {
+        Preconditions.checkNotNull(typeId, "typeId must not be null");
         return this.forType(new TypeReference(typeId));
     }
 
@@ -239,10 +240,9 @@ public final class MigrationTester<T> {
      * @throws IllegalStateException if required configuration is missing
      */
     @NotNull
-    @SuppressWarnings("unchecked")
     public Dynamic<T> migrate() {
         this.validateConfiguration();
-        return (Dynamic<T>) this.fixer.update(
+        return this.fixer.update(
                 this.typeReference,
                 this.input,
                 this.fromVersion,
@@ -333,6 +333,8 @@ public final class MigrationTester<T> {
          */
         @NotNull
         public FixerSetup addFix(@NotNull final String typeId, @NotNull final DataFix<?> fix) {
+            Preconditions.checkNotNull(typeId, "typeId must not be null");
+            Preconditions.checkNotNull(fix, "fix must not be null");
             return this.addFix(new TypeReference(typeId), fix);
         }
 

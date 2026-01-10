@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.testkit.context;
 
+import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +107,7 @@ public final class RecordingContext implements DataFixerContext {
     public List<LogEntry> infoLogs() {
         return this.logs.stream()
                 .filter(e -> e.level() == LogLevel.INFO)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -118,7 +119,7 @@ public final class RecordingContext implements DataFixerContext {
     public List<LogEntry> warnLogs() {
         return this.logs.stream()
                 .filter(e -> e.level() == LogLevel.WARN)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -128,6 +129,7 @@ public final class RecordingContext implements DataFixerContext {
      * @return true if found
      */
     public boolean hasInfo(@NotNull final String substring) {
+        Preconditions.checkNotNull(substring, "substring must not be null");
         return this.infoLogs().stream()
                 .anyMatch(e -> e.formattedMessage().contains(substring));
     }
@@ -139,6 +141,7 @@ public final class RecordingContext implements DataFixerContext {
      * @return true if found
      */
     public boolean hasWarn(@NotNull final String substring) {
+        Preconditions.checkNotNull(substring, "substring must not be null");
         return this.warnLogs().stream()
                 .anyMatch(e -> e.formattedMessage().contains(substring));
     }
@@ -150,6 +153,7 @@ public final class RecordingContext implements DataFixerContext {
      * @return true if found
      */
     public boolean hasLog(@NotNull final String substring) {
+        Preconditions.checkNotNull(substring, "substring must not be null");
         return this.logs.stream()
                 .anyMatch(e -> e.formattedMessage().contains(substring));
     }
@@ -231,6 +235,12 @@ public final class RecordingContext implements DataFixerContext {
             @NotNull String message,
             @Nullable Object[] args
     ) {
+
+        public LogEntry {
+            Preconditions.checkNotNull(level, "level must not be null");
+            Preconditions.checkNotNull(message, "message must not be null");
+        }
+
         /**
          * Returns the formatted message with placeholders substituted.
          *
