@@ -390,6 +390,35 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation delegates to {@link #compose(Traversal)} if the provided optic is a
+     * {@link Traversal}. For other optic types, an {@link UnsupportedOperationException} is thrown
+     * since traversal composition requires the other optic to also be a traversal to maintain traversal semantics
+     * (zero-to-many focus with bulk modification capability).</p>
+     *
+     * <h4>Supported Compositions</h4>
+     * <ul>
+     *   <li>{@link Traversal} - Produces a composed {@link Traversal}</li>
+     * </ul>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Traversal<Company, Company, Employee, Employee> employeesTraversal = ...;
+     * Optic<Employee, Employee, String, String> skillsOptic = skillsTraversal; // A Traversal
+     *
+     * Optic<Company, Company, String, String> composed = employeesTraversal.compose(skillsOptic);
+     * // Returns a Traversal focusing on all skills of all employees
+     * }</pre>
+     *
+     * @param other the optic to compose with, must be a {@link Traversal}, must not be {@code null}
+     * @param <C>   the new focus type
+     * @param <D>   the new modified focus type
+     * @return a composed optic (specifically a {@link Traversal} if {@code other} is a Traversal), never {@code null}
+     * @throws NullPointerException          if {@code other} is {@code null}
+     * @throws UnsupportedOperationException if {@code other} is not a {@link Traversal}
+     */
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
         Preconditions.checkNotNull(other, "other must not be null");
@@ -403,10 +432,20 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      * Functional interface for applying a modification function to all focused elements.
      *
      * <p>This interface is used by {@link #of(String, Function, ModifyFunction)} to define
-     * how a modifier should be applied to all elements of a traversal. Implementations receive the source structure and
-     * a modifier function, and must return a new source with all focused elements transformed.</p>
+     * how a modifier should be applied to all elements of a traversal. Implementations receive
+     * the source structure and a modifier function, and must return a new source with all
+     * focused elements transformed.</p>
      *
-     * <p><b>Example Implementation</b></p>
+     * <h2>Contract</h2>
+     * <p>Implementations must:</p>
+     * <ul>
+     *   <li>Apply the modifier to <em>all</em> focused elements</li>
+     *   <li>Return a new structure (not mutate the original)</li>
+     *   <li>Preserve the structure's shape (same number of elements in same positions)</li>
+     *   <li>Handle empty collections gracefully (return empty collection)</li>
+     * </ul>
+     *
+     * <h2>Example Implementations</h2>
      * <pre>{@code
      * // For a List<String> traversal
      * ModifyFunction<List<String>, String> listModify =
@@ -419,19 +458,27 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      *             Map.Entry::getKey,
      *             e -> modifier.apply(e.getValue())
      *         ));
+     *
+     * // For an Optional<T>
+     * ModifyFunction<Optional<T>, T> optionalModify =
+     *     (opt, modifier) -> opt.map(modifier);
      * }</pre>
      *
-     * @param <S> the source/container type
-     * @param <A> the focus/element type
+     * @param <S> the source/container type holding the elements to modify
+     * @param <A> the focus/element type that the modifier operates on
      */
     @FunctionalInterface
     interface ModifyFunction<S, A> {
+
         /**
          * Applies the modifier function to all focused elements in the source.
          *
-         * @param source   the source structure containing elements to modify
-         * @param modifier the function to apply to each focused element
-         * @return a new source with all focused elements transformed
+         * <p>This method should transform every element accessible by the traversal
+         * and return a new source structure containing the transformed elements.</p>
+         *
+         * @param source   the source structure containing elements to modify, must not be {@code null}
+         * @param modifier the function to apply to each focused element, must not be {@code null}
+         * @return a new source with all focused elements transformed, never {@code null}
          */
         S apply(final S source,
                 final Function<A, A> modifier);

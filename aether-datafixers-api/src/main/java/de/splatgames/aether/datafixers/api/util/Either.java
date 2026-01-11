@@ -376,39 +376,99 @@ public sealed interface Either<L, R> {
     /**
      * Implementation of {@link Either} representing a left value.
      *
-     * <p>By convention, the left case represents an error, failure, or alternative result.</p>
+     * <p>By convention, the left case represents an error, failure, or alternative result.
+     * This record implementation is immutable and thread-safe.</p>
+     *
+     * <h2>Usage</h2>
+     * <p>Instances should be created via the factory method {@link Either#left(Object)}
+     * rather than directly constructing this record.</p>
+     *
+     * <pre>{@code
+     * Either<String, Integer> error = Either.left("Not found");
+     * // Equivalent to: new Either.Left<>("Not found")
+     * }</pre>
+     *
+     * <h2>Behavior</h2>
+     * <ul>
+     *   <li>{@link #isLeft()} always returns {@code true}</li>
+     *   <li>{@link #isRight()} always returns {@code false}</li>
+     *   <li>{@link #left()} returns {@code Optional.of(value)}</li>
+     *   <li>{@link #right()} returns {@code Optional.empty()}</li>
+     *   <li>{@link #map(Function)} returns this unchanged (type-cast)</li>
+     *   <li>{@link #flatMap(Function)} returns this unchanged (type-cast)</li>
+     *   <li>{@link #fold(Function, Function)} applies the left mapper</li>
+     * </ul>
      *
      * @param value the left value, must not be {@code null}
      * @param <L>   the type of the left value
-     * @param <R>   the type of the right value (not used in this case)
+     * @param <R>   the type of the right value (phantom type parameter, not used in this case)
      */
     record Left<L, R>(@NotNull L value) implements Either<L, R> {
+
+        /**
+         * Canonical constructor for the Left record.
+         *
+         * <p>Validates that the provided value is not {@code null}.</p>
+         *
+         * @param value the left value to store
+         * @throws NullPointerException if {@code value} is {@code null}
+         */
         public Left {
             Preconditions.checkNotNull(value, "value must not be null");
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code true} for Left
+         */
         @Override
         public boolean isLeft() {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code false} for Left
+         */
         @Override
         public boolean isRight() {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return an {@link Optional} containing the left value
+         */
         @NotNull
         @Override
         public Optional<L> left() {
             return Optional.of(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@link Optional#empty()} for Left
+         */
         @NotNull
         @Override
         public Optional<R> right() {
             return Optional.empty();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, the mapper is not applied and this instance is returned unchanged
+         * (with adjusted type parameters).</p>
+         *
+         * @param mapper the mapping function (not applied for Left)
+         * @param <R2>   the new right type
+         * @return this Left instance cast to the new type
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <R2> @NotNull Either<L, R2> map(@NotNull final Function<? super R, ? extends R2> mapper) {
@@ -416,12 +476,31 @@ public sealed interface Either<L, R> {
             return (Either<L, R2>) this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, the mapper is applied to transform the left value.</p>
+         *
+         * @param mapper the mapping function to apply to the left value
+         * @param <L2>   the new left type
+         * @return a new Left containing the mapped value
+         */
         @Override
         public <L2> @NotNull Either<L2, R> mapLeft(@NotNull final Function<? super L, ? extends L2> mapper) {
             Preconditions.checkNotNull(mapper, "mapper must not be null");
             return Either.left(mapper.apply(this.value));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, the mapper is not applied and this instance is returned unchanged
+         * (with adjusted type parameters).</p>
+         *
+         * @param mapper the mapping function (not applied for Left)
+         * @param <R2>   the new right type
+         * @return this Left instance cast to the new type
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <R2> @NotNull Either<L, R2> flatMap(@NotNull final Function<? super R, ? extends Either<L, R2>> mapper) {
@@ -429,6 +508,16 @@ public sealed interface Either<L, R> {
             return (Either<L, R2>) this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, applies the {@code leftMapper} to the left value.</p>
+         *
+         * @param leftMapper  the function to apply to the left value
+         * @param rightMapper the function for right values (not used for Left)
+         * @param <T>         the result type
+         * @return the result of applying {@code leftMapper} to the left value
+         */
         @Override
         public <T> T fold(@NotNull final Function<? super L, ? extends T> leftMapper,
                           @NotNull final Function<? super R, ? extends T> rightMapper) {
@@ -437,6 +526,14 @@ public sealed interface Either<L, R> {
             return leftMapper.apply(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, the consumer is invoked with the left value.</p>
+         *
+         * @param consumer the consumer to invoke with the left value
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public Either<L, R> ifLeft(@NotNull final Consumer<? super L> consumer) {
@@ -445,6 +542,14 @@ public sealed interface Either<L, R> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, the consumer is not invoked.</p>
+         *
+         * @param consumer the consumer (not invoked for Left)
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public Either<L, R> ifRight(@NotNull final Consumer<? super R> consumer) {
@@ -452,29 +557,70 @@ public sealed interface Either<L, R> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, returns a Right containing the left value.</p>
+         *
+         * @return a Right containing this Left's value
+         */
         @NotNull
         @Override
         public Either<R, L> swap() {
             return Either.right(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, always throws the exception created from the left value.</p>
+         *
+         * @param exceptionMapper the function to create an exception from the left value
+         * @param <X>             the exception type
+         * @return never returns normally
+         * @throws X always thrown, created from the left value
+         */
         @Override
         public <X extends Throwable> R orElseThrow(@NotNull final Function<? super L, ? extends X> exceptionMapper) throws X {
             Preconditions.checkNotNull(exceptionMapper, "exceptionMapper must not be null");
             throw exceptionMapper.apply(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, always returns the default value.</p>
+         *
+         * @param defaultValue the value to return
+         * @return the provided default value
+         */
         @Override
         public R orElse(final R defaultValue) {
             return defaultValue;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Left, applies the function to the left value to compute the result.</p>
+         *
+         * @param other the function to compute the result from the left value
+         * @return the result of applying {@code other} to the left value
+         */
         @Override
         public R orElseGet(@NotNull final Function<? super L, ? extends R> other) {
             Preconditions.checkNotNull(other, "other must not be null");
             return other.apply(this.value);
         }
 
+        /**
+         * Compares this Left to another object for equality.
+         *
+         * <p>Two Left instances are equal if they contain equal values.</p>
+         *
+         * @param obj the object to compare with
+         * @return {@code true} if the other object is a Left with an equal value
+         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
@@ -486,11 +632,21 @@ public sealed interface Either<L, R> {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * Returns the hash code for this Left.
+         *
+         * @return the hash code based on the left value
+         */
         @Override
         public int hashCode() {
             return Objects.hash(this.value);
         }
 
+        /**
+         * Returns a string representation of this Left.
+         *
+         * @return a string in the format "Left[value]"
+         */
         @NotNull
         @Override
         public String toString() {
@@ -501,45 +657,114 @@ public sealed interface Either<L, R> {
     /**
      * Implementation of {@link Either} representing a right value.
      *
-     * <p>By convention, the right case represents a success or primary result.</p>
+     * <p>By convention, the right case represents a success or primary result.
+     * This record implementation is immutable and thread-safe.</p>
+     *
+     * <h2>Usage</h2>
+     * <p>Instances should be created via the factory method {@link Either#right(Object)}
+     * rather than directly constructing this record.</p>
+     *
+     * <pre>{@code
+     * Either<String, Integer> success = Either.right(42);
+     * // Equivalent to: new Either.Right<>(42)
+     * }</pre>
+     *
+     * <h2>Behavior</h2>
+     * <ul>
+     *   <li>{@link #isLeft()} always returns {@code false}</li>
+     *   <li>{@link #isRight()} always returns {@code true}</li>
+     *   <li>{@link #left()} returns {@code Optional.empty()}</li>
+     *   <li>{@link #right()} returns {@code Optional.of(value)}</li>
+     *   <li>{@link #map(Function)} applies the mapper to the value</li>
+     *   <li>{@link #flatMap(Function)} applies the mapper and returns its result</li>
+     *   <li>{@link #fold(Function, Function)} applies the right mapper</li>
+     * </ul>
      *
      * @param value the right value, must not be {@code null}
-     * @param <L>   the type of the left value (not used in this case)
+     * @param <L>   the type of the left value (phantom type parameter, not used in this case)
      * @param <R>   the type of the right value
      */
     record Right<L, R>(@NotNull R value) implements Either<L, R> {
+
+        /**
+         * Canonical constructor for the Right record.
+         *
+         * <p>Validates that the provided value is not {@code null}.</p>
+         *
+         * @param value the right value to store
+         * @throws NullPointerException if {@code value} is {@code null}
+         */
         public Right {
             Preconditions.checkNotNull(value, "value must not be null");
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code false} for Right
+         */
         @Override
         public boolean isLeft() {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@code true} for Right
+         */
         @Override
         public boolean isRight() {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return always {@link Optional#empty()} for Right
+         */
         @NotNull
         @Override
         public Optional<L> left() {
             return Optional.empty();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return an {@link Optional} containing the right value
+         */
         @NotNull
         @Override
         public Optional<R> right() {
             return Optional.of(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, the mapper is applied to transform the right value.</p>
+         *
+         * @param mapper the mapping function to apply to the right value
+         * @param <R2>   the new right type
+         * @return a new Right containing the mapped value
+         */
         @Override
         public <R2> @NotNull Either<L, R2> map(@NotNull final Function<? super R, ? extends R2> mapper) {
             Preconditions.checkNotNull(mapper, "mapper must not be null");
             return Either.right(mapper.apply(this.value));
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, the mapper is not applied and this instance is returned unchanged
+         * (with adjusted type parameters).</p>
+         *
+         * @param mapper the mapping function (not applied for Right)
+         * @param <L2>   the new left type
+         * @return this Right instance cast to the new type
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <L2> @NotNull Either<L2, R> mapLeft(@NotNull final Function<? super L, ? extends L2> mapper) {
@@ -547,12 +772,31 @@ public sealed interface Either<L, R> {
             return (Either<L2, R>) this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, the mapper is applied to the right value and its result is returned.</p>
+         *
+         * @param mapper the mapping function to apply to the right value
+         * @param <R2>   the new right type
+         * @return the result of applying the mapper to the right value
+         */
         @Override
         public <R2> @NotNull Either<L, R2> flatMap(@NotNull final Function<? super R, ? extends Either<L, R2>> mapper) {
             Preconditions.checkNotNull(mapper, "mapper must not be null");
             return mapper.apply(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, applies the {@code rightMapper} to the right value.</p>
+         *
+         * @param leftMapper  the function for left values (not used for Right)
+         * @param rightMapper the function to apply to the right value
+         * @param <T>         the result type
+         * @return the result of applying {@code rightMapper} to the right value
+         */
         @Override
         public <T> T fold(@NotNull final Function<? super L, ? extends T> leftMapper,
                           @NotNull final Function<? super R, ? extends T> rightMapper) {
@@ -561,6 +805,14 @@ public sealed interface Either<L, R> {
             return rightMapper.apply(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, the consumer is not invoked.</p>
+         *
+         * @param consumer the consumer (not invoked for Right)
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public Either<L, R> ifLeft(@NotNull final Consumer<? super L> consumer) {
@@ -568,6 +820,14 @@ public sealed interface Either<L, R> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, the consumer is invoked with the right value.</p>
+         *
+         * @param consumer the consumer to invoke with the right value
+         * @return this instance for method chaining
+         */
         @NotNull
         @Override
         public Either<L, R> ifRight(@NotNull final Consumer<? super R> consumer) {
@@ -576,29 +836,69 @@ public sealed interface Either<L, R> {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, returns a Left containing the right value.</p>
+         *
+         * @return a Left containing this Right's value
+         */
         @NotNull
         @Override
         public Either<R, L> swap() {
             return Either.left(this.value);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, returns the right value without throwing.</p>
+         *
+         * @param exceptionMapper the function to create an exception (not used for Right)
+         * @param <X>             the exception type
+         * @return the right value
+         */
         @Override
         public <X extends Throwable> R orElseThrow(@NotNull final Function<? super L, ? extends X> exceptionMapper) throws X {
             Preconditions.checkNotNull(exceptionMapper, "exceptionMapper must not be null");
             return this.value;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, always returns the right value, ignoring the default.</p>
+         *
+         * @param defaultValue the default value (ignored for Right)
+         * @return the right value
+         */
         @Override
         public R orElse(final R defaultValue) {
             return this.value;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>For Right, always returns the right value without invoking the function.</p>
+         *
+         * @param other the function to compute a result (not invoked for Right)
+         * @return the right value
+         */
         @Override
         public R orElseGet(@NotNull final Function<? super L, ? extends R> other) {
             Preconditions.checkNotNull(other, "other must not be null");
             return this.value;
         }
 
+        /**
+         * Compares this Right to another object for equality.
+         *
+         * <p>Two Right instances are equal if they contain equal values.</p>
+         *
+         * @param obj the object to compare with
+         * @return {@code true} if the other object is a Right with an equal value
+         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
@@ -610,11 +910,21 @@ public sealed interface Either<L, R> {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * Returns the hash code for this Right.
+         *
+         * @return the hash code based on the right value
+         */
         @Override
         public int hashCode() {
             return Objects.hash(this.value);
         }
 
+        /**
+         * Returns a string representation of this Right.
+         *
+         * @return a string in the format "Right[value]"
+         */
         @NotNull
         @Override
         public String toString() {

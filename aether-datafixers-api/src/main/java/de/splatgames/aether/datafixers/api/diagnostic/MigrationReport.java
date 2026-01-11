@@ -251,7 +251,17 @@ public interface MigrationReport {
      * migration events as they occur. After the migration completes, {@link #build()} produces an immutable
      * report.</p>
      *
-     * <h2>Usage Pattern</h2>
+     * <h3>Lifecycle</h3>
+     * <p>The builder follows a specific lifecycle that must be adhered to:</p>
+     * <ol>
+     *   <li>Call {@link #startMigration(TypeReference, DataVersion, DataVersion)} exactly once</li>
+     *   <li>Optionally call {@link #setInputSnapshot(String)} to capture input data</li>
+     *   <li>For each fix: call {@link #startFix(DataFix)}, record events, then {@link #endFix(DataFix, Duration, String)}</li>
+     *   <li>Optionally call {@link #setOutputSnapshot(String)} to capture output data</li>
+     *   <li>Call {@link #build()} exactly once to produce the report</li>
+     * </ol>
+     *
+     * <h3>Usage Pattern</h3>
      * <pre>{@code
      * // Called by DataFixerImpl during migration
      * builder.startMigration(type, fromVersion, toVersion);
@@ -266,16 +276,31 @@ public interface MigrationReport {
      * builder.setOutputSnapshot(outputJson);
      * MigrationReport report = builder.build();
      * }</pre>
+     *
+     * <h3>Thread Safety</h3>
+     * <p>This builder is not thread-safe. It should be used by a single thread
+     * during the course of a migration operation. The resulting {@link MigrationReport}
+     * is immutable and thread-safe.</p>
      */
     interface Builder {
 
         /**
          * Marks the start of a migration operation.
          *
-         * @param type        the type reference being migrated
-         * @param fromVersion the source version
-         * @param toVersion   the target version
-         * @return this builder
+         * <p>This method must be called exactly once before any other builder methods
+         * (except for {@link #build()}). It initializes the migration metadata including
+         * the type being migrated and the version range.</p>
+         *
+         * <h4>Timing</h4>
+         * <p>The start time is recorded when this method is called, which is used to
+         * calculate the total migration duration in the final report.</p>
+         *
+         * @param type        the type reference being migrated; must not be {@code null}
+         * @param fromVersion the source version from which the migration starts; must not be {@code null}
+         * @param toVersion   the target version to which the migration proceeds; must not be {@code null}
+         * @return this builder for method chaining; never {@code null}
+         * @throws NullPointerException  if any parameter is {@code null}
+         * @throws IllegalStateException if migration was already started
          */
         @NotNull
         Builder startMigration(
@@ -287,8 +312,18 @@ public interface MigrationReport {
         /**
          * Sets the input data snapshot.
          *
-         * @param snapshot the JSON representation of input data
-         * @return this builder
+         * <p>This method captures a JSON representation of the data before any fixes
+         * are applied. This is useful for debugging to compare the original input with
+         * the final output or intermediate states.</p>
+         *
+         * <h4>Snapshot Format</h4>
+         * <p>The snapshot is typically a JSON string representation of the input data.
+         * Depending on the {@link DiagnosticOptions}, it may be pretty-printed or compact,
+         * and may be truncated if it exceeds the maximum snapshot length.</p>
+         *
+         * @param snapshot the JSON representation of input data; may be {@code null} to
+         *                 indicate no snapshot should be captured
+         * @return this builder for method chaining; never {@code null}
          */
         @NotNull
         Builder setInputSnapshot(@Nullable String snapshot);
@@ -296,8 +331,20 @@ public interface MigrationReport {
         /**
          * Marks the start of a fix execution.
          *
-         * @param fix the fix being applied
-         * @return this builder
+         * <p>This method should be called immediately before a {@link DataFix} is applied.
+         * It records the start time for the fix and prepares the builder to accept
+         * rule application events and snapshots for this fix.</p>
+         *
+         * <h4>Pairing Requirement</h4>
+         * <p>Each call to {@code startFix} must be followed by exactly one call to
+         * {@link #endFix(DataFix, Duration, String)} for the same fix. Nested or
+         * overlapping fix executions are not supported.</p>
+         *
+         * @param fix the fix that is about to be applied; must not be {@code null}
+         * @return this builder for method chaining; never {@code null}
+         * @throws NullPointerException  if {@code fix} is {@code null}
+         * @throws IllegalStateException if a fix is already in progress
+         * @see #endFix(DataFix, Duration, String)
          */
         @NotNull
         Builder startFix(@NotNull DataFix<?> fix);
@@ -305,8 +352,14 @@ public interface MigrationReport {
         /**
          * Sets the before snapshot for the current fix.
          *
-         * @param snapshot the JSON representation before fix application
-         * @return this builder
+         * <p>This method captures the state of the data immediately before the current
+         * fix is applied. It must be called after {@link #startFix(DataFix)} and before
+         * {@link #endFix(DataFix, Duration, String)}.</p>
+         *
+         * @param snapshot the JSON representation of data before fix application;
+         *                 may be {@code null} to indicate no snapshot should be captured
+         * @return this builder for method chaining; never {@code null}
+         * @throws IllegalStateException if no fix is currently in progress
          */
         @NotNull
         Builder setFixBeforeSnapshot(@Nullable String snapshot);
@@ -314,8 +367,19 @@ public interface MigrationReport {
         /**
          * Records a rule application within the current fix.
          *
-         * @param application the rule application details
-         * @return this builder
+         * <p>This method records details about an individual {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}
+         * application, including whether it matched and transformed the data. Multiple
+         * rule applications can be recorded for a single fix.</p>
+         *
+         * <h4>Recording Order</h4>
+         * <p>Rule applications are recorded in the order they are added and will appear
+         * in that order in the final {@link FixExecution#ruleApplications()} list.</p>
+         *
+         * @param application the rule application details to record; must not be {@code null}
+         * @return this builder for method chaining; never {@code null}
+         * @throws NullPointerException  if {@code application} is {@code null}
+         * @throws IllegalStateException if no fix is currently in progress
+         * @see RuleApplication
          */
         @NotNull
         Builder recordRuleApplication(@NotNull RuleApplication application);
@@ -323,10 +387,23 @@ public interface MigrationReport {
         /**
          * Marks the end of a fix execution.
          *
-         * @param fix           the fix that was applied
-         * @param duration      the time taken to apply the fix
-         * @param afterSnapshot optional snapshot after fix application
-         * @return this builder
+         * <p>This method should be called immediately after a {@link DataFix} has been
+         * applied. It finalizes the fix execution record with the total duration and
+         * an optional after snapshot.</p>
+         *
+         * <h4>Pairing Requirement</h4>
+         * <p>This method must be called after {@link #startFix(DataFix)} for the same fix.
+         * The fix parameter should match the one passed to {@code startFix}.</p>
+         *
+         * @param fix           the fix that was applied; must not be {@code null}
+         * @param duration      the total time taken to apply the fix; must not be {@code null}
+         * @param afterSnapshot optional JSON representation of data after fix application;
+         *                      may be {@code null} to indicate no snapshot should be captured
+         * @return this builder for method chaining; never {@code null}
+         * @throws NullPointerException  if {@code fix} or {@code duration} is {@code null}
+         * @throws IllegalStateException if no fix is currently in progress or if the fix
+         *                               does not match the one started
+         * @see #startFix(DataFix)
          */
         @NotNull
         Builder endFix(
@@ -336,19 +413,40 @@ public interface MigrationReport {
         );
 
         /**
-         * Adds a touched type reference.
+         * Adds a touched type reference to the report.
          *
-         * @param type the type reference that was processed
-         * @return this builder
+         * <p>This method records that a particular type was encountered and processed
+         * during the migration. The touched types set includes the primary type and
+         * any nested or referenced types that were traversed.</p>
+         *
+         * <h4>Deduplication</h4>
+         * <p>Adding the same type reference multiple times has no additional effect;
+         * each type appears at most once in the final {@link MigrationReport#touchedTypes()} set.</p>
+         *
+         * @param type the type reference that was processed; must not be {@code null}
+         * @return this builder for method chaining; never {@code null}
+         * @throws NullPointerException if {@code type} is {@code null}
          */
         @NotNull
         Builder addTouchedType(@NotNull TypeReference type);
 
         /**
-         * Adds a warning message.
+         * Adds a warning message to the report.
          *
-         * @param message the warning message
-         * @return this builder
+         * <p>This method records a warning that occurred during migration. Warnings are
+         * non-fatal issues that did not prevent the migration from completing but may
+         * indicate potential problems or unexpected conditions.</p>
+         *
+         * <h4>Common Warnings</h4>
+         * <ul>
+         *   <li>Missing optional fields that were expected</li>
+         *   <li>Deprecated field formats that were auto-converted</li>
+         *   <li>Rules that matched but produced unexpected results</li>
+         * </ul>
+         *
+         * @param message the warning message to record; must not be {@code null}
+         * @return this builder for method chaining; never {@code null}
+         * @throws NullPointerException if {@code message} is {@code null}
          */
         @NotNull
         Builder addWarning(@NotNull String message);
@@ -356,8 +454,18 @@ public interface MigrationReport {
         /**
          * Sets the output data snapshot.
          *
-         * @param snapshot the JSON representation of output data
-         * @return this builder
+         * <p>This method captures a JSON representation of the data after all fixes
+         * have been applied. This is useful for debugging to compare the final output
+         * with the original input.</p>
+         *
+         * <h4>Snapshot Format</h4>
+         * <p>The snapshot is typically a JSON string representation of the output data.
+         * Depending on the {@link DiagnosticOptions}, it may be pretty-printed or compact,
+         * and may be truncated if it exceeds the maximum snapshot length.</p>
+         *
+         * @param snapshot the JSON representation of output data; may be {@code null} to
+         *                 indicate no snapshot should be captured
+         * @return this builder for method chaining; never {@code null}
          */
         @NotNull
         Builder setOutputSnapshot(@Nullable String snapshot);
@@ -365,11 +473,23 @@ public interface MigrationReport {
         /**
          * Builds the immutable migration report.
          *
-         * <p>This method should be called after the migration completes.
-         * The builder should not be used after this method is called.</p>
+         * <p>This method finalizes the report construction, recording the end time and
+         * producing an immutable {@link MigrationReport} instance. The builder transitions
+         * to a terminal state after this method is called.</p>
          *
-         * @return the constructed migration report
-         * @throws IllegalStateException if the migration was not properly started
+         * <h4>Builder State After Build</h4>
+         * <p>After calling this method, the builder should not be used for any further
+         * operations. Implementations may throw {@link IllegalStateException} if any
+         * builder methods are called after {@code build()}.</p>
+         *
+         * <h4>Validation</h4>
+         * <p>This method validates that the migration was properly started via
+         * {@link #startMigration(TypeReference, DataVersion, DataVersion)} and that
+         * all started fixes have been properly ended.</p>
+         *
+         * @return the constructed immutable migration report; never {@code null}
+         * @throws IllegalStateException if the migration was not properly started or
+         *                               if there are unclosed fix executions
          */
         @NotNull
         MigrationReport build();

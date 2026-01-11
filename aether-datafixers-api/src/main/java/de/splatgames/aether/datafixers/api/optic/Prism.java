@@ -368,6 +368,35 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation delegates to {@link #compose(Prism)} if the provided optic is a
+     * {@link Prism}. For other optic types, an {@link UnsupportedOperationException} is thrown
+     * since prism composition requires the other optic to also be a prism to maintain prism semantics
+     * (partial matching on sum types with construction capability).</p>
+     *
+     * <h4>Supported Compositions</h4>
+     * <ul>
+     *   <li>{@link Prism} - Produces a composed {@link Prism}</li>
+     * </ul>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Prism<Response, Response, ErrorData, ErrorData> errorPrism = ...;
+     * Optic<ErrorData, ErrorData, String, String> messageOptic = messagePrism; // A Prism
+     *
+     * Optic<Response, Response, String, String> composed = errorPrism.compose(messageOptic);
+     * // Returns a Prism that matches only error responses with a message
+     * }</pre>
+     *
+     * @param other the optic to compose with, must be a {@link Prism}, must not be {@code null}
+     * @param <C>   the new focus type
+     * @param <D>   the new modified focus type
+     * @return a composed optic (specifically a {@link Prism} if {@code other} is a Prism), never {@code null}
+     * @throws NullPointerException          if {@code other} is {@code null}
+     * @throws UnsupportedOperationException if {@code other} is not a {@link Prism}
+     */
     @Override
     default @NotNull <C, D> Optic<S, T, C, D> compose(@NotNull final Optic<A, B, C, D> other) {
         Preconditions.checkNotNull(other, "other must not be null");

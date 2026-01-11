@@ -955,19 +955,61 @@ public final class RecordCodecBuilder {
     // ==================== Tuple Classes for Accumulation ====================
 
     /**
-     * Internal tuple for accumulating 3 values during decoding.
+     * Internal tuple for accumulating 3 decoded values before applying the constructor.
+     *
+     * <p>This record is used internally during the decoding process to collect
+     * intermediate results when decoding records with 3 or more fields. The values
+     * are accumulated using {@link DataResult#apply2} before being passed to the
+     * final constructor function.</p>
+     *
+     * @param a   the first decoded value
+     * @param b   the second decoded value
+     * @param c   the third decoded value
+     * @param <A> the type of the first value
+     * @param <B> the type of the second value
+     * @param <C> the type of the third value
      */
     private record Tuple3<A, B, C>(A a, B b, C c) {
     }
 
     /**
-     * Internal tuple for accumulating 4 values during decoding.
+     * Internal tuple for accumulating 4 decoded values before applying the constructor.
+     *
+     * <p>This record is used internally during the decoding process to collect
+     * intermediate results when decoding records with 4 or more fields. The values
+     * are accumulated using {@link DataResult#apply2} before being passed to the
+     * final constructor function.</p>
+     *
+     * @param a   the first decoded value
+     * @param b   the second decoded value
+     * @param c   the third decoded value
+     * @param d   the fourth decoded value
+     * @param <A> the type of the first value
+     * @param <B> the type of the second value
+     * @param <C> the type of the third value
+     * @param <D> the type of the fourth value
      */
     private record Tuple4<A, B, C, D>(A a, B b, C c, D d) {
     }
 
     /**
-     * Internal tuple for accumulating 5 values during decoding.
+     * Internal tuple for accumulating 5 decoded values before applying the constructor.
+     *
+     * <p>This record is used internally during the decoding process to collect
+     * intermediate results when decoding records with 5 or more fields. The values
+     * are accumulated using {@link DataResult#apply2} before being passed to the
+     * final constructor function.</p>
+     *
+     * @param a   the first decoded value
+     * @param b   the second decoded value
+     * @param c   the third decoded value
+     * @param d   the fourth decoded value
+     * @param e   the fifth decoded value
+     * @param <A> the type of the first value
+     * @param <B> the type of the second value
+     * @param <C> the type of the third value
+     * @param <D> the type of the fourth value
+     * @param <E> the type of the fifth value
      */
     private record Tuple5<A, B, C, D, E>(A a, B b, C c, D d, E e) {
     }

@@ -60,20 +60,58 @@ import org.jetbrains.annotations.NotNull;
 public class TaggedDynamic {
 
     /**
-     * The type reference identifying the kind of data.
+     * The type reference identifying the kind of data contained in this tagged dynamic.
+     *
+     * <p>This reference is used by the data fixing system to determine which
+     * transformation rules should be applied to the data. It serves as a discriminator
+     * that routes the data through the appropriate fixes during migration.</p>
+     *
+     * <p>Common type references include:</p>
+     * <ul>
+     *   <li>{@code "player"} - Player entity data</li>
+     *   <li>{@code "entity"} - Generic entity data</li>
+     *   <li>{@code "block_entity"} - Block entity (tile entity) data</li>
+     *   <li>{@code "chunk"} - Chunk data</li>
+     *   <li>{@code "world"} - World/level data</li>
+     * </ul>
      */
     private final TypeReference type;
 
     /**
-     * The dynamic value containing the actual data.
+     * The dynamic value containing the actual data to be processed.
+     *
+     * <p>This value holds the raw data in a format-agnostic representation
+     * that can be manipulated using the {@link Dynamic} API. The data can be
+     * in any format (JSON, YAML, NBT, etc.) as long as an appropriate
+     * {@link DynamicOps} implementation is provided.</p>
      */
     private final Dynamic<?> value;
 
     /**
      * Creates a new TaggedDynamic with the specified type and value.
      *
-     * @param type  the type reference identifying the kind of data, must not be {@code null}
-     * @param value the dynamic value containing the data, must not be {@code null}
+     * <p>This constructor pairs a type identifier with the actual data, creating
+     * a self-describing data unit that can be processed by the data fixing system.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Create a tagged dynamic for player data
+     * TypeReference playerRef = new TypeReference("player");
+     * Dynamic<JsonElement> playerData = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     * TaggedDynamic taggedPlayer = new TaggedDynamic(playerRef, playerData);
+     *
+     * // Use with the data fixer
+     * DataFixer fixer = ...;
+     * Dynamic<?> migrated = fixer.update(
+     *     taggedPlayer.type(),
+     *     taggedPlayer.value(),
+     *     oldVersion,
+     *     newVersion
+     * );
+     * }</pre>
+     *
+     * @param type  the type reference identifying the kind of data; must not be {@code null}
+     * @param value the dynamic value containing the data; must not be {@code null}
      * @throws NullPointerException if {@code type} or {@code value} is {@code null}
      */
     public TaggedDynamic(@NotNull final TypeReference type, @NotNull final Dynamic<?> value) {
@@ -88,9 +126,26 @@ public class TaggedDynamic {
      * Returns the type reference for this tagged dynamic.
      *
      * <p>The type reference identifies the kind of data contained in the
-     * dynamic value, enabling type-specific processing and transformations.</p>
+     * dynamic value, enabling type-specific processing and transformations.
+     * This is used by the data fixing system to route the data through
+     * appropriate migration fixes.</p>
      *
-     * @return the type reference, never {@code null}
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TaggedDynamic tagged = ...;
+     *
+     * // Check the type before processing
+     * if (tagged.type().getId().equals("player")) {
+     *     // Process as player data
+     *     processPlayerData(tagged.value());
+     * } else if (tagged.type().getId().equals("entity")) {
+     *     // Process as generic entity data
+     *     processEntityData(tagged.value());
+     * }
+     * }</pre>
+     *
+     * @return the type reference identifying the data kind; never {@code null}
+     * @see TypeReference
      */
     @NotNull
     public TypeReference type() {
@@ -98,12 +153,30 @@ public class TaggedDynamic {
     }
 
     /**
-     * Returns the dynamic value.
+     * Returns the dynamic value containing the actual data.
      *
-     * <p>The dynamic value contains the actual data and provides operations
-     * for reading and manipulating it.</p>
+     * <p>The dynamic value provides a format-agnostic API for reading and
+     * manipulating the data. Through the {@link Dynamic} class, you can access
+     * fields, read primitives, and perform transformations without knowing
+     * the underlying serialization format.</p>
      *
-     * @return the dynamic value, never {@code null}
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TaggedDynamic tagged = ...;
+     * Dynamic<?> data = tagged.value();
+     *
+     * // Read fields from the data
+     * String name = data.get("name").asString().result().orElse("unknown");
+     * int level = data.get("level").asInt().result().orElse(1);
+     *
+     * // Modify the data
+     * Dynamic<?> updated = data
+     *     .set("level", data.createInt(level + 1))
+     *     .set("lastModified", data.createLong(System.currentTimeMillis()));
+     * }</pre>
+     *
+     * @return the dynamic value containing the data; never {@code null}
+     * @see Dynamic
      */
     @NotNull
     public Dynamic<?> value() {
