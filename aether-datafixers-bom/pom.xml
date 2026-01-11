@@ -13,6 +13,10 @@
     <packaging>pom</packaging>
 
     <name>Aether Datafixers :: BOM</name>
+
+    <properties>
+        <jacoco.skip>true</jacoco.skip>
+    </properties>
     <description>Bill of Materials for Aether Datafixers modules.</description>
 
     <dependencyManagement>
