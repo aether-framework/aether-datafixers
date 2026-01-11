@@ -54,6 +54,7 @@
 
         <!-- QA configuration -->
         <jacoco.skip>false</jacoco.skip>
+        <jacoco.coverage.minimum>0.75</jacoco.coverage.minimum>
 
         <!-- CLI dependencies -->
         <picocli.version>4.7.6</picocli.version>
@@ -381,7 +382,7 @@
                                                 <limit>
                                                     <counter>LINE</counter>
                                                     <value>COVEREDRATIO</value>
-                                                    <minimum>0.75</minimum>
+                                                    <minimum>${jacoco.coverage.minimum}</minimum>
                                                 </limit>
                                             </limits>
                                         </rule>
