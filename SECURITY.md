@@ -139,8 +139,9 @@ Security audits are welcome.
 For encrypted communication and release verification:
 
 - **Key Purpose:** Release artifact signing
-- **Key ID:** Available upon request
-- **Fingerprint:** Available upon request
+- **Key ID:** 37B59B93DC756EE8
+- **Fingerprint:** C6BE25BF2A4639A67A491EBD37B59B93DC756EE8
+- **Accessable in repository:** `KEYS`
 
 Contact: **security@splatgames.de**
 
