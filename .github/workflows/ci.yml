@@ -60,7 +60,9 @@ jobs:
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          report_paths: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
           check_name: Test Report (Java ${{ matrix.java }})
 
   quality:
@@ -112,6 +114,8 @@ jobs:
     name: OWASP Dependency Check
     runs-on: ubuntu-latest
     needs: build
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -124,13 +128,13 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Cache NVD database
+      - name: Cache Dependency-Check DB
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: nvd-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          path: target/dependency-check-data
+          key: depcheck-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            nvd-${{ runner.os }}-
+            depcheck-${{ runner.os }}-
 
       - name: Run OWASP Dependency Check
         run: mvn -B dependency-check:aggregate -Pqa
@@ -141,5 +145,7 @@ jobs:
         if: always()
         with:
           name: dependency-check-report
-          path: target/dependency-check-report.html
+          path: |
+            target/dependency-check-report.html
+            target/dependency-check-report.json
           retention-days: 30

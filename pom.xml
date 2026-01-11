@@ -442,6 +442,8 @@
                         <artifactId>dependency-check-maven</artifactId>
                         <version>${plugin.owasp.version}</version>
                         <configuration>
+                            <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                            <dataDirectory>${project.build.directory}/dependency-check-data</dataDirectory>
                             <failBuildOnCVSS>7</failBuildOnCVSS>
                             <suppressionFiles>
                                 <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppressions.xml</suppressionFile>
