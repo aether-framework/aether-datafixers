@@ -74,8 +74,7 @@ public final class DataVersion implements Comparable<DataVersion> {
      * The internal numeric representation of this data version.
      *
      * <p>This value is guaranteed to be non-negative and represents the version number
-     * in a monotonically increasing sequence. Higher values indicate newer versions of
-     * the data schema.</p>
+     * in a monotonically increasing sequence. Higher values indicate newer versions of the data schema.</p>
      */
     private final int version;
 
@@ -136,9 +135,8 @@ public final class DataVersion implements Comparable<DataVersion> {
      * }</pre>
      *
      * @param o the data version to compare against; must not be {@code null}
-     * @return a negative integer if this version is less than the specified version,
-     *         zero if they are equal, or a positive integer if this version is
-     *         greater than the specified version
+     * @return a negative integer if this version is less than the specified version, zero if they are equal, or a al,
+     * or a positive integer if this version is greater than the specified version
      * @throws NullPointerException if the specified data version is {@code null}
      */
     @Override
@@ -150,8 +148,8 @@ public final class DataVersion implements Comparable<DataVersion> {
      * Indicates whether some other object is "equal to" this data version.
      *
      * <p>Two {@code DataVersion} instances are considered equal if and only if they
-     * have the same numeric version value. This method adheres to the general contract
-     * of {@link Object#equals(Object)}, providing:</p>
+     * have the same numeric version value. This method adheres to the general contract of
+     * {@link Object#equals(Object)}, providing:</p>
      * <ul>
      *   <li><b>Reflexivity:</b> For any non-null {@code DataVersion x}, {@code x.equals(x)}
      *       returns {@code true}</li>
@@ -169,8 +167,7 @@ public final class DataVersion implements Comparable<DataVersion> {
      * </ul>
      *
      * @param obj the reference object with which to compare; may be {@code null}
-     * @return {@code true} if this data version is equal to the specified object;
-     *         {@code false} otherwise
+     * @return {@code true} if this data version is equal to the specified object; {@code false} otherwise
      * @see #hashCode()
      */
     @Override
@@ -213,8 +210,8 @@ public final class DataVersion implements Comparable<DataVersion> {
      * Returns a string representation of this data version.
      *
      * <p>The returned string follows the format {@code "DataVersion{version=N}"} where
-     * {@code N} is the numeric version value. This format is intended for debugging and
-     * logging purposes and should not be parsed programmatically.</p>
+     * {@code N} is the numeric version value. This format is intended for debugging and logging purposes and should not
+     * be parsed programmatically.</p>
      *
      * <p><b>Example output:</b></p>
      * <pre>{@code
@@ -222,8 +219,7 @@ public final class DataVersion implements Comparable<DataVersion> {
      * new DataVersion(0).toString()   // Returns "DataVersion{version=0}"
      * }</pre>
      *
-     * @return a string representation of this data version in the format
-     *         {@code "DataVersion{version=N}"}
+     * @return a string representation of this data version in the format {@code "DataVersion{version=N}"}
      */
     @Override
     public String toString() {

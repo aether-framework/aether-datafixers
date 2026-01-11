@@ -1117,10 +1117,14 @@ public final class DSL {
      */
     private static final class ConstTemplate implements TypeTemplate {
 
-        /** The human-readable name of this constant type for descriptions. */
+        /**
+         * The human-readable name of this constant type for descriptions.
+         */
         private final String name;
 
-        /** The fixed type that this template always produces. */
+        /**
+         * The fixed type that this template always produces.
+         */
         private final Type<?> type;
 
         /**
@@ -1172,7 +1176,9 @@ public final class DSL {
      */
     private static final class IdTemplate implements TypeTemplate {
 
-        /** The zero-based index of the type parameter to retrieve from the family. */
+        /**
+         * The zero-based index of the type parameter to retrieve from the family.
+         */
         private final int index;
 
         /**
@@ -1219,10 +1225,14 @@ public final class DSL {
      */
     private static final class ProductTemplate implements TypeTemplate {
 
-        /** The template for the first component of the product. */
+        /**
+         * The template for the first component of the product.
+         */
         private final TypeTemplate first;
 
-        /** The template for the second component of the product. */
+        /**
+         * The template for the second component of the product.
+         */
         private final TypeTemplate second;
 
         /**
@@ -1272,10 +1282,14 @@ public final class DSL {
      */
     private static final class SumTemplate implements TypeTemplate {
 
-        /** The template for the left alternative. */
+        /**
+         * The template for the left alternative.
+         */
         private final TypeTemplate left;
 
-        /** The template for the right alternative. */
+        /**
+         * The template for the right alternative.
+         */
         private final TypeTemplate right;
 
         /**
@@ -1324,7 +1338,9 @@ public final class DSL {
      */
     private static final class ListTemplate implements TypeTemplate {
 
-        /** The template for elements of this list. */
+        /**
+         * The template for elements of this list.
+         */
         private final TypeTemplate element;
 
         /**
@@ -1371,7 +1387,9 @@ public final class DSL {
      */
     private static final class OptionalTemplate implements TypeTemplate {
 
-        /** The template for the optional element. */
+        /**
+         * The template for the optional element.
+         */
         private final TypeTemplate element;
 
         /**
@@ -1418,13 +1436,19 @@ public final class DSL {
      */
     private static final class FieldTemplate implements TypeTemplate {
 
-        /** The name of the field in the object structure. */
+        /**
+         * The name of the field in the object structure.
+         */
         private final String name;
 
-        /** The template for the field's value type. */
+        /**
+         * The template for the field's value type.
+         */
         private final TypeTemplate type;
 
-        /** Whether this field is optional (may be absent). */
+        /**
+         * Whether this field is optional (may be absent).
+         */
         private final boolean optional;
 
         /**
@@ -1477,10 +1501,14 @@ public final class DSL {
      */
     private static final class NamedTemplate implements TypeTemplate {
 
-        /** The symbolic name for this type. */
+        /**
+         * The symbolic name for this type.
+         */
         private final String name;
 
-        /** The underlying template that defines the type structure. */
+        /**
+         * The underlying template that defines the type structure.
+         */
         private final TypeTemplate template;
 
         /**
@@ -1564,10 +1592,14 @@ public final class DSL {
      */
     private static final class TaggedChoiceTemplate implements TypeTemplate {
 
-        /** The name of the discriminator field that determines the variant. */
+        /**
+         * The name of the discriminator field that determines the variant.
+         */
         private final String tagField;
 
-        /** Mapping from tag values to type templates for each variant. */
+        /**
+         * Mapping from tag values to type templates for each variant.
+         */
         private final Map<String, TypeTemplate> choices;
 
         /**
@@ -1626,10 +1658,14 @@ public final class DSL {
      */
     private static final class RecursiveTemplate implements TypeTemplate {
 
-        /** The name for the recursive type, used in descriptions and self-references. */
+        /**
+         * The name for the recursive type, used in descriptions and self-references.
+         */
         private final String name;
 
-        /** The definition function that receives the self-reference template and returns the body. */
+        /**
+         * The definition function that receives the self-reference template and returns the body.
+         */
         private final Function<TypeTemplate, TypeTemplate> definition;
 
         /**

@@ -297,14 +297,14 @@ public class Schema {
      * Internal type implementation that wraps a DSL-generated type with a TypeReference.
      *
      * <p>This class is used internally by {@link Schema#registerType} to associate
-     * a {@link TypeReference} with a type that was generated from a {@link TypeTemplate}.
-     * It implements the decorator pattern, delegating codec operations to the underlying
-     * DSL-generated type while providing the reference information.</p>
+     * a {@link TypeReference} with a type that was generated from a {@link TypeTemplate}. It implements the decorator
+     * pattern, delegating codec operations to the underlying DSL-generated type while providing the reference
+     * information.</p>
      *
      * <h2>Purpose</h2>
      * <p>When types are registered in a schema using templates, the resulting type
-     * needs both a reference (for lookup) and a codec (for serialization). This class
-     * provides that association by wrapping any {@link Type} with its reference.</p>
+     * needs both a reference (for lookup) and a codec (for serialization). This class provides that association by
+     * wrapping any {@link Type} with its reference.</p>
      *
      * <h2>Thread Safety</h2>
      * <p>This class is immutable and thread-safe.</p>
@@ -314,10 +314,14 @@ public class Schema {
      */
     private static final class TemplateBasedType<A> implements Type<A> {
 
-        /** The type reference identifying this type in the registry. */
+        /**
+         * The type reference identifying this type in the registry.
+         */
         private final TypeReference reference;
 
-        /** The underlying type providing codec functionality. */
+        /**
+         * The underlying type providing codec functionality.
+         */
         private final Type<A> delegate;
 
         /**

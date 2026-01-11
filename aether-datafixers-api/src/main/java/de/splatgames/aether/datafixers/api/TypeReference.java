@@ -78,8 +78,8 @@ public final class TypeReference {
      * The unique string identifier for this type reference.
      *
      * <p>This identifier is used as a key for type lookups in registries and serves as
-     * the canonical name for the data type throughout the data fixing system. The value
-     * is guaranteed to be non-null and non-empty.</p>
+     * the canonical name for the data type throughout the data fixing system. The value is guaranteed to be non-null
+     * and non-empty.</p>
      *
      * <p>By convention, type identifiers use lowercase letters with underscores to
      * separate words (e.g., "player", "block_entity", "world_data").</p>
@@ -104,8 +104,8 @@ public final class TypeReference {
      * Returns the unique identifier for this type reference.
      *
      * <p>The returned identifier is the canonical name used to look up type definitions
-     * in a {@link TypeRegistry} and to associate {@link DataFix} instances with this
-     * data type. The identifier is guaranteed to be non-null and non-empty.</p>
+     * in a {@link TypeRegistry} and to associate {@link DataFix} instances with this data type. The identifier is
+     * guaranteed to be non-null and non-empty.</p>
      *
      * <p><b>Example usage:</b></p>
      * <pre>{@code
@@ -127,8 +127,7 @@ public final class TypeReference {
      * Returns a hash code value for this type reference.
      *
      * <p>The hash code is computed solely based on the string identifier. This
-     * implementation satisfies the general contract of {@link Object#hashCode()},
-     * ensuring that:</p>
+     * implementation satisfies the general contract of {@link Object#hashCode()}, ensuring that:</p>
      * <ul>
      *   <li>If two {@code TypeReference} objects are equal according to the
      *       {@link #equals(Object)} method, then calling {@code hashCode()} on each
@@ -153,8 +152,8 @@ public final class TypeReference {
      * Indicates whether some other object is "equal to" this type reference.
      *
      * <p>Two {@code TypeReference} instances are considered equal if and only if they
-     * have the same string identifier (case-sensitive comparison). This method adheres
-     * to the general contract of {@link Object#equals(Object)}, providing:</p>
+     * have the same string identifier (case-sensitive comparison). This method adheres to the general contract of
+     * {@link Object#equals(Object)}, providing:</p>
      * <ul>
      *   <li><b>Reflexivity:</b> For any non-null {@code TypeReference x},
      *       {@code x.equals(x)} returns {@code true}</li>
@@ -180,8 +179,7 @@ public final class TypeReference {
      * }</pre>
      *
      * @param obj the reference object with which to compare; may be {@code null}
-     * @return {@code true} if this type reference is equal to the specified object;
-     *         {@code false} otherwise
+     * @return {@code true} if this type reference is equal to the specified object; {@code false} otherwise
      * @see #hashCode()
      */
     @Override
@@ -199,8 +197,8 @@ public final class TypeReference {
      * Returns a string representation of this type reference.
      *
      * <p>The returned string follows the format {@code "TypeReference{id='<identifier>'}"}.
-     * This format is intended for debugging and logging purposes and provides a clear,
-     * human-readable representation of the type reference.</p>
+     * This format is intended for debugging and logging purposes and provides a clear, human-readable representation of
+     * the type reference.</p>
      *
      * <p><b>Example output:</b></p>
      * <pre>{@code
@@ -212,8 +210,8 @@ public final class TypeReference {
      * }</pre>
      *
      * <p><b>Note:</b> The format of this string is not guaranteed to remain stable across
-     * versions and should not be parsed programmatically. Use {@link #getId()} to retrieve
-     * the identifier for programmatic use.</p>
+     * versions and should not be parsed programmatically. Use {@link #getId()} to retrieve the identifier for
+     * programmatic use.</p>
      *
      * @return a string representation of this type reference
      * @see #getId()

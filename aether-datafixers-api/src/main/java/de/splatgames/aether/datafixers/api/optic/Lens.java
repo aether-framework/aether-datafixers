@@ -324,9 +324,9 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      * {@inheritDoc}
      *
      * <p>This implementation delegates to {@link #compose(Lens)} if the provided optic is a
-     * {@link Lens}. For other optic types, an {@link UnsupportedOperationException} is thrown
-     * since lens composition requires the other optic to also be a lens to maintain lens semantics
-     * (guaranteed single focus with read/write access).</p>
+     * {@link Lens}. For other optic types, an {@link UnsupportedOperationException} is thrown since lens composition
+     * requires the other optic to also be a lens to maintain lens semantics (guaranteed single focus with read/write
+     * access).</p>
      *
      * <h4>Supported Compositions</h4>
      * <ul>

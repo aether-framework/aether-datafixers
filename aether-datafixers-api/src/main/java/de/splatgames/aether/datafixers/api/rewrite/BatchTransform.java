@@ -265,8 +265,8 @@ public final class BatchTransform<T> {
      * Base interface for field operations in a batch transform.
      *
      * <p>All field operations implement this interface, allowing them to be
-     * collected and applied sequentially to a {@link Dynamic} value. Operations
-     * are immutable and return new Dynamic instances.</p>
+     * collected and applied sequentially to a {@link Dynamic} value. Operations are immutable and return new Dynamic
+     * instances.</p>
      *
      * @param <T> the underlying data format type
      * @since 0.4.0

@@ -88,8 +88,8 @@ public interface DataFixerBootstrap {
      * Registers all schemas with the provided schema registry.
      *
      * <p>This method is invoked during data fixer initialization to populate the schema
-     * registry with {@link Schema} instances for each supported data version. Schemas define
-     * the structure and types available at each version of the data model.</p>
+     * registry with {@link Schema} instances for each supported data version. Schemas define the structure and types
+     * available at each version of the data model.</p>
      *
      * <h3>Implementation Guidelines</h3>
      * <p>When implementing this method, consider the following best practices:</p>
@@ -127,8 +127,7 @@ public interface DataFixerBootstrap {
      * Implementations do not need to be thread-safe, but they should not retain references
      * to the registry after the method returns.</p>
      *
-     * @param schemas the schema registry to populate with version-specific schemas;
-     *                must not be {@code null}
+     * @param schemas the schema registry to populate with version-specific schemas; must not be {@code null}
      * @throws NullPointerException if {@code schemas} is {@code null}
      * @see Schema
      * @see SchemaRegistry
@@ -139,9 +138,8 @@ public interface DataFixerBootstrap {
      * Registers all data fixes with the provided fix registrar.
      *
      * <p>This method is invoked during data fixer initialization to register all
-     * {@link DataFix} instances that handle migrations between data versions. Each fix
-     * defines a transformation from one version to another for a specific type or set
-     * of types.</p>
+     * {@link DataFix} instances that handle migrations between data versions. Each fix defines a transformation from
+     * one version to another for a specific type or set of types.</p>
      *
      * <h3>Implementation Guidelines</h3>
      * <p>When implementing this method, adhere to these best practices:</p>
@@ -179,8 +177,7 @@ public interface DataFixerBootstrap {
      * Implementations do not need to be thread-safe, but they should not retain references
      * to the registrar after the method returns.</p>
      *
-     * @param fixes the fix registrar to populate with data migration fixes;
-     *              must not be {@code null}
+     * @param fixes the fix registrar to populate with data migration fixes; must not be {@code null}
      * @throws NullPointerException if {@code fixes} is {@code null}
      * @see DataFix
      * @see FixRegistrar
