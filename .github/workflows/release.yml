@@ -109,6 +109,10 @@ jobs:
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
@@ -120,16 +124,12 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: Deploy to Maven Central
-        env:
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B clean deploy -Prelease -DskipTests -Dgpg.useAgent=false
 
   sbom:
     name: Generate SBOM
     runs-on: ubuntu-latest
-    needs: validate
+    needs: [ validate, test ]
 
     steps:
       - name: Checkout repository
