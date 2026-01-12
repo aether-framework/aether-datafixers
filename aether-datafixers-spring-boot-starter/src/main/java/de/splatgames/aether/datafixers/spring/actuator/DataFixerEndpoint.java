@@ -284,6 +284,13 @@ public class DataFixerEndpoint {
      * @since 0.4.0
      */
     public record DataFixersSummary(Map<String, DomainSummary> domains) {
+
+        /**
+         * Compact constructor that creates a defensive copy of the domains map.
+         */
+        public DataFixersSummary {
+            domains = domains != null ? Map.copyOf(domains) : Map.of();
+        }
     }
 
     /**

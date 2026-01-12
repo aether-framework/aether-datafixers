@@ -123,6 +123,12 @@
             <artifactId>annotations</artifactId>
         </dependency>
 
+        <!-- ==================== SpotBugs Annotations ==================== -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+        </dependency>
+
         <!-- ==================== Test Dependencies ==================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

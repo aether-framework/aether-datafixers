@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.schematools.diff;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.type.Type;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -151,6 +152,10 @@ public final class TypeDiff {
      *
      * @return the source type, never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Type<?> is immutable; returning it directly is safe."
+    )
     @NotNull
     public Type<?> sourceType() {
         return this.sourceType;
@@ -161,6 +166,10 @@ public final class TypeDiff {
      *
      * @return the target type, never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Type<?> is immutable; returning it directly is safe."
+    )
     @NotNull
     public Type<?> targetType() {
         return this.targetType;
@@ -190,7 +199,7 @@ public final class TypeDiff {
 
     /**
      * Returns only the removed fields.
-     *
+     *f
      * @return a list of field diffs with kind REMOVED, never {@code null}
      */
     @NotNull
