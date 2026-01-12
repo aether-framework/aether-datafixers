@@ -150,14 +150,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: unit-xml-java-*
-          merge-multiple: true
           path: reports/unit
 
       - name: Download IT XMLs (all Java versions)
         uses: actions/download-artifact@v4
         with:
           pattern: it-xml-java-*
-          merge-multiple: true
           path: reports/it
 
       - name: Publish Unit Test Report
