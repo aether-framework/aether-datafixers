@@ -18,6 +18,7 @@
         <module>aether-datafixers-spring-boot-starter</module>
         <module>aether-datafixers-examples</module>
         <module>aether-datafixers-bom</module>
+        <module>aether-datafixers-functional-tests</module>
     </modules>
 
     <properties>
@@ -25,6 +26,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <gpg.useAgent>true</gpg.useAgent>
+
+        <!-- Skip integration tests by default -->
+        <skipITs>true</skipITs>
 
         <!-- definition of versions for dependencies -->
         <jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
@@ -44,6 +48,7 @@
         <plugin.site.version>3.20.0</plugin.site.version>
         <plugin.gpg.version>3.2.6</plugin.gpg.version>
         <plugin.surefire.version>3.1.2</plugin.surefire.version>
+        <plugin.failsafe.version>3.1.2</plugin.failsafe.version>
         <plugin.shade.version>3.5.1</plugin.shade.version>
 
         <!-- QA plugin versions -->
@@ -279,6 +284,23 @@
                         <failIfNoTests>false</failIfNoTests>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${plugin.failsafe.version}</version>
+                    <configuration>
+                        <useModulePath>false</useModulePath>
+                        <failIfNoTests>false</failIfNoTests>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -350,6 +372,14 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Integration Tests Profile: Run E2E and IT tests -->
+        <profile>
+            <id>it</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
         </profile>
 
         <!-- QA Profile: Code Quality and Security Analysis -->

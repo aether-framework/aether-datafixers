@@ -1,8 +1,6 @@
-name: CI
+name: CI (pull_request)
 
 on:
-  push:
-    branches: [ main, develop, 'feature/**' ]
   pull_request:
     branches: [ main, develop ]
 
@@ -36,32 +34,51 @@ jobs:
       - name: Build and test with Maven
         run: mvn -B clean verify -Pqa -Ddependency-check.skip=true
 
-      - name: Upload test results
+      # Upload XMLs ONLY once (Java 21) so the report doesn't double-count
+      - name: Upload unit test XMLs (Java 21 only)
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && matrix.java == '21'
         with:
-          name: test-results-java-${{ matrix.java }}
+          name: unit-xml
           path: |
-            **/target/surefire-reports/
-            **/target/failsafe-reports/
+            **/target/surefire-reports/TEST-*.xml
+            **/target/*-reports/TEST-*.xml
           retention-days: 7
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        if: matrix.java == '21'
-        with:
-          name: coverage-report
-          path: |
-            **/target/site/jacoco/
-            **/target/jacoco.exec
-          retention-days: 7
+  integration-tests:
+    name: Integration & E2E Tests (Java ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '17', '21' ]
 
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
-        if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          report_paths: '**/target/*-reports/TEST-*.xml'
-          check_name: Test Report (Java ${{ matrix.java }})
+          fetch-depth: 1
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run integration tests
+        run: mvn -B clean verify -Pit -Ddependency-check.skip=true
+
+      # Upload XMLs ONLY once (Java 21) so the report doesn't double-count
+      - name: Upload IT test XMLs (Java 21 only)
+        uses: actions/upload-artifact@v4
+        if: always() && matrix.java == '21'
+        with:
+          name: it-xml
+          path: |
+            **/target/failsafe-reports/TEST-*.xml
+          retention-days: 7
 
   quality:
     name: Code Quality Analysis
@@ -81,32 +98,14 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Install artifacts for analysis
+      - name: Install artifacts for analysis (skip tests)
         run: mvn -B -Ddependency-check.skip=true clean install -Pqa -DskipTests
 
       - name: Run SpotBugs analysis
         run: mvn -B spotbugs:check -Pqa -Ddependency-check.skip=true
-        continue-on-error: true
 
       - name: Run Checkstyle analysis
         run: mvn -B checkstyle:check -Pqa -Ddependency-check.skip=true
-        continue-on-error: true
-
-      - name: Upload SpotBugs report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: spotbugs-report
-          path: '**/target/spotbugsXml.xml'
-          retention-days: 7
-
-      - name: Upload Checkstyle report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: checkstyle-report
-          path: '**/target/checkstyle-result.xml'
-          retention-days: 7
 
   dependency-check:
     name: OWASP Dependency Check
@@ -136,13 +135,41 @@ jobs:
 
       - name: Run OWASP Dependency Check
         run: mvn -B dependency-check:aggregate -Pqa
-        continue-on-error: true
 
-      - name: Upload Dependency Check report
-        uses: actions/upload-artifact@v4
+  reports:
+    name: Test Reports
+    runs-on: ubuntu-latest
+    needs: [ build, integration-tests ]
+    if: always()
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Download unit XMLs (Java 21 only)
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-xml
+          path: reports/unit
+
+      - name: Download IT XMLs (Java 21 only)
+        uses: actions/download-artifact@v4
+        with:
+          name: it-xml
+          path: reports/it
+
+      - name: Publish Unit Test Report
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          name: dependency-check-report
-          path: |
-            target/dependency-check-report.html
-          retention-days: 30
+          report_paths: 'reports/unit/**/TEST-*.xml'
+          check_name: Unit Test Report
+
+      - name: Publish IT Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: 'reports/it/**/TEST-*.xml'
+          check_name: IT Test Report
