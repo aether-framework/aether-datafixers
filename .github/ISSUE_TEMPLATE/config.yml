@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🔒 Security Policy
+    url: https://github.com/aether-framework/aether-datafixers/security/policy
+    about: Please report serious vulnerabilities via the security policy / advisories.
+  - name: 📖 Documentation
+    url: https://github.com/aether-framework/aether-datafixers
+    about: Check the README and docs first.

@@ -1,0 +1,62 @@
+name: 🔒 Security Report
+description: Report a potential security issue (no sensitive details)
+title: "[Security]: "
+labels: ["security", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ Do NOT include exploit details, credentials, tokens, private keys, or sensitive information.
+        If this is a serious vulnerability, please use GitHub Security Advisories or follow SECURITY.md.
+
+  - type: input
+    id: affected_versions
+    attributes:
+      label: Affected Version(s)
+      placeholder: e.g. 0.5.0, 0.4.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity (reporter estimate)
+      options:
+        - low
+        - medium
+        - high
+        - critical
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary (non-sensitive)
+      description: High-level description of the issue without exploitation steps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What could happen if exploited?
+    validations:
+      required: false
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Mitigation (optional)
+      description: Any ideas on how to fix or mitigate it?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I did not include sensitive exploit details in this public report.
+          required: true
