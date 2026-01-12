@@ -34,11 +34,12 @@ jobs:
       - name: Build and test with Maven
         run: mvn -B clean verify -Pqa -Ddependency-check.skip=true
 
-      - name: Upload unit test XMLs
+      # Upload XMLs ONLY once (Java 21) so the report doesn't double-count
+      - name: Upload unit test XMLs (Java 21 only)
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && matrix.java == '21'
         with:
-          name: unit-xml-java-${{ matrix.java }}
+          name: unit-xml
           path: |
             **/target/surefire-reports/TEST-*.xml
             **/target/*-reports/TEST-*.xml
@@ -69,11 +70,12 @@ jobs:
       - name: Run integration tests
         run: mvn -B clean verify -Pit -Ddependency-check.skip=true
 
-      - name: Upload IT test XMLs
+      # Upload XMLs ONLY once (Java 21) so the report doesn't double-count
+      - name: Upload IT test XMLs (Java 21 only)
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && matrix.java == '21'
         with:
-          name: it-xml-java-${{ matrix.java }}
+          name: it-xml
           path: |
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
@@ -146,16 +148,16 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Download unit XMLs (all Java versions)
+      - name: Download unit XMLs (Java 21 only)
         uses: actions/download-artifact@v4
         with:
-          pattern: unit-xml-java-*
+          name: unit-xml
           path: reports/unit
 
-      - name: Download IT XMLs (all Java versions)
+      - name: Download IT XMLs (Java 21 only)
         uses: actions/download-artifact@v4
         with:
-          pattern: it-xml-java-*
+          name: it-xml
           path: reports/it
 
       - name: Publish Unit Test Report
