@@ -63,13 +63,13 @@ jobs:
           check_name: Test Report (Java ${{ matrix.java }})
 
   integration-tests:
-    name: "Integration & E2E Tests (Java ${{ matrix.java }})"
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     strategy:
       fail-fast: false
       matrix:
         java: [ '17', '21' ]
+    name: "Integration & E2E Tests (Java ${{ matrix.java }})"
 
     steps:
       - name: Checkout repository
