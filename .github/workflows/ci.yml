@@ -147,5 +147,4 @@ jobs:
           name: dependency-check-report
           path: |
             target/dependency-check-report.html
-            target/dependency-check-report.json
           retention-days: 30
