@@ -131,7 +131,7 @@ jobs:
       - name: Cache Dependency-Check DB
         uses: actions/cache@v4
         with:
-          path: target/dependency-check-data
+          path: ~/.m2/repository/org/owasp/dependency-check-data
           key: depcheck-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             depcheck-${{ runner.os }}-
