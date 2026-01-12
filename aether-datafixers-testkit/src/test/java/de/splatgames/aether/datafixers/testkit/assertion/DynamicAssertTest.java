@@ -340,4 +340,261 @@ class DynamicAssertTest {
                     .hasSize(2);
         }
     }
+
+    @Nested
+    @DisplayName("Failure paths")
+    class FailurePaths {
+
+        @Test
+        @DisplayName("isList fails for non-lists")
+        void isListFailsForNonLists() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().string("hello");
+
+            assertThatThrownBy(() -> assertThat(dynamic).isList())
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("isString fails for non-strings")
+        void isStringFailsForNonStrings() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().integer(42);
+
+            assertThatThrownBy(() -> assertThat(dynamic).isString())
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("isNumber fails for non-numbers")
+        void isNumberFailsForNonNumbers() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().string("hello");
+
+            assertThatThrownBy(() -> assertThat(dynamic).isNumber())
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("isBoolean fails for non-booleans")
+        void isBooleanFailsForNonBooleans() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().string("hello");
+
+            assertThatThrownBy(() -> assertThat(dynamic).isBoolean())
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("doesNotHaveField fails when field exists")
+        void doesNotHaveFieldFailsWhenFieldExists() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("name", "Alice")
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).doesNotHaveField("name"))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("hasStringField fails for wrong value")
+        void hasStringFieldFailsForWrongValue() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("name", "Bob")
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).hasStringField("name", "Alice"))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("hasIntField fails for wrong value")
+        void hasIntFieldFailsForWrongValue() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("age", 25)
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).hasIntField("age", 30))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("hasSize fails for wrong size")
+        void hasSizeFailsForWrongSize() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().list()
+                    .add(1).add(2)
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).hasSize(5))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("isNotEmpty fails for empty list")
+        void isNotEmptyFailsForEmptyList() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().list().build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).isNotEmpty())
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("atIndex fails for out of bounds")
+        void atIndexFailsForOutOfBounds() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().list()
+                    .add("one")
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).atIndex(5))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("atPath fails for missing path")
+        void atPathFailsForMissingPath() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("name", "Alice")
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).atPath("missing.path"))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        @DisplayName("isEqualTo fails for different values")
+        void isEqualToFailsForDifferentValues() {
+            final Dynamic<JsonElement> d1 = TestData.gson().object()
+                    .put("key", "value1")
+                    .build();
+            final Dynamic<JsonElement> d2 = TestData.gson().object()
+                    .put("key", "value2")
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(d1).isEqualTo(d2))
+                    .isInstanceOf(AssertionError.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("Additional field assertions")
+    class AdditionalFieldAssertions {
+
+        @Test
+        @DisplayName("hasFields passes when all fields exist")
+        void hasFieldsPassesWhenAllFieldsExist() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("name", "Alice")
+                    .put("age", 30)
+                    .put("active", true)
+                    .build();
+
+            assertThat(dynamic).hasFields("name", "age", "active");
+        }
+
+        @Test
+        @DisplayName("hasOnlyFields passes for exact match")
+        void hasOnlyFieldsPassesForExactMatch() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("name", "Alice")
+                    .put("age", 30)
+                    .build();
+
+            assertThat(dynamic).hasOnlyFields("name", "age");
+        }
+
+        @Test
+        @DisplayName("hasOnlyFields fails for extra fields")
+        void hasOnlyFieldsFailsForExtraFields() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("name", "Alice")
+                    .put("age", 30)
+                    .put("extra", true)
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).hasOnlyFields("name", "age"))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("extra");
+        }
+
+        @Test
+        @DisplayName("hasLongField validates long value")
+        void hasLongFieldValidatesLongValue() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("timestamp", 1234567890123L)
+                    .build();
+
+            assertThat(dynamic).hasLongField("timestamp", 1234567890123L);
+        }
+
+        @Test
+        @DisplayName("hasDoubleField validates double value")
+        void hasDoubleFieldValidatesDoubleValue() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("score", 95.5)
+                    .build();
+
+            assertThat(dynamic).hasDoubleField("score", 95.5, 0.01);
+        }
+
+        @Test
+        @DisplayName("hasLongValue validates long content")
+        void hasLongValueValidatesLongContent() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().longValue(9876543210L);
+
+            assertThat(dynamic).hasLongValue(9876543210L);
+        }
+    }
+
+    @Nested
+    @DisplayName("List value assertions")
+    class ListValueAssertions {
+
+        @Test
+        @DisplayName("containsIntValues validates integer contents")
+        void containsIntValuesValidatesIntegerContents() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().list()
+                    .add(1).add(2).add(3)
+                    .build();
+
+            assertThat(dynamic).containsIntValues(1, 2, 3);
+        }
+
+        @Test
+        @DisplayName("containsStringValues fails when value missing")
+        void containsStringValuesFailsWhenValueMissing() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().list()
+                    .add("a").add("b")
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).containsStringValues("c"))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("contain");
+        }
+
+        @Test
+        @DisplayName("containsIntValues fails when value missing")
+        void containsIntValuesFailsWhenValueMissing() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().list()
+                    .add(1).add(2)
+                    .build();
+
+            assertThatThrownBy(() -> assertThat(dynamic).containsIntValues(5))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("contain");
+        }
+    }
+
+    @Nested
+    @DisplayName("Custom validation")
+    class CustomValidation {
+
+        @Test
+        @DisplayName("satisfies allows custom assertions")
+        void satisfiesAllowsCustomAssertions() {
+            final Dynamic<JsonElement> dynamic = TestData.gson().object()
+                    .put("count", 5)
+                    .build();
+
+            assertThat(dynamic).satisfies(d -> {
+                final int count = d.get("count").asInt().orElse(0);
+                org.assertj.core.api.Assertions.assertThat(count).isGreaterThan(0);
+            });
+        }
+    }
 }
