@@ -25,7 +25,6 @@ package de.splatgames.aether.datafixers.core.bootstrap;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
-import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;

@@ -235,7 +235,7 @@ public class ValidateCommand implements Callable<Integer> {
         try {
             final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
             final DataVersion targetVersion = new DataVersion(this.toVersion);
-            final AetherDataFixer fixer = new DataFixerRuntimeFactory()
+            new DataFixerRuntimeFactory()
                     .create(targetVersion, bootstrap);
 
             final FormatHandler<?> handler = FormatRegistry.get(this.format);

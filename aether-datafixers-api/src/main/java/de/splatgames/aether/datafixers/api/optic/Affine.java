@@ -382,9 +382,9 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
      * {@inheritDoc}
      *
      * <p>This implementation delegates to {@link #compose(Affine)} if the provided optic is an
-     * {@link Affine}. For other optic types, an {@link UnsupportedOperationException} is thrown
-     * since affine composition requires the other optic to also be an affine to maintain affine semantics
-     * (optional focus with set capability).</p>
+     * {@link Affine}. For other optic types, an {@link UnsupportedOperationException} is thrown since affine
+     * composition requires the other optic to also be an affine to maintain affine semantics (optional focus with set
+     * capability).</p>
      *
      * <h4>Supported Compositions</h4>
      * <ul>

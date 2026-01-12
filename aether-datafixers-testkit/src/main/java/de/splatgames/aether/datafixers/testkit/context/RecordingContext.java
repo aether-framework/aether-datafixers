@@ -228,7 +228,7 @@ public final class RecordingContext implements DataFixerContext {
      *
      * @param level   the log level
      * @param message the message format string
-     * @param args    the arguments (may be null)
+     * @param args    the arguments (defensively copied)
      */
     public record LogEntry(
             @NotNull LogLevel level,
@@ -236,9 +236,24 @@ public final class RecordingContext implements DataFixerContext {
             @Nullable Object[] args
     ) {
 
+        /**
+         * Compact constructor that defensively copies the args array.
+         */
         public LogEntry {
             Preconditions.checkNotNull(level, "level must not be null");
             Preconditions.checkNotNull(message, "message must not be null");
+            args = args != null ? args.clone() : null;
+        }
+
+        /**
+         * Returns a defensive copy of the arguments array.
+         *
+         * @return a copy of the arguments, or {@code null} if no arguments
+         */
+        @Override
+        @Nullable
+        public Object[] args() {
+            return args != null ? args.clone() : null;
         }
 
         /**

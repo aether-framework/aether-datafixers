@@ -958,9 +958,8 @@ public final class RecordCodecBuilder {
      * Internal tuple for accumulating 3 decoded values before applying the constructor.
      *
      * <p>This record is used internally during the decoding process to collect
-     * intermediate results when decoding records with 3 or more fields. The values
-     * are accumulated using {@link DataResult#apply2} before being passed to the
-     * final constructor function.</p>
+     * intermediate results when decoding records with 3 or more fields. The values are accumulated using
+     * {@link DataResult#apply2} before being passed to the final constructor function.</p>
      *
      * @param a   the first decoded value
      * @param b   the second decoded value
@@ -976,9 +975,8 @@ public final class RecordCodecBuilder {
      * Internal tuple for accumulating 4 decoded values before applying the constructor.
      *
      * <p>This record is used internally during the decoding process to collect
-     * intermediate results when decoding records with 4 or more fields. The values
-     * are accumulated using {@link DataResult#apply2} before being passed to the
-     * final constructor function.</p>
+     * intermediate results when decoding records with 4 or more fields. The values are accumulated using
+     * {@link DataResult#apply2} before being passed to the final constructor function.</p>
      *
      * @param a   the first decoded value
      * @param b   the second decoded value
@@ -996,9 +994,8 @@ public final class RecordCodecBuilder {
      * Internal tuple for accumulating 5 decoded values before applying the constructor.
      *
      * <p>This record is used internally during the decoding process to collect
-     * intermediate results when decoding records with 5 or more fields. The values
-     * are accumulated using {@link DataResult#apply2} before being passed to the
-     * final constructor function.</p>
+     * intermediate results when decoding records with 5 or more fields. The values are accumulated using
+     * {@link DataResult#apply2} before being passed to the final constructor function.</p>
      *
      * @param a   the first decoded value
      * @param b   the second decoded value

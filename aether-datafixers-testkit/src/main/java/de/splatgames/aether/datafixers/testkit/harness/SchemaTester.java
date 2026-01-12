@@ -27,6 +27,7 @@ import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.type.Type;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -348,6 +349,10 @@ public final class SchemaTester {
      * @return this tester for chaining (allows further assertions)
      * @throws AssertionError if any validation fails
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Parent null check is performed via hasParent boolean before access."
+    )
     @NotNull
     public SchemaTester verify() {
         // Validate version

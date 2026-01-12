@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.dynamic;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
@@ -85,6 +86,10 @@ import java.util.stream.Stream;
  * @see TaggedDynamic
  * @since 0.1.0
  */
+@SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP"},
+        justification = "DynamicOps is a stateless strategy object that is intentionally stored and exposed as part of Dynamic's public API."
+)
 public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
 
     /**
@@ -103,8 +108,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Checks if this value represents a map or object structure.
      *
      * <p>A map is a collection of key-value pairs where keys are strings. In JSON terms,
-     * this corresponds to an object ({@code {...}}). Use this method to verify the structure
-     * before calling map-related operations like {@link #get(String)} or {@link #set(String, Dynamic)}.</p>
+     * this corresponds to an object ({@code {...}}). Use this method to verify the structure before calling map-related
+     * operations like {@link #get(String)} or {@link #set(String, Dynamic)}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -126,8 +131,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Checks if this value represents a list or array structure.
      *
      * <p>A list is an ordered collection of elements. In JSON terms, this corresponds to
-     * an array ({@code [...]}). Use this method to verify the structure before calling
-     * list-related operations like {@link #asListStream()}.</p>
+     * an array ({@code [...]}). Use this method to verify the structure before calling list-related operations like
+     * {@link #asListStream()}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -151,8 +156,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Checks if this value represents a string primitive.
      *
      * <p>Use this method to verify that the value is a string before attempting to read it
-     * with {@link #asString()}. While {@code asString()} returns a {@link DataResult} that
-     * handles type mismatches gracefully, this method allows for pre-emptive type checking.</p>
+     * with {@link #asString()}. While {@code asString()} returns a {@link DataResult} that handles type mismatches
+     * gracefully, this method allows for pre-emptive type checking.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -174,8 +179,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Checks if this value represents a numeric primitive.
      *
      * <p>Numbers include integers, floats, doubles, longs, and other numeric types.
-     * Use this method to verify that the value is numeric before attempting to read it
-     * with methods like {@link #asInt()}, {@link #asLong()}, or {@link #asDouble()}.</p>
+     * Use this method to verify that the value is numeric before attempting to read it with methods like
+     * {@link #asInt()}, {@link #asLong()}, or {@link #asDouble()}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -221,8 +226,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a string.
      *
      * <p>If this value is not a string, the returned {@link DataResult} will contain an error
-     * message explaining the type mismatch. Use {@link DataResult#result()} to safely extract
-     * the value as an {@link Optional}, or {@link DataResult#getOrThrow()} to throw on failure.</p>
+     * message explaining the type mismatch. Use {@link DataResult#result()} to safely extract the value as an
+     * {@link Optional}, or {@link DataResult#getOrThrow()} to throw on failure.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -235,8 +240,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * String required = dynamic.get("id").asString().getOrThrow();
      * }</pre>
      *
-     * @return a {@link DataResult} containing the string value on success, or an error
-     *         describing why the value could not be read as a string
+     * @return a {@link DataResult} containing the string value on success, or an error describing why the value could
+     * not be read as a string
      * @see #isString()
      * @see DataResult#result()
      */
@@ -249,8 +254,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a generic {@link Number}.
      *
      * <p>This method returns the underlying numeric value without converting to a specific
-     * type. Use this when you need to inspect the number type or perform type-specific
-     * operations. For type-specific extraction, use {@link #asInt()}, {@link #asLong()}, etc.</p>
+     * type. Use this when you need to inspect the number type or perform type-specific operations. For type-specific
+     * extraction, use {@link #asInt()}, {@link #asLong()}, etc.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -266,8 +271,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * });
      * }</pre>
      *
-     * @return a {@link DataResult} containing the number value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the number value on success, or an error describing why the value could
+     * not be read as a number
      * @see #isNumber()
      * @see #asInt()
      * @see #asDouble()
@@ -281,8 +286,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a 32-bit integer.
      *
      * <p>If the underlying value is a number of a different type (e.g., double, long), it
-     * will be converted to an integer, potentially with loss of precision or overflow.
-     * If the value is not numeric at all, the result will contain an error.</p>
+     * will be converted to an integer, potentially with loss of precision or overflow. If the value is not numeric at
+     * all, the result will contain an error.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -292,8 +297,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * int level = dynamic.get("level").asInt().getOrThrow();
      * }</pre>
      *
-     * @return a {@link DataResult} containing the integer value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the integer value on success, or an error describing why the value could
+     * not be read as a number
      * @see #asLong()
      * @see #asNumber()
      */
@@ -306,8 +311,7 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a 64-bit long integer.
      *
      * <p>Long values are suitable for large numbers, timestamps, or IDs that exceed
-     * the 32-bit integer range. If the underlying value is a different numeric type,
-     * it will be converted.</p>
+     * the 32-bit integer range. If the underlying value is a different numeric type, it will be converted.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -317,8 +321,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * long userId = dynamic.get("userId").asLong().getOrThrow();
      * }</pre>
      *
-     * @return a {@link DataResult} containing the long value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the long value on success, or an error describing why the value could not
+     * be read as a number
      * @see #asInt()
      */
     @NotNull
@@ -330,8 +334,7 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a 32-bit floating-point number.
      *
      * <p>Float values provide decimal precision with less memory than doubles. If the
-     * underlying value is a different numeric type, it will be converted, potentially
-     * with loss of precision.</p>
+     * underlying value is a different numeric type, it will be converted, potentially with loss of precision.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -340,8 +343,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * float alpha = dynamic.get("alpha").asFloat().result().orElse(1.0f);
      * }</pre>
      *
-     * @return a {@link DataResult} containing the float value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the float value on success, or an error describing why the value could
+     * not be read as a number
      * @see #asDouble()
      */
     @NotNull
@@ -353,8 +356,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a 64-bit double-precision floating-point number.
      *
      * <p>Double values provide high precision for decimal numbers and are the default
-     * floating-point type in most JSON parsers. Use this for coordinates, percentages,
-     * or any value requiring decimal precision.</p>
+     * floating-point type in most JSON parsers. Use this for coordinates, percentages, or any value requiring decimal
+     * precision.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -365,8 +368,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * double z = dynamic.get("z").asDouble().result().orElse(0.0);
      * }</pre>
      *
-     * @return a {@link DataResult} containing the double value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the double value on success, or an error describing why the value could
+     * not be read as a number
      * @see #asFloat()
      */
     @NotNull
@@ -378,8 +381,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as an 8-bit byte.
      *
      * <p>Byte values are useful for small integers, flags, or compact binary data.
-     * If the underlying value exceeds the byte range ({@code -128} to {@code 127}),
-     * the value will overflow according to Java's byte conversion rules.</p>
+     * If the underlying value exceeds the byte range ({@code -128} to {@code 127}), the value will overflow according
+     * to Java's byte conversion rules.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -388,8 +391,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * byte flags = dynamic.get("flags").asByte().result().orElse((byte) 0);
      * }</pre>
      *
-     * @return a {@link DataResult} containing the byte value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the byte value on success, or an error describing why the value could not
+     * be read as a number
      * @see #asShort()
      * @see #asInt()
      */
@@ -411,8 +414,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * short port = dynamic.get("port").asShort().result().orElse((short) 8080);
      * }</pre>
      *
-     * @return a {@link DataResult} containing the short value on success, or an error
-     *         describing why the value could not be read as a number
+     * @return a {@link DataResult} containing the short value on success, or an error describing why the value could
+     * not be read as a number
      * @see #asByte()
      * @see #asInt()
      */
@@ -425,8 +428,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a boolean.
      *
      * <p>Boolean values represent true/false states. The exact interpretation depends
-     * on the {@link DynamicOps} implementation - some may convert numbers (0/1) or
-     * strings ("true"/"false") to booleans.</p>
+     * on the {@link DynamicOps} implementation - some may convert numbers (0/1) or strings ("true"/"false") to
+     * booleans.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -436,8 +439,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * boolean visible = dynamic.get("visible").asBoolean().getOrThrow();
      * }</pre>
      *
-     * @return a {@link DataResult} containing the boolean value on success, or an error
-     *         describing why the value could not be read as a boolean
+     * @return a {@link DataResult} containing the boolean value on success, or an error describing why the value could
+     * not be read as a boolean
      * @see #isBoolean()
      */
     @NotNull
@@ -451,8 +454,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Attempts to read this value as a stream of {@link Dynamic} elements.
      *
      * <p>If this value is a list/array, the method returns a stream where each element is
-     * wrapped in its own {@link Dynamic} instance, preserving the ops reference. This enables
-     * fluent chaining for processing list elements.</p>
+     * wrapped in its own {@link Dynamic} instance, preserving the ops reference. This enables fluent chaining for
+     * processing list elements.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -476,8 +479,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      *     .orElse(List.of());
      * }</pre>
      *
-     * @return a {@link DataResult} containing a stream of Dynamic elements on success,
-     *         or an error if this value is not a list
+     * @return a {@link DataResult} containing a stream of Dynamic elements on success, or an error if this value is not
+     * a list
      * @see #isList()
      * @see #createList(Stream)
      */
@@ -490,8 +493,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Creates a new list {@link Dynamic} from a stream of Dynamic values.
      *
      * <p>This method is used to construct list values programmatically. The resulting
-     * Dynamic contains a list representation in the underlying format (e.g., a JSON array).
-     * All input Dynamic values must use the same {@link DynamicOps} as this instance.</p>
+     * Dynamic contains a list representation in the underlying format (e.g., a JSON array). All input Dynamic values
+     * must use the same {@link DynamicOps} as this instance.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -530,8 +533,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Checks if a key exists in this map/object structure.
      *
      * <p>This method performs an existence check without retrieving the value. Use this
-     * to conditionally process fields or to validate structure before accessing values.
-     * If this value is not a map, the behavior depends on the {@link DynamicOps} implementation.</p>
+     * to conditionally process fields or to validate structure before accessing values. If this value is not a map, the
+     * behavior depends on the {@link DynamicOps} implementation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -558,8 +561,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Retrieves a value from this map by its key.
      *
      * <p>If the key exists, returns a new {@link Dynamic} wrapping the child value.
-     * If the key does not exist or this value is not a map, returns {@code null}.
-     * For a null-safe alternative, use {@link #getOptional(String)} or {@link #getOrEmpty(String)}.</p>
+     * If the key does not exist or this value is not a map, returns {@code null}. For a null-safe alternative, use
+     * {@link #getOptional(String)} or {@link #getOrEmpty(String)}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -593,8 +596,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Retrieves a value from this map by key, returning an empty map if not found.
      *
      * <p>This method provides a null-safe way to access nested structures. If the key
-     * does not exist, an empty map Dynamic is returned, allowing continued chaining
-     * without null checks. This is useful for accessing deeply nested optional fields.</p>
+     * does not exist, an empty map Dynamic is returned, allowing continued chaining without null checks. This is useful
+     * for accessing deeply nested optional fields.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -609,8 +612,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * }</pre>
      *
      * @param key the field name to retrieve; must not be {@code null}
-     * @return a Dynamic containing the field value, or an empty map Dynamic if the key
-     *         does not exist; never {@code null}
+     * @return a Dynamic containing the field value, or an empty map Dynamic if the key does not exist; never
+     * {@code null}
      * @see #get(String)
      * @see #getOptional(String)
      * @see #emptyMap()
@@ -625,8 +628,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Retrieves a value from this map as an {@link Optional}.
      *
      * <p>This method wraps the result of {@link #get(String)} in an Optional, providing
-     * a functional API for handling missing values. This is the preferred approach when
-     * working with functional-style code or Optional-based APIs.</p>
+     * a functional API for handling missing values. This is the preferred approach when working with functional-style
+     * code or Optional-based APIs.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -657,8 +660,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Sets a value in this map, returning a new Dynamic with the updated structure.
      *
      * <p>This operation is immutable - it creates and returns a new Dynamic rather than
-     * modifying this instance. If the key already exists, its value is replaced. If this
-     * value is not a map, the behavior depends on the {@link DynamicOps} implementation.</p>
+     * modifying this instance. If the key already exists, its value is replaced. If this value is not a map, the
+     * behavior depends on the {@link DynamicOps} implementation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -697,8 +700,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Removes a key from this map, returning a new Dynamic without that field.
      *
      * <p>This operation is immutable - it creates and returns a new Dynamic rather than
-     * modifying this instance. If the key does not exist, the returned Dynamic is effectively
-     * unchanged (but may be a new instance depending on the ops implementation).</p>
+     * modifying this instance. If the key does not exist, the returned Dynamic is effectively unchanged (but may be a
+     * new instance depending on the ops implementation).</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -730,9 +733,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Updates a field in this map using the provided transformation function.
      *
      * <p>This method retrieves the current value at the specified key, applies the updater
-     * function, and sets the result back. If the key does not exist, the original Dynamic
-     * is returned unchanged. This is a convenience method that combines {@link #get(String)}
-     * and {@link #set(String, Dynamic)}.</p>
+     * function, and sets the result back. If the key does not exist, the original Dynamic is returned unchanged. This
+     * is a convenience method that combines {@link #get(String)} and {@link #set(String, Dynamic)}.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -774,8 +776,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Reads this map as a stream of key-value pairs.
      *
      * <p>Each entry in the stream is a {@link Pair} where both the key and value are
-     * wrapped as {@link Dynamic} instances. This enables processing map entries while
-     * maintaining type safety and ops consistency.</p>
+     * wrapped as {@link Dynamic} instances. This enables processing map entries while maintaining type safety and ops
+     * consistency.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -800,8 +802,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      *     .orElse(Map.of());
      * }</pre>
      *
-     * @return a {@link DataResult} containing a stream of key-value pairs on success,
-     *         or an error if this value is not a map
+     * @return a {@link DataResult} containing a stream of key-value pairs on success, or an error if this value is not
+     * a map
      * @see #isMap()
      * @see Pair
      */
@@ -820,8 +822,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Creates an empty Dynamic using the default empty representation for this ops.
      *
      * <p>The exact representation of "empty" depends on the {@link DynamicOps} implementation.
-     * Typically, this returns an empty map/object, but some implementations may use a
-     * different default. Use {@link #emptyMap()} or {@link #emptyList()} for specific types.</p>
+     * Typically, this returns an empty map/object, but some implementations may use a different default. Use
+     * {@link #emptyMap()} or {@link #emptyList()} for specific types.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1095,8 +1097,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Converts this Dynamic to a different data format representation.
      *
      * <p>This method enables converting data between different serialization formats
-     * (e.g., from Gson JSON to Jackson JSON, or from JSON to YAML). The conversion
-     * preserves the logical structure while transforming the underlying representation.</p>
+     * (e.g., from Gson JSON to Jackson JSON, or from JSON to YAML). The conversion preserves the logical structure
+     * while transforming the underlying representation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -1125,8 +1127,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      * Transforms this Dynamic's underlying value using the provided mapping function.
      *
      * <p>This method applies a transformation to the raw underlying value without
-     * changing the ops. Use this for low-level manipulations when the standard
-     * fluent API doesn't provide the needed operation.</p>
+     * changing the ops. Use this for low-level manipulations when the standard fluent API doesn't provide the needed
+     * operation.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code

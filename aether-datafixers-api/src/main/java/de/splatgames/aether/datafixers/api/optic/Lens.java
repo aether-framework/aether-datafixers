@@ -230,8 +230,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      * @throws NullPointerException if {@code source} or {@code value} is {@code null}
      */
     @NotNull
-    T set(@NotNull final S source,
-          @NotNull final B value);
+    T set(@NotNull final S source, @NotNull final B value);
 
     /**
      * Transforms the focused value using the given function.
@@ -324,9 +323,9 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      * {@inheritDoc}
      *
      * <p>This implementation delegates to {@link #compose(Lens)} if the provided optic is a
-     * {@link Lens}. For other optic types, an {@link UnsupportedOperationException} is thrown
-     * since lens composition requires the other optic to also be a lens to maintain lens semantics
-     * (guaranteed single focus with read/write access).</p>
+     * {@link Lens}. For other optic types, an {@link UnsupportedOperationException} is thrown since lens composition
+     * requires the other optic to also be a lens to maintain lens semantics (guaranteed single focus with read/write
+     * access).</p>
      *
      * <h4>Supported Compositions</h4>
      * <ul>

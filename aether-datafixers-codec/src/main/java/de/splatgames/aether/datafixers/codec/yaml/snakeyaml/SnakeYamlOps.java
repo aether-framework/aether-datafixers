@@ -120,7 +120,7 @@ import java.util.stream.Stream;
  *   <tr><td>{@code String}</td><td>{@link String}</td><td>Standard Java string</td></tr>
  *   <tr><td>{@code List/Stream}</td><td>{@link ArrayList}</td><td>Preserves element order; mutable internally</td></tr>
  *   <tr><td>{@code Map}</td><td>{@link LinkedHashMap}</td><td>Preserves insertion order; string keys only</td></tr>
- *   <tr><td>{@code null/empty}</td><td>{@code null}</td><td>Java {@code null} reference</td></tr>
+ *   <tr><td>{@code null/empty}</td><td>{@link #NULL} sentinel</td><td>Singleton marker object; use {@link #unwrap(Object)} for serialization</td></tr>
  * </table>
  *
  * <h2>SnakeYAML-Specific Considerations</h2>
@@ -130,7 +130,9 @@ import java.util.stream.Stream;
  *       {@link LinkedHashMap} instances. This implementation creates defensive copies to ensure
  *       immutability guarantees.</li>
  *   <li><strong>Null Representation:</strong> YAML's {@code null} and {@code ~} values are
- *       represented as Java {@code null}. The {@link #empty()} method returns {@code null}.</li>
+ *       represented by the {@link #NULL} sentinel object. Use {@link #wrap(Object)} after parsing
+ *       YAML with SnakeYAML to convert Java {@code null} to the sentinel, and {@link #unwrap(Object)}
+ *       before serializing to convert back.</li>
  *   <li><strong>Number Types:</strong> SnakeYAML preserves the specific numeric type from the
  *       YAML source (e.g., integers vs. floats), which is maintained in this implementation.</li>
  *   <li><strong>Key Types:</strong> While YAML supports complex keys, this implementation
@@ -229,6 +231,41 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     public static final SnakeYamlOps INSTANCE = new SnakeYamlOps();
 
     /**
+     * Sentinel object representing the YAML null value.
+     *
+     * <p>This singleton instance represents the absence of a value in YAML, corresponding to
+     * YAML's explicit {@code null} or {@code ~} values. Unlike using Java's {@code null} directly,
+     * this sentinel allows the {@link DynamicOps} contract to be fulfilled (which requires
+     * {@link #empty()} to return a non-null value).</p>
+     *
+     * <p><b>Usage</b></p>
+     * <pre>{@code
+     * // Check if a value is the YAML null sentinel
+     * if (value == SnakeYamlOps.NULL) {
+     *     // Handle null case
+     * }
+     *
+     * // Create an explicit null value
+     * Object nullValue = SnakeYamlOps.NULL;
+     * }</pre>
+     *
+     * <p><b>Serialization Note</b></p>
+     * <p>When serializing data containing this sentinel to YAML text using SnakeYAML, you should
+     * convert the sentinel back to Java {@code null} before serialization. Use
+     * {@link #unwrap(Object)} for this purpose:</p>
+     * <pre>{@code
+     * Object data = ...; // May contain YamlNull.INSTANCE
+     * Object unwrapped = SnakeYamlOps.unwrap(data);
+     * String yaml = new Yaml().dump(unwrapped);
+     * }</pre>
+     *
+     * @see #empty()
+     * @see #isNull(Object)
+     * @see #unwrap(Object)
+     */
+    public static final Object NULL = YamlNull.INSTANCE;
+
+    /**
      * Private constructor to enforce singleton pattern.
      *
      * <p>This constructor is intentionally private to prevent instantiation from outside
@@ -246,25 +283,26 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     /**
      * {@inheritDoc}
      *
-     * <p>Returns {@code null} which represents the absence of a value in YAML. This is the
-     * canonical "empty" value for the SnakeYAML format and corresponds to YAML's explicit
-     * {@code null} or {@code ~} values.</p>
+     * <p>Returns the {@link #NULL} sentinel which represents the absence of a value in YAML.
+     * This corresponds to YAML's explicit {@code null} or {@code ~} values.</p>
      *
-     * <p>Unlike JSON-based implementations that return a null object (e.g., {@code JsonNull}),
-     * SnakeYAML uses Java's {@code null} directly. This is used when:</p>
-     * <ul>
-     *   <li>A field has no value</li>
-     *   <li>A conversion cannot determine the appropriate type</li>
-     *   <li>An optional value is absent</li>
-     *   <li>Representing YAML's explicit null ({@code null}, {@code ~}, or empty value)</li>
-     * </ul>
+     * <p>The sentinel object is used instead of Java's {@code null} to satisfy the
+     * {@link DynamicOps} contract which requires this method to return a non-null value.
+     * Use {@link #isNull(Object)} to check if a value is the null sentinel, or compare
+     * directly with {@code == SnakeYamlOps.NULL}.</p>
      *
-     * @return {@code null}, representing the absence of a value
+     * <p>When serializing data to YAML text format, use {@link #unwrap(Object)} to convert
+     * the sentinel back to Java {@code null} before passing to SnakeYAML.</p>
+     *
+     * @return the {@link #NULL} sentinel representing the absence of a value; never {@code null}
+     * @see #NULL
+     * @see #isNull(Object)
+     * @see #unwrap(Object)
      */
-    @Nullable
+    @NotNull
     @Override
     public Object empty() {
-        return null;
+        return YamlNull.INSTANCE;
     }
 
     // ==================== Type Check Operations ====================
@@ -702,20 +740,18 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input list is a {@link List} instance</li>
-     *   <li>Input list is {@code null} (treated as empty list)</li>
      * </ul>
      *
      * <p><b>Failure Conditions</b></p>
      * <ul>
-     *   <li>Input list is not a list or null (e.g., Map, primitive)</li>
+     *   <li>Input list is not a {@link List} instance (e.g., Map, primitive)</li>
      * </ul>
      *
      * <p><strong>Immutability:</strong> The original list is never modified. A new
      * {@link ArrayList} is created from the original elements, and the value is deep-copied
      * before being appended to ensure nested structures are also copied.</p>
      *
-     * @param list  the list to append to; must not be {@code null}; may be {@code null}
-     *              (treated as empty list)
+     * @param list  the list to append to; must not be {@code null}
      * @param value the value to append; must not be {@code null}
      * @return a {@link DataResult} containing the new list with the appended value,
      *         or an error message if the list is not valid; never {@code null}
@@ -727,10 +763,10 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
                                           @NotNull final Object value) {
         Preconditions.checkNotNull(list, "list must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-        if (list != null && !(list instanceof List)) {
+        if (!(list instanceof List)) {
             return DataResult.error("Not a list: " + list);
         }
-        final List<Object> result = list == null ? new ArrayList<>() : new ArrayList<>((List<Object>) list);
+        final List<Object> result = new ArrayList<>((List<Object>) list);
         result.add(deepCopy(value));
         return DataResult.success(result);
     }
@@ -848,13 +884,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Input map is a {@link Map} instance</li>
-     *   <li>Input map is {@code null} (treated as empty map)</li>
      *   <li>Key is a {@link String}</li>
      * </ul>
      *
      * <p><b>Failure Conditions</b></p>
      * <ul>
-     *   <li>Input map is not a map or null (e.g., List, primitive)</li>
+     *   <li>Input map is not a {@link Map} instance (e.g., List, primitive)</li>
      *   <li>Key is not a {@link String}</li>
      * </ul>
      *
@@ -862,8 +897,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * {@link LinkedHashMap} is created from the original entries, and the value is
      * deep-copied before being added.</p>
      *
-     * @param map   the map to add the entry to; must not be {@code null}; may be {@code null}
-     *              (treated as empty map)
+     * @param map   the map to add the entry to; must not be {@code null}
      * @param key   the key for the entry; must not be {@code null}; must be a {@link String}
      * @param value the value for the entry; must not be {@code null}
      * @return a {@link DataResult} containing the new map with the added entry,
@@ -878,15 +912,13 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         Preconditions.checkNotNull(map, "map must not be null");
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-        if (map != null && !(map instanceof Map)) {
+        if (!(map instanceof Map)) {
             return DataResult.error("Not a map: " + map);
         }
         if (!(key instanceof String)) {
             return DataResult.error("Key is not a string: " + key);
         }
-        final Map<String, Object> result = map == null
-                ? new LinkedHashMap<>()
-                : new LinkedHashMap<>((Map<String, Object>) map);
+        final Map<String, Object> result = new LinkedHashMap<>((Map<String, Object>) map);
         result.put((String) key, deepCopy(value));
         return DataResult.success(result);
     }
@@ -900,13 +932,12 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p><b>Success Conditions</b></p>
      * <ul>
      *   <li>Both inputs are {@link Map} instances</li>
-     *   <li>Either input may be {@code null} (treated as empty map)</li>
      * </ul>
      *
      * <p><b>Failure Conditions</b></p>
      * <ul>
-     *   <li>First input is not a map or null</li>
-     *   <li>Second input is not a map or null</li>
+     *   <li>First input is not a {@link Map} instance</li>
+     *   <li>Second input is not a {@link Map} instance</li>
      * </ul>
      *
      * <p><b>Merge Behavior</b></p>
@@ -920,10 +951,8 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * {@link LinkedHashMap} is created, and all values from the second map are deep-copied
      * before being added.</p>
      *
-     * @param map   the base map; must not be {@code null}; may be {@code null}
-     *              (treated as empty map)
-     * @param other the map to merge into the base; must not be {@code null}; may be
-     *              {@code null} (treated as empty map)
+     * @param map   the base map; must not be {@code null}
+     * @param other the map to merge into the base; must not be {@code null}
      * @return a {@link DataResult} containing the merged map, or an error message
      *         if either input is invalid; never {@code null}
      */
@@ -934,19 +963,15 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
                                          @NotNull final Object other) {
         Preconditions.checkNotNull(map, "map must not be null");
         Preconditions.checkNotNull(other, "other must not be null");
-        if (map != null && !(map instanceof Map)) {
+        if (!(map instanceof Map)) {
             return DataResult.error("First argument is not a map: " + map);
         }
-        if (other != null && !(other instanceof Map)) {
+        if (!(other instanceof Map)) {
             return DataResult.error("Second argument is not a map: " + other);
         }
-        final Map<String, Object> result = map == null
-                ? new LinkedHashMap<>()
-                : new LinkedHashMap<>((Map<String, Object>) map);
-        if (other != null) {
-            for (final Map.Entry<String, Object> entry : ((Map<String, Object>) other).entrySet()) {
-                result.put(entry.getKey(), deepCopy(entry.getValue()));
-            }
+        final Map<String, Object> result = new LinkedHashMap<>((Map<String, Object>) map);
+        for (final Map.Entry<String, Object> entry : ((Map<String, Object>) other).entrySet()) {
+            result.put(entry.getKey(), deepCopy(entry.getValue()));
         }
         return DataResult.success(result);
     }
@@ -1121,20 +1146,20 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *       creates an {@link ArrayList} with recursively converted elements</li>
      *   <li><strong>Map:</strong> If {@link DynamicOps#getMapEntries} succeeds,
      *       creates a {@link LinkedHashMap} with recursively converted entries</li>
-     *   <li><strong>Fallback:</strong> Returns {@code null} if no type matches</li>
+     *   <li><strong>Fallback:</strong> Returns the {@link #NULL} sentinel if no type matches</li>
      * </ol>
      *
      * <p><b>Edge Cases</b></p>
      * <ul>
      *   <li>Map entries with {@code null} keys are skipped</li>
-     *   <li>Map entries with {@code null} values are converted to {@code null}</li>
+     *   <li>Map entries with {@code null} values are converted to the {@link #NULL} sentinel</li>
      *   <li>Empty collections are preserved as empty ArrayList/LinkedHashMap</li>
      * </ul>
      *
      * <p><b>Format-Specific Notes</b></p>
      * <ul>
-     *   <li>Gson's {@code JsonNull} is converted to Java {@code null}</li>
-     *   <li>Jackson's {@code NullNode} is converted to Java {@code null}</li>
+     *   <li>Gson's {@code JsonNull} is converted to the {@link #NULL} sentinel</li>
+     *   <li>Jackson's {@code NullNode} is converted to the {@link #NULL} sentinel</li>
      *   <li>Numeric types are preserved where the source format supports them</li>
      * </ul>
      *
@@ -1142,10 +1167,10 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *                  {@code null}
      * @param input     the value to convert from the source format; must not be {@code null}
      * @param <U>       the type parameter of the source format
-     * @return the converted value as a SnakeYAML native type; may return {@code null}
-     *         for empty/null source values
+     * @return the converted value as a SnakeYAML native type; returns the {@link #NULL}
+     *         sentinel for empty/null source values; never {@code null}
      */
-    @Nullable
+    @NotNull
     @Override
     public <U> Object convertTo(@NotNull final DynamicOps<U> sourceOps,
                                 @NotNull final U input) {
@@ -1193,7 +1218,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
             );
         }
 
-        // Fallback: return null for unknown/empty types
+        // Fallback: return the NULL sentinel for unknown/empty types
         return empty();
     }
 
@@ -1210,6 +1235,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * <p><b>Copy Behavior by Type</b></p>
      * <ul>
      *   <li><strong>null:</strong> Returns {@code null}</li>
+     *   <li><strong>YamlNull sentinel:</strong> Returns the sentinel as-is (it's a singleton)</li>
      *   <li><strong>Map:</strong> Creates a new {@link LinkedHashMap} with recursively
      *       deep-copied values (keys are assumed to be immutable strings)</li>
      *   <li><strong>List:</strong> Creates a new {@link ArrayList} with recursively
@@ -1224,7 +1250,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * Consider using batch operations ({@link #createMap(Stream)}, {@link #createList(Stream)})
      * to minimize the number of copy operations.</p>
      *
-     * @param value the value to copy; may be {@code null}
+     * @param value the value to copy; may be {@code null} or the {@link #NULL} sentinel
      * @return a deep copy of the value, or the value itself if it is immutable;
      *         {@code null} if the input is {@code null}
      */
@@ -1233,6 +1259,9 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     private Object deepCopy(@Nullable final Object value) {
         if (value == null) {
             return null;
+        }
+        if (value == YamlNull.INSTANCE) {
+            return YamlNull.INSTANCE;
         }
         if (value instanceof Map) {
             final Map<String, Object> original = (Map<String, Object>) value;
@@ -1267,5 +1296,170 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     @Override
     public String toString() {
         return "SnakeYamlOps";
+    }
+
+    // ==================== Static Utility Methods ====================
+
+    /**
+     * Checks whether the given value is the YAML null sentinel.
+     *
+     * <p>This method provides a convenient way to check if a value represents YAML's null
+     * without directly comparing to {@link #NULL}.</p>
+     *
+     * @param value the value to check; may be {@code null}
+     * @return {@code true} if the value is the YAML null sentinel, {@code false} otherwise
+     */
+    public static boolean isNull(@Nullable final Object value) {
+        return value == YamlNull.INSTANCE;
+    }
+
+    /**
+     * Recursively converts the YAML null sentinel back to Java {@code null}.
+     *
+     * <p>This method should be used before serializing data to YAML text format using
+     * SnakeYAML, as SnakeYAML expects Java {@code null} for null values, not the sentinel.</p>
+     *
+     * <p><b>Conversion Behavior</b></p>
+     * <ul>
+     *   <li>{@link #NULL} sentinel is converted to Java {@code null}</li>
+     *   <li>{@link Map} instances are recursively processed (values only, keys are preserved)</li>
+     *   <li>{@link List} instances are recursively processed</li>
+     *   <li>All other values are returned unchanged</li>
+     * </ul>
+     *
+     * <p><b>Example</b></p>
+     * <pre>{@code
+     * // Data structure with sentinel values
+     * Map<String, Object> data = new LinkedHashMap<>();
+     * data.put("name", "Alice");
+     * data.put("nickname", SnakeYamlOps.NULL);
+     *
+     * // Convert for serialization
+     * Object unwrapped = SnakeYamlOps.unwrap(data);
+     *
+     * // Now safe to serialize with SnakeYAML
+     * String yaml = new Yaml().dump(unwrapped);
+     * // Output: {name: Alice, nickname: null}
+     * }</pre>
+     *
+     * @param value the value to unwrap; may be {@code null}
+     * @return the value with all sentinel instances replaced by Java {@code null}
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static Object unwrap(@Nullable final Object value) {
+        if (value == null || value == YamlNull.INSTANCE) {
+            return null;
+        }
+        if (value instanceof Map) {
+            final Map<String, Object> original = (Map<String, Object>) value;
+            final Map<String, Object> result = new LinkedHashMap<>();
+            for (final Map.Entry<String, Object> entry : original.entrySet()) {
+                result.put(entry.getKey(), unwrap(entry.getValue()));
+            }
+            return result;
+        }
+        if (value instanceof List) {
+            final List<Object> original = (List<Object>) value;
+            final List<Object> result = new ArrayList<>();
+            for (final Object element : original) {
+                result.add(unwrap(element));
+            }
+            return result;
+        }
+        return value;
+    }
+
+    /**
+     * Recursively converts Java {@code null} values to the YAML null sentinel.
+     *
+     * <p>This method should be used after parsing YAML with SnakeYAML to ensure all null
+     * values are represented by the sentinel, making the data safe to use with
+     * {@link DynamicOps} methods that require non-null values.</p>
+     *
+     * <p><b>Conversion Behavior</b></p>
+     * <ul>
+     *   <li>Java {@code null} is converted to {@link #NULL} sentinel</li>
+     *   <li>{@link Map} instances are recursively processed (values only, keys are preserved)</li>
+     *   <li>{@link List} instances are recursively processed</li>
+     *   <li>All other values are returned unchanged</li>
+     * </ul>
+     *
+     * <p><b>Example</b></p>
+     * <pre>{@code
+     * // Parse YAML with SnakeYAML
+     * Yaml yaml = new Yaml();
+     * Object parsed = yaml.load("name: Alice\nnickname: null");
+     *
+     * // Wrap null values for use with DynamicOps
+     * Object wrapped = SnakeYamlOps.wrap(parsed);
+     *
+     * // Now safe to use with Dynamic
+     * Dynamic<Object> dynamic = new Dynamic<>(SnakeYamlOps.INSTANCE, wrapped);
+     * }</pre>
+     *
+     * @param value the value to wrap; may be {@code null}
+     * @return the value with all Java {@code null} instances replaced by the sentinel;
+     *         never {@code null} (returns {@link #NULL} if input is {@code null})
+     */
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public static Object wrap(@Nullable final Object value) {
+        if (value == null) {
+            return YamlNull.INSTANCE;
+        }
+        if (value instanceof Map) {
+            final Map<String, Object> original = (Map<String, Object>) value;
+            final Map<String, Object> result = new LinkedHashMap<>();
+            for (final Map.Entry<String, Object> entry : original.entrySet()) {
+                result.put(entry.getKey(), wrap(entry.getValue()));
+            }
+            return result;
+        }
+        if (value instanceof List) {
+            final List<Object> original = (List<Object>) value;
+            final List<Object> result = new ArrayList<>();
+            for (final Object element : original) {
+                result.add(wrap(element));
+            }
+            return result;
+        }
+        return value;
+    }
+
+    // ==================== Inner Classes ====================
+
+    /**
+     * Sentinel class representing the YAML null value.
+     *
+     * <p>This is a singleton class used to represent YAML's null value in a way that
+     * satisfies the {@link DynamicOps} contract (which requires non-null return values).
+     * The single instance is accessible via {@link SnakeYamlOps#NULL}.</p>
+     *
+     * <p>This class is intentionally package-private and should not be instantiated
+     * or subclassed outside of {@link SnakeYamlOps}.</p>
+     */
+    static final class YamlNull {
+        /**
+         * The singleton instance of the YAML null sentinel.
+         */
+        static final YamlNull INSTANCE = new YamlNull();
+
+        /**
+         * Private constructor to enforce singleton pattern.
+         */
+        private YamlNull() {
+            // Singleton
+        }
+
+        /**
+         * Returns a string representation of this null sentinel.
+         *
+         * @return the string {@code "null"}
+         */
+        @Override
+        public String toString() {
+            return "null";
+        }
     }
 }

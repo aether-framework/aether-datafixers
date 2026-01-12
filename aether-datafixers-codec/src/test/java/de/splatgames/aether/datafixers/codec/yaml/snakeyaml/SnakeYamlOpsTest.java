@@ -73,9 +73,10 @@ class SnakeYamlOpsTest {
     class EmptyValues {
 
         @Test
-        @DisplayName("empty() returns null")
-        void emptyReturnsNull() {
-            assertThat(ops.empty()).isNull();
+        @DisplayName("empty() returns NULL sentinel")
+        void emptyReturnsNullSentinel() {
+            assertThat(ops.empty()).isSameAs(SnakeYamlOps.NULL);
+            assertThat(SnakeYamlOps.isNull(ops.empty())).isTrue();
         }
 
         @Test
@@ -94,6 +95,138 @@ class SnakeYamlOpsTest {
 
             assertThat(result).isInstanceOf(Map.class);
             assertThat((Map<?, ?>) result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("Null Sentinel Utilities")
+    class NullSentinelUtilities {
+
+        @Test
+        @DisplayName("isNull() returns true for NULL sentinel")
+        void isNullReturnsTrueForSentinel() {
+            assertThat(SnakeYamlOps.isNull(SnakeYamlOps.NULL)).isTrue();
+            assertThat(SnakeYamlOps.isNull(ops.empty())).isTrue();
+        }
+
+        @Test
+        @DisplayName("isNull() returns false for other values")
+        void isNullReturnsFalseForOtherValues() {
+            assertThat(SnakeYamlOps.isNull(null)).isFalse();
+            assertThat(SnakeYamlOps.isNull("test")).isFalse();
+            assertThat(SnakeYamlOps.isNull(42)).isFalse();
+            assertThat(SnakeYamlOps.isNull(new LinkedHashMap<>())).isFalse();
+        }
+
+        @Test
+        @DisplayName("wrap() converts null to sentinel")
+        void wrapConvertsNullToSentinel() {
+            assertThat(SnakeYamlOps.wrap(null)).isSameAs(SnakeYamlOps.NULL);
+        }
+
+        @Test
+        @DisplayName("wrap() preserves non-null values")
+        void wrapPreservesNonNullValues() {
+            assertThat(SnakeYamlOps.wrap("test")).isEqualTo("test");
+            assertThat(SnakeYamlOps.wrap(42)).isEqualTo(42);
+        }
+
+        @Test
+        @DisplayName("wrap() recursively converts nulls in maps")
+        void wrapRecursivelyConvertsMaps() {
+            final Map<String, Object> input = new LinkedHashMap<>();
+            input.put("name", "Alice");
+            input.put("nickname", null);
+
+            final Object wrapped = SnakeYamlOps.wrap(input);
+
+            assertThat(wrapped).isInstanceOf(Map.class);
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> result = (Map<String, Object>) wrapped;
+            assertThat(result.get("name")).isEqualTo("Alice");
+            assertThat(result.get("nickname")).isSameAs(SnakeYamlOps.NULL);
+        }
+
+        @Test
+        @DisplayName("wrap() recursively converts nulls in lists")
+        void wrapRecursivelyConvertsLists() {
+            final List<Object> input = new ArrayList<>();
+            input.add("first");
+            input.add(null);
+            input.add("third");
+
+            final Object wrapped = SnakeYamlOps.wrap(input);
+
+            assertThat(wrapped).isInstanceOf(List.class);
+            @SuppressWarnings("unchecked")
+            final List<Object> result = (List<Object>) wrapped;
+            assertThat(result.get(0)).isEqualTo("first");
+            assertThat(result.get(1)).isSameAs(SnakeYamlOps.NULL);
+            assertThat(result.get(2)).isEqualTo("third");
+        }
+
+        @Test
+        @DisplayName("unwrap() converts sentinel to null")
+        void unwrapConvertsSentinelToNull() {
+            assertThat(SnakeYamlOps.unwrap(SnakeYamlOps.NULL)).isNull();
+        }
+
+        @Test
+        @DisplayName("unwrap() preserves non-sentinel values")
+        void unwrapPreservesNonSentinelValues() {
+            assertThat(SnakeYamlOps.unwrap("test")).isEqualTo("test");
+            assertThat(SnakeYamlOps.unwrap(42)).isEqualTo(42);
+            assertThat(SnakeYamlOps.unwrap(null)).isNull();
+        }
+
+        @Test
+        @DisplayName("unwrap() recursively converts sentinels in maps")
+        void unwrapRecursivelyConvertsMaps() {
+            final Map<String, Object> input = new LinkedHashMap<>();
+            input.put("name", "Alice");
+            input.put("nickname", SnakeYamlOps.NULL);
+
+            final Object unwrapped = SnakeYamlOps.unwrap(input);
+
+            assertThat(unwrapped).isInstanceOf(Map.class);
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> result = (Map<String, Object>) unwrapped;
+            assertThat(result.get("name")).isEqualTo("Alice");
+            assertThat(result.get("nickname")).isNull();
+        }
+
+        @Test
+        @DisplayName("unwrap() recursively converts sentinels in lists")
+        void unwrapRecursivelyConvertsLists() {
+            final List<Object> input = new ArrayList<>();
+            input.add("first");
+            input.add(SnakeYamlOps.NULL);
+            input.add("third");
+
+            final Object unwrapped = SnakeYamlOps.unwrap(input);
+
+            assertThat(unwrapped).isInstanceOf(List.class);
+            @SuppressWarnings("unchecked")
+            final List<Object> result = (List<Object>) unwrapped;
+            assertThat(result.get(0)).isEqualTo("first");
+            assertThat(result.get(1)).isNull();
+            assertThat(result.get(2)).isEqualTo("third");
+        }
+
+        @Test
+        @DisplayName("wrap() and unwrap() are inverse operations")
+        void wrapAndUnwrapAreInverse() {
+            final Map<String, Object> original = new LinkedHashMap<>();
+            original.put("name", "Alice");
+            original.put("nickname", null);
+            original.put("nested", new LinkedHashMap<>() {{
+                put("value", null);
+            }});
+
+            final Object wrapped = SnakeYamlOps.wrap(original);
+            final Object unwrapped = SnakeYamlOps.unwrap(wrapped);
+
+            assertThat(unwrapped).isEqualTo(original);
         }
     }
 

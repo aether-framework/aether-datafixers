@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
 import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,6 +91,10 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
 
     @Override
     @NotNull
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Builder exposure is intentional API design for report construction."
+    )
     public MigrationReport.Builder reportBuilder() {
         return this.reportBuilder;
     }
@@ -261,13 +266,31 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      *
      * @param level   the log level
      * @param message the message format string
-     * @param args    the arguments
+     * @param args    the arguments (defensively copied)
      */
     public record LogEntry(
             @NotNull LogLevel level,
             @NotNull String message,
             @Nullable Object[] args
     ) {
+
+        /**
+         * Compact constructor that defensively copies the args array.
+         */
+        public LogEntry {
+            args = args != null ? args.clone() : null;
+        }
+
+        /**
+         * Returns a defensive copy of the arguments array.
+         *
+         * @return a copy of the arguments, or {@code null} if no arguments
+         */
+        @Override
+        @Nullable
+        public Object[] args() {
+            return args != null ? args.clone() : null;
+        }
 
         /**
          * Returns the formatted message with placeholders replaced.

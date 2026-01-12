@@ -531,7 +531,6 @@ public sealed interface DataResult<A> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
-         * @param value the successful value to store
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Success {
@@ -815,8 +814,8 @@ public sealed interface DataResult<A> {
      * Implementation of {@link DataResult} representing an error result.
      *
      * <p>An error contains a non-null error message and optionally a partial result
-     * that represents a "best effort" value despite the error. This record implementation
-     * is immutable and thread-safe.</p>
+     * that represents a "best effort" value despite the error. This record implementation is immutable and
+     * thread-safe.</p>
      *
      * <h2>Usage</h2>
      * <p>Instances should be created via the factory methods {@link DataResult#error(String)}
@@ -832,8 +831,7 @@ public sealed interface DataResult<A> {
      *
      * <h2>Partial Results</h2>
      * <p>Partial results allow error recovery in scenarios where a "best effort" value
-     * can be computed despite encountering an error. This is useful for lenient parsing
-     * or graceful degradation.</p>
+     * can be computed despite encountering an error. This is useful for lenient parsing or graceful degradation.</p>
      *
      * <h2>Behavior</h2>
      * <ul>
@@ -862,8 +860,6 @@ public sealed interface DataResult<A> {
          * <p>Validates that the error message is not {@code null}. The partial
          * result may be {@code null} to indicate no best-effort value is available.</p>
          *
-         * @param message the error message to store
-         * @param partial the optional partial result, may be {@code null}
          * @throws NullPointerException if {@code message} is {@code null}
          */
         public Error {
@@ -915,8 +911,7 @@ public sealed interface DataResult<A> {
         /**
          * {@inheritDoc}
          *
-         * @return an {@link Optional} containing the partial result if available,
-         *         otherwise {@link Optional#empty()}
+         * @return an {@link Optional} containing the partial result if available, otherwise {@link Optional#empty()}
          */
         @NotNull
         @Override
@@ -928,8 +923,8 @@ public sealed interface DataResult<A> {
          * {@inheritDoc}
          *
          * <p>For Error, if a partial result exists, applies the mapper to it and
-         * returns a new Error with the same message but mapped partial result. If no
-         * partial result exists, returns this instance with type adjusted.</p>
+         * returns a new Error with the same message but mapped partial result. If no partial result exists, returns
+         * this instance with type adjusted.</p>
          *
          * @param mapper the mapping function to apply to the partial result
          * @param <B>    the new value type
@@ -949,9 +944,8 @@ public sealed interface DataResult<A> {
          * {@inheritDoc}
          *
          * <p>For Error, if a partial result exists, applies the mapper and combines
-         * error messages. If the mapper returns a success, the success value becomes
-         * the new partial while preserving this error's message. If the mapper returns
-         * an error, the messages are concatenated with "; " separator.</p>
+         * error messages. If the mapper returns a success, the success value becomes the new partial while preserving
+         * this error's message. If the mapper returns an error, the messages are concatenated with "; " separator.</p>
          *
          * @param mapper the mapping function to apply to the partial result
          * @param <B>    the new value type
@@ -1007,8 +1001,7 @@ public sealed interface DataResult<A> {
          * {@inheritDoc}
          *
          * <p>For Error, invokes the error handler with the message, then returns the
-         * partial result if available. If no partial result exists, throws an
-         * {@link IllegalStateException}.</p>
+         * partial result if available. If no partial result exists, throws an {@link IllegalStateException}.</p>
          *
          * @param onError the error handler to invoke before returning partial
          * @return the partial result if available
@@ -1086,9 +1079,9 @@ public sealed interface DataResult<A> {
          * {@inheritDoc}
          *
          * <p>For Error, attempts to combine with another result using partial values.
-         * If this has a partial and other is successful, combines them into a new Error
-         * preserving this error's message. If both have errors and partials, combines
-         * messages with "; " separator. If no partials available, returns this unchanged.</p>
+         * If this has a partial and other is successful, combines them into a new Error preserving this error's
+         * message. If both have errors and partials, combines messages with "; " separator. If no partials available,
+         * returns this unchanged.</p>
          *
          * @param other    the other result to combine with
          * @param combiner the function to combine values
@@ -1131,8 +1124,7 @@ public sealed interface DataResult<A> {
          * {@inheritDoc}
          *
          * <p>For Error with a partial result, invokes the error handler and promotes
-         * the partial to a full Success. If no partial result exists, returns this
-         * Error unchanged.</p>
+         * the partial to a full Success. If no partial result exists, returns this Error unchanged.</p>
          *
          * @param onError the error handler to invoke when promoting
          * @return a Success containing the partial, or this Error if no partial
@@ -1183,8 +1175,7 @@ public sealed interface DataResult<A> {
          *
          * <p>The format includes the message and, if present, the partial result.</p>
          *
-         * @return a string in the format "DataResult.Error[message]" or
-         *         "DataResult.Error[message, partial=value]"
+         * @return a string in the format "DataResult.Error[message]" or "DataResult.Error[message, partial=value]"
          */
         @NotNull
         @Override

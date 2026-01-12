@@ -98,9 +98,8 @@ public final class Fixes {
      * Creates a rule that transforms typed values of a specific type.
      *
      * <p>This method creates a {@link TypeRewriteRule} that matches values of the specified
-     * input type and transforms them using the provided rewrite function. The rule only
-     * matches types with the same {@link de.splatgames.aether.datafixers.api.TypeReference}
-     * as the input type.</p>
+     * input type and transforms them using the provided rewrite function. The rule only matches types with the same
+     * {@link de.splatgames.aether.datafixers.api.TypeReference} as the input type.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code

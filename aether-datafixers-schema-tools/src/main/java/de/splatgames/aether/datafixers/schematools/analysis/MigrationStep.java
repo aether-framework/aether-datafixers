@@ -27,6 +27,7 @@ import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.schematools.diff.SchemaDiff;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -401,6 +402,10 @@ public final class MigrationStep {
          * @param diff the schema diff, may be {@code null}
          * @return this builder for chaining
          */
+        @SuppressFBWarnings(
+                value = "EI_EXPOSE_REP2",
+                justification = "SchemaDiff is immutable; storing it directly is safe."
+        )
         @NotNull
         public Builder schemaDiff(@Nullable final SchemaDiff diff) {
             this.schemaDiff = diff;

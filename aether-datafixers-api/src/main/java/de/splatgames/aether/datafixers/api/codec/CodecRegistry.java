@@ -66,9 +66,9 @@ public interface CodecRegistry {
      * Registers a codec for the given type reference.
      *
      * <p>This method associates a {@link Codec} with a {@link TypeReference}, enabling
-     * later retrieval via {@link #get(TypeReference)} or {@link #require(TypeReference)}.
-     * If a codec is already registered for the given reference, the behavior depends on
-     * the implementation (it may replace the existing codec or throw an exception).</p>
+     * later retrieval via {@link #get(TypeReference)} or {@link #require(TypeReference)}. If a codec is already
+     * registered for the given reference, the behavior depends on the implementation (it may replace the existing codec
+     * or throw an exception).</p>
      *
      * <h4>Example Usage</h4>
      * <pre>{@code
@@ -97,8 +97,8 @@ public interface CodecRegistry {
      * Retrieves a codec by its type reference.
      *
      * <p>This method performs a lookup in the registry and returns the codec associated
-     * with the given type reference, or {@code null} if no codec has been registered for
-     * that reference. For a non-null guarantee, use {@link #require(TypeReference)} instead.</p>
+     * with the given type reference, or {@code null} if no codec has been registered for that reference. For a non-null
+     * guarantee, use {@link #require(TypeReference)} instead.</p>
      *
      * <h4>Example Usage</h4>
      * <pre>{@code
@@ -110,8 +110,8 @@ public interface CodecRegistry {
      * }</pre>
      *
      * @param ref the type reference to look up; must not be {@code null}
-     * @return the codec associated with the given reference, or {@code null} if no codec
-     *         is registered for that reference
+     * @return the codec associated with the given reference, or {@code null} if no codec is registered for that
+     * reference
      * @throws NullPointerException if {@code ref} is {@code null}
      * @see #has(TypeReference)
      * @see #require(TypeReference)
@@ -123,9 +123,8 @@ public interface CodecRegistry {
      * Checks whether a codec is registered for the given type reference.
      *
      * <p>This method provides a way to verify the existence of a codec registration
-     * without actually retrieving the codec. It is more efficient than calling
-     * {@link #get(TypeReference)} and checking for {@code null} if you only need to
-     * test for presence.</p>
+     * without actually retrieving the codec. It is more efficient than calling {@link #get(TypeReference)} and checking
+     * for {@code null} if you only need to test for presence.</p>
      *
      * <h4>Example Usage</h4>
      * <pre>{@code
@@ -139,8 +138,7 @@ public interface CodecRegistry {
      * }</pre>
      *
      * @param ref the type reference to check for registration; must not be {@code null}
-     * @return {@code true} if a codec is registered for the given reference;
-     *         {@code false} otherwise
+     * @return {@code true} if a codec is registered for the given reference; {@code false} otherwise
      * @throws NullPointerException if {@code ref} is {@code null}
      * @see #get(TypeReference)
      * @see #require(TypeReference)
@@ -151,9 +149,8 @@ public interface CodecRegistry {
      * Retrieves a codec by its type reference, throwing an exception if not found.
      *
      * <p>This method is similar to {@link #get(TypeReference)} but guarantees a non-null
-     * return value. If no codec is registered for the given reference, an
-     * {@link IllegalStateException} is thrown. Use this method when the absence of a
-     * codec indicates a programming error or misconfiguration.</p>
+     * return value. If no codec is registered for the given reference, an {@link IllegalStateException} is thrown. Use
+     * this method when the absence of a codec indicates a programming error or misconfiguration.</p>
      *
      * <h4>Example Usage</h4>
      * <pre>{@code
@@ -191,9 +188,9 @@ public interface CodecRegistry {
      * Freezes this registry, making it immutable.
      *
      * <p>After freezing, any attempt to modify the registry (e.g., via
-     * {@link #register(TypeReference, Codec)}) will throw an {@link IllegalStateException}.
-     * This is useful for ensuring thread-safety after the initialization phase is complete,
-     * as an immutable registry can be safely shared across threads without synchronization.</p>
+     * {@link #register(TypeReference, Codec)}) will throw an {@link IllegalStateException}. This is useful for ensuring
+     * thread-safety after the initialization phase is complete, as an immutable registry can be safely shared across
+     * threads without synchronization.</p>
      *
      * <h4>Idempotency</h4>
      * <p>This method is idempotent - calling it multiple times has no additional effect
@@ -228,8 +225,7 @@ public interface CodecRegistry {
      * Returns whether this registry has been frozen and is now immutable.
      *
      * <p>A frozen registry cannot accept new codec registrations. Any call to
-     * {@link #register(TypeReference, Codec)} on a frozen registry will throw an
-     * {@link IllegalStateException}.</p>
+     * {@link #register(TypeReference, Codec)} on a frozen registry will throw an {@link IllegalStateException}.</p>
      *
      * <h4>Example Usage</h4>
      * <pre>{@code
@@ -245,8 +241,8 @@ public interface CodecRegistry {
      * <p>The default implementation returns {@code false}, indicating that the registry
      * is always mutable. Implementations that support freezing should override this method.</p>
      *
-     * @return {@code true} if this registry has been frozen and is immutable;
-     *         {@code false} if it is still mutable and accepts new registrations
+     * @return {@code true} if this registry has been frozen and is immutable; {@code false} if it is still mutable and
+     * accepts new registrations
      * @see #freeze()
      */
     default boolean isFrozen() {

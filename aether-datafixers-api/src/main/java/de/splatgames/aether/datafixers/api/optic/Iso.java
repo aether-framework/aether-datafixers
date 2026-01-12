@@ -478,9 +478,8 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
      * {@inheritDoc}
      *
      * <p>This implementation supports composition with multiple optic types, delegating to the
-     * appropriate specialized compose method based on the runtime type of the provided optic.
-     * An {@link Iso} is the most versatile optic for composition since it implements both
-     * {@link Lens} and {@link Prism}.</p>
+     * appropriate specialized compose method based on the runtime type of the provided optic. An {@link Iso} is the
+     * most versatile optic for composition since it implements both {@link Lens} and {@link Prism}.</p>
      *
      * <h4>Supported Compositions</h4>
      * <ul>

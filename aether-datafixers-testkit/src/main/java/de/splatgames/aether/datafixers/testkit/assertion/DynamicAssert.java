@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.testkit.assertion;
 
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.assertj.core.api.AbstractAssert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -283,6 +284,10 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param expected the expected value
      * @return this assertion for chaining
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Objects.equals() safely handles null values"
+    )
     @NotNull
     public DynamicAssert<T> hasStringField(@NotNull final String key, @NotNull final String expected) {
         this.hasField(key);
@@ -302,6 +307,10 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param expected the expected value
      * @return this assertion for chaining
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Objects.equals() safely handles null values"
+    )
     @NotNull
     public DynamicAssert<T> hasIntField(@NotNull final String key, final int expected) {
         this.hasField(key);
@@ -321,6 +330,10 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param expected the expected value
      * @return this assertion for chaining
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Objects.equals() safely handles null values"
+    )
     @NotNull
     public DynamicAssert<T> hasLongField(@NotNull final String key, final long expected) {
         this.hasField(key);
@@ -341,6 +354,10 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param epsilon  the tolerance
      * @return this assertion for chaining
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Null check via short-circuit evaluation prevents NPE"
+    )
     @NotNull
     public DynamicAssert<T> hasDoubleField(@NotNull final String key, final double expected, final double epsilon) {
         this.hasField(key);
@@ -360,6 +377,10 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param expected the expected value
      * @return this assertion for chaining
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Objects.equals() safely handles null values"
+    )
     @NotNull
     public DynamicAssert<T> hasBooleanField(@NotNull final String key, final boolean expected) {
         this.hasField(key);
@@ -499,7 +520,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
                         dotPath, part, currentPath, this.fieldsOf(current));
             }
             current = current.get(part);
-            if (currentPath.length() > 0) {
+            if (!currentPath.isEmpty()) {
                 currentPath.append(".");
             }
             currentPath.append(part);
@@ -673,11 +694,21 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     }
 
     private String describeActual() {
-        if (this.actual.isMap()) return "map";
-        if (this.actual.isList()) return "list";
-        if (this.actual.isString()) return "string: " + this.actual.asString().orElse("?");
-        if (this.actual.isNumber()) return "number: " + this.actual.asNumber().orElse(null);
-        if (this.actual.isBoolean()) return "boolean: " + this.actual.asBoolean().orElse(null);
+        if (this.actual.isMap()) {
+            return "map";
+        }
+        if (this.actual.isList()) {
+            return "list";
+        }
+        if (this.actual.isString()) {
+            return "string: " + this.actual.asString().orElse("?");
+        }
+        if (this.actual.isNumber()) {
+            return "number: " + this.actual.asNumber().orElse(null);
+        }
+        if (this.actual.isBoolean()) {
+            return "boolean: " + this.actual.asBoolean().orElse(null);
+        }
         return "unknown: " + this.actual.value();
     }
 

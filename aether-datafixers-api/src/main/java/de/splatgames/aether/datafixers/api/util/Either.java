@@ -410,7 +410,6 @@ public sealed interface Either<L, R> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
-         * @param value the left value to store
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Left {
@@ -691,7 +690,6 @@ public sealed interface Either<L, R> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
-         * @param value the right value to store
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Right {

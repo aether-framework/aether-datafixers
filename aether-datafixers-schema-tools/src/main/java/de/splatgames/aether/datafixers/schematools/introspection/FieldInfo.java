@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.schematools.introspection;
 
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.type.Type;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -194,6 +195,10 @@ public final class FieldInfo {
      *
      * @return the field type, never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Type<?> is immutable; returning it directly is safe."
+    )
     @NotNull
     public Type<?> fieldType() {
         return this.fieldType;

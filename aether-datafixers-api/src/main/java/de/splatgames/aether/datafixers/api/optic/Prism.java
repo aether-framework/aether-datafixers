@@ -372,9 +372,9 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      * {@inheritDoc}
      *
      * <p>This implementation delegates to {@link #compose(Prism)} if the provided optic is a
-     * {@link Prism}. For other optic types, an {@link UnsupportedOperationException} is thrown
-     * since prism composition requires the other optic to also be a prism to maintain prism semantics
-     * (partial matching on sum types with construction capability).</p>
+     * {@link Prism}. For other optic types, an {@link UnsupportedOperationException} is thrown since prism composition
+     * requires the other optic to also be a prism to maintain prism semantics (partial matching on sum types with
+     * construction capability).</p>
      *
      * <h4>Supported Compositions</h4>
      * <ul>

@@ -28,10 +28,10 @@ import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
 import de.splatgames.aether.datafixers.spring.AetherDataFixersProperties;
 import de.splatgames.aether.datafixers.spring.config.DataFixerDomainProperties;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -351,6 +351,10 @@ public class DataFixerAutoConfiguration {
      * @return the resolved DataVersion
      * @throws IllegalStateException if version cannot be determined from any source
      */
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Null check for getCurrentVersion() is performed before access on line 363."
+    )
     @NotNull
     private static DataVersion resolveVersion(
             @NotNull final DataFixerBootstrap bootstrap,

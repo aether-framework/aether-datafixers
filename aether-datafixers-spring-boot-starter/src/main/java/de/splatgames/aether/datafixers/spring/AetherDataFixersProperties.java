@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.spring;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.spring.config.DataFixerDomainProperties;
 import de.splatgames.aether.datafixers.spring.config.DynamicOpsFormat;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -235,6 +236,10 @@ public class AetherDataFixersProperties {
      *
      * @return the mutable domain configuration map, never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Spring @ConfigurationProperties requires mutable getters for property binding."
+    )
     @NotNull
     public Map<String, DataFixerDomainProperties> getDomains() {
         return this.domains;
@@ -258,6 +263,10 @@ public class AetherDataFixersProperties {
      *
      * @return the actuator properties, never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Spring @ConfigurationProperties requires mutable getters for property binding."
+    )
     @NotNull
     public ActuatorProperties getActuator() {
         return this.actuator;
@@ -281,6 +290,10 @@ public class AetherDataFixersProperties {
      *
      * @return the metrics properties, never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Spring @ConfigurationProperties requires mutable getters for property binding."
+    )
     @NotNull
     public MetricsProperties getMetrics() {
         return this.metrics;

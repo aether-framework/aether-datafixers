@@ -394,9 +394,9 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      * {@inheritDoc}
      *
      * <p>This implementation delegates to {@link #compose(Traversal)} if the provided optic is a
-     * {@link Traversal}. For other optic types, an {@link UnsupportedOperationException} is thrown
-     * since traversal composition requires the other optic to also be a traversal to maintain traversal semantics
-     * (zero-to-many focus with bulk modification capability).</p>
+     * {@link Traversal}. For other optic types, an {@link UnsupportedOperationException} is thrown since traversal
+     * composition requires the other optic to also be a traversal to maintain traversal semantics (zero-to-many focus
+     * with bulk modification capability).</p>
      *
      * <h4>Supported Compositions</h4>
      * <ul>
@@ -432,9 +432,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
      * Functional interface for applying a modification function to all focused elements.
      *
      * <p>This interface is used by {@link #of(String, Function, ModifyFunction)} to define
-     * how a modifier should be applied to all elements of a traversal. Implementations receive
-     * the source structure and a modifier function, and must return a new source with all
-     * focused elements transformed.</p>
+     * how a modifier should be applied to all elements of a traversal. Implementations receive the source structure and
+     * a modifier function, and must return a new source with all focused elements transformed.</p>
      *
      * <h2>Contract</h2>
      * <p>Implementations must:</p>

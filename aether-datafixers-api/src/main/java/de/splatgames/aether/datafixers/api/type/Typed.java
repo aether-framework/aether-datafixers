@@ -30,6 +30,7 @@ import de.splatgames.aether.datafixers.api.optic.Finder;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Either;
 import de.splatgames.aether.datafixers.api.util.Pair;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -110,6 +111,10 @@ public final class Typed<A> {
      * @param value the actual value, must not be {@code null}
      * @throws NullPointerException if {@code type} or {@code value} is {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "Type instances are immutable and thread-safe by contract; storing the reference is intended."
+    )
     public Typed(@NotNull final Type<A> type,
                  @NotNull final A value) {
         Preconditions.checkNotNull(type, "type must not be null");
@@ -142,6 +147,10 @@ public final class Typed<A> {
      * @return the type of this value, never {@code null}
      */
     @NotNull
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "Type instances are immutable and thread-safe by contract; returning the reference is intended."
+    )
     public Type<A> type() {
         return this.type;
     }
@@ -526,9 +535,18 @@ public final class Typed<A> {
             if (childTypes.size() == 2) {
                 final Type<?> firstType = childTypes.get(0);
                 final Type<?> secondType = childTypes.get(1);
+
+                final Object first = pair.first();
+                final Object second = pair.second();
+
+                if (first == null || second == null) {
+                    final String which = first == null ? "first" : "second";
+                    return DataResult.error("Cannot extract children for pair: component (" + which + ") is null");
+                }
+
                 return DataResult.success(List.of(
-                        new Typed<>((Type<Object>) firstType, pair.first()),
-                        new Typed<>((Type<Object>) secondType, pair.second())
+                        new Typed<>((Type<Object>) firstType, first),
+                        new Typed<>((Type<Object>) secondType, second)
                 ));
             }
         }
@@ -539,8 +557,8 @@ public final class Typed<A> {
                 final Type<?> leftType = childTypes.get(0);
                 final Type<?> rightType = childTypes.get(1);
                 return either.fold(
-                        left -> DataResult.success(List.<Typed<?>>of(new Typed<>((Type<Object>) leftType, left))),
-                        right -> DataResult.success(List.<Typed<?>>of(new Typed<>((Type<Object>) rightType, right)))
+                        left -> DataResult.success(List.of(new Typed<>((Type<Object>) leftType, left))),
+                        right -> DataResult.success(List.of(new Typed<>((Type<Object>) rightType, right)))
                 );
             }
         }

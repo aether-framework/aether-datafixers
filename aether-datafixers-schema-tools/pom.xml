@@ -33,6 +33,12 @@
             <artifactId>annotations</artifactId>
         </dependency>
 
+        <!-- SpotBugs annotations -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+        </dependency>
+
         <!-- Guava for utilities -->
         <dependency>
             <groupId>com.google.guava</groupId>

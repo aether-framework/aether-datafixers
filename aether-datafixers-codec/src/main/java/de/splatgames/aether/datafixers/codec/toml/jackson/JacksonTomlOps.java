@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -287,6 +288,10 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * @param mapper the TOML mapper to use for node factory access and optional direct
      *               serialization; must not be {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "TomlMapper is intentionally stored by reference to provide direct mapper access via mapper() method."
+    )
     public JacksonTomlOps(@NotNull final TomlMapper mapper) {
         Preconditions.checkNotNull(mapper, "mapper must not be null");
         this.mapper = mapper;
@@ -319,6 +324,10 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *
      * @return the TOML mapper used by this instance; never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "TomlMapper exposure is intentional API design for serialization and parsing operations."
+    )
     public TomlMapper mapper() {
         return this.mapper;
     }

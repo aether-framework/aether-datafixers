@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!--
+        OWASP Dependency-Check Suppressions for Aether Datafixers
+
+        This file contains suppressed vulnerabilities that have been reviewed and
+        determined to be false positives or not applicable to our usage.
+
+        Guidelines:
+        - Only suppress after careful review
+        - Document: CVE, reason, reviewer, review date
+        - Re-review suppressions quarterly
+        - Remove when dependencies are updated
+
+        Suppression examples:
+
+        By CVE:
+        <suppress>
+            <notes>False positive: vulnerability only affects server-side usage</notes>
+            <cve>CVE-2024-12345</cve>
+        </suppress>
+
+        By GAV (GroupId:ArtifactId:Version):
+        <suppress>
+            <notes>Test-only dependency, not in production</notes>
+            <gav regex="true">^org\.junit\..*:.*:.*$</gav>
+            <cve>CVE-2024-12345</cve>
+        </suppress>
+
+        By file path:
+        <suppress>
+            <notes>Example library not shipped</notes>
+            <filePath regex="true">.*examples.*\.jar</filePath>
+            <vulnerabilityName>CVE-2024-12345</vulnerabilityName>
+        </suppress>
+    -->
+
+    <!-- Add actual suppressions below as needed -->
+
+</suppressions>

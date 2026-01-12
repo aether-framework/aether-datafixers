@@ -63,8 +63,8 @@ public class TaggedDynamic {
      * The type reference identifying the kind of data contained in this tagged dynamic.
      *
      * <p>This reference is used by the data fixing system to determine which
-     * transformation rules should be applied to the data. It serves as a discriminator
-     * that routes the data through the appropriate fixes during migration.</p>
+     * transformation rules should be applied to the data. It serves as a discriminator that routes the data through the
+     * appropriate fixes during migration.</p>
      *
      * <p>Common type references include:</p>
      * <ul>
@@ -81,9 +81,8 @@ public class TaggedDynamic {
      * The dynamic value containing the actual data to be processed.
      *
      * <p>This value holds the raw data in a format-agnostic representation
-     * that can be manipulated using the {@link Dynamic} API. The data can be
-     * in any format (JSON, YAML, NBT, etc.) as long as an appropriate
-     * {@link DynamicOps} implementation is provided.</p>
+     * that can be manipulated using the {@link Dynamic} API. The data can be in any format (JSON, YAML, NBT, etc.) as
+     * long as an appropriate {@link DynamicOps} implementation is provided.</p>
      */
     private final Dynamic<?> value;
 
@@ -126,9 +125,8 @@ public class TaggedDynamic {
      * Returns the type reference for this tagged dynamic.
      *
      * <p>The type reference identifies the kind of data contained in the
-     * dynamic value, enabling type-specific processing and transformations.
-     * This is used by the data fixing system to route the data through
-     * appropriate migration fixes.</p>
+     * dynamic value, enabling type-specific processing and transformations. This is used by the data fixing system to
+     * route the data through appropriate migration fixes.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -156,9 +154,8 @@ public class TaggedDynamic {
      * Returns the dynamic value containing the actual data.
      *
      * <p>The dynamic value provides a format-agnostic API for reading and
-     * manipulating the data. Through the {@link Dynamic} class, you can access
-     * fields, read primitives, and perform transformations without knowing
-     * the underlying serialization format.</p>
+     * manipulating the data. Through the {@link Dynamic} class, you can access fields, read primitives, and perform
+     * transformations without knowing the underlying serialization format.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code

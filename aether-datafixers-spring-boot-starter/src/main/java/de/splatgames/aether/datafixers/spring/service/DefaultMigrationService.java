@@ -29,6 +29,7 @@ import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry;
 import de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -103,6 +104,7 @@ import java.util.concurrent.ForkJoinPool;
  * @see MigrationMetrics
  * @since 0.4.0
  */
+@SuppressWarnings("checkstyle:JavadocType")
 public class DefaultMigrationService implements MigrationService {
 
     /**
@@ -296,7 +298,12 @@ public class DefaultMigrationService implements MigrationService {
 
         /**
          * Optional custom DynamicOps implementation.
+         * Reserved for future use when custom ops support is implemented.
          */
+        @SuppressFBWarnings(
+                value = "URF_UNREAD_FIELD",
+                justification = "Field is part of the public API (withOps method); implementation pending."
+        )
         @Nullable
         private DynamicOps<?> ops;
 

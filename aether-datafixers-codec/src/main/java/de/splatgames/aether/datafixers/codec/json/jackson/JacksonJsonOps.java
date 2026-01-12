@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.node.ShortNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -317,6 +318,10 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *
      * @param mapper the object mapper to use for JSON operations; must not be {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "ObjectMapper is intentionally stored by reference to provide direct mapper access via mapper() method."
+    )
     public JacksonJsonOps(@NotNull final ObjectMapper mapper) {
         Preconditions.checkNotNull(mapper, "mapper must not be null");
         this.mapper = mapper;
@@ -356,6 +361,10 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *
      * @return the object mapper used by this instance; never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "ObjectMapper exposure is intentional API design for serialization and parsing operations."
+    )
     public ObjectMapper mapper() {
         return this.mapper;
     }
