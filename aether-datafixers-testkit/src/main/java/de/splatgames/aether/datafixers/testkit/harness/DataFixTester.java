@@ -29,6 +29,7 @@ import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.testkit.context.AssertingContext;
 import de.splatgames.aether.datafixers.testkit.context.RecordingContext;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -320,6 +321,10 @@ public final class DataFixTester<T> {
          *
          * @return the RecordingContext, or null if not using recording
          */
+        @SuppressFBWarnings(
+                value = "EI_EXPOSE_REP",
+                justification = "Context exposure is intentional API design for test verification."
+        )
         @Nullable
         public RecordingContext context() {
             return this.context;
