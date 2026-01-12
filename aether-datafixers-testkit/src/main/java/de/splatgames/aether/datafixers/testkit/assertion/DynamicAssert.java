@@ -499,7 +499,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
                         dotPath, part, currentPath, this.fieldsOf(current));
             }
             current = current.get(part);
-            if (currentPath.length() > 0) {
+            if (!currentPath.isEmpty()) {
                 currentPath.append(".");
             }
             currentPath.append(part);
@@ -673,11 +673,21 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     }
 
     private String describeActual() {
-        if (this.actual.isMap()) return "map";
-        if (this.actual.isList()) return "list";
-        if (this.actual.isString()) return "string: " + this.actual.asString().orElse("?");
-        if (this.actual.isNumber()) return "number: " + this.actual.asNumber().orElse(null);
-        if (this.actual.isBoolean()) return "boolean: " + this.actual.asBoolean().orElse(null);
+        if (this.actual.isMap()) {
+            return "map";
+        }
+        if (this.actual.isList()) {
+            return "list";
+        }
+        if (this.actual.isString()) {
+            return "string: " + this.actual.asString().orElse("?");
+        }
+        if (this.actual.isNumber()) {
+            return "number: " + this.actual.asNumber().orElse(null);
+        }
+        if (this.actual.isBoolean()) {
+            return "boolean: " + this.actual.asBoolean().orElse(null);
+        }
         return "unknown: " + this.actual.value();
     }
 

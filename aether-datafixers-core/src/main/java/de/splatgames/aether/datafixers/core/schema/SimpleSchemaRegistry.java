@@ -110,7 +110,9 @@ public final class SimpleSchemaRegistry implements SchemaRegistry {
         Preconditions.checkNotNull(version, "version must not be null");
 
         final Schema schema = this.get(version);
-        Preconditions.checkState(schema != null, "No schema found for version: %s", version);
+        if (schema == null) {
+            throw new IllegalStateException("No schema found for version: " + version);
+        }
         return schema;
     }
 

@@ -230,8 +230,7 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
      * @throws NullPointerException if {@code source} or {@code value} is {@code null}
      */
     @NotNull
-    T set(@NotNull final S source,
-          @NotNull final B value);
+    T set(@NotNull final S source, @NotNull final B value);
 
     /**
      * Transforms the focused value using the given function.

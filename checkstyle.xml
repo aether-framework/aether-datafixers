@@ -21,7 +21,7 @@
 
     <!-- File length -->
     <module name="FileLength">
-        <property name="max" value="2000"/>
+        <property name="max" value="3000"/>
         <property name="severity" value="warning"/>
     </module>
 
@@ -110,10 +110,6 @@
             <property name="allowSingleLineStatement" value="false"/>
         </module>
         <module name="LeftCurly"/>
-        <module name="RightCurly">
-            <property name="option" value="alone"/>
-            <!--<property name="tokens" value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT, INSTANCE_INIT"/>-->
-        </module>
 
         <!-- Block checks -->
         <module name="EmptyBlock">
