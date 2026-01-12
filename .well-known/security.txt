@@ -3,7 +3,7 @@
 
 Contact: mailto:security@splatgames.de
 Contact: https://github.com/aether-framework/aether-datafixers/security/advisories/new
-Expires: 2027-01-01T00:00:00.000Z
+Expires: 2035-01-01T00:00:00.000Z
 Preferred-Languages: en, de
 Canonical: https://raw.githubusercontent.com/aether-framework/aether-datafixers/main/.well-known/security.txt
 Policy: https://github.com/aether-framework/aether-datafixers/blob/main/SECURITY.md
