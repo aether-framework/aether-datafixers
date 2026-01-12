@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -316,6 +317,10 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
      * @param mapper the YAML mapper to use for node creation and serialization;
      *               must not be {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "YAMLMapper is intentionally stored by reference to provide direct mapper access via mapper() method."
+    )
     public JacksonYamlOps(@NotNull final YAMLMapper mapper) {
         Preconditions.checkNotNull(mapper, "mapper must not be null");
         this.mapper = mapper;
@@ -355,6 +360,10 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
      *
      * @return the YAML mapper used by this instance; never {@code null}
      */
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP",
+            justification = "YAMLMapper exposure is intentional API design for serialization and parsing operations."
+    )
     public YAMLMapper mapper() {
         return this.mapper;
     }

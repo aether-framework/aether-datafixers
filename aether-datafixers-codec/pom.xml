@@ -21,6 +21,12 @@
             <artifactId>aether-datafixers-api</artifactId>
         </dependency>
 
+        <!-- SpotBugs annotations for suppressing false positives -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+        </dependency>
+
         <!-- Gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
