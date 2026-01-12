@@ -27,6 +27,9 @@
         <maven.compiler.release>17</maven.compiler.release>
         <gpg.useAgent>true</gpg.useAgent>
 
+        <!-- Skip integration tests by default -->
+        <skipITs>true</skipITs>
+
         <!-- definition of versions for dependencies -->
         <jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
         <gson.version>2.13.2</gson.version>
@@ -369,6 +372,14 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Integration Tests Profile: Run E2E and IT tests -->
+        <profile>
+            <id>it</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
         </profile>
 
         <!-- QA Profile: Code Quality and Security Analysis -->

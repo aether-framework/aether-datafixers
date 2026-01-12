@@ -159,10 +159,12 @@
             </plugin>
 
             <!-- Integration tests (naming: *IT.java, *E2E.java) -->
+            <!-- Run with: mvn verify -Pit -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
+                    <skipITs>${skipITs}</skipITs>
                     <includes>
                         <include>**/*IT.java</include>
                         <include>**/*E2E.java</include>
