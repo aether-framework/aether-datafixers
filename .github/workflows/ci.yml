@@ -83,8 +83,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Compile for analysis
-        run: mvn -B clean compile -DskipTests
+      - name: Install artifacts for analysis
+        run: mvn -B -Ddependency-check.skip=true clean install -Pqa -DskipTests
 
       - name: Run SpotBugs analysis
         run: mvn -B spotbugs:check -Pqa -Ddependency-check.skip=true
