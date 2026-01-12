@@ -1,0 +1,131 @@
+name: 🐞 Bug Report
+description: Report a reproducible bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! Please provide enough details so we can reproduce and fix the issue quickly.
+
+  - type: input
+    id: affected_version
+    attributes:
+      label: Affected Version
+      description: Which version(s) are affected?
+      placeholder: e.g. 0.5.0 (or main @ <commit>)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected_module
+    attributes:
+      label: Affected Module
+      description: Which module is affected?
+      options:
+        - api
+        - core
+        - codec
+        - testkit
+        - cli
+        - schema-tools
+        - spring-boot-starter
+        - other / unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Short summary of what is wrong.
+      placeholder: One or two sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro_steps
+    attributes:
+      label: Steps to Reproduce
+      description: Provide a minimal, complete, reproducible set of steps.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: minimal_example
+    attributes:
+      label: Minimal Reproducible Example (code/config)
+      description: If possible, paste a small snippet that reproduces the issue.
+      render: java
+    validations:
+      required: false
+
+  - type: textarea
+    id: stacktrace
+    attributes:
+      label: Logs / Stacktrace
+      description: Paste relevant logs or the full stacktrace.
+      render: shell
+    validations:
+      required: false
+
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Regression?
+      description: Did this work in a previous version?
+      options:
+        - "unknown"
+        - "yes"
+        - "no"
+    validations:
+      required: true
+
+  - type: input
+    id: last_working_version
+    attributes:
+      label: Last Known Working Version (if regression)
+      placeholder: e.g. 0.4.0
+    validations:
+      required: false
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Java version, OS, build tool, etc.
+      placeholder: e.g. Java 21, Maven 3.9.x, Windows 11 / Ubuntu 24.04
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues to avoid duplicates.
+          required: true
+        - label: I can reproduce this reliably.
+          required: false
+        - label: I included a minimal example or clear repro steps.
+          required: false

@@ -1,0 +1,39 @@
+name: Retarget Dependabot PRs to develop
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  retarget:
+    if: >
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.state == 'open'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Change base branch to develop
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+
+            // Only retarget if it is still targeting main
+            if (pr.base.ref !== 'main') {
+              core.info(`PR base is already '${pr.base.ref}', nothing to do.`);
+              return;
+            }
+
+            core.info(`Retargeting PR #${pr.number} from '${pr.base.ref}' to 'develop'...`);
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              base: 'develop',
+            });
+
+            core.info(`Done. PR #${pr.number} now targets 'develop'.`);

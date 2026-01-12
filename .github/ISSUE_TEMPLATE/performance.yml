@@ -1,0 +1,72 @@
+name: ⚡ Performance
+description: Report performance regressions, hotspots, or high resource usage
+title: "[Performance]: "
+labels: ["performance", "needs-triage"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Affected Version
+      placeholder: e.g. 0.5.0 (or main @ <commit>)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - regression (slower than before)
+        - slow operation (always slow)
+        - memory usage / allocations
+        - cpu usage
+        - startup time
+    validations:
+      required: true
+
+  - type: textarea
+    id: workload
+    attributes:
+      label: Workload / Scenario
+      description: Describe the operation, input sizes, and typical usage pattern.
+      placeholder: Include data sizes (e.g. 10k entries), schema complexity, number of fixers, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Performance
+      description: What performance do you expect (baseline)?
+      placeholder: e.g. should complete under X ms for Y input size
+    validations:
+      required: false
+
+  - type: textarea
+    id: measured
+    attributes:
+      label: Measured Performance
+      description: Provide numbers and how you measured them.
+      placeholder: |
+        - Before: ...
+        - After: ...
+        - Measurement method: JMH / integration benchmark / stopwatch
+        - Hardware: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: profiling
+    attributes:
+      label: Profiling Data (optional)
+      description: Attach or paste relevant profiler output (JFR, async-profiler, allocation trace).
+    validations:
+      required: false
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: e.g. Java 21, OS, CPU model, RAM, Maven/Gradle
+    validations:
+      required: false

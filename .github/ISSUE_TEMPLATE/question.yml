@@ -1,0 +1,46 @@
+name: ❓ Question
+description: Ask a usage question (not a bug report)
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What are you trying to accomplish?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Relevant details (versions, module, configuration, snippet).
+      placeholder: Paste minimal code/config if relevant.
+      render: java
+    validations:
+      required: false
+
+  - type: textarea
+    id: what_tried
+    attributes:
+      label: What did you try?
+      description: What approaches did you already attempt?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Related Module
+      options:
+        - api
+        - core
+        - codec
+        - testkit
+        - cli
+        - schema-tools
+        - spring-boot-starter
+        - other / unknown
+    validations:
+      required: false

@@ -1,0 +1,40 @@
+title: "Show & Tell"
+labels: ["community"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Show what you built with this project!
+        Share links, screenshots, benchmarks, or lessons learned.
+
+  - type: input
+    id: project
+    attributes:
+      label: Project name
+      placeholder: e.g. MyGameSaveMigrator
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Link (optional)
+      placeholder: Repository / website / blog post
+    validations:
+      required: false
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What did you build?
+      placeholder: Describe the project and how this library is used.
+    validations:
+      required: true
+
+  - type: textarea
+    id: learnings
+    attributes:
+      label: Learnings / Feedback
+      description: What worked well? What should be improved?
+    validations:
+      required: false

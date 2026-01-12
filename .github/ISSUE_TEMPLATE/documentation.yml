@@ -1,0 +1,53 @@
+name: 📚 Documentation
+description: Report missing, unclear, or incorrect documentation
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Where is the docs issue? (URL, file path, section)
+      placeholder: e.g. docs/codec.md#json or README.md#usage
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - typo / wording
+        - unclear explanation
+        - missing section
+        - incorrect/outdated information
+        - broken link
+        - example does not work
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Content / Problem
+      description: What exactly is wrong right now?
+      placeholder: Paste the relevant snippet or describe the issue precisely.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Suggested Change
+      description: What should it say/do instead?
+      placeholder: Proposed wording, fixed link, corrected example, etc.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context (optional)
+      description: Why is it confusing? Who is the target audience?
+    validations:
+      required: false

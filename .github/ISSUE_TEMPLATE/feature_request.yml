@@ -1,0 +1,93 @@
+name: ✨ Feature Request
+description: Suggest an idea or improvement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the problem first, then the proposed solution.
+        Good feature requests include use-cases, constraints, and API impact.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What are you trying to achieve? What is painful today?
+      placeholder: Describe the user story and why it matters.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you want to see.
+      placeholder: Describe expected behavior and how it should be used.
+    validations:
+      required: true
+
+  - type: textarea
+    id: api_design
+    attributes:
+      label: API / Design Sketch (optional)
+      description: If you have an idea for public API shape, describe it here.
+      render: java
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives / Workarounds
+      description: What else did you consider? Any current workaround?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: breaking_change
+    attributes:
+      label: Would this be a breaking change?
+      options:
+        - "unknown"
+        - "no"
+        - "yes"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority (reporter estimate)
+      options:
+        - low
+        - medium
+        - high
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Related Module
+      options:
+        - api
+        - core
+        - codec
+        - testkit
+        - cli
+        - schema-tools
+        - spring-boot-starter
+        - other / unknown
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked existing issues and discussions for duplicates.
+          required: true
+        - label: This request is within the project's scope (not a support question).
+          required: false
