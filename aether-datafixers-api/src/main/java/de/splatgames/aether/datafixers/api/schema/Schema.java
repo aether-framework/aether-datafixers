@@ -183,7 +183,7 @@ public class Schema {
         // Inherit types from parent if present
         if (this.parent != null) {
             // Copy types from parent
-            final TypeRegistry parentTypes = this.parent.types();
+            this.parent.types();
             // Parent types are already registered in parent's registry
             // For now, we don't copy - subclass must re-register all types it needs
         }

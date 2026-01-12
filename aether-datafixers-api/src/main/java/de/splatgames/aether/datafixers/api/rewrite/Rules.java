@@ -1614,7 +1614,7 @@ public final class Rules {
         Preconditions.checkNotNull(targetPath, "targetPath must not be null");
 
         final Finder<?> sourceFinder = parsePath(sourcePath);
-        final Finder<?> targetFinder = parsePath(targetPath);
+        parsePath(targetPath); // Parse and cache target path eagerly to validate the syntax early.
 
         return dynamicTransform("moveField(" + sourcePath + " -> " + targetPath + ")", ops, dynamic -> {
             final Dynamic<?> value = sourceFinder.get(dynamic);

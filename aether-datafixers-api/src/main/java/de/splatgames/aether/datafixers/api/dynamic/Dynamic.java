@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.dynamic;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
@@ -85,6 +86,10 @@ import java.util.stream.Stream;
  * @see TaggedDynamic
  * @since 0.1.0
  */
+@SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP"},
+        justification = "DynamicOps is a stateless strategy object that is intentionally stored and exposed as part of Dynamic's public API."
+)
 public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
 
     /**

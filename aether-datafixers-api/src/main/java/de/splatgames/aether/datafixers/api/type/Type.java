@@ -31,6 +31,7 @@ import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Either;
 import de.splatgames.aether.datafixers.api.util.Pair;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1078,6 +1079,10 @@ public interface Type<A> {
          *
          * @return the type of the field's value, never {@code null}
          */
+        @SuppressFBWarnings(
+                value = "EI_EXPOSE_REP",
+                justification = "Type instances are immutable descriptors intended to be shared. Exposing the inner type is part of the API contract."
+        )
         public Type<A> fieldType() {
             return this.fieldType;
         }

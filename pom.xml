@@ -34,6 +34,7 @@
         <junit.jupiter.version>5.13.4</junit.jupiter.version>
         <assertj.version>3.27.6</assertj.version>
         <slf4j.version>2.0.17</slf4j.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
 
         <!-- definition of versions for plugins -->
         <plugin.compiler.version>3.11.0</plugin.compiler.version>
@@ -199,6 +200,13 @@
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <!-- SpotBugs Annotations -->
+            <dependency>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>${spotbugs.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

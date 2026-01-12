@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.api.rewrite;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -79,6 +80,10 @@ import java.util.function.Function;
 public final class BatchTransform<T> {
 
     private final List<FieldOperation<T>> operations = new ArrayList<>();
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "DynamicOps is a stateless strategy object stored for future extensions of this builder; exposing/copying is neither required nor meaningful."
+    )
     private final DynamicOps<T> ops;
 
     /**
@@ -301,6 +306,8 @@ public final class BatchTransform<T> {
          *
          * <p>Moves the value from the {@code from} field to the {@code to} field.
          * Returns the dynamic unchanged if the source field doesn't exist.</p>
+         * @param dynamic the dynamic value to transform, must not be {@code null}
+         * @return the transformed dynamic value, never {@code null}
          */
         @Override
         @NotNull
@@ -329,6 +336,8 @@ public final class BatchTransform<T> {
          * {@inheritDoc}
          *
          * <p>Removes the specified field from the dynamic.</p>
+         * @param dynamic the dynamic value to transform, must not be {@code null}
+         * @return the transformed dynamic value, never {@code null}
          */
         @Override
         @NotNull
@@ -355,6 +364,8 @@ public final class BatchTransform<T> {
          * {@inheritDoc}
          *
          * <p>Sets the field to the value computed by the supplier function.</p>
+         * @param dynamic the dynamic value to transform, must not be {@code null}
+         * @return the transformed dynamic value, never {@code null}
          */
         @Override
         @NotNull
@@ -383,6 +394,8 @@ public final class BatchTransform<T> {
          *
          * <p>Transforms the field value using the transformation function.
          * Returns the dynamic unchanged if the field doesn't exist.</p>
+         * @param dynamic the dynamic value to transform, must not be {@code null}
+         * @return the transformed dynamic value, never {@code null}
          */
         @Override
         @NotNull
@@ -415,6 +428,8 @@ public final class BatchTransform<T> {
          *
          * <p>Adds the field with the supplied value only if the field doesn't exist.
          * Returns the dynamic unchanged if the field already has a value.</p>
+         * @param dynamic the dynamic value to transform, must not be {@code null}
+         * @return the transformed dynamic value, never {@code null}
          */
         @Override
         @NotNull
