@@ -65,6 +65,7 @@ jobs:
   integration-tests:
     name: "Integration & E2E Tests (Java ${{ matrix.java }})"
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     strategy:
       fail-fast: false
       matrix:
