@@ -297,13 +297,9 @@ public class DefaultMigrationService implements MigrationService {
         private String domain = DataFixerRegistry.DEFAULT_DOMAIN;
 
         /**
-         * Optional custom DynamicOps implementation.
-         * Reserved for future use when custom ops support is implemented.
+         * Optional custom DynamicOps implementation for format conversion.
+         * When set, the input data will be converted to this format before migration.
          */
-        @SuppressFBWarnings(
-                value = "URF_UNREAD_FIELD",
-                justification = "Field is part of the public API (withOps method); implementation pending."
-        )
         @Nullable
         private DynamicOps<?> ops;
 
@@ -395,6 +391,7 @@ public class DefaultMigrationService implements MigrationService {
          *   <li>Validates the builder configuration</li>
          *   <li>Resolves the DataFixer from the registry</li>
          *   <li>Resolves the target version if "toLatest" was specified</li>
+         *   <li>Converts the input data to the specified DynamicOps format (if configured)</li>
          *   <li>Executes the migration with timing</li>
          *   <li>Records metrics if available</li>
          *   <li>Returns a success or failure result</li>
@@ -422,7 +419,10 @@ public class DefaultMigrationService implements MigrationService {
             final Instant start = Instant.now();
 
             try {
-                final TaggedDynamic result = fixer.update(this.data, from, to);
+                // Convert to target format if custom ops are specified
+                final TaggedDynamic inputData = convertToTargetOps(this.data);
+
+                final TaggedDynamic result = fixer.update(inputData, from, to);
                 final Duration duration = Duration.between(start, Instant.now());
 
                 LOG.debug("Migration completed successfully in {}ms", duration.toMillis());
@@ -449,6 +449,31 @@ public class DefaultMigrationService implements MigrationService {
 
                 return MigrationResult.failure(from, to, this.domain, duration, e);
             }
+        }
+
+        /**
+         * Converts the input data to the target DynamicOps format if custom ops are specified.
+         *
+         * <p>If no custom ops are configured, the original data is returned unchanged.
+         * Otherwise, the data's Dynamic value is converted to the new format using
+         * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic#convert(DynamicOps)}.</p>
+         *
+         * @param input the input TaggedDynamic to potentially convert
+         * @return the converted TaggedDynamic, or the original if no conversion is needed
+         */
+        @NotNull
+        private TaggedDynamic convertToTargetOps(@NotNull final TaggedDynamic input) {
+            if (this.ops == null) {
+                return input;
+            }
+
+            @SuppressWarnings("unchecked")
+            final DynamicOps<Object> targetOps = (DynamicOps<Object>) this.ops;
+
+            final de.splatgames.aether.datafixers.api.dynamic.Dynamic<?> converted =
+                    input.value().convert(targetOps);
+
+            return new TaggedDynamic(input.type(), converted);
         }
 
         /**

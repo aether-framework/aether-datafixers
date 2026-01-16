@@ -29,7 +29,13 @@ import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
+import de.splatgames.aether.datafixers.schematools.analysis.CoverageGap;
+import de.splatgames.aether.datafixers.schematools.analysis.FixCoverage;
+import de.splatgames.aether.datafixers.schematools.analysis.MigrationAnalyzer;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Fluent API for validating schemas and schema registries.
@@ -365,20 +371,84 @@ public final class SchemaValidator {
     /**
      * Validates that all type changes between schema versions have corresponding DataFixes.
      *
-     * <p>This method uses the {@link de.splatgames.aether.datafixers.schematools.analysis.MigrationAnalyzer}
-     * to analyze the migration path and identify any coverage gaps where types changed
-     * without a DataFix to handle the migration.</p>
-     *
-     * <p><strong>Note:</strong> This is currently a placeholder implementation.
-     * Full integration with MigrationAnalyzer is pending.</p>
+     * <p>This method uses the {@link MigrationAnalyzer} to analyze the migration path
+     * and identify any coverage gaps where types changed without a DataFix to handle
+     * the migration.</p>
      *
      * @return validation result containing coverage gap issues, never {@code null}
      */
     @NotNull
     private ValidationResult validateFixCoverageInternal() {
-        // This will be fully implemented when MigrationAnalyzer is complete
-        // For now, return empty to allow the API to compile and work
-        // The actual coverage analysis requires MigrationAnalyzer which will be created next
-        return ValidationResult.empty();
+        // Get version range from the registry
+        final List<Schema> schemas = this.registry.stream().toList();
+        if (schemas.size() < 2) {
+            // Not enough schemas to analyze coverage
+            return ValidationResult.empty();
+        }
+
+        // Determine version range
+        final int minVersion = schemas.stream()
+                .map(s -> s.version().getVersion())
+                .min(Comparator.naturalOrder())
+                .orElse(0);
+        final int maxVersion = schemas.stream()
+                .map(s -> s.version().getVersion())
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+
+        if (minVersion == maxVersion) {
+            return ValidationResult.empty();
+        }
+
+        // Use MigrationAnalyzer to analyze coverage
+        final MigrationAnalyzer analyzer = MigrationAnalyzer.forRegistries(
+                this.registry,
+                this.fixerBuilder.getFixRegistry()
+        );
+
+        final FixCoverage coverage = analyzer
+                .from(new DataVersion(minVersion))
+                .to(new DataVersion(maxVersion))
+                .includeFieldLevel(true)
+                .analyzeCoverage();
+
+        if (coverage.isFullyCovered()) {
+            return ValidationResult.empty();
+        }
+
+        // Convert coverage gaps to validation issues
+        final ValidationResult.Builder resultBuilder = ValidationResult.builder();
+
+        for (final CoverageGap gap : coverage.gaps()) {
+            final String location = String.format(
+                    "v%d -> v%d",
+                    gap.sourceVersion().getVersion(),
+                    gap.targetVersion().getVersion()
+            );
+
+            final String message = gap.fieldName()
+                    .map(field -> String.format(
+                            "Missing DataFix for type '%s' field '%s': %s",
+                            gap.type().getId(),
+                            field,
+                            gap.reason().description()
+                    ))
+                    .orElseGet(() -> String.format(
+                            "Missing DataFix for type '%s': %s",
+                            gap.type().getId(),
+                            gap.reason().description()
+                    ));
+
+            resultBuilder.add(
+                    ValidationIssue.warning("COVERAGE_MISSING_FIX", message)
+                            .at(location)
+                            .withContext("type", gap.type().getId())
+                            .withContext("reason", gap.reason().name())
+                            .withContext("sourceVersion", gap.sourceVersion().getVersion())
+                            .withContext("targetVersion", gap.targetVersion().getVersion())
+            );
+        }
+
+        return resultBuilder.build();
     }
 }
