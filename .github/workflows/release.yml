@@ -124,6 +124,8 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: Deploy to Maven Central
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B clean deploy -Prelease -DskipTests -Dgpg.useAgent=false
 
   sbom:
