@@ -22,18 +22,18 @@ cd aether-datafixers
 mvn clean install
 
 # The fat JAR is located at:
-# aether-datafixers-cli/target/aether-datafixers-cli-0.4.0-jar-with-dependencies.jar
+# aether-datafixers-cli/target/aether-datafixers-cli-0.5.0-jar-with-dependencies.jar
 ```
 
 ### Verify Installation
 
 ```bash
-java -jar aether-datafixers-cli/target/aether-datafixers-cli-0.4.0-jar-with-dependencies.jar --version
+java -jar aether-datafixers-cli/target/aether-datafixers-cli-0.5.0-jar-with-dependencies.jar --version
 ```
 
 Expected output:
 ```
-Aether Datafixers CLI 0.4.0
+Aether Datafixers CLI 0.5.0
 ```
 
 ---
@@ -45,7 +45,7 @@ Aether Datafixers CLI 0.4.0
 Run the CLI directly with `java -jar`:
 
 ```bash
-java -jar aether-datafixers-cli-0.4.0-jar-with-dependencies.jar migrate \
+java -jar aether-datafixers-cli-0.5.0-jar-with-dependencies.jar migrate \
     --to 200 \
     --type player \
     --bootstrap com.example.MyBootstrap \
@@ -57,7 +57,7 @@ java -jar aether-datafixers-cli-0.4.0-jar-with-dependencies.jar migrate \
 Add to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
 
 ```bash
-alias aether-cli='java -jar /path/to/aether-datafixers-cli-0.4.0-jar-with-dependencies.jar'
+alias aether-cli='java -jar /path/to/aether-datafixers-cli-0.5.0-jar-with-dependencies.jar'
 ```
 
 Then use:
@@ -72,7 +72,7 @@ Create `aether-cli.bat`:
 
 ```batch
 @echo off
-java -jar "C:\path\to\aether-datafixers-cli-0.4.0-jar-with-dependencies.jar" %*
+java -jar "C:\path\to\aether-datafixers-cli-0.5.0-jar-with-dependencies.jar" %*
 ```
 
 Add the directory to your PATH, then use:
@@ -105,7 +105,7 @@ The CLI needs access to your `DataFixerBootstrap` implementation. There are seve
 Add your bootstrap JAR to the classpath:
 
 ```bash
-java -cp "aether-datafixers-cli-0.4.0-jar-with-dependencies.jar:my-bootstrap.jar" \
+java -cp "aether-datafixers-cli-0.5.0-jar-with-dependencies.jar:my-bootstrap.jar" \
     de.splatgames.aether.datafixers.cli.AetherCli \
     migrate --to 200 --type player --bootstrap com.example.MyBootstrap input.json
 ```
@@ -122,7 +122,7 @@ Create a custom fat JAR that includes both the CLI and your bootstrap:
     <dependency>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers-cli</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 
@@ -151,7 +151,7 @@ Create a custom fat JAR that includes both the CLI and your bootstrap:
 During development, point to compiled classes:
 
 ```bash
-java -cp "aether-datafixers-cli-0.4.0-jar-with-dependencies.jar:target/classes" \
+java -cp "aether-datafixers-cli-0.5.0-jar-with-dependencies.jar:target/classes" \
     de.splatgames.aether.datafixers.cli.AetherCli \
     migrate --to 200 --type player --bootstrap com.example.MyBootstrap input.json
 ```
@@ -168,14 +168,14 @@ To use the CLI as a dependency in your project (for programmatic access):
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-cli</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'de.splatgames.aether.datafixers:aether-datafixers-cli:0.4.0'
+implementation 'de.splatgames.aether.datafixers:aether-datafixers-cli:0.5.0'
 ```
 
 ---

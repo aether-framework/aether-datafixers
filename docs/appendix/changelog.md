@@ -4,7 +4,42 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ---
 
-## Version 0.5.0
+## Version 0.5.0 (API Freeze)
+
+### API Freeze
+
+Public API is now stable. No breaking changes expected before v1.0.0.
+
+### SchemaValidator Fix Coverage Integration
+
+The `SchemaValidator.validateFixCoverage()` method now performs actual coverage analysis:
+
+- Full integration with `MigrationAnalyzer` for detecting missing DataFixes
+- Automatic version range detection from schema registry
+- Field-level coverage gap detection with detailed context
+- Reports issues as `ValidationIssue` warnings with location and context
+
+Updated documentation:
+- [Schema Validation](../schema-tools/schema-validation.md) — Updated with fix coverage validation examples
+
+### MigrationService.withOps() Support
+
+The Spring Boot `MigrationService` now fully supports custom `DynamicOps`:
+
+- Convert input data to specified format before migration
+- Seamless integration with the fluent API
+- Supports all DynamicOps implementations (Gson, Jackson, YAML, TOML, XML)
+
+Updated documentation:
+- [MigrationService API](../spring-boot/migration-service.md) — Added withOps() usage examples
+
+### Functional Tests Module
+
+New `aether-datafixers-functional-tests` module with comprehensive E2E and integration tests:
+
+- Cross-format migration tests (all DynamicOps implementations)
+- Error recovery integration tests
+- Field transformation E2E tests (rename, add, group)
 
 ### CLI: New Built-in Format Handlers
 

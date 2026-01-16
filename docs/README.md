@@ -148,7 +148,7 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 
 | Module                                  | Description                                                         |
 |-----------------------------------------|---------------------------------------------------------------------|
-| `aether-datafixers-api`                 | Core interfaces and API contracts                                   |
+| `aether-datafixers-api`                 | Core interfaces and API contracts (stable)                          |
 | `aether-datafixers-core`                | Default implementations                                             |
 | `aether-datafixers-codec`               | DynamicOps for JSON, YAML, TOML, XML (Gson, Jackson, SnakeYAML)     |
 | `aether-datafixers-spring-boot-starter` | Spring Boot auto-configuration, MigrationService, Actuator, Metrics |
@@ -156,6 +156,7 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 | `aether-datafixers-testkit`             | Testing utilities for DataFix, Schema, and migration testing        |
 | `aether-datafixers-schema-tools`        | Schema analysis, validation, and diffing utilities                  |
 | `aether-datafixers-examples`            | Practical usage examples                                            |
+| `aether-datafixers-functional-tests`    | End-to-end and integration tests                                    |
 | `aether-datafixers-bom`                 | Bill of Materials for version management                            |
 
 ---

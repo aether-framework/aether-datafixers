@@ -220,7 +220,7 @@ aether-cli info [OPTIONS]
 Without options (or with `--formats`):
 
 ```
-Aether Datafixers CLI v0.4.0
+Aether Datafixers CLI v0.5.0
 ============================
 
 Available Formats:
@@ -233,7 +233,7 @@ Available Formats:
 With `--bootstrap`:
 
 ```
-Aether Datafixers CLI v0.4.0
+Aether Datafixers CLI v0.5.0
 ============================
 
 Bootstrap Information:
