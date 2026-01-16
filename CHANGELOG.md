@@ -6,9 +6,69 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [0.5.0] - 2026-01-12
+## [0.5.0] - 2026-01-16
+
+### API Freeze
+
+This release marks the **API freeze** for Aether Datafixers. The public API is now stable and no breaking changes are expected before v1.0.0.
 
 ### Added
+
+#### SchemaValidator Fix Coverage Integration (`aether-datafixers-schema-tools`)
+
+The `SchemaValidator.validateFixCoverage()` method now performs actual coverage analysis using `MigrationAnalyzer`:
+
+- **Full MigrationAnalyzer integration** — Detects missing DataFixes for schema changes
+- **Automatic version range detection** — Scans the entire schema registry to determine version bounds
+- **Field-level coverage gaps** — Reports issues for added, removed, or modified fields without fixes
+- **Detailed context** — Issues include type, field name, version range, and gap reason
+
+**Usage:**
+```java
+ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
+    .validateFixCoverage()
+    .validate();
+
+for (ValidationIssue issue : result.warnings()) {
+    System.out.println(issue.message());
+    // "Missing DataFix for type 'player' field 'health': FIELD_ADDED"
+}
+```
+
+#### MigrationService.withOps() Implementation (`aether-datafixers-spring-boot-starter`)
+
+The Spring Boot `MigrationService` now fully supports custom `DynamicOps` for format conversion:
+
+- **Format conversion during migration** — Convert input data to specified format before migration
+- **Seamless API integration** — Works with the existing fluent builder API
+- **All formats supported** — Gson, Jackson JSON, YAML (both), TOML, and XML
+
+**Usage:**
+```java
+// Convert Gson data to Jackson YAML format during migration
+MigrationResult result = migrationService
+    .migrate(gsonData)
+    .from(100)
+    .to(200)
+    .withOps(JacksonYamlOps.INSTANCE)
+    .execute();
+
+// Result data is now in Jackson YAML format
+Dynamic<JsonNode> yamlResult = (Dynamic<JsonNode>) result.getData();
+```
+
+#### Functional Tests Module (`aether-datafixers-functional-tests`)
+
+New module with comprehensive end-to-end and integration tests:
+
+- **Cross-format migration tests** — Verify migrations work identically across all DynamicOps implementations
+- **Error recovery tests** — Test graceful handling of malformed data and fix failures
+- **Field transformation E2E tests** — Validate rename, add, remove, and group operations
+
+**Running:**
+```bash
+mvn verify -Pit
+```
 
 #### CLI Format Handlers for YAML, TOML, and XML (`aether-datafixers-cli`)
 

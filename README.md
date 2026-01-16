@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-red)
 ![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether.datafixers/aether-datafixers)
-![Version](https://img.shields.io/badge/version-0.4.0-orange)
+![Version](https://img.shields.io/badge/version-0.5.0-orange)
 
 # Aether Datafixers 🔧
 
@@ -10,7 +10,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 
 ---
 
-## ✨ Features (v0.4.0)
+## ✨ Features (v0.5.0)
 
 - ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
 - ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
@@ -25,6 +25,8 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - ✅ **Migration Diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
 - ✅ **Extended Rewrite Rules** — Batch operations, path-based transforms, conditional rules
 - ✅ **High-Performance APIs** — `Rules.batch()` for single-pass multi-operation transforms
+- ✅ **Fix Coverage Validation** — Detect schema changes without corresponding DataFixes
+- ✅ **Extended Codec Support** — Multi-format DynamicOps for CLI and Testkit modules
 - ✅ **JDK 17+** — Built and tested on modern LTS JVMs
 
 ---
@@ -39,6 +41,7 @@ inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, *
 - **aether-datafixers-schema-tools** — Schema analysis, validation, diffing, and introspection
 - **aether-datafixers-spring-boot-starter** — Spring Boot 3.x auto-configuration with Actuator support
 - **aether-datafixers-examples** — Practical examples demonstrating real-world usage
+- **aether-datafixers-functional-tests** — End-to-end and integration tests
 - **aether-datafixers-bom** — Bill of Materials for coordinated dependency management
 
 ---
@@ -89,7 +92,7 @@ Dynamic<?> updated = fixer.update(
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
@@ -97,7 +100,7 @@ Dynamic<?> updated = fixer.update(
 
 ```groovy
 dependencies {
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0'
+    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.5.0'
 }
 ```
 
@@ -105,7 +108,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.4.0")
+    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.5.0")
 }
 ```
 
@@ -125,7 +128,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
         <dependency>
             <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -149,7 +152,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 
 ```groovy
 dependencies {
-    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0')
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.5.0')
 
     // No version needed
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
@@ -161,7 +164,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.4.0"))
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.5.0"))
 
     // No version needed
     implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
@@ -366,14 +369,14 @@ The `aether-datafixers-spring-boot-starter` provides comprehensive Spring Boot 3
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-spring-boot-starter</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
 **Gradle (Kotlin)**
 
 ```kotlin
-implementation("de.splatgames.aether.datafixers:aether-datafixers-spring-boot-starter:0.4.0")
+implementation("de.splatgames.aether.datafixers:aether-datafixers-spring-boot-starter:0.5.0")
 ```
 
 ### Quick Start
@@ -562,7 +565,7 @@ mvn test
   - **Fix coverage analysis** — Detect schema changes without corresponding DataFixes
   - **Convention checking** — Enforce naming conventions for types, fields, and classes
 
-- **v0.4.0** (current)
+- **v0.4.0**
   - **Spring Boot Starter** — Auto-configuration, MigrationService with fluent API
   - **Actuator integration** — Health indicator, info contributor, custom endpoint, Micrometer metrics
   - **Multi-domain support** — Multiple DataFixers with @Qualifier annotations
@@ -570,16 +573,17 @@ mvn test
   - **Multi-format DynamicOps** — YAML (SnakeYAML, Jackson), TOML (Jackson), XML (Jackson)
   - **Package restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
 
-- **v0.5.0** (next, API freeze candidate – expect one last missed out feature)
-  - **Codec integration** — Integration of extra codecs for aether-datafixers-testkit and aether-datafixers-cli
-  - **API stabilization pass** — Naming/packaging cleanup + deprecations completed
-  - **Compatibility checks in CI** — Binary/source compatibility guardrails for public API
-  - **Hardened error model** — Consistent exception types + structured error details
-  - **Release readiness** — Final review of docs/examples against frozen API
+- **v0.5.0** (current, API freeze)
+  - **API Freeze** — Public API stabilized, no breaking changes expected before v1.0.0
+  - **Extended Codec Support** — Multi-format DynamicOps integration for CLI, Testkit and Spring Boot modules
+  - **SchemaValidator integration** — Full `MigrationAnalyzer` integration for fix coverage validation
+  - **MigrationService.withOps()** — Custom `DynamicOps` support for format conversion during migrations
+  - **Functional Tests module** — Comprehensive E2E and integration tests
+  - **Comprehensive documentation** — Complete documentation suite covering all modules
 
-- **v1.0.0**
-  - Stable API surface
-  - Comprehensive documentation
+- **v1.0.0** (next)
+  - Stable API surface with semantic versioning guarantees
+  - Performance benchmarks
   - Production-ready release
 
 ---
