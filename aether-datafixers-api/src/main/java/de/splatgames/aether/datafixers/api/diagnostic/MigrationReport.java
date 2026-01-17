@@ -251,7 +251,7 @@ public interface MigrationReport {
      * migration events as they occur. After the migration completes, {@link #build()} produces an immutable
      * report.</p>
      *
-     * <h3>Lifecycle</h3>
+     * <p><b>Lifecycle</b></p>
      * <p>The builder follows a specific lifecycle that must be adhered to:</p>
      * <ol>
      *   <li>Call {@link #startMigration(TypeReference, DataVersion, DataVersion)} exactly once</li>
@@ -261,7 +261,7 @@ public interface MigrationReport {
      *   <li>Call {@link #build()} exactly once to produce the report</li>
      * </ol>
      *
-     * <h3>Usage Pattern</h3>
+     * <p><b>Usage Pattern</b></p>
      * <pre>{@code
      * // Called by DataFixerImpl during migration
      * builder.startMigration(type, fromVersion, toVersion);
@@ -277,7 +277,7 @@ public interface MigrationReport {
      * MigrationReport report = builder.build();
      * }</pre>
      *
-     * <h3>Thread Safety</h3>
+     * <p><b>Thread Safety</b></p>
      * <p>This builder is not thread-safe. It should be used by a single thread
      * during the course of a migration operation. The resulting {@link MigrationReport}
      * is immutable and thread-safe.</p>

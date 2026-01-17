@@ -91,7 +91,7 @@ public interface DataFixerBootstrap {
      * registry with {@link Schema} instances for each supported data version. Schemas define the structure and types
      * available at each version of the data model.</p>
      *
-     * <h3>Implementation Guidelines</h3>
+     * <p><b>Implementation Guidelines</b></p>
      * <p>When implementing this method, consider the following best practices:</p>
      * <ul>
      *   <li><b>Version Ordering:</b> Register schemas in ascending version order for clarity,
@@ -104,7 +104,7 @@ public interface DataFixerBootstrap {
      *       definitions between versions when types remain unchanged</li>
      * </ul>
      *
-     * <h3>Example Implementation</h3>
+     * <p><b>Example Implementation</b></p>
      * <pre>{@code
      * @Override
      * public void registerSchemas(SchemaRegistry schemas) {
@@ -122,7 +122,7 @@ public interface DataFixerBootstrap {
      * }
      * }</pre>
      *
-     * <h3>Thread Safety</h3>
+     * <p><b>Thread Safety</b></p>
      * <p>This method is typically called once during initialization on a single thread.
      * Implementations do not need to be thread-safe, but they should not retain references
      * to the registry after the method returns.</p>
@@ -141,7 +141,7 @@ public interface DataFixerBootstrap {
      * {@link DataFix} instances that handle migrations between data versions. Each fix defines a transformation from
      * one version to another for a specific type or set of types.</p>
      *
-     * <h3>Implementation Guidelines</h3>
+     * <p><b>Implementation Guidelines</b></p>
      * <p>When implementing this method, adhere to these best practices:</p>
      * <ul>
      *   <li><b>Version Coverage:</b> Ensure there are fixes to migrate between all
@@ -154,7 +154,7 @@ public interface DataFixerBootstrap {
      *       the order in which they are registered</li>
      * </ul>
      *
-     * <h3>Example Implementation</h3>
+     * <p><b>Example Implementation</b></p>
      * <pre>{@code
      * @Override
      * public void registerFixes(FixRegistrar fixes) {
@@ -172,7 +172,7 @@ public interface DataFixerBootstrap {
      * }
      * }</pre>
      *
-     * <h3>Thread Safety</h3>
+     * <p><b>Thread Safety</b></p>
      * <p>This method is typically called once during initialization on a single thread.
      * Implementations do not need to be thread-safe, but they should not retain references
      * to the registrar after the method returns.</p>
