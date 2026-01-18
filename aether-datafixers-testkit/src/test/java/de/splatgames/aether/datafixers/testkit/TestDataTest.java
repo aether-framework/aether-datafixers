@@ -265,17 +265,6 @@ class TestDataTest {
         }
 
         @Test
-        @DisplayName("jackson() creates Jackson JSON builder (deprecated)")
-        @SuppressWarnings("deprecation")
-        void jacksonCreatesJacksonJsonBuilder() {
-            final Dynamic<JsonNode> dynamic = TestData.jackson().object()
-                    .put("key", "value")
-                    .build();
-
-            assertThat(dynamic.get("key").asString().result()).hasValue("value");
-        }
-
-        @Test
         @DisplayName("snakeYaml() creates SnakeYAML builder")
         void snakeYamlCreatesSnakeYamlBuilder() {
             final Dynamic<Object> dynamic = TestData.snakeYaml().object()
