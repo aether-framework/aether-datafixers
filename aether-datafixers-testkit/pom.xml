@@ -54,7 +54,7 @@
             <artifactId>gson</artifactId>
         </dependency>
 
-        <!-- Jackson for TestData.jackson() -->
+        <!-- Jackson for TestData.jacksonJson() -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

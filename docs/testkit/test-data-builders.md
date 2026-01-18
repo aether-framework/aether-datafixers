@@ -31,8 +31,6 @@ TestData.jacksonXml()...
 TestData.using(myCustomOps)...
 ```
 
-> **Deprecation Notice:** `TestData.jackson()` is deprecated since 0.5.0 and will be removed in 1.0.0. Use `TestData.jacksonJson()` instead for explicit format naming.
-
 ## Creating Primitives
 
 ```java
