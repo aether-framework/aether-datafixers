@@ -227,7 +227,7 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
      *
      * <p>If this value is not a string, the returned {@link DataResult} will contain an error
      * message explaining the type mismatch. Use {@link DataResult#result()} to safely extract the value as an
-     * {@link Optional}, or {@link DataResult#getOrThrow()} to throw on failure.</p>
+     * {@link Optional}, or {@code getOrThrow()} to throw on failure.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
