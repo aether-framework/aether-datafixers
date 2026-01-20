@@ -110,8 +110,6 @@ public class SingleFixBenchmark {
      * This represents a common, lightweight migration operation. The benchmark is parameterized by {@link PayloadSize}
      * to measure scaling behavior.</p>
      *
-     * <p><b>Expected performance:</b> ~0.26-0.29 μs/op (sub-microsecond)</p>
-     *
      * @param s         the shared benchmark state containing fixer and input data
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
@@ -130,8 +128,6 @@ public class SingleFixBenchmark {
      * <p>Measures pure framework overhead without any actual data transformation.
      * Use this as a baseline to calculate the true cost of transformations by subtracting identity time from other
      * benchmark results.</p>
-     *
-     * <p><b>Expected performance:</b> ~0.24-0.25 μs/op (minimal framework overhead)</p>
      *
      * @param s         the shared benchmark state containing identity fixer and input data
      * @param blackhole JMH blackhole to prevent dead code elimination
@@ -152,10 +148,8 @@ public class SingleFixBenchmark {
      * is decoded via codec, transformed, and re-encoded. This represents the upper bound of migration cost for complex
      * object transformations.</p>
      *
-     * <p><b>Expected performance:</b> ~17-18 μs/op (significantly slower due to codec overhead)</p>
-     *
-     * <p>The ~70x slowdown compared to {@link #singleRenameFix} is expected and
-     * acceptable, as codec roundtrips involve reflection, object instantiation, and full serialization/deserialization
+     * <p>This benchmark is expected to be significantly slower than {@link #singleRenameFix}
+     * because codec roundtrips involve reflection, object instantiation, and full serialization/deserialization
      * cycles.</p>
      *
      * @param s         the shared player benchmark state
