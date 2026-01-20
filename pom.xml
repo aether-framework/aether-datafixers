@@ -19,6 +19,7 @@
         <module>aether-datafixers-examples</module>
         <module>aether-datafixers-bom</module>
         <module>aether-datafixers-functional-tests</module>
+        <module>aether-datafixers-benchmarks</module>
     </modules>
 
     <properties>
@@ -67,6 +68,9 @@
 
         <!-- Extra Ops dependencies -->
         <snakeyaml.version>2.2</snakeyaml.version>
+
+        <!-- JMH Benchmark dependencies -->
+        <jmh.version>1.37</jmh.version>
     </properties>
 
     <name>Aether Datafixers :: Parent</name>
@@ -211,6 +215,18 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
                 <version>${spotbugs.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- JMH Benchmarks -->
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
