@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Splatgames.de Software and Contributors
+ * Copyright (c) 2026 Splatgames.de Software and Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@
 package de.splatgames.aether.datafixers.benchmarks.codec;
 
 import com.google.gson.JsonElement;
-import de.splatgames.aether.datafixers.api.codec.Codec;
 import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
