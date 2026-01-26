@@ -32,25 +32,25 @@
         <skipITs>true</skipITs>
 
         <!-- definition of versions for dependencies -->
-        <jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
+        <jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
         <gson.version>2.13.2</gson.version>
-        <jackson.version>2.19.0</jackson.version>
+        <jackson.version>2.21.0</jackson.version>
         <guava.version>33.5.0-jre</guava.version>
         <junit.jupiter.version>5.13.4</junit.jupiter.version>
-        <assertj.version>3.27.6</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <slf4j.version>2.0.17</slf4j.version>
         <spotbugs.version>4.9.8</spotbugs.version>
 
         <!-- definition of versions for plugins -->
-        <plugin.compiler.version>3.11.0</plugin.compiler.version>
-        <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
-        <plugin.source.version>3.3.1</plugin.source.version>
-        <plugin.javadoc.version>3.10.1</plugin.javadoc.version>
-        <plugin.site.version>3.20.0</plugin.site.version>
-        <plugin.gpg.version>3.2.6</plugin.gpg.version>
-        <plugin.surefire.version>3.1.2</plugin.surefire.version>
-        <plugin.failsafe.version>3.1.2</plugin.failsafe.version>
-        <plugin.shade.version>3.5.1</plugin.shade.version>
+        <plugin.compiler.version>3.14.1</plugin.compiler.version>
+        <plugin.enforcer.version>3.6.2</plugin.enforcer.version>
+        <plugin.source.version>3.4.0</plugin.source.version>
+        <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
+        <plugin.site.version>3.21.0</plugin.site.version>
+        <plugin.gpg.version>3.2.8</plugin.gpg.version>
+        <plugin.surefire.version>3.5.4</plugin.surefire.version>
+        <plugin.failsafe.version>3.5.4</plugin.failsafe.version>
+        <plugin.shade.version>3.6.1</plugin.shade.version>
 
         <!-- QA plugin versions -->
         <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
@@ -64,10 +64,10 @@
         <jacoco.coverage.minimum>0.75</jacoco.coverage.minimum>
 
         <!-- CLI dependencies -->
-        <picocli.version>4.7.6</picocli.version>
+        <picocli.version>4.7.7</picocli.version>
 
         <!-- Extra Ops dependencies -->
-        <snakeyaml.version>2.2</snakeyaml.version>
+        <snakeyaml.version>2.5</snakeyaml.version>
 
         <!-- JMH Benchmark dependencies -->
         <jmh.version>1.37</jmh.version>
@@ -329,7 +329,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.8.0</version>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
