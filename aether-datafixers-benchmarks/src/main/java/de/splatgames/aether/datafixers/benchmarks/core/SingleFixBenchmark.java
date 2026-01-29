@@ -114,7 +114,8 @@ public class SingleFixBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void singleRenameFix(final SizedState s, final Blackhole blackhole) {
+    public void singleRenameFix(final SizedState s,
+                                final Blackhole blackhole) {
         blackhole.consume(s.fixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 s.input,
@@ -133,7 +134,8 @@ public class SingleFixBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void identityFix(final SizedState s, final Blackhole blackhole) {
+    public void identityFix(final SizedState s,
+                            final Blackhole blackhole) {
         blackhole.consume(s.identityFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 s.input,

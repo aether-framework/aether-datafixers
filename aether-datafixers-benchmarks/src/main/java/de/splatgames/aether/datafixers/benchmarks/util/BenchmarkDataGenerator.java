@@ -29,41 +29,125 @@ import de.splatgames.aether.datafixers.testkit.TestDataBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Utility class for generating benchmark test data.
+ * Factory for generating benchmark test data with configurable complexity.
  *
- * <p>Generates {@link Dynamic} objects with configurable complexity based on
- * {@link PayloadSize} settings. Uses the testkit's {@link TestDataBuilder}
- * for efficient, format-agnostic data construction.</p>
+ * <p>This utility class creates {@link Dynamic} objects of varying sizes and
+ * structures for use in JMH benchmarks. Data generation is format-agnostic, working with any {@link DynamicOps}
+ * implementation.</p>
+ *
+ * <h2>Data Generation Methods</h2>
+ * <table border="1">
+ *   <tr><th>Method</th><th>Structure</th><th>Use Case</th></tr>
+ *   <tr>
+ *     <td>{@link #generate(DynamicOps, PayloadSize)}</td>
+ *     <td>Complex (fields + nesting + lists)</td>
+ *     <td>General-purpose benchmarks</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #generatePlayerData(DynamicOps)}</td>
+ *     <td>Domain-specific (player data)</td>
+ *     <td>Realistic migration scenarios</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #generateFlat(DynamicOps, int)}</td>
+ *     <td>Flat object (fields only)</td>
+ *     <td>Basic operation benchmarks</td>
+ *   </tr>
+ * </table>
+ *
+ * <h2>Generated Data Structure</h2>
+ * <p>The main {@link #generate(DynamicOps, PayloadSize)} method creates objects with:</p>
+ * <pre>{@code
+ * {
+ *   "stringField0": "value0",
+ *   "intField0": 0,
+ *   "boolField0": true,
+ *   "stringField1": "value1",
+ *   ...
+ *   "nested": {
+ *     "level": 4,
+ *     "data": "nested-level-4",
+ *     "timestamp": 1234567890,
+ *     "child": {
+ *       "level": 3,
+ *       ...
+ *     }
+ *   },
+ *   "items": [
+ *     {"id": "item-0", "quantity": 1, "active": true},
+ *     {"id": "item-1", "quantity": 2, "active": false},
+ *     ...
+ *   ]
+ * }
+ * }</pre>
+ *
+ * <h2>Design Considerations</h2>
+ * <ul>
+ *   <li><b>Testkit integration</b>: Uses {@link TestDataBuilder} for fluent,
+ *       type-safe data construction</li>
+ *   <li><b>Format agnostic</b>: Works with any DynamicOps (Gson, Jackson, YAML, etc.)</li>
+ *   <li><b>Deterministic</b>: Generated data is reproducible for benchmark consistency
+ *       (except timestamp fields)</li>
+ *   <li><b>Configurable complexity</b>: {@link PayloadSize} controls data volume</li>
+ * </ul>
+ *
+ * <h2>Usage Example</h2>
+ * <pre>{@code
+ * // In a JMH benchmark
+ * @Setup(Level.Iteration)
+ * public void setup() {
+ *     // Generate medium-complexity test data
+ *     this.input = BenchmarkDataGenerator.generate(GsonOps.INSTANCE, PayloadSize.MEDIUM);
+ *
+ *     // Or generate player-specific data
+ *     this.playerData = BenchmarkDataGenerator.generatePlayerData(GsonOps.INSTANCE);
+ * }
+ * }</pre>
  *
  * @author Erik Pförtner
+ * @see PayloadSize
+ * @see BenchmarkBootstrap
+ * @see de.splatgames.aether.datafixers.testkit.TestDataBuilder
  * @since 1.0.0
  */
 public final class BenchmarkDataGenerator {
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private BenchmarkDataGenerator() {
         // Utility class
     }
 
     /**
-     * Generates benchmark data with the specified payload size.
+     * Generates benchmark data with the specified payload size and complexity.
      *
-     * <p>Creates a complex object structure including:
+     * <p>Creates a complex object structure including:</p>
      * <ul>
-     *   <li>Primitive fields (strings, integers, booleans)</li>
-     *   <li>Nested objects up to the configured depth</li>
-     *   <li>A list with the configured number of items</li>
+     *   <li><b>Primitive fields</b>: String, integer, and boolean fields based on
+     *       {@link PayloadSize#getFieldCount()}</li>
+     *   <li><b>Nested objects</b>: Recursive nesting up to
+     *       {@link PayloadSize#getNestingDepth()} levels</li>
+     *   <li><b>List with items</b>: An "items" array with
+     *       {@link PayloadSize#getListSize()} objects</li>
      * </ul>
      *
-     * @param ops  the DynamicOps to use for data creation
-     * @param size the payload size configuration
-     * @param <T>  the underlying value type
-     * @return a new Dynamic containing the generated data
+     * <h3>Field Naming Patterns</h3>
+     * <table border="1">
+     *   <tr><th>Field Type</th><th>Pattern</th><th>Example</th></tr>
+     *   <tr><td>String</td><td>{@code stringFieldN}</td><td>{@code stringField0: "value0"}</td></tr>
+     *   <tr><td>Integer</td><td>{@code intFieldN}</td><td>{@code intField0: 0}</td></tr>
+     *   <tr><td>Boolean</td><td>{@code boolFieldN}</td><td>{@code boolField0: true}</td></tr>
+     * </table>
+     *
+     * @param ops  the DynamicOps implementation to use for data creation
+     * @param size the payload size configuration controlling data complexity
+     * @param <T>  the underlying value type of the DynamicOps
+     * @return a new Dynamic containing the generated benchmark data
      */
     @NotNull
-    public static <T> Dynamic<T> generate(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final PayloadSize size
-    ) {
+    public static <T> Dynamic<T> generate(@NotNull final DynamicOps<T> ops,
+                                          @NotNull final PayloadSize size) {
         final TestDataBuilder<T> builder = TestData.using(ops).object();
 
         // Add primitive fields
@@ -93,18 +177,39 @@ public final class BenchmarkDataGenerator {
     /**
      * Generates a player-like data structure for realistic migration benchmarks.
      *
-     * <p>Creates a structure similar to game player data with:
-     * <ul>
-     *   <li>Identity fields (id, name)</li>
-     *   <li>Stats (level, experience, health)</li>
-     *   <li>Position object (x, y, z, world)</li>
-     *   <li>Inventory list</li>
-     *   <li>Achievements list</li>
-     * </ul>
+     * <p>Creates a structure simulating game player data, useful for domain-specific
+     * migration testing with {@link BenchmarkBootstrap#createPlayerFixer()}.</p>
      *
-     * @param ops the DynamicOps to use for data creation
-     * @param <T> the underlying value type
-     * @return a new Dynamic containing player-like data
+     * <h3>Generated Structure</h3>
+     * <pre>{@code
+     * {
+     *   "id": "player-benchmark-12345",
+     *   "name": "BenchmarkPlayer",
+     *   "level": 50,
+     *   "experience": 125000,
+     *   "health": 100.0,
+     *   "active": true,
+     *   "position": {"x": 100.5, "y": 64.0, "z": -200.25, "world": "overworld"},
+     *   "stats": {"strength": 15, "agility": 12, "intelligence": 18, "luck": 7},
+     *   "inventory": [{"slot": 0, "itemId": "minecraft:item_0", "count": 1, "damage": 0}, ...],
+     *   "achievements": ["first_login", "level_10", "level_25", "level_50", ...]
+     * }
+     * }</pre>
+     *
+     * <h3>Data Characteristics</h3>
+     * <table border="1">
+     *   <tr><th>Component</th><th>Count</th><th>Description</th></tr>
+     *   <tr><td>Top-level fields</td><td>6</td><td>id, name, level, experience, health, active</td></tr>
+     *   <tr><td>Nested objects</td><td>2</td><td>position (4 fields), stats (4 fields)</td></tr>
+     *   <tr><td>Inventory slots</td><td>36</td><td>Standard inventory size</td></tr>
+     *   <tr><td>Achievements</td><td>6</td><td>String list</td></tr>
+     * </table>
+     *
+     * @param ops the DynamicOps implementation to use for data creation
+     * @param <T> the underlying value type of the DynamicOps
+     * @return a new Dynamic containing player-like benchmark data
+     * @see BenchmarkBootstrap#createPlayerFixer()
+     * @see BenchmarkBootstrap#PLAYER_TYPE
      */
     @NotNull
     public static <T> Dynamic<T> generatePlayerData(@NotNull final DynamicOps<T> ops) {
@@ -147,18 +252,32 @@ public final class BenchmarkDataGenerator {
     }
 
     /**
-     * Generates a simple flat object for basic operation benchmarks.
+     * Generates a simple flat object with only string fields.
      *
-     * @param ops        the DynamicOps to use for data creation
-     * @param fieldCount the number of fields to generate
-     * @param <T>        the underlying value type
-     * @return a new Dynamic containing flat data
+     * <p>Creates a minimal object structure without nesting or lists, useful for
+     * benchmarking basic field access and manipulation operations with minimal traversal overhead.</p>
+     *
+     * <h3>Generated Structure</h3>
+     * <pre>{@code
+     * {
+     *   "field0": "value0",
+     *   "field1": "value1",
+     *   "field2": "value2",
+     *   ...
+     * }
+     * }</pre>
+     *
+     * <p>This method is useful for isolating field operation costs from
+     * structural complexity overhead.</p>
+     *
+     * @param ops        the DynamicOps implementation to use for data creation
+     * @param fieldCount the number of string fields to generate (field0 through field(n-1))
+     * @param <T>        the underlying value type of the DynamicOps
+     * @return a new Dynamic containing a flat object with string fields
      */
     @NotNull
-    public static <T> Dynamic<T> generateFlat(
-            @NotNull final DynamicOps<T> ops,
-            final int fieldCount
-    ) {
+    public static <T> Dynamic<T> generateFlat(@NotNull final DynamicOps<T> ops,
+                                              final int fieldCount) {
         final TestDataBuilder<T> builder = TestData.using(ops).object();
         for (int i = 0; i < fieldCount; i++) {
             builder.put("field" + i, "value" + i);
@@ -166,11 +285,25 @@ public final class BenchmarkDataGenerator {
         return builder.build();
     }
 
-    private static <T> void addNestedObject(
-            final TestDataBuilder<T> builder,
-            final String key,
-            final int depth
-    ) {
+    /**
+     * Recursively adds nested object structures to the builder.
+     *
+     * <p>Creates a chain of nested objects, each containing:</p>
+     * <ul>
+     *   <li>{@code level} - the current nesting depth</li>
+     *   <li>{@code data} - a string identifying the nesting level</li>
+     *   <li>{@code timestamp} - current system time (for data variation)</li>
+     *   <li>{@code child} - the next nested level (if depth &gt; 0)</li>
+     * </ul>
+     *
+     * @param builder the TestDataBuilder to add the nested structure to
+     * @param key     the field name for this nested object
+     * @param depth   remaining nesting levels (stops when depth reaches 0)
+     * @param <T>     the underlying value type of the builder
+     */
+    private static <T> void addNestedObject(final TestDataBuilder<T> builder,
+                                            final String key,
+                                            final int depth) {
         if (depth <= 0) {
             return;
         }
