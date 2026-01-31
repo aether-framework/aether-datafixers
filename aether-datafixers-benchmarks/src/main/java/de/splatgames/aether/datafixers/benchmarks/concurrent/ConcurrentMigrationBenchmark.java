@@ -157,7 +157,7 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 3, time = 2, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 5, time = 2, timeUnit = TimeUnit.SECONDS)
 @Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx2G"})
-public class ConcurrentMigrationBenchmark {
+public final class ConcurrentMigrationBenchmark {
 
     // ==================== Concurrent Migration Benchmarks ====================
 
