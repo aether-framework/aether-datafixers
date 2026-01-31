@@ -8,6 +8,12 @@ Solutions to common issues with Aether Datafixers.
 - [Debugging Tips](debugging-tips.md) — Strategies for finding issues
 - [FAQ](faq.md) — Frequently asked questions
 
+## Operations Runbook
+
+For production operations, incident response, and recovery procedures, see the [Operations Runbook](../operations/index.md).
+
+---
+
 ## Quick Fixes
 
 ### Migration Not Applied
