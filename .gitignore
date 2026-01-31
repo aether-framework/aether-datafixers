@@ -50,3 +50,6 @@ bin/
 # Claude Code
 /.claude/
 /CLAUDE.md
+
+# GitHub
+current-ticket.md
