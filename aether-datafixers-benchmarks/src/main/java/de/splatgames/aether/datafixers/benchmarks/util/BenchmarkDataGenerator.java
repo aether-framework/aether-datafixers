@@ -86,8 +86,7 @@ import org.jetbrains.annotations.NotNull;
  *   <li><b>Testkit integration</b>: Uses {@link TestDataBuilder} for fluent,
  *       type-safe data construction</li>
  *   <li><b>Format agnostic</b>: Works with any DynamicOps (Gson, Jackson, YAML, etc.)</li>
- *   <li><b>Deterministic</b>: Generated data is reproducible for benchmark consistency
- *       (except timestamp fields)</li>
+ *   <li><b>Deterministic</b>: Generated data is fully reproducible for benchmark consistency</li>
  *   <li><b>Configurable complexity</b>: {@link PayloadSize} controls data volume</li>
  * </ul>
  *
@@ -111,6 +110,14 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  */
 public final class BenchmarkDataGenerator {
+
+    /**
+     * Fixed timestamp value used for deterministic benchmark data generation.
+     *
+     * <p>Using a constant timestamp ensures reproducible benchmark results
+     * across different runs, eliminating variability from system time.</p>
+     */
+    private static final long FIXED_TIMESTAMP = 1704067200000L; // 2024-01-01 00:00:00 UTC
 
     /**
      * Private constructor to prevent instantiation.
@@ -292,7 +299,7 @@ public final class BenchmarkDataGenerator {
      * <ul>
      *   <li>{@code level} - the current nesting depth</li>
      *   <li>{@code data} - a string identifying the nesting level</li>
-     *   <li>{@code timestamp} - current system time (for data variation)</li>
+     *   <li>{@code timestamp} - fixed timestamp for reproducibility</li>
      *   <li>{@code child} - the next nested level (if depth &gt; 0)</li>
      * </ul>
      *
@@ -310,7 +317,7 @@ public final class BenchmarkDataGenerator {
         builder.putObject(key, nested -> {
             nested.put("level", depth);
             nested.put("data", "nested-level-" + depth);
-            nested.put("timestamp", System.currentTimeMillis());
+            nested.put("timestamp", FIXED_TIMESTAMP);
             addNestedObject(nested, "child", depth - 1);
         });
     }

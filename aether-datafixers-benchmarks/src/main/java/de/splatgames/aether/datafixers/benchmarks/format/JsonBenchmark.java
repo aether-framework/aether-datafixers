@@ -44,6 +44,7 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
+import org.jetbrains.annotations.Nullable;
 import org.openjdk.jmh.infra.Blackhole;
 
 import java.util.concurrent.TimeUnit;
@@ -149,7 +150,7 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx2G"})
-public final class JsonBenchmark {
+public class JsonBenchmark {
 
     /**
      * Field name used for read/write benchmarks.
@@ -197,6 +198,7 @@ public final class JsonBenchmark {
      * <p>May be {@code null} if no dedicated Jackson fixer is configured.
      * In that case, cross-format migration behavior is measured instead.</p>
      */
+    @Nullable
     private DataFixer jacksonFixer;
 
     /**

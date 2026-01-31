@@ -147,7 +147,7 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx2G"})
-public final class YamlBenchmark {
+public class YamlBenchmark {
 
     /**
      * Field name used for read/write benchmarks.
