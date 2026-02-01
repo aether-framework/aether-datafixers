@@ -31,6 +31,11 @@
         <!-- Skip integration tests by default -->
         <skipITs>true</skipITs>
 
+        <!-- Stress test configuration (defaults for optional stress profile) -->
+        <stress.threads>100</stress.threads>
+        <stress.duration.minutes>5</stress.duration.minutes>
+        <stress.operations.per.thread>1000</stress.operations.per.thread>
+
         <!-- definition of versions for dependencies -->
         <jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
         <gson.version>2.13.2</gson.version>
@@ -395,6 +400,17 @@
             <id>it</id>
             <properties>
                 <skipITs>false</skipITs>
+            </properties>
+        </profile>
+
+        <!-- Stress Tests Profile: Run stress and chaos tests -->
+        <profile>
+            <id>stress</id>
+            <properties>
+                <skipITs>false</skipITs>
+                <stress.threads>100</stress.threads>
+                <stress.duration.minutes>5</stress.duration.minutes>
+                <stress.operations.per.thread>1000</stress.operations.per.thread>
             </properties>
         </profile>
 
