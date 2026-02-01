@@ -148,6 +148,7 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 ### Support
 
 - [Troubleshooting](troubleshooting/index.md)
+- [Migration Guide](migration/index.md)
 - [Common Errors](troubleshooting/common-errors.md)
 - [FAQ](troubleshooting/faq.md)
 - [Glossary](appendix/glossary.md)
