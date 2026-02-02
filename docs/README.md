@@ -123,6 +123,16 @@ For experienced users:
 - [Performance Optimization](advanced/performance-optimization.md)
 - [Extending the Framework](advanced/extending-framework.md)
 
+### Security
+
+Guidance for processing untrusted data safely:
+
+- [Security Overview](security/index.md) — Introduction to security considerations
+- [Threat Model](security/threat-model.md) — Attack vectors and trust boundaries
+- [Format Security](security/format-considerations/index.md) — Per-format security guidance
+- [Best Practices](security/best-practices.md) — Secure configuration patterns
+- [Secure Configuration Examples](security/secure-configuration-examples.md) — Ready-to-use examples
+
 ### Spring Boot Integration
 
 Seamlessly integrate Aether Datafixers into Spring Boot applications:
@@ -138,6 +148,7 @@ Seamlessly integrate Aether Datafixers into Spring Boot applications:
 ### Support
 
 - [Troubleshooting](troubleshooting/index.md)
+- [Migration Guide](migration/index.md)
 - [Common Errors](troubleshooting/common-errors.md)
 - [FAQ](troubleshooting/faq.md)
 - [Glossary](appendix/glossary.md)

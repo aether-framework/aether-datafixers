@@ -142,21 +142,6 @@ public final class TestData {
     /**
      * Creates a builder using {@link JacksonJsonOps}.
      *
-     * <p>Use this when testing with Jackson's JSON representation.</p>
-     *
-     * @return a new {@link TestDataBuilder} for Jackson JSON
-     * @deprecated Since 0.5.0. Use {@link #jacksonJson()} instead for explicit format naming.
-     *             This method will be removed in version 1.0.0.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    @NotNull
-    public static TestDataBuilder<JsonNode> jackson() {
-        return jacksonJson();
-    }
-
-    /**
-     * Creates a builder using {@link JacksonJsonOps}.
-     *
      * <p>Use this when testing with Jackson's JSON representation. This method provides
      * explicit naming to distinguish from other Jackson-based format builders like
      * {@link #jacksonYaml()}, {@link #jacksonToml()}, and {@link #jacksonXml()}.</p>

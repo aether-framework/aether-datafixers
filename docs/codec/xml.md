@@ -338,6 +338,38 @@ DataResult<ServerConfig> result = ServerConfig.CODEC.decode(JacksonXmlOps.INSTAN
 ServerConfig config = result.getOrThrow();
 ```
 
+## Security Considerations
+
+> **WARNING:** XML processing is vulnerable to **XXE (XML External Entity)** attacks.
+> When processing untrusted XML, you **MUST** configure the `XmlMapper` to disable
+> external entity processing.
+
+**XXE attacks can:**
+- Read local files (`file:///etc/passwd`)
+- Perform Server-Side Request Forgery (SSRF)
+- Cause Denial of Service through entity expansion (Billion Laughs)
+
+**Secure configuration for untrusted XML:**
+
+```java
+XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
+xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+
+XmlMapper secureMapper = XmlMapper.builder(
+    XmlFactory.builder()
+        .xmlInputFactory(xmlInputFactory)
+        .build()
+).build();
+
+JacksonXmlOps secureOps = new JacksonXmlOps(secureMapper);
+```
+
+For detailed security guidance and configuration examples, see [Jackson XML Security](../security/format-considerations/jackson.md#xxe-prevention).
+
+---
+
 ## Best Practices
 
 1. **Use Simple Structures** - Jackson XML works best with simple, well-structured XML
