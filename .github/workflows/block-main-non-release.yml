@@ -1,0 +1,19 @@
+name: Block main merges from non-release branches
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+    branches: [main]
+
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure PR comes from release/*
+        run: |
+          echo "Base: ${{ github.base_ref }}"
+          echo "Head: ${{ github.head_ref }}"
+          if [[ "${{ github.head_ref }}" != release/* ]]; then
+            echo "::error::PRs to main are only allowed from release/* branches."
+            exit 1
+          fi
