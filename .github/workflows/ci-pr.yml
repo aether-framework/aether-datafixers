@@ -149,13 +149,13 @@ jobs:
 
     steps:
       - name: Download unit XMLs (Java 21 only)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: unit-xml
           path: reports/unit
 
       - name: Download IT XMLs (Java 21 only)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: it-xml
           path: reports/it
