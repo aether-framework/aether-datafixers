@@ -139,6 +139,7 @@
 
             <!-- Integration tests (naming: *IT.java, *E2E.java) -->
             <!-- Run with: mvn verify -Pit -->
+            <!-- Run stress tests with: mvn verify -Pstress -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -148,6 +149,15 @@
                         <include>**/*IT.java</include>
                         <include>**/*E2E.java</include>
                     </includes>
+                    <!-- Pass stress test configuration as system properties -->
+                    <systemPropertyVariables>
+                        <stress.threads>${stress.threads}</stress.threads>
+                        <stress.duration.minutes>${stress.duration.minutes}</stress.duration.minutes>
+                        <stress.operations.per.thread>${stress.operations.per.thread}</stress.operations.per.thread>
+                    </systemPropertyVariables>
+                    <!-- Extended timeout and memory for stress tests -->
+                    <argLine>-Xms512M -Xmx2G</argLine>
+                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
         </plugins>

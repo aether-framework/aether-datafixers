@@ -1,0 +1,158 @@
+name: Nightly Stress Tests
+
+on:
+  schedule:
+    # Run at 2 AM UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      duration_minutes:
+        description: 'Test duration in minutes'
+        required: false
+        default: '5'
+      thread_count:
+        description: 'Number of concurrent threads'
+        required: false
+        default: '100'
+      test_groups:
+        description: 'Test groups to run (comma-separated: stress, chaos)'
+        required: false
+        default: 'stress,chaos'
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  stress-tests:
+    name: Stress Tests (Java ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['17', '21']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run stress tests
+        run: |
+          mvn -B clean verify -Pstress \
+            -pl aether-datafixers-functional-tests \
+            -Dgroups=${{ github.event.inputs.test_groups || 'stress,chaos' }} \
+            -Dstress.threads=${{ github.event.inputs.thread_count || '100' }} \
+            -Dstress.duration.minutes=${{ github.event.inputs.duration_minutes || '5' }} \
+            -Ddependency-check.skip=true
+        timeout-minutes: 60
+
+      - name: Upload stress test results
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: stress-test-results-java${{ matrix.java }}
+          path: |
+            **/target/failsafe-reports/TEST-*.xml
+            **/target/failsafe-reports/*.txt
+          retention-days: 30
+
+  chaos-tests:
+    name: Chaos Tests (Java 21)
+    runs-on: ubuntu-latest
+    needs: stress-tests
+    if: always() && (needs.stress-tests.result == 'success' || needs.stress-tests.result == 'failure')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run chaos tests only
+        run: |
+          mvn -B clean verify -Pit \
+            -pl aether-datafixers-functional-tests \
+            -Dgroups=chaos \
+            -Ddependency-check.skip=true
+        timeout-minutes: 30
+
+      - name: Upload chaos test results
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: chaos-test-results
+          path: |
+            **/target/failsafe-reports/TEST-*.xml
+          retention-days: 30
+
+  reports:
+    name: Test Reports
+    runs-on: ubuntu-latest
+    needs: [stress-tests, chaos-tests]
+    if: always()
+
+    permissions:
+      contents: read
+      checks: write
+
+    steps:
+      - name: Download stress test results (Java 17)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: stress-test-results-java17
+          path: reports/stress-java17
+
+      - name: Download stress test results (Java 21)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: stress-test-results-java21
+          path: reports/stress-java21
+
+      - name: Download chaos test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: chaos-test-results
+          path: reports/chaos
+
+      - name: Publish Stress Test Report (Java 17)
+        uses: mikepenz/action-junit-report@v6
+        if: always()
+        continue-on-error: true
+        with:
+          report_paths: 'reports/stress-java17/**/TEST-*.xml'
+          check_name: Stress Test Report (Java 17)
+
+      - name: Publish Stress Test Report (Java 21)
+        uses: mikepenz/action-junit-report@v6
+        if: always()
+        continue-on-error: true
+        with:
+          report_paths: 'reports/stress-java21/**/TEST-*.xml'
+          check_name: Stress Test Report (Java 21)
+
+      - name: Publish Chaos Test Report
+        uses: mikepenz/action-junit-report@v6
+        if: always()
+        continue-on-error: true
+        with:
+          report_paths: 'reports/chaos/**/TEST-*.xml'
+          check_name: Chaos Test Report
