@@ -192,17 +192,16 @@ public final class FailingDataFix<T> implements DataFix<T> {
         /**
          * Configures the fix to introduce random delays.
          *
+         * <p>Note: This replaces any existing chaos configuration.
+         * To combine delays with failures, use {@link #chaosInjector(ChaosInjector)}
+         * with a fully configured injector.
+         *
          * @param minMs minimum delay in milliseconds
          * @param maxMs maximum delay in milliseconds
          * @return this builder
          */
         public Builder<T> randomDelay(int minMs, int maxMs) {
-            this.chaosInjector = ChaosInjector.builder()
-                    .delayRange(minMs, maxMs)
-                    .failureProbability(
-                            this.chaosInjector != null ? 0 : 0 // Keep existing probability if set
-                    )
-                    .build();
+            this.chaosInjector = ChaosInjector.withRandomDelay(minMs, maxMs);
             return this;
         }
 
