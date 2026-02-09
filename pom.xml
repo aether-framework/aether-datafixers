@@ -63,7 +63,7 @@
         <jacoco.coverage.minimum>0.75</jacoco.coverage.minimum>
 
         <!-- CLI dependencies -->
-        <picocli.version>4.7.6</picocli.version>
+        <picocli.version>4.7.7</picocli.version>
 
         <!-- Extra Ops dependencies -->
         <snakeyaml.version>2.2</snakeyaml.version>
