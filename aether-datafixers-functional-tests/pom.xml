@@ -44,7 +44,7 @@
         <!-- Skip coverage requirements for test-only module -->
         <jacoco.skip>true</jacoco.skip>
         <!-- Spring Boot version for tests -->
-        <spring.boot.version>3.4.1</spring.boot.version>
+        <spring.boot.version>3.5.10</spring.boot.version>
     </properties>
 
     <dependencies>

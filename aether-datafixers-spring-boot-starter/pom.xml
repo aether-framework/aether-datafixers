@@ -18,7 +18,7 @@
         DynamicOps integration, MigrationService with fluent API, and Actuator endpoints.</description>
 
     <properties>
-        <spring-boot.version>3.4.1</spring-boot.version>
+        <spring-boot.version>3.5.10</spring-boot.version>
     </properties>
 
     <dependencyManagement>
