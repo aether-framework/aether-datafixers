@@ -409,23 +409,13 @@ class SnakeYamlOpsTest {
     }
 
     @Nested
-    @DisplayName("Java Object Creation")
-    class JavaObjectCreation {
+    @DisplayName("Object Aware Capability")
+    class ObjectAwareCapability {
 
-        @SuppressWarnings("deprecation")
         @Test
-        @DisplayName("createObject() throws SecurityException")
-        void createObjectThrowsSecurityException() {
-            assertThatThrownBy(() -> ops.createObject("test"))
-                    .isInstanceOf(SecurityException.class);
-        }
-
-        @SuppressWarnings("deprecation")
-        @Test
-        @DisplayName("getObjectValue() throws SecurityException")
-        void getObjectValueThrowsSecurityException() {
-            assertThatThrownBy(() -> ops.getObjectValue("test"))
-                    .isInstanceOf(SecurityException.class);
+        @DisplayName("asObjectAware() returns empty Optional")
+        void asObjectAwareReturnsEmpty() {
+            assertThat(ops.asObjectAware()).isEmpty();
         }
     }
 

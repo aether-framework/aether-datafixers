@@ -56,15 +56,16 @@ public interface DynamicOps<T> {
     T createLong(long value);
     T createDouble(double value);
     T createBoolean(boolean value);
-    T createObject(Object value);          // Experimental (since 1.1.0)
     T createList(Stream<T> values);
     T createMap(Map<T, T> map);
+
+    // Capability discovery
+    Optional<ObjectAwareDynamicOps<T>> asObjectAware(); // since 1.1.0
 
     // Type extraction
     DataResult<String> getStringValue(T input);
     DataResult<Number> getNumberValue(T input);
     DataResult<Boolean> getBooleanValue(T input);
-    DataResult<Object> getObjectValue(T input); // Experimental (since 1.1.0)
     DataResult<Stream<T>> getStream(T input);
     DataResult<Map<T, T>> getMapValues(T input);
 
@@ -77,6 +78,34 @@ public interface DynamicOps<T> {
 
     // ... more operations
 }
+```
+
+### ObjectAwareDynamicOps<T> (since 1.1.0)
+
+A capability sub-interface for `DynamicOps` implementations that support arbitrary Java object passthrough. This uses the **Capability Pattern** — only implementations that explicitly opt in by implementing this interface expose `createObject`/`getObjectValue`:
+
+```java
+@ApiStatus.Experimental
+public interface ObjectAwareDynamicOps<T> extends DynamicOps<T> {
+    T createObject(Object value);
+    DataResult<Object> getObjectValue(T input);
+
+    // Discovery — automatically returns Optional.of(this)
+    @Override
+    default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
+        return Optional.of(this);
+    }
+}
+```
+
+Standard codec implementations (GsonOps, JacksonJsonOps, etc.) do **not** implement this interface, so `asObjectAware()` returns `Optional.empty()`. This prevents uninformed users from accidentally implementing arbitrary object deserialization, which could lead to RCE vulnerabilities.
+
+```java
+// Check capability at runtime
+ops.asObjectAware().ifPresent(oa -> {
+    T wrapped = oa.createObject(myPojo);
+    DataResult<Object> extracted = oa.getObjectValue(wrapped);
+});
 ```
 
 ### TaggedDynamic
@@ -121,9 +150,9 @@ Dynamic<JsonElement> doubleVal = dynamic.createDouble(3.14);
 Dynamic<JsonElement> boolVal = dynamic.createBoolean(true);
 
 // Create arbitrary Java object (Experimental — @since 1.1.0)
-// WARNING: Not supported by codec implementations (throws SecurityException).
-// Only use with DynamicOps that explicitly support it (e.g., TestOps).
-// Dynamic<JsonElement> objVal = dynamic.createObject(myPojo); // SecurityException with GsonOps!
+// Only available when the DynamicOps implements ObjectAwareDynamicOps.
+// dynamic.createObject(myPojo); // UnsupportedOperationException with GsonOps!
+// See ObjectAwareDynamicOps for details.
 
 // Create structures
 Dynamic<JsonElement> map = dynamic.emptyMap()
@@ -153,8 +182,8 @@ DataResult<Integer> levelResult = player.get("level").asInt();
 DataResult<Double> xResult = player.get("position").get("x").asDouble();
 
 // Extract arbitrary Java object (Experimental — @since 1.1.0)
-// WARNING: Not supported by codec implementations (throws SecurityException).
-// DataResult<Object> objResult = player.asObject(); // SecurityException with GsonOps!
+// Only available when the DynamicOps implements ObjectAwareDynamicOps.
+// DataResult<Object> objResult = player.asObject(); // error result with GsonOps!
 
 // With defaults
 String nameValue = name.asString().orElse("Unknown");
@@ -504,12 +533,13 @@ fixer.update(tagged, fromVersion, toVersion);
 
 ## Summary
 
-| Component         | Purpose                      |
-|-------------------|------------------------------|
-| `Dynamic<T>`      | Format-agnostic data wrapper |
-| `DynamicOps<T>`   | Format-specific operations   |
-| `OptionalDynamic` | Safe nested access           |
-| `TaggedDynamic`   | Associates data with type    |
+| Component                | Purpose                              |
+|--------------------------|--------------------------------------|
+| `Dynamic<T>`             | Format-agnostic data wrapper         |
+| `DynamicOps<T>`          | Format-specific operations           |
+| `ObjectAwareDynamicOps<T>` | Capability for Java object passthrough |
+| `OptionalDynamic`        | Safe nested access                   |
+| `TaggedDynamic`          | Associates data with type            |
 
 ## Available DynamicOps Implementations
 

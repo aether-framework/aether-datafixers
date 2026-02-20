@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -239,67 +240,6 @@ public interface DynamicOps<T> {
      */
     @NotNull T createNumeric(@NotNull final Number value);
 
-    // ==================== Java Object Creation ====================
-
-    /**
-     * Creates a value from an arbitrary Java object. This is an optional,
-     * experimental method that may not be supported by all implementations.
-     *
-     * <p><b>Note:</b>
-     * Implementations of the {@code aether-datafixers-codec} module do not support
-     * this method and will throw {@link SecurityException} if called. This is because
-     * allowing arbitrary object creation can lead to security vulnerabilities if not
-     * used carefully. If you need to create values from Java objects, consider
-     * implementing a custom {@link de.splatgames.aether.datafixers.api.codec.Encoder Encoder}
-     * that explicitly defines how to convert your objects to the dynamic format.</p>
-     *
-     * @param value the Java object to convert
-     * @return the created value
-     * @throws UnsupportedOperationException if this method is not supported by the implementation
-     *         (default behavior)
-     * @throws SecurityException if the implementation explicitly rejects this operation
-     *         for security reasons (e.g., codec module implementations)
-     * @deprecated This is an experimental API that may not be implemented by all
-     *     DynamicOps. Prefer using typed creation methods (e.g., {@link #createString},
-     *     {@link #createInt}) or a custom Encoder for your specific use case.
-     * @since 1.1.0
-     */
-    @Deprecated
-    @ApiStatus.Experimental
-    default @NotNull T createObject(@NotNull final Object value) {
-        throw new UnsupportedOperationException("createObject is not supported by this DynamicOps implementation");
-    }
-
-    /**
-     * Reads an arbitrary Java object from a format value. This is the read counterpart
-     * to {@link #createObject(Object)} and is an optional, experimental method that may
-     * not be supported by all implementations.
-     *
-     * <p><b>Note:</b>
-     * Implementations of the {@code aether-datafixers-codec} module do not support
-     * this method and will throw {@link SecurityException} if called. This is because
-     * allowing arbitrary object deserialization can lead to security vulnerabilities
-     * if not used carefully. If you need to read values as Java objects, consider
-     * implementing a custom {@link de.splatgames.aether.datafixers.api.codec.Decoder Decoder}
-     * that explicitly defines how to convert the dynamic format to your objects.</p>
-     *
-     * @param input the format value to convert
-     * @return a {@link DataResult} containing the Java object on success, or an error
-     *         describing why the operation is not supported
-     * @throws SecurityException if the implementation explicitly rejects this operation
-     *         for security reasons (e.g., codec module implementations)
-     * @deprecated This is an experimental API that may not be implemented by all
-     *     DynamicOps. Prefer using typed reading methods (e.g., {@link #getStringValue},
-     *     {@link #getNumberValue}) or a custom Decoder for your specific use case.
-     * @see #createObject(Object)
-     * @since 1.1.0
-     */
-    @Deprecated
-    @ApiStatus.Experimental
-    default @NotNull DataResult<Object> getObjectValue(@NotNull final T input) {
-        return DataResult.error("getObjectValue is not supported by this DynamicOps implementation");
-    }
-
     // ==================== Primitive Reading ====================
 
     /**
@@ -460,4 +400,38 @@ public interface DynamicOps<T> {
      */
     @NotNull <U> T convertTo(@NotNull final DynamicOps<U> ops,
                              @NotNull final U input);
+
+    // ==================== Capability Discovery ====================
+
+    /**
+     * Returns this {@code DynamicOps} as an {@link ObjectAwareDynamicOps} if it
+     * supports creating and reading arbitrary Java objects.
+     *
+     * <p>This method follows the <em>Capability Pattern</em>: instead of providing
+     * unsupported operations that throw exceptions, implementations that support
+     * Java object operations implement the {@link ObjectAwareDynamicOps} sub-interface
+     * and this method returns them wrapped in an {@link Optional}. Implementations
+     * that do not support object operations inherit this default, which returns
+     * {@link Optional#empty()}.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * DynamicOps<Object> ops = ...;
+     *
+     * ops.asObjectAware().ifPresent(objectOps -> {
+     *     Object value = objectOps.createObject(myPojo);
+     *     DataResult<Object> result = objectOps.getObjectValue(value);
+     * });
+     * }</pre>
+     *
+     * @return an {@link Optional} containing this instance as
+     *         {@link ObjectAwareDynamicOps} if supported, or empty otherwise
+     * @see ObjectAwareDynamicOps
+     * @since 1.1.0
+     */
+    @NotNull
+    @ApiStatus.Experimental
+    default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
+        return Optional.empty();
+    }
 }

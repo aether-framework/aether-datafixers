@@ -32,8 +32,6 @@ public interface DynamicOps<T> {
     T createFloat(float value);
     T createDouble(double value);
     T createBoolean(boolean value);
-    T createObject(Object value);          // Experimental (since 1.1.0)
-
     T createList(Stream<T> values);
     T createMap(Map<T, T> map);
 
@@ -41,7 +39,9 @@ public interface DynamicOps<T> {
     DataResult<String> getStringValue(T input);
     DataResult<Number> getNumberValue(T input);
     DataResult<Boolean> getBooleanValue(T input);
-    DataResult<Object> getObjectValue(T input); // Experimental (since 1.1.0)
+
+    // Capability discovery (since 1.1.0)
+    Optional<ObjectAwareDynamicOps<T>> asObjectAware();
 
     DataResult<Stream<T>> getStream(T input);
     DataResult<Map<T, T>> getMapValues(T input);
@@ -581,6 +581,30 @@ return DataResult.error("Expected string but got " + input.getClass().getSimpleN
 // Use thread-safe collections or ensure immutability
 public static final SimpleMapOps INSTANCE = new SimpleMapOps();
 ```
+
+## ObjectAwareDynamicOps (Optional Capability)
+
+If your custom `DynamicOps` works directly with Java objects (e.g., `Map<String, Object>`-based implementations) and you want to support arbitrary object passthrough, you can implement `ObjectAwareDynamicOps<T>` instead of `DynamicOps<T>`:
+
+```java
+public class SimpleMapOps implements ObjectAwareDynamicOps<Object> {
+    // ... all DynamicOps methods as above ...
+
+    @Override
+    public Object createObject(Object value) {
+        return value;  // pass through directly
+    }
+
+    @Override
+    public DataResult<Object> getObjectValue(Object input) {
+        return DataResult.success(input);  // extract directly
+    }
+}
+```
+
+This is entirely optional. Standard format implementations (GsonOps, JacksonJsonOps, etc.) intentionally do **not** implement this interface, as arbitrary Java object deserialization could lead to security vulnerabilities (RCE).
+
+See [Dynamic System — ObjectAwareDynamicOps](../concepts/dynamic-system.md#objectawaredynamicopst-since-110) for details.
 
 ## Next Steps
 

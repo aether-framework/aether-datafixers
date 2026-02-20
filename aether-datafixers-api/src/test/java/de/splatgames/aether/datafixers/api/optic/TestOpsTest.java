@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.api.optic;
 
+import de.splatgames.aether.datafixers.api.dynamic.ObjectAwareDynamicOps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,10 +41,22 @@ class TestOpsTest {
     private final TestOps ops = TestOps.INSTANCE;
 
     @Nested
-    @DisplayName("Java Object Creation")
-    class JavaObjectCreation {
+    @DisplayName("Object Aware Capability")
+    class ObjectAwareCapability {
 
-        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("TestOps is an instance of ObjectAwareDynamicOps")
+        void isObjectAwareDynamicOps() {
+            assertThat(ops).isInstanceOf(ObjectAwareDynamicOps.class);
+        }
+
+        @Test
+        @DisplayName("asObjectAware() returns present Optional containing this instance")
+        void asObjectAwareReturnsPresent() {
+            assertThat(ops.asObjectAware()).isPresent();
+            assertThat(ops.asObjectAware().get()).isSameAs(ops);
+        }
+
         @Test
         @DisplayName("createObject() returns the value directly")
         void createObjectReturnsValueDirectly() {
@@ -60,7 +73,6 @@ class TestOpsTest {
             assertThat(ops.createObject(mapValue)).isSameAs(mapValue);
         }
 
-        @SuppressWarnings("deprecation")
         @Test
         @DisplayName("getObjectValue() returns the value as DataResult.success")
         void getObjectValueReturnsValueAsSuccess() {

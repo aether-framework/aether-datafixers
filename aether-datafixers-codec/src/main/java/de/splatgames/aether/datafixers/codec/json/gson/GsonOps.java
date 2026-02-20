@@ -462,40 +462,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return new JsonPrimitive(value);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p><b>This operation is not supported by GsonOps.</b> Allowing arbitrary object
-     * creation from untrusted input can lead to security vulnerabilities. Use typed
-     * creation methods or a custom Encoder instead.</p>
-     *
-     * @throws SecurityException always
-     * @since 1.1.0
-     */
-    @Deprecated
-    @NotNull
-    @Override
-    public JsonElement createObject(@NotNull final Object value) {
-        throw new SecurityException("createObject is not supported by GsonOps for security reasons");
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p><b>This operation is not supported by GsonOps.</b> Allowing arbitrary object
-     * deserialization from untrusted input can lead to security vulnerabilities. Use typed
-     * reading methods or a custom Decoder instead.</p>
-     *
-     * @throws SecurityException always
-     * @since 1.1.0
-     */
-    @Deprecated
-    @NotNull
-    @Override
-    public DataResult<Object> getObjectValue(@NotNull final JsonElement input) {
-        throw new SecurityException("getObjectValue is not supported by GsonOps for security reasons");
-    }
-
     // ==================== Primitive Reading Operations ====================
 
     /**

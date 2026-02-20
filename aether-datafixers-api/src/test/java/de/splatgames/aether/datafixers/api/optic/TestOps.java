@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.api.optic;
 
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
+import de.splatgames.aether.datafixers.api.dynamic.ObjectAwareDynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
  * A simple DynamicOps implementation for testing purposes. Uses plain Java objects: String, Number, Boolean, Map,
  * List.
  */
-public final class TestOps implements DynamicOps<Object> {
+public final class TestOps implements ObjectAwareDynamicOps<Object> {
 
     public static final TestOps INSTANCE = new TestOps();
 
@@ -129,13 +130,11 @@ public final class TestOps implements DynamicOps<Object> {
         return value;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public @NotNull Object createObject(@NotNull final Object value) {
         return value;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public @NotNull DataResult<Object> getObjectValue(@NotNull final Object input) {
         return DataResult.success(input);

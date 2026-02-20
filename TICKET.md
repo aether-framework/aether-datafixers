@@ -1,8 +1,8 @@
-# [Feature]: Experimental Java Object support in DynamicOps (`createObject` / `getObjectValue`)
+# [Feature]: Experimental Java Object support via Capability Pattern (`ObjectAwareDynamicOps`)
 
-**Labels:** `enhancement`, `experimental`, `api`, `codec`
+**Labels:** `enhancement`, `experimental`, `api`
 **Priority:** medium
-**Related Module:** api, codec
+**Related Module:** api
 **Breaking Change:** no
 **Target Version:** 1.1.0
 
@@ -12,157 +12,160 @@
 
 The `DynamicOps<T>` interface provides symmetric create/read method pairs for all primitive types:
 
-| Create | Read (DynamicOps) | Read (Dynamic) |
-|---|---|---|
-| `createString(String)` | `getStringValue(T)` | `asString()` |
-| `createInt(int)` | `getNumberValue(T)` | `asInt()` |
-| `createBoolean(boolean)` | `getBooleanValue(T)` | `asBoolean()` |
-| **`createObject(Object)`** | **missing** | **missing** |
+| Create                     | Read (DynamicOps)    | Read (Dynamic) |
+|----------------------------|----------------------|----------------|
+| `createString(String)`     | `getStringValue(T)`  | `asString()`   |
+| `createInt(int)`           | `getNumberValue(T)`  | `asInt()`      |
+| `createBoolean(boolean)`   | `getBooleanValue(T)` | `asBoolean()`  |
+| **`createObject(Object)`** | **missing**          | **missing**    |
 
 There is currently no way to pass an arbitrary Java `Object` through the `DynamicOps` abstraction layer and retrieve it on the other side. This limits special use cases where a `DynamicOps` implementation works directly with plain Java objects (e.g., `TestOps`, in-memory pipelines, or custom object-graph-based implementations) and needs to carry opaque values through the `Dynamic` wrapper without format-specific serialization.
 
 Without this feature, users are forced to work around the type system by casting or storing objects outside the `Dynamic` pipeline, breaking the format-agnostic abstraction.
 
+### Security Consideration
+
+Placing `createObject`/`getObjectValue` directly on `DynamicOps<T>` as default methods is dangerous: uninformed users implementing custom `DynamicOps` might naively map these methods to their format library's object deserialization (e.g., Jackson's `ObjectMapper.treeToValue()`), potentially enabling Remote Code Execution (RCE) vulnerabilities.
+
 ## Proposed Solution
 
-Add a symmetric `createObject` / `getObjectValue` pair to `DynamicOps<T>` and corresponding wrapper methods to `Dynamic<T>`:
+Use the **Capability Pattern** to provide `createObject`/`getObjectValue` through a separate sub-interface `ObjectAwareDynamicOps<T>`, discoverable at runtime via `DynamicOps.asObjectAware()`.
 
-### DynamicOps (Interface Defaults)
+This ensures that:
+- The methods are **not visible** on the base `DynamicOps<T>` interface
+- Only implementations that **explicitly opt in** by implementing `ObjectAwareDynamicOps<T>` expose them
+- Standard codec implementations (GsonOps, JacksonJsonOps, etc.) never see these methods
+- No `SecurityException` overrides are needed in codec implementations
 
-- **`createObject(Object value)`** — Creates a format-specific representation of an arbitrary Java object. Default throws `UnsupportedOperationException`.
-- **`getObjectValue(T input)`** — Extracts an arbitrary Java object from a format-specific value. Default returns `DataResult.error(...)`.
+### ObjectAwareDynamicOps<T> (Sub-Interface)
 
-### Dynamic (Wrapper Methods)
+- **`createObject(Object value)`** — Creates a format-specific representation of an arbitrary Java object.
+- **`getObjectValue(T input)`** — Extracts an arbitrary Java object from a format-specific value. Returns `DataResult<Object>`.
+- **`asObjectAware()`** — Returns `Optional.of(this)` (provided by default method).
 
-- **`createObject(Object value)`** — Delegates to `ops.createObject(value)`, returns a new `Dynamic<T>`.
-- **`asObject()`** — Delegates to `ops.getObjectValue(value)`, returns `DataResult<Object>`.
+### DynamicOps<T> (Capability Discovery)
 
-### Codec Module (Security Block)
+- **`asObjectAware()`** — Returns `Optional.empty()` by default. Implementations of `ObjectAwareDynamicOps` override this to return themselves.
 
-All codec implementations (`GsonOps`, `JacksonJsonOps`, `JacksonXmlOps`, `JacksonYamlOps`, `JacksonTomlOps`, `SnakeYamlOps`) override both methods to throw `SecurityException`. Arbitrary Java object serialization/deserialization is intentionally blocked for security reasons in format-bound implementations, as it could enable untrusted deserialization attacks.
+### Dynamic<T> (Wrapper Methods)
+
+- **`createObject(Object value)`** — Delegates via `ops.asObjectAware()`. Throws `UnsupportedOperationException` if the ops does not support it.
+- **`asObject()`** — Delegates via `ops.asObjectAware()`. Returns `DataResult.error(...)` if the ops does not support it.
 
 ### TestOps (Trivial Implementation)
 
-Since `TestOps` operates on `Object` directly, both methods are trivially implemented:
+Since `TestOps` operates on `Object` directly, it implements `ObjectAwareDynamicOps<Object>` with trivial pass-through:
 - `createObject(Object)` returns the value as-is.
 - `getObjectValue(Object)` returns `DataResult.success(input)`.
 
 ### Annotations
 
 All new methods are annotated with:
-- `@Deprecated` — Signals highly experimental status
 - `@ApiStatus.Experimental` — JetBrains annotation for experimental API
 - `@since 1.1.0`
 
 ## API / Design Sketch
 
 ```java
-// === DynamicOps<T> — Interface Defaults ===
+// === ObjectAwareDynamicOps<T> — Sub-Interface ===
 
-@Deprecated
 @ApiStatus.Experimental
-default @NotNull T createObject(@NotNull final Object value) {
-    throw new UnsupportedOperationException(
-        "createObject is not supported by this DynamicOps implementation"
-    );
+public interface ObjectAwareDynamicOps<T> extends DynamicOps<T> {
+
+    @NotNull T createObject(@NotNull final Object value);
+
+    @NotNull DataResult<Object> getObjectValue(@NotNull final T input);
+
+    @Override
+    default @NotNull Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
+        return Optional.of(this);
+    }
 }
 
-@Deprecated
+// === DynamicOps<T> — Capability Discovery ===
+
 @ApiStatus.Experimental
-default @NotNull DataResult<Object> getObjectValue(@NotNull final T input) {
-    return DataResult.error(
-        "getObjectValue is not supported by this DynamicOps implementation"
-    );
+default @NotNull Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
+    return Optional.empty();
 }
 
 // === Dynamic<T> — Wrapper Methods ===
 
-@Deprecated
 @ApiStatus.Experimental
 public Dynamic<T> createObject(@NotNull final Object value) {
-    return new Dynamic<>(this.ops, this.ops.createObject(value));
+    return this.ops.asObjectAware()
+            .map(oa -> new Dynamic<>(this.ops, oa.createObject(value)))
+            .orElseThrow(() -> new UnsupportedOperationException(
+                    "The DynamicOps implementation does not support Java object operations. "
+                    + "Only ObjectAwareDynamicOps implementations support createObject()."
+            ));
 }
 
-@Deprecated
 @ApiStatus.Experimental
 public DataResult<Object> asObject() {
-    return this.ops.getObjectValue(this.value);
+    return this.ops.asObjectAware()
+            .map(oa -> oa.getObjectValue(this.value))
+            .orElseGet(() -> DataResult.error(
+                    "The DynamicOps implementation does not support Java object operations. "
+                    + "Only ObjectAwareDynamicOps implementations support asObject()."
+            ));
 }
 
-// === Codec Implementations (e.g., GsonOps) ===
+// === TestOps — Implements ObjectAwareDynamicOps<Object> ===
 
-@Deprecated
-@Override
-public JsonElement createObject(@NotNull final Object value) {
-    throw new SecurityException(
-        "createObject is not supported by GsonOps for security reasons"
-    );
-}
+public class TestOps implements ObjectAwareDynamicOps<Object> {
+    @Override
+    public Object createObject(@NotNull final Object value) {
+        return value;
+    }
 
-@Deprecated
-@Override
-public DataResult<Object> getObjectValue(@NotNull final JsonElement input) {
-    throw new SecurityException(
-        "getObjectValue is not supported by GsonOps for security reasons"
-    );
-}
-
-// === TestOps — Trivial Pass-Through ===
-
-@Override
-public Object createObject(@NotNull final Object value) {
-    return value;
-}
-
-@Override
-public DataResult<Object> getObjectValue(@NotNull final Object input) {
-    return DataResult.success(input);
+    @Override
+    public DataResult<Object> getObjectValue(@NotNull final Object input) {
+        return DataResult.success(input);
+    }
 }
 ```
 
 ## Alternatives / Workarounds
 
-1. **Manual casting outside Dynamic:** Users can store objects in a side map and pass keys through `Dynamic`. This breaks the format-agnostic abstraction and adds bookkeeping complexity.
-2. **Custom wrapper type in DynamicOps:** Users could implement a custom `DynamicOps` that wraps objects internally. This works but requires duplicating significant boilerplate without API support.
-3. **Do nothing:** Leave the gap in the API. Users with special use cases would need to maintain their own fork or use unsafe casting patterns.
+1. **Default methods on DynamicOps (rejected):** The original approach. Exposes the methods to all implementors, creating a risk that users naively implement them with unsafe deserialization. Required `SecurityException` overrides in all 6 codec implementations.
+2. **Manual casting outside Dynamic:** Users can store objects in a side map and pass keys through `Dynamic`. This breaks the format-agnostic abstraction and adds bookkeeping complexity.
+3. **Custom wrapper type in DynamicOps:** Users could implement a custom `DynamicOps` that wraps objects internally. This works but requires duplicating significant boilerplate without API support.
+4. **Do nothing:** Leave the gap in the API. Users with special use cases would need to maintain their own fork or use unsafe casting patterns.
 
-None of these alternatives provide a clean, framework-supported solution.
+The Capability Pattern provides the cleanest solution: opt-in, discoverable, and secure by default.
 
 ## Scope of Changes
 
 ### Files Modified
 
-| File | Change |
-|------|--------|
-| `DynamicOps.java` | Add `createObject` and `getObjectValue` default methods |
-| `Dynamic.java` | Add `createObject` and `asObject` wrapper methods |
-| `TestOps.java` | Implement `createObject` and `getObjectValue` |
-| `GsonOps.java` | Override with `SecurityException` |
-| `JacksonJsonOps.java` | Override with `SecurityException` |
-| `JacksonXmlOps.java` | Override with `SecurityException` |
-| `JacksonYamlOps.java` | Override with `SecurityException` |
-| `JacksonTomlOps.java` | Override with `SecurityException` |
-| `SnakeYamlOps.java` | Override with `SecurityException` |
+| File                         | Change                                                                              |
+|------------------------------|-------------------------------------------------------------------------------------|
+| `ObjectAwareDynamicOps.java` | **New** — Sub-interface with `createObject`, `getObjectValue`, default `asObjectAware()` |
+| `DynamicOps.java`            | Added `asObjectAware()` capability discovery method                                 |
+| `Dynamic.java`               | Added `createObject` and `asObject` wrapper methods (delegate via `asObjectAware()`) |
+| `TestOps.java`               | Implements `ObjectAwareDynamicOps<Object>` with trivial pass-through                |
 
 ### Tests Added
 
-| Test File | Tests |
-|-----------|-------|
-| `TestOpsTest.java` | `createObject` returns value directly, `getObjectValue` returns `DataResult.success` |
-| `GsonOpsTest.java` | `createObject` throws `SecurityException`, `getObjectValue` throws `SecurityException` |
-| `JacksonJsonOpsTest.java` | Same as above |
-| `JacksonXmlOpsTest.java` | Same as above |
-| `JacksonYamlOpsTest.java` | Same as above |
-| `JacksonTomlOpsTest.java` | Same as above |
-| `SnakeYamlOpsTest.java` | Same as above |
+| Test File                 | Tests                                                                            |
+|---------------------------|----------------------------------------------------------------------------------|
+| `TestOpsTest.java`        | `isObjectAwareDynamicOps`, `asObjectAware()` returns present, `createObject` returns value, `getObjectValue` returns success |
+| `GsonOpsTest.java`        | `asObjectAware()` returns empty                                                  |
+| `JacksonJsonOpsTest.java` | `asObjectAware()` returns empty                                                  |
+| `JacksonXmlOpsTest.java`  | `asObjectAware()` returns empty                                                  |
+| `JacksonYamlOpsTest.java` | `asObjectAware()` returns empty                                                  |
+| `JacksonTomlOpsTest.java` | `asObjectAware()` returns empty                                                  |
+| `SnakeYamlOpsTest.java`   | `asObjectAware()` returns empty                                                  |
 
 ### Documentation Updated
 
-| Document | Change |
-|----------|--------|
-| `docs/concepts/dynamic-system.md` | Added to interface listing, creating and reading sections |
-| `docs/tutorials/custom-dynamicops.md` | Added to interface template |
-| `docs/appendix/changelog.md` | Added Version 1.1.0 section |
+| Document                              | Change                                                              |
+|---------------------------------------|---------------------------------------------------------------------|
+| `docs/concepts/dynamic-system.md`     | Added `ObjectAwareDynamicOps` section, updated interface listing    |
+| `docs/tutorials/custom-dynamicops.md` | Added `ObjectAwareDynamicOps` section, updated interface template   |
+| `docs/appendix/changelog.md`          | Added Version 1.1.0 section                                        |
+| `package-info.java`                   | Added `ObjectAwareDynamicOps` to Key Classes list                  |
 
 ## Checklist
 

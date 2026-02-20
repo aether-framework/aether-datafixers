@@ -6,33 +6,45 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ## Version 1.1.0
 
-### Experimental: Java Object Support in DynamicOps
+### Experimental: Java Object Support via Capability Pattern
 
-Added experimental `createObject` and `getObjectValue` methods to `DynamicOps<T>` for working with arbitrary Java objects. This enables special use cases where format-agnostic object passthrough is needed.
+Added experimental Java object passthrough support using the **Capability Pattern**. The methods `createObject` and `getObjectValue` live in a new sub-interface `ObjectAwareDynamicOps<T>`, discoverable at runtime via `DynamicOps.asObjectAware()`.
 
-**New API Methods:**
+This design ensures that uninformed users cannot accidentally implement arbitrary object deserialization in custom `DynamicOps` implementations (which could lead to RCE vulnerabilities). Only implementations that explicitly opt in by implementing `ObjectAwareDynamicOps<T>` expose these methods.
 
-| Method | Location | Behavior |
-|--------|----------|----------|
-| `DynamicOps.createObject(Object)` | Interface default | Throws `UnsupportedOperationException` |
-| `DynamicOps.getObjectValue(T)` | Interface default | Returns `DataResult.error(...)` |
-| `Dynamic.createObject(Object)` | Wrapper | Delegates to `ops.createObject(value)` |
-| `Dynamic.asObject()` | Wrapper | Delegates to `ops.getObjectValue(value)` |
+**API:**
 
-**Codec Module — Security Block:**
+| Component | Description |
+|-----------|-------------|
+| `ObjectAwareDynamicOps<T>` | Sub-interface of `DynamicOps<T>` with `createObject(Object)` and `getObjectValue(T)` |
+| `DynamicOps.asObjectAware()` | Capability discovery, returns `Optional<ObjectAwareDynamicOps<T>>` (empty by default) |
+| `Dynamic.createObject(Object)` | Wrapper, delegates via `ops.asObjectAware()` (throws `UnsupportedOperationException` if unsupported) |
+| `Dynamic.asObject()` | Wrapper, delegates via `ops.asObjectAware()` (returns error `DataResult` if unsupported) |
 
-All codec implementations (`GsonOps`, `JacksonJsonOps`, `JacksonXmlOps`, `JacksonYamlOps`, `JacksonTomlOps`, `SnakeYamlOps`) override both methods to throw `SecurityException`. Arbitrary Java object serialization/deserialization is intentionally blocked in codec implementations for security reasons.
+**Usage:**
 
-**Annotations:**
+```java
+// Check capability and use
+ops.asObjectAware().ifPresent(oa -> {
+    T obj = oa.createObject(myPojo);
+    DataResult<Object> result = oa.getObjectValue(obj);
+});
 
-All new methods are annotated with:
-- `@Deprecated` — Signals experimental status; may change or be removed in future versions
-- `@ApiStatus.Experimental` — JetBrains annotation for experimental API
-- `@since 1.1.0`
+// To support object passthrough in a custom DynamicOps:
+public class MyOps implements ObjectAwareDynamicOps<Object> {
+    @Override public Object createObject(Object value) { return value; }
+    @Override public DataResult<Object> getObjectValue(Object input) { return DataResult.success(input); }
+    // asObjectAware() returns Optional.of(this) via default method
+}
+```
+
+Standard codec implementations (`GsonOps`, `JacksonJsonOps`, etc.) do **not** implement this interface — `asObjectAware()` returns `Optional.empty()`.
+
+**Annotations:** All new methods are annotated with `@ApiStatus.Experimental` and `@since 1.1.0`.
 
 Updated documentation:
-- [Dynamic System](../concepts/dynamic-system.md) — Added `createObject`/`getObjectValue` to interface listing and usage sections
-- [Custom DynamicOps Tutorial](../tutorials/custom-dynamicops.md) — Updated interface template
+- [Dynamic System](../concepts/dynamic-system.md) — Added `ObjectAwareDynamicOps` section, updated interface listing
+- [Custom DynamicOps Tutorial](../tutorials/custom-dynamicops.md) — Added ObjectAwareDynamicOps section
 
 ---
 

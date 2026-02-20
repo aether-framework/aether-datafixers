@@ -36,6 +36,10 @@
  *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps} - The operations
  *       interface that defines how to read, write, and transform values in a specific
  *       format. Implementations exist for JSON, NBT, and other formats.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.ObjectAwareDynamicOps} - A
+ *       capability sub-interface of {@code DynamicOps} for implementations that support
+ *       arbitrary Java object passthrough via {@code createObject}/{@code getObjectValue}.
+ *       Discovered at runtime via {@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps#asObjectAware()}.</li>
  *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic} - A Dynamic
  *       that includes a {@link de.splatgames.aether.datafixers.api.TypeReference}
  *       to indicate what type of data it represents.</li>
