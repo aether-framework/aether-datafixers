@@ -80,10 +80,9 @@ public interface ObjectAwareDynamicOps<T> extends DynamicOps<T> {
 // === DynamicOps<T> — Capability Discovery (instanceof-based) ===
 
 @ApiStatus.Experimental
-@SuppressWarnings("unchecked")
 default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-    return (this instanceof ObjectAwareDynamicOps<?> objectOps)
-            ? Optional.of((ObjectAwareDynamicOps<T>) objectOps)
+    return (this instanceof ObjectAwareDynamicOps<T> objectOps)
+            ? Optional.of(objectOps)
             : Optional.empty();
 }
 

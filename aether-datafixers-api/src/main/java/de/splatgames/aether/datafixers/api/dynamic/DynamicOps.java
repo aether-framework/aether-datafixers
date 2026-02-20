@@ -429,10 +429,9 @@ public interface DynamicOps<T> {
      */
     @NotNull
     @ApiStatus.Experimental
-    @SuppressWarnings("unchecked")
     default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-        return (this instanceof ObjectAwareDynamicOps<?> objectOps)
-                ? Optional.of((ObjectAwareDynamicOps<T>) objectOps)
+        return (this instanceof ObjectAwareDynamicOps<T> objectOps)
+                ? Optional.of(objectOps)
                 : Optional.empty();
     }
 
@@ -466,7 +465,7 @@ public interface DynamicOps<T> {
     default ObjectAwareDynamicOps<T> requireObjectAware() {
         return asObjectAware().orElseThrow(() ->
                 new UnsupportedOperationException(
-                        getClass().getSimpleName()
+                        getClass().getName()
                         + " does not implement ObjectAwareDynamicOps. "
                         + "Use asObjectAware() to check for capability before calling this method, "
                         + "or ensure that the DynamicOps implementation supports Java object operations."
