@@ -56,6 +56,7 @@ public interface DynamicOps<T> {
     T createLong(long value);
     T createDouble(double value);
     T createBoolean(boolean value);
+    T createObject(Object value);          // Experimental (since 1.1.0)
     T createList(Stream<T> values);
     T createMap(Map<T, T> map);
 
@@ -63,6 +64,7 @@ public interface DynamicOps<T> {
     DataResult<String> getStringValue(T input);
     DataResult<Number> getNumberValue(T input);
     DataResult<Boolean> getBooleanValue(T input);
+    DataResult<Object> getObjectValue(T input); // Experimental (since 1.1.0)
     DataResult<Stream<T>> getStream(T input);
     DataResult<Map<T, T>> getMapValues(T input);
 
@@ -118,6 +120,11 @@ Dynamic<JsonElement> intVal = dynamic.createInt(42);
 Dynamic<JsonElement> doubleVal = dynamic.createDouble(3.14);
 Dynamic<JsonElement> boolVal = dynamic.createBoolean(true);
 
+// Create arbitrary Java object (Experimental — @since 1.1.0)
+// WARNING: Not supported by codec implementations (throws SecurityException).
+// Only use with DynamicOps that explicitly support it (e.g., TestOps).
+// Dynamic<JsonElement> objVal = dynamic.createObject(myPojo); // SecurityException with GsonOps!
+
 // Create structures
 Dynamic<JsonElement> map = dynamic.emptyMap()
     .set("key1", dynamic.createString("value1"))
@@ -144,6 +151,10 @@ OptionalDynamic<JsonElement> position = player.get("position");
 DataResult<String> nameResult = name.asString();
 DataResult<Integer> levelResult = player.get("level").asInt();
 DataResult<Double> xResult = player.get("position").get("x").asDouble();
+
+// Extract arbitrary Java object (Experimental — @since 1.1.0)
+// WARNING: Not supported by codec implementations (throws SecurityException).
+// DataResult<Object> objResult = player.asObject(); // SecurityException with GsonOps!
 
 // With defaults
 String nameValue = name.asString().orElse("Unknown");

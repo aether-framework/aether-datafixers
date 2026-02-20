@@ -129,6 +129,18 @@ public final class TestOps implements DynamicOps<Object> {
         return value;
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull Object createObject(@NotNull final Object value) {
+        return value;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull DataResult<Object> getObjectValue(@NotNull final Object input) {
+        return DataResult.success(input);
+    }
+
     @Override
     public @NotNull DataResult<String> getStringValue(@NotNull final Object input) {
         if (input instanceof String s) {

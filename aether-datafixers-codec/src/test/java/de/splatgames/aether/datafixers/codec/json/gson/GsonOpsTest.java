@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit tests for {@link GsonOps}.
@@ -254,6 +255,27 @@ class GsonOpsTest {
         void createNumericCreatesNumberPrimitive() {
             assertThat(ops.createNumeric(42).getAsInt()).isEqualTo(42);
             assertThat(ops.createNumeric(3.14).getAsDouble()).isEqualTo(3.14);
+        }
+    }
+
+    @Nested
+    @DisplayName("Java Object Creation")
+    class JavaObjectCreation {
+
+        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("createObject() throws SecurityException")
+        void createObjectThrowsSecurityException() {
+            assertThatThrownBy(() -> ops.createObject("test"))
+                    .isInstanceOf(SecurityException.class);
+        }
+
+        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("getObjectValue() throws SecurityException")
+        void getObjectValueThrowsSecurityException() {
+            assertThatThrownBy(() -> ops.getObjectValue(new JsonPrimitive("test")))
+                    .isInstanceOf(SecurityException.class);
         }
     }
 

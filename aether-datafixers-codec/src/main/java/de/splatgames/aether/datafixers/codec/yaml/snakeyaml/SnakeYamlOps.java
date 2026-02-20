@@ -557,6 +557,40 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return value;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p><b>This operation is not supported by SnakeYamlOps.</b> Allowing arbitrary object
+     * creation from untrusted input can lead to security vulnerabilities. Use typed
+     * creation methods or a custom Encoder instead.</p>
+     *
+     * @throws SecurityException always
+     * @since 1.1.0
+     */
+    @Deprecated
+    @NotNull
+    @Override
+    public Object createObject(@NotNull final Object value) {
+        throw new SecurityException("createObject is not supported by SnakeYamlOps for security reasons");
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p><b>This operation is not supported by SnakeYamlOps.</b> Allowing arbitrary object
+     * deserialization from untrusted input can lead to security vulnerabilities. Use typed
+     * reading methods or a custom Decoder instead.</p>
+     *
+     * @throws SecurityException always
+     * @since 1.1.0
+     */
+    @Deprecated
+    @NotNull
+    @Override
+    public DataResult<Object> getObjectValue(@NotNull final Object input) {
+        throw new SecurityException("getObjectValue is not supported by SnakeYamlOps for security reasons");
+    }
+
     // ==================== Primitive Reading Operations ====================
 
     /**

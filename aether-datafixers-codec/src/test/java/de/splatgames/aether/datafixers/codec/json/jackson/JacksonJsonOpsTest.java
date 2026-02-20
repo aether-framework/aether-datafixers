@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit tests for {@link JacksonJsonOps}.
@@ -285,6 +286,27 @@ class JacksonJsonOpsTest {
             assertThat(ops.createNumeric(3.14).isDouble()).isTrue();
             assertThat(ops.createNumeric((short) 10).isShort()).isTrue();
             assertThat(ops.createNumeric((byte) 5).isShort()).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("Java Object Creation")
+    class JavaObjectCreation {
+
+        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("createObject() throws SecurityException")
+        void createObjectThrowsSecurityException() {
+            assertThatThrownBy(() -> ops.createObject("test"))
+                    .isInstanceOf(SecurityException.class);
+        }
+
+        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("getObjectValue() throws SecurityException")
+        void getObjectValueThrowsSecurityException() {
+            assertThatThrownBy(() -> ops.getObjectValue(TextNode.valueOf("test")))
+                    .isInstanceOf(SecurityException.class);
         }
     }
 

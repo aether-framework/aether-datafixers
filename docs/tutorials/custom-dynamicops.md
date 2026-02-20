@@ -32,6 +32,7 @@ public interface DynamicOps<T> {
     T createFloat(float value);
     T createDouble(double value);
     T createBoolean(boolean value);
+    T createObject(Object value);          // Experimental (since 1.1.0)
 
     T createList(Stream<T> values);
     T createMap(Map<T, T> map);
@@ -40,6 +41,7 @@ public interface DynamicOps<T> {
     DataResult<String> getStringValue(T input);
     DataResult<Number> getNumberValue(T input);
     DataResult<Boolean> getBooleanValue(T input);
+    DataResult<Object> getObjectValue(T input); // Experimental (since 1.1.0)
 
     DataResult<Stream<T>> getStream(T input);
     DataResult<Map<T, T>> getMapValues(T input);

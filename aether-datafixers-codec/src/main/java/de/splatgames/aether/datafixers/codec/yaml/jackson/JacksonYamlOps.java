@@ -727,6 +727,40 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         return DoubleNode.valueOf(value.doubleValue());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p><b>This operation is not supported by JacksonYamlOps.</b> Allowing arbitrary object
+     * creation from untrusted input can lead to security vulnerabilities. Use typed
+     * creation methods or a custom Encoder instead.</p>
+     *
+     * @throws SecurityException always
+     * @since 1.1.0
+     */
+    @Deprecated
+    @NotNull
+    @Override
+    public JsonNode createObject(@NotNull final Object value) {
+        throw new SecurityException("createObject is not supported by JacksonYamlOps for security reasons");
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p><b>This operation is not supported by JacksonYamlOps.</b> Allowing arbitrary object
+     * deserialization from untrusted input can lead to security vulnerabilities. Use typed
+     * reading methods or a custom Decoder instead.</p>
+     *
+     * @throws SecurityException always
+     * @since 1.1.0
+     */
+    @Deprecated
+    @NotNull
+    @Override
+    public DataResult<Object> getObjectValue(@NotNull final JsonNode input) {
+        throw new SecurityException("getObjectValue is not supported by JacksonYamlOps for security reasons");
+    }
+
     // ==================== Primitive Reading Operations ====================
 
     /**

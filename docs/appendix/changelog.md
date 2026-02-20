@@ -4,6 +4,38 @@ History of documentation updates. For code changes, see the main [CHANGELOG.md](
 
 ---
 
+## Version 1.1.0
+
+### Experimental: Java Object Support in DynamicOps
+
+Added experimental `createObject` and `getObjectValue` methods to `DynamicOps<T>` for working with arbitrary Java objects. This enables special use cases where format-agnostic object passthrough is needed.
+
+**New API Methods:**
+
+| Method | Location | Behavior |
+|--------|----------|----------|
+| `DynamicOps.createObject(Object)` | Interface default | Throws `UnsupportedOperationException` |
+| `DynamicOps.getObjectValue(T)` | Interface default | Returns `DataResult.error(...)` |
+| `Dynamic.createObject(Object)` | Wrapper | Delegates to `ops.createObject(value)` |
+| `Dynamic.asObject()` | Wrapper | Delegates to `ops.getObjectValue(value)` |
+
+**Codec Module — Security Block:**
+
+All codec implementations (`GsonOps`, `JacksonJsonOps`, `JacksonXmlOps`, `JacksonYamlOps`, `JacksonTomlOps`, `SnakeYamlOps`) override both methods to throw `SecurityException`. Arbitrary Java object serialization/deserialization is intentionally blocked in codec implementations for security reasons.
+
+**Annotations:**
+
+All new methods are annotated with:
+- `@Deprecated` — Signals experimental status; may change or be removed in future versions
+- `@ApiStatus.Experimental` — JetBrains annotation for experimental API
+- `@since 1.1.0`
+
+Updated documentation:
+- [Dynamic System](../concepts/dynamic-system.md) — Added `createObject`/`getObjectValue` to interface listing and usage sections
+- [Custom DynamicOps Tutorial](../tutorials/custom-dynamicops.md) — Updated interface template
+
+---
+
 ## Version 0.5.0 (API Freeze)
 
 ### API Freeze

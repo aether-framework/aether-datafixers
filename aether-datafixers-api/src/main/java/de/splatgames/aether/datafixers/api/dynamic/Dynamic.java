@@ -26,6 +26,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -446,6 +447,39 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
     @NotNull
     public DataResult<Boolean> asBoolean() {
         return this.ops.getBooleanValue(this.value);
+    }
+
+    /**
+     * Attempts to read this value as an arbitrary Java object.
+     *
+     * <p>This is an experimental method that delegates to {@link DynamicOps#getObjectValue(Object)}.
+     * Most {@link DynamicOps} implementations do not support this operation. The default
+     * returns a {@link DataResult} error, while codec module implementations will throw
+     * {@link SecurityException}. Prefer using the typed reading methods
+     * (e.g., {@link #asString()}, {@link #asInt()}) whenever possible.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Only works with DynamicOps implementations that support getObjectValue
+     * Dynamic<Object> dynamic = new Dynamic<>(myOps, someValue);
+     * DataResult<Object> result = dynamic.asObject();
+     * }</pre>
+     *
+     * @return a {@link DataResult} containing the Java object on success, or an error
+     *         describing why the operation is not supported
+     * @throws SecurityException if the underlying ops explicitly rejects this operation
+     *         for security reasons
+     * @see DynamicOps#getObjectValue(Object)
+     * @see #asString()
+     * @see #asNumber()
+     * @deprecated This is an experimental API. Prefer typed reading methods or a custom Decoder.
+     * @since 1.1.0
+     */
+    @Deprecated
+    @ApiStatus.Experimental
+    @NotNull
+    public DataResult<Object> asObject() {
+        return this.ops.getObjectValue(this.value);
     }
 
     // ==================== List Operations ====================
@@ -1089,6 +1123,37 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
     @NotNull
     public Dynamic<T> createBoolean(final boolean value) {
         return new Dynamic<>(this.ops, this.ops.createBoolean(value));
+    }
+
+    /**
+     * Creates a Dynamic from an arbitrary Java object.
+     *
+     * <p>This is an experimental method that delegates to {@link DynamicOps#createObject(Object)}.
+     * Most {@link DynamicOps} implementations do not support this operation and will throw
+     * {@link UnsupportedOperationException}. Prefer using the typed creation methods
+     * (e.g., {@link #createString(String)}, {@link #createInt(int)}) whenever possible.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Only works with DynamicOps implementations that support createObject
+     * Dynamic<Object> dynamic = new Dynamic<>(myOps, myOps.empty());
+     * Dynamic<Object> result = dynamic.createObject(someJavaObject);
+     * }</pre>
+     *
+     * @param value the Java object to convert; must not be {@code null}
+     * @return a new Dynamic containing the converted value; never {@code null}
+     * @throws NullPointerException          if {@code value} is {@code null}
+     * @throws UnsupportedOperationException if the underlying ops does not support this operation
+     * @see DynamicOps#createObject(Object)
+     * @deprecated This is an experimental API. Prefer typed creation methods or a custom Encoder.
+     * @since 1.1.0
+     */
+    @Deprecated
+    @ApiStatus.Experimental
+    @NotNull
+    public Dynamic<T> createObject(@NotNull final Object value) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        return new Dynamic<>(this.ops, this.ops.createObject(value));
     }
 
     // ==================== Conversion ====================

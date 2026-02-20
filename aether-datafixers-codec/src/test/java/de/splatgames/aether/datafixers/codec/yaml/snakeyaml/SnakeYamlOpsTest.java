@@ -409,6 +409,27 @@ class SnakeYamlOpsTest {
     }
 
     @Nested
+    @DisplayName("Java Object Creation")
+    class JavaObjectCreation {
+
+        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("createObject() throws SecurityException")
+        void createObjectThrowsSecurityException() {
+            assertThatThrownBy(() -> ops.createObject("test"))
+                    .isInstanceOf(SecurityException.class);
+        }
+
+        @SuppressWarnings("deprecation")
+        @Test
+        @DisplayName("getObjectValue() throws SecurityException")
+        void getObjectValueThrowsSecurityException() {
+            assertThatThrownBy(() -> ops.getObjectValue("test"))
+                    .isInstanceOf(SecurityException.class);
+        }
+    }
+
+    @Nested
     @DisplayName("Primitive Reading")
     class PrimitiveReading {
 
