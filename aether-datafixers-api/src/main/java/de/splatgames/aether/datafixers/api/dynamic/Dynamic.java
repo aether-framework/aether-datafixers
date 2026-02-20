@@ -1153,12 +1153,7 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
     @NotNull
     public Dynamic<T> createObject(@NotNull final Object value) {
         Preconditions.checkNotNull(value, "value must not be null");
-        return this.ops.asObjectAware()
-                .map(oa -> new Dynamic<>(this.ops, oa.createObject(value)))
-                .orElseThrow(() -> new UnsupportedOperationException(
-                        "The DynamicOps implementation does not support Java object operations. "
-                        + "Only ObjectAwareDynamicOps implementations support createObject()."
-                ));
+        return new Dynamic<>(this.ops, this.ops.requireObjectAware().createObject(value));
     }
 
     // ==================== Conversion ====================

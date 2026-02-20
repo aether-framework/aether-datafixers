@@ -17,24 +17,29 @@ This design ensures that uninformed users cannot accidentally implement arbitrar
 | Component | Description |
 |-----------|-------------|
 | `ObjectAwareDynamicOps<T>` | Sub-interface of `DynamicOps<T>` with `createObject(Object)` and `getObjectValue(T)` |
-| `DynamicOps.asObjectAware()` | Capability discovery, returns `Optional<ObjectAwareDynamicOps<T>>` (empty by default) |
-| `Dynamic.createObject(Object)` | Wrapper, delegates via `ops.asObjectAware()` (throws `UnsupportedOperationException` if unsupported) |
+| `DynamicOps.asObjectAware()` | Capability discovery via `instanceof`, returns `Optional<ObjectAwareDynamicOps<T>>` |
+| `DynamicOps.requireObjectAware()` | Throwing variant of `asObjectAware()` for when the capability is required |
+| `Dynamic.createObject(Object)` | Wrapper, delegates via `ops.requireObjectAware()` (throws `UnsupportedOperationException` if unsupported) |
 | `Dynamic.asObject()` | Wrapper, delegates via `ops.asObjectAware()` (returns error `DataResult` if unsupported) |
 
 **Usage:**
 
 ```java
-// Check capability and use
+// Check capability (optional)
 ops.asObjectAware().ifPresent(oa -> {
     T obj = oa.createObject(myPojo);
     DataResult<Object> result = oa.getObjectValue(obj);
 });
 
+// Or require capability (throws if not supported)
+ObjectAwareDynamicOps<T> oa = ops.requireObjectAware();
+T obj = oa.createObject(myPojo);
+
 // To support object passthrough in a custom DynamicOps:
 public class MyOps implements ObjectAwareDynamicOps<Object> {
     @Override public Object createObject(Object value) { return value; }
     @Override public DataResult<Object> getObjectValue(Object input) { return DataResult.success(input); }
-    // asObjectAware() returns Optional.of(this) via default method
+    // asObjectAware() automatically detects this via instanceof in DynamicOps
 }
 ```
 

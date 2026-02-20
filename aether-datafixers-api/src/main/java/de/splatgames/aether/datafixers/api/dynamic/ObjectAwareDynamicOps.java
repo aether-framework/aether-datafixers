@@ -26,8 +26,6 @@ import de.splatgames.aether.datafixers.api.result.DataResult;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 /**
  * An extension of {@link DynamicOps} that supports creating and reading
  * arbitrary Java objects through the dynamic data abstraction layer.
@@ -106,17 +104,4 @@ public interface ObjectAwareDynamicOps<T> extends DynamicOps<T> {
      * @since 1.1.0
      */
     @NotNull DataResult<Object> getObjectValue(@NotNull final T input);
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Since this implementation already is an {@code ObjectAwareDynamicOps},
-     * this method returns {@code Optional.of(this)}.</p>
-     *
-     * @return an {@link Optional} containing {@code this}; never empty
-     */
-    @Override
-    default @NotNull Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-        return Optional.of(this);
-    }
 }

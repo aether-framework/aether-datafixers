@@ -41,15 +41,15 @@ This ensures that:
 
 - **`createObject(Object value)`** — Creates a format-specific representation of an arbitrary Java object.
 - **`getObjectValue(T input)`** — Extracts an arbitrary Java object from a format-specific value. Returns `DataResult<Object>`.
-- **`asObjectAware()`** — Returns `Optional.of(this)` (provided by default method).
 
 ### DynamicOps<T> (Capability Discovery)
 
-- **`asObjectAware()`** — Returns `Optional.empty()` by default. Implementations of `ObjectAwareDynamicOps` override this to return themselves.
+- **`asObjectAware()`** — Uses `instanceof` to check if the implementation is an `ObjectAwareDynamicOps`. No override needed.
+- **`requireObjectAware()`** — Throwing variant of `asObjectAware()`. Use when the capability is a hard requirement.
 
 ### Dynamic<T> (Wrapper Methods)
 
-- **`createObject(Object value)`** — Delegates via `ops.asObjectAware()`. Throws `UnsupportedOperationException` if the ops does not support it.
+- **`createObject(Object value)`** — Delegates via `ops.requireObjectAware()`. Throws `UnsupportedOperationException` if the ops does not support it.
 - **`asObject()`** — Delegates via `ops.asObjectAware()`. Returns `DataResult.error(...)` if the ops does not support it.
 
 ### TestOps (Trivial Implementation)
@@ -75,30 +75,35 @@ public interface ObjectAwareDynamicOps<T> extends DynamicOps<T> {
     @NotNull T createObject(@NotNull final Object value);
 
     @NotNull DataResult<Object> getObjectValue(@NotNull final T input);
-
-    @Override
-    default @NotNull Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-        return Optional.of(this);
-    }
 }
 
-// === DynamicOps<T> — Capability Discovery ===
+// === DynamicOps<T> — Capability Discovery (instanceof-based) ===
 
 @ApiStatus.Experimental
-default @NotNull Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-    return Optional.empty();
+@SuppressWarnings("unchecked")
+default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
+    return (this instanceof ObjectAwareDynamicOps<?> objectOps)
+            ? Optional.of((ObjectAwareDynamicOps<T>) objectOps)
+            : Optional.empty();
+}
+
+@ApiStatus.Experimental
+default ObjectAwareDynamicOps<T> requireObjectAware() {
+    return asObjectAware().orElseThrow(() ->
+            new UnsupportedOperationException(
+                    getClass().getSimpleName()
+                    + " does not implement ObjectAwareDynamicOps. "
+                    + "Use asObjectAware() to check for capability before calling this method, "
+                    + "or ensure that the DynamicOps implementation supports Java object operations."
+            ));
 }
 
 // === Dynamic<T> — Wrapper Methods ===
 
 @ApiStatus.Experimental
 public Dynamic<T> createObject(@NotNull final Object value) {
-    return this.ops.asObjectAware()
-            .map(oa -> new Dynamic<>(this.ops, oa.createObject(value)))
-            .orElseThrow(() -> new UnsupportedOperationException(
-                    "The DynamicOps implementation does not support Java object operations. "
-                    + "Only ObjectAwareDynamicOps implementations support createObject()."
-            ));
+    Preconditions.checkNotNull(value, "value must not be null");
+    return new Dynamic<>(this.ops, this.ops.requireObjectAware().createObject(value));
 }
 
 @ApiStatus.Experimental
@@ -141,7 +146,7 @@ The Capability Pattern provides the cleanest solution: opt-in, discoverable, and
 
 | File                         | Change                                                                              |
 |------------------------------|-------------------------------------------------------------------------------------|
-| `ObjectAwareDynamicOps.java` | **New** — Sub-interface with `createObject`, `getObjectValue`, default `asObjectAware()` |
+| `ObjectAwareDynamicOps.java` | **New** — Sub-interface with `createObject` and `getObjectValue`                         |
 | `DynamicOps.java`            | Added `asObjectAware()` capability discovery method                                 |
 | `Dynamic.java`               | Added `createObject` and `asObject` wrapper methods (delegate via `asObjectAware()`) |
 | `TestOps.java`               | Implements `ObjectAwareDynamicOps<Object>` with trivial pass-through                |

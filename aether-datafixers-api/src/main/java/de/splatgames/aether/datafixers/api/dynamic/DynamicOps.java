@@ -404,15 +404,13 @@ public interface DynamicOps<T> {
     // ==================== Capability Discovery ====================
 
     /**
-     * Returns this {@code DynamicOps} as an {@link ObjectAwareDynamicOps} if it
-     * supports creating and reading arbitrary Java objects.
+     * Returns this {@code DynamicOps} as an {@link ObjectAwareDynamicOps} if it supports creating and reading arbitrary
+     * Java objects.
      *
      * <p>This method follows the <em>Capability Pattern</em>: instead of providing
-     * unsupported operations that throw exceptions, implementations that support
-     * Java object operations implement the {@link ObjectAwareDynamicOps} sub-interface
-     * and this method returns them wrapped in an {@link Optional}. Implementations
-     * that do not support object operations inherit this default, which returns
-     * {@link Optional#empty()}.</p>
+     * unsupported operations that throw exceptions, implementations that support Java object operations implement the
+     * {@link ObjectAwareDynamicOps} sub-interface. This default method uses an {@code instanceof} check to
+     * automatically detect whether the implementation supports the capability, requiring no override.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -424,14 +422,54 @@ public interface DynamicOps<T> {
      * });
      * }</pre>
      *
-     * @return an {@link Optional} containing this instance as
-     *         {@link ObjectAwareDynamicOps} if supported, or empty otherwise
+     * @return an {@link Optional} containing this instance as {@link ObjectAwareDynamicOps} if supported, or empty
+     * otherwise
      * @see ObjectAwareDynamicOps
      * @since 1.1.0
      */
     @NotNull
     @ApiStatus.Experimental
+    @SuppressWarnings("unchecked")
     default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-        return Optional.empty();
+        return (this instanceof ObjectAwareDynamicOps<?> objectOps)
+                ? Optional.of((ObjectAwareDynamicOps<T>) objectOps)
+                : Optional.empty();
+    }
+
+    /**
+     * Returns this {@code DynamicOps} as an {@link ObjectAwareDynamicOps}, throwing an exception if the capability
+     * is not supported.
+     *
+     * <p>This is the throwing counterpart to {@link #asObjectAware()}. Use this method when Java object operations
+     * are a hard requirement and the absence of the capability indicates a programming error or misconfiguration,
+     * rather than a condition that should be handled gracefully.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // When you know the ops must support objects:
+     * ObjectAwareDynamicOps<T> objectOps = ops.requireObjectAware();
+     * T wrapped = objectOps.createObject(myPojo);
+     *
+     * // vs. the optional variant for conditional usage:
+     * ops.asObjectAware().ifPresent(oa -> { ... });
+     * }</pre>
+     *
+     * @return this instance as {@link ObjectAwareDynamicOps}; never {@code null}
+     * @throws UnsupportedOperationException if this {@code DynamicOps} does not implement
+     *         {@link ObjectAwareDynamicOps}
+     * @see #asObjectAware()
+     * @see ObjectAwareDynamicOps
+     * @since 1.1.0
+     */
+    @NotNull
+    @ApiStatus.Experimental
+    default ObjectAwareDynamicOps<T> requireObjectAware() {
+        return asObjectAware().orElseThrow(() ->
+                new UnsupportedOperationException(
+                        getClass().getSimpleName()
+                        + " does not implement ObjectAwareDynamicOps. "
+                        + "Use asObjectAware() to check for capability before calling this method, "
+                        + "or ensure that the DynamicOps implementation supports Java object operations."
+                ));
     }
 }

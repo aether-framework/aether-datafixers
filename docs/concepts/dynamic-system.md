@@ -59,8 +59,9 @@ public interface DynamicOps<T> {
     T createList(Stream<T> values);
     T createMap(Map<T, T> map);
 
-    // Capability discovery
-    Optional<ObjectAwareDynamicOps<T>> asObjectAware(); // since 1.1.0
+    // Capability discovery (since 1.1.0)
+    Optional<ObjectAwareDynamicOps<T>> asObjectAware();
+    ObjectAwareDynamicOps<T> requireObjectAware();
 
     // Type extraction
     DataResult<String> getStringValue(T input);
@@ -89,23 +90,23 @@ A capability sub-interface for `DynamicOps` implementations that support arbitra
 public interface ObjectAwareDynamicOps<T> extends DynamicOps<T> {
     T createObject(Object value);
     DataResult<Object> getObjectValue(T input);
-
-    // Discovery — automatically returns Optional.of(this)
-    @Override
-    default Optional<ObjectAwareDynamicOps<T>> asObjectAware() {
-        return Optional.of(this);
-    }
 }
 ```
+
+Discovery happens automatically — `DynamicOps.asObjectAware()` uses an `instanceof` check internally, so implementations only need to declare `implements ObjectAwareDynamicOps<T>`. No override required.
 
 Standard codec implementations (GsonOps, JacksonJsonOps, etc.) do **not** implement this interface, so `asObjectAware()` returns `Optional.empty()`. This prevents uninformed users from accidentally implementing arbitrary object deserialization, which could lead to RCE vulnerabilities.
 
 ```java
-// Check capability at runtime
+// Check capability at runtime (optional)
 ops.asObjectAware().ifPresent(oa -> {
     T wrapped = oa.createObject(myPojo);
     DataResult<Object> extracted = oa.getObjectValue(wrapped);
 });
+
+// Or require capability (throws UnsupportedOperationException if not supported)
+ObjectAwareDynamicOps<T> oa = ops.requireObjectAware();
+T wrapped = oa.createObject(myPojo);
 ```
 
 ### TaggedDynamic
