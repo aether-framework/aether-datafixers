@@ -41,15 +41,15 @@
         <spotbugs.version>4.9.8</spotbugs.version>
 
         <!-- definition of versions for plugins -->
-        <plugin.compiler.version>3.11.0</plugin.compiler.version>
-        <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
-        <plugin.source.version>3.3.1</plugin.source.version>
-        <plugin.javadoc.version>3.10.1</plugin.javadoc.version>
-        <plugin.site.version>3.20.0</plugin.site.version>
-        <plugin.gpg.version>3.2.6</plugin.gpg.version>
-        <plugin.surefire.version>3.1.2</plugin.surefire.version>
-        <plugin.failsafe.version>3.1.2</plugin.failsafe.version>
-        <plugin.shade.version>3.5.1</plugin.shade.version>
+        <plugin.compiler.version>3.15.0</plugin.compiler.version>
+        <plugin.enforcer.version>3.6.2</plugin.enforcer.version>
+        <plugin.source.version>3.4.0</plugin.source.version>
+        <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
+        <plugin.site.version>3.21.0</plugin.site.version>
+        <plugin.gpg.version>3.2.8</plugin.gpg.version>
+        <plugin.surefire.version>3.5.5</plugin.surefire.version>
+        <plugin.failsafe.version>3.5.5</plugin.failsafe.version>
+        <plugin.shade.version>3.6.1</plugin.shade.version>
 
         <!-- QA plugin versions -->
         <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
