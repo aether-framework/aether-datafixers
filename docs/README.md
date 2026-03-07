@@ -120,7 +120,7 @@ For experienced users:
 
 - [Traversal Strategies](advanced/traversal-strategies.md)
 - [Custom Optics](advanced/custom-optics.md)
-- [Performance Optimization](advanced/performance-optimization.md)
+- [Performance Optimization](advanced/performance-optimization.md) — Benchmark results, format comparison, and tuning
 - [Extending the Framework](advanced/extending-framework.md)
 
 ### Security
