@@ -1,0 +1,46 @@
+=== Benchmark Run: 20260306-230907 ===
+
+--- Java ---
+openjdk version "17.0.18" 2026-01-20
+OpenJDK Runtime Environment (build 17.0.18+8-Ubuntu-122.04.1)
+OpenJDK 64-Bit Server VM (build 17.0.18+8-Ubuntu-122.04.1, mixed mode, sharing)
+
+--- OS ---
+Linux dmz-benchmarking 5.15.0-171-generic #181-Ubuntu SMP Fri Feb 6 22:44:50 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+--- CPU ---
+model name	: Intel(R) Core(TM) i9-9900K CPU @ 3.60GHz
+Cores: 4
+
+--- Memory ---
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       191Mi       6.1Gi       1.0Mi       1.4Gi       7.3Gi
+Swap:             0B          0B          0B
+
+--- Git ---
+Branch: feature/43-benchmark-guide
+Commit: ffaf87fa27a3aa09b33425400dae5b688acfe7f4
+Dirty:  3 files
+
+--- JMH Settings ---
+Warmup iterations:      5
+Measurement iterations: 10
+Forks:                  3
+JVM args:               -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+
+=== Summary ===
+Total duration: 5h 10m (18642s)
+Failed suites:  0/4
+
+--- Timing ---
+benchmark,exit_code,duration_seconds
+core,0,5050
+format,0,7812
+codec,0,3562
+concurrent,0,2218
+
+--- Result Files ---
+-rw-r--r-- 1 root root 222K Mar  7 03:43 benchmark-results/20260306-230907/codec.json
+-rw-r--r-- 1 root root  72K Mar  7 04:20 benchmark-results/20260306-230907/concurrent.json
+-rw-r--r-- 1 root root 319K Mar  7 00:33 benchmark-results/20260306-230907/core.json
+-rw-r--r-- 1 root root 489K Mar  7 02:43 benchmark-results/20260306-230907/format.json
