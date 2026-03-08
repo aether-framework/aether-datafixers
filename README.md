@@ -9,6 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://openjdk.org/projects/jdk/17/"><img src="https://img.shields.io/badge/Java-17%2B-orange" alt="Java 17+"></a>
   <a href="https://github.com/aether-framework/aether-datafixers/actions/workflows/ci-push.yml"><img src="https://github.com/aether-framework/aether-datafixers/actions/workflows/ci-push.yml/badge.svg" alt="CI"></a>
+  <img src="https://sonarqube.splatgames.de/api/project_badges/measure?project=aether-framework_aether-datafixers_b5e07f1f-da6c-4600-8649-09a35a5d42d5&metric=alert_status&token=sqb_c8b086b266abfba4ae3dbf364edc22af3d650bea" alt="Code Quality">
   <img src="https://img.shields.io/badge/coverage-75%25%2B-brightgreen" alt="Coverage">
 </p>
 
