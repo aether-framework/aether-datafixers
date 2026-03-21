@@ -203,18 +203,10 @@ public final class Fixes {
                 }
 
                 final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
-                final DataResult<Typed<?>> result = encodeResult.flatMap(dynamic -> {
+                return encodeResult.flatMap(dynamic -> {
                     final Dynamic<?> transformed = rewrite.apply(dynamic);
                     return ((Type) type).read(transformed);
-                }).map(newValue -> new Typed<>((Type) type, newValue));
-
-                final Typed<?> value = result.getOrThrow(false, error -> {
-                    throw new IllegalStateException(
-                        "Error applying fixTypeEverywhere rule '" + name + "' to type " + type + ": " + error
-                    );
-                });
-
-                return Optional.of(value);
+                }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
             @Override
