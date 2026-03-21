@@ -179,4 +179,68 @@ public class TaggedDynamic {
     public Dynamic<?> value() {
         return this.value;
     }
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     *
+     * <p>Two {@code TaggedDynamic} instances are considered equal if they have the same type reference and the same
+     * dynamic value.
+     * This means that both the type and the data must match for two tagged dynamics to be considered equal.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TaggedDynamic tagged1 = new TaggedDynamic(typeRef, dynamicValue);
+     * TaggedDynamic tagged2 = new TaggedDynamic(typeRef, dynamicValue);
+     *
+     * // tagged1 and tagged2 are equal because they have the same type and value
+     * boolean isEqual = tagged1.equals(tagged2); // true
+     * }</pre>
+     *
+     * @param obj the reference object with which to compare
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final TaggedDynamic that = (TaggedDynamic) obj;
+        return this.type.equals(that.type) && this.value.equals(that.value);
+    }
+
+    /**
+     * Returns a hash code value for the object.
+     *
+     * <p>The hash code is computed based on both the type reference and the dynamic value. This ensures that equal
+     * {@code TaggedDynamic} instances will have the same hash code, which is important for correct behavior in
+     * hash-based collections.</p>
+     *
+     * @return a hash code value for this object
+     */
+    @Override
+    public int hashCode() {
+        int result = this.type.hashCode();
+        result = 31 * result + this.value.hashCode();
+        return result;
+    }
+
+    /**
+     * Returns a string representation of the object.
+     *
+     * <p>The string representation includes the type reference and the dynamic value, providing a human-readable
+     * summary of the tagged dynamic's contents. This can be useful for debugging and logging purposes.</p>
+     *
+     * @return a string representation of the object
+     */
+    @Override
+    public String toString() {
+        return "TaggedDynamic{" +
+                "type=" + this.type +
+                ", value=" + this.value +
+                '}';
+    }
 }
