@@ -384,7 +384,8 @@ public final class Typed<A> {
      * @param ops    the dynamic operations for encoding, must not be {@code null}
      * @param finder the finder that locates the desired sub-value, must not be {@code null}
      * @param <T>    the underlying data format type
-     * @return a {@link DataResult} containing the found dynamic value or {@code null} if not found, never {@code null}
+     * @return a {@link DataResult} containing the found dynamic value on success, or an error result if the path
+     *         was not found; never {@code null}
      * @throws NullPointerException if {@code ops} or {@code finder} is {@code null}
      * @see #updateAt(DynamicOps, Finder, Function)
      */
