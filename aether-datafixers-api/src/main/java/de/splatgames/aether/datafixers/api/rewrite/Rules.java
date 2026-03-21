@@ -1568,9 +1568,13 @@ public final class Rules {
             Dynamic<T> result = typedDynamic.remove(fieldName);
             final var entries = entriesResult.result().orElse(java.util.stream.Stream.empty()).toList();
             for (final var entry : entries) {
-                final String key = entry.first().asString().result().orElse(null);
+                final Dynamic<?> keyDynamic = entry.first();
+                final Dynamic<T> value = entry.second();
+                if (keyDynamic == null || value == null) {
+                    continue;
+                }
+                final String key = keyDynamic.asString().result().orElse(null);
                 if (key != null) {
-                    final Dynamic<T> value = entry.second();
                     result = result.set(key, value);
                 }
             }
