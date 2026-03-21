@@ -205,6 +205,7 @@ public interface Finder<A> {
      */
     @NotNull
     static Finder<Object> index(final int index) {
+        Preconditions.checkArgument(index >= 0, "index must not be negative, got: %s", index);
         return new Finder<>() {
             @NotNull
             @Override
