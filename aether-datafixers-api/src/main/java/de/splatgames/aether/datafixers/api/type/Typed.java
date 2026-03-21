@@ -393,12 +393,12 @@ public final class Typed<A> {
                                             @NotNull final Finder<?> finder) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(finder, "finder must not be null");
-        return encode(ops).map(dynamic -> {
+        return encode(ops).flatMap(dynamic -> {
             final Dynamic<?> found = finder.get(dynamic);
             if (found == null) {
-                return null;
+                return DataResult.error("Path not found: " + finder);
             }
-            return found.convert(ops);
+            return DataResult.success(found.convert(ops));
         });
     }
 
