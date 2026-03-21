@@ -384,13 +384,6 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from(modifier.apply(to(source)));
             }
-
-            @NotNull
-            @Override
-            public <C, D> Optic<B, A, C, D> compose(@NotNull final Optic<T, S, C, D> other) {
-                Preconditions.checkNotNull(other, "other must not be null");
-                throw new UnsupportedOperationException("Compose on reversed iso");
-            }
         };
     }
 

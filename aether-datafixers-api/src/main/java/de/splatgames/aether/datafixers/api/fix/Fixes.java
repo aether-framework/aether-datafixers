@@ -121,7 +121,7 @@ public final class Fixes {
      * @param rewrite    the function that transforms the typed value; must not be {@code null}
      * @return a type rewrite rule that applies the transformation to matching types; never {@code null}
      * @throws NullPointerException if any parameter is {@code null}
-     * @see #fixTypeEverywhere(String, Type, Function)
+     * @see #fixTypeEverywhere(String, DynamicOps, Type, Function)
      */
     @NotNull
     public static TypeRewriteRule fixTypeEverywhereTyped(@NotNull final String name,
@@ -156,22 +156,44 @@ public final class Fixes {
     /**
      * Creates a rule that transforms the dynamic representation of a type.
      *
-     * @param name    the fix name
-     * @param type    the type to transform
-     * @param rewrite the dynamic transformation function
-     * @return a type rewrite rule
+     * <p>This method creates a {@link TypeRewriteRule} that matches values of the specified
+     * type and transforms them by encoding to {@link Dynamic}, applying the rewrite function, and decoding back. The
+     * rule only matches types with the same {@link de.splatgames.aether.datafixers.api.TypeReference} as the target
+     * type.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule rule = Fixes.fixTypeEverywhere(
+     *     "addTimestamp",
+     *     GsonOps.INSTANCE,
+     *     playerType,
+     *     dynamic -> dynamic.set("timestamp", dynamic.createLong(0L))
+     * );
+     * }</pre>
+     *
+     * @param <T>     the dynamic type
+     * @param name    the fix name; must not be {@code null}
+     * @param ops     the dynamic ops for encoding/decoding; must not be {@code null}
+     * @param type    the type to transform; must not be {@code null}
+     * @param rewrite the dynamic transformation function; must not be {@code null}
+     * @return a type rewrite rule; never {@code null}
+     * @throws NullPointerException if any parameter is {@code null}
+     * @see #fixTypeEverywhereTyped(String, Type, Type, Function)
      */
     @NotNull
-    public static TypeRewriteRule fixTypeEverywhere(@NotNull final String name,
-                                                    @NotNull final Type<?> type,
-                                                    @NotNull final Function<Dynamic<?>, Dynamic<?>> rewrite) {
+    public static <T> TypeRewriteRule fixTypeEverywhere(@NotNull final String name,
+                                                        @NotNull final DynamicOps<T> ops,
+                                                        @NotNull final Type<?> type,
+                                                        @NotNull final Function<Dynamic<?>, Dynamic<?>> rewrite) {
         Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(rewrite, "rewrite must not be null");
 
         return new TypeRewriteRule() {
             @NotNull
             @Override
+            @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
                                               @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(inputType, "inputType must not be null");
@@ -180,9 +202,11 @@ public final class Fixes {
                     return Optional.empty();
                 }
 
-                // We need to get DynamicOps from somewhere - this requires the caller to provide it
-                // For now, we'll use a simplified approach
-                return Optional.of(input);
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                return encodeResult.flatMap(dynamic -> {
+                    final Dynamic<?> transformed = rewrite.apply(dynamic);
+                    return ((Type) type).read(transformed);
+                }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
             @Override

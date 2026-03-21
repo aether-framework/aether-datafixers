@@ -179,8 +179,10 @@ public interface Finder<A> {
      * Creates a finder that navigates to an element by index in a list/array structure.
      *
      * <p>The returned finder extracts and modifies the element at the specified
-     * index position. If the index is out of bounds (negative or beyond the list size), {@link #get} returns
-     * {@code null} and {@link #set} returns the root unchanged.</p>
+     * index position. A negative {@code index} is rejected immediately by throwing
+     * {@link IllegalArgumentException} at construction time. If the index is non-negative
+     * but beyond the list size, {@link #get} returns {@code null} and {@link #set} returns
+     * the root unchanged.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -195,16 +197,21 @@ public interface Finder<A> {
      * Dynamic<?> updated = firstScoreFinder.set(data, data.createInt(100));
      * // updated: {"scores": [100, 92, 78]}
      *
-     * // Out of bounds access
+     * // Out-of-range (positive) index — get returns null, set returns root unchanged
      * Finder<?> outOfBounds = scoresFinder.then(Finder.index(10));
      * Dynamic<?> missing = outOfBounds.get(data);  // null
+     *
+     * // Negative index — throws IllegalArgumentException immediately
+     * Finder.index(-1);  // throws IllegalArgumentException
      * }</pre>
      *
-     * @param index the zero-based index of the element to focus on
+     * @param index the zero-based index of the element to focus on; must not be negative
+     * @throws IllegalArgumentException if {@code index} is negative
      * @return a finder that navigates to the element at the specified index, never {@code null}
      */
     @NotNull
     static Finder<Object> index(final int index) {
+        Preconditions.checkArgument(index >= 0, "index must not be negative, got: %s", index);
         return new Finder<>() {
             @NotNull
             @Override
@@ -232,7 +239,7 @@ public interface Finder<A> {
                     return root;
                 }
                 final var list = listResult.result().orElseThrow().toList();
-                if (index < 0 || index >= list.size()) {
+                if (index >= list.size()) {
                     return root;
                 }
                 final List<Dynamic<Object>> newList = new ArrayList<>();

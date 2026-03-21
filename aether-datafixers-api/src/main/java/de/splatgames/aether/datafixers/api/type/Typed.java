@@ -384,7 +384,8 @@ public final class Typed<A> {
      * @param ops    the dynamic operations for encoding, must not be {@code null}
      * @param finder the finder that locates the desired sub-value, must not be {@code null}
      * @param <T>    the underlying data format type
-     * @return a {@link DataResult} containing the found dynamic value or {@code null} if not found, never {@code null}
+     * @return a {@link DataResult} containing the found dynamic value on success, or an error result if the path
+     *         was not found; never {@code null}
      * @throws NullPointerException if {@code ops} or {@code finder} is {@code null}
      * @see #updateAt(DynamicOps, Finder, Function)
      */
@@ -393,12 +394,12 @@ public final class Typed<A> {
                                             @NotNull final Finder<?> finder) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(finder, "finder must not be null");
-        return encode(ops).map(dynamic -> {
+        return encode(ops).flatMap(dynamic -> {
             final Dynamic<?> found = finder.get(dynamic);
             if (found == null) {
-                return null;
+                return DataResult.error("Path not found: " + finder);
             }
-            return found.convert(ops);
+            return DataResult.success(found.convert(ops));
         });
     }
 

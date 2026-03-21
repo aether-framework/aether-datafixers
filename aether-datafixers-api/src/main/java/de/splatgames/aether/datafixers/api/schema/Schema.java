@@ -94,7 +94,8 @@ import org.jetbrains.annotations.Nullable;
 public class Schema {
     private final DataVersion version;
     private final Schema parent;
-    private TypeRegistry types;
+    private volatile TypeRegistry types;
+    private TypeRegistry buildingTypes;
 
     /**
      * Creates a new schema for the specified version with the given types.
@@ -161,10 +162,17 @@ public class Schema {
      */
     @NotNull
     public TypeRegistry types() {
-        if (this.types == null) {
-            this.types = this.buildTypes();
+        TypeRegistry result = this.types;
+        if (result == null) {
+            synchronized (this) {
+                result = this.types;
+                if (result == null) {
+                    result = this.buildTypes();
+                    this.types = result;
+                }
+            }
         }
-        return this.types;
+        return result;
     }
 
     /**
@@ -178,18 +186,22 @@ public class Schema {
     @NotNull
     private TypeRegistry buildTypes() {
         final TypeRegistry registry = this.createTypeRegistry();
-        this.types = registry;
+        this.buildingTypes = registry;
 
         // Inherit types from parent if present
         if (this.parent != null) {
-            // Copy types from parent
-            this.parent.types();
-            // Parent types are already registered in parent's registry
-            // For now, we don't copy - subclass must re-register all types it needs
+            final TypeRegistry parentTypes = this.parent.types();
+            for (final TypeReference ref : parentTypes.references()) {
+                final Type<?> parentType = parentTypes.get(ref);
+                if (parentType != null) {
+                    registry.register(parentType);
+                }
+            }
         }
 
         // Let subclass register types
         this.registerTypes();
+        this.buildingTypes = null;
 
         return registry;
     }
@@ -232,8 +244,9 @@ public class Schema {
      */
     protected final void registerType(@NotNull final Type<?> type) {
         Preconditions.checkNotNull(type, "type must not be null");
-        Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
-        this.types.register(type);
+        final TypeRegistry registry = this.buildingTypes;
+        Preconditions.checkState(registry != null, "Cannot register types outside of registerTypes()");
+        registry.register(type);
     }
 
     /**
@@ -267,13 +280,14 @@ public class Schema {
                                       @NotNull final TypeTemplate template) {
         Preconditions.checkNotNull(reference, "reference must not be null");
         Preconditions.checkNotNull(template, "template must not be null");
-        Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
+        final TypeRegistry registry = this.buildingTypes;
+        Preconditions.checkState(registry != null, "Cannot register types outside of registerTypes()");
 
         // Apply the template with an empty family to get the concrete type
         final Type<?> templateType = template.apply(TypeFamily.empty());
 
         // Wrap the template type with the reference
-        this.types.register(new TemplateBasedType<>(reference, templateType));
+        registry.register(new TemplateBasedType<>(reference, templateType));
     }
 
     /**

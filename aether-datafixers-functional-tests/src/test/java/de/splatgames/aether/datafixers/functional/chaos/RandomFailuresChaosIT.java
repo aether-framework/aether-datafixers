@@ -29,6 +29,7 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixer;
+import de.splatgames.aether.datafixers.api.exception.FixException;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
@@ -104,8 +105,8 @@ class RandomFailuresChaosIT {
 
                     assertThat(result.get("processed").asBoolean().result()).contains(true);
                     successCount.incrementAndGet();
-                } catch (ChaosInjector.ChaosException e) {
-                    // Expected chaos failure
+                } catch (FixException e) {
+                    // Expected: DataFixerImpl wraps ChaosException in FixException
                     failureCount.incrementAndGet();
                 }
             }
@@ -142,8 +143,9 @@ class RandomFailuresChaosIT {
                     CHAOS_TYPE, input,
                     new DataVersion(1), new DataVersion(2)
             ))
-                    .isInstanceOf(ChaosInjector.ChaosException.class)
-                    .hasMessageContaining("Chaos-injected failure");
+                    .isInstanceOf(FixException.class)
+                    .hasMessageContaining("Chaos-injected failure")
+                    .hasCauseInstanceOf(ChaosInjector.ChaosException.class);
         }
 
         @Test
@@ -170,7 +172,8 @@ class RandomFailuresChaosIT {
             assertThatThrownBy(() -> fixer.update(
                     CHAOS_TYPE, input,
                     new DataVersion(1), new DataVersion(4)
-            )).isInstanceOf(ChaosInjector.ChaosException.class);
+            )).isInstanceOf(FixException.class)
+                    .hasCauseInstanceOf(ChaosInjector.ChaosException.class);
 
             // Fix 1 should have run
             assertThat(fix1Count.get()).isEqualTo(1);
@@ -225,7 +228,7 @@ class RandomFailuresChaosIT {
 
                                 totalSuccess.incrementAndGet();
                                 threadsWithSuccess.add(threadId);
-                            } catch (ChaosInjector.ChaosException e) {
+                            } catch (FixException e) {
                                 totalFailure.incrementAndGet();
                                 threadsWithFailure.add(threadId);
                             }
@@ -300,7 +303,7 @@ class RandomFailuresChaosIT {
                 try {
                     fixer.update(CHAOS_TYPE, input, new DataVersion(1), new DataVersion(2));
                     phase1Success.incrementAndGet();
-                } catch (ChaosInjector.ChaosException e) {
+                } catch (FixException e) {
                     phase1Failure.incrementAndGet();
                 }
             }
@@ -336,7 +339,7 @@ class RandomFailuresChaosIT {
                 try {
                     fixer.update(CHAOS_TYPE, input, new DataVersion(1), new DataVersion(2));
                     phase3Success.incrementAndGet();
-                } catch (ChaosInjector.ChaosException e) {
+                } catch (FixException e) {
                     phase3Failure.incrementAndGet();
                 }
             }
