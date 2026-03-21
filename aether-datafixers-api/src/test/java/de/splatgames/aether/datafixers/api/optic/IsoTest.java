@@ -197,6 +197,26 @@ class IsoTest {
         }
 
         @Test
+        @DisplayName("reverse() supports compose()")
+        void reverseSupportsCompose() {
+            // reversed: String -> Wrapper<String>
+            final Iso<String, String, Wrapper<String>, Wrapper<String>> reversed = unwrapIso.reverse();
+
+            // another iso: Wrapper<String> -> String (extract value and uppercase)
+            final Iso<Wrapper<String>, Wrapper<String>, String, String> extractUpper = Iso.of(
+                    "wrapper.upper",
+                    w -> w.value().toUpperCase(),
+                    s -> new Wrapper<>(s.toLowerCase())
+            );
+
+            // compose: String -> Wrapper<String> -> String (uppercased)
+            final Iso<String, String, String, String> composed = reversed.compose(extractUpper);
+
+            assertThat(composed.to("hello")).isEqualTo("HELLO");
+            assertThat(composed.from("HELLO")).isEqualTo("hello");
+        }
+
+        @Test
         @DisplayName("double reverse returns to original")
         void doubleReverseReturnsToOriginal() {
             final Wrapper<String> wrapper = new Wrapper<>("test");
