@@ -240,7 +240,8 @@ public final class FieldInfo {
         return this.optional == other.optional
                 && this.name.equals(other.name)
                 && this.path.equals(other.path)
-                && this.fieldType.reference().equals(other.fieldType.reference());
+                && this.fieldType.reference().equals(other.fieldType.reference())
+                && this.fieldType.codec().equals(other.fieldType.codec());
     }
 
     /**
