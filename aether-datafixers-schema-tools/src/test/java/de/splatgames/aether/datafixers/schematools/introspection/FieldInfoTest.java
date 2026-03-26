@@ -22,6 +22,7 @@
 
 package de.splatgames.aether.datafixers.schematools.introspection;
 
+import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.type.Type;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -182,6 +183,26 @@ class FieldInfoTest {
             final FieldInfo field = FieldInfo.create("name", false, Type.STRING, "path");
 
             assertThat(field).isEqualTo(field);
+        }
+
+        @Test
+        @DisplayName("equals returns false for different Type.codec")
+        void equalsReturnsFalseForDifferentTypeCodec() {
+            var falseCodecStringType = Type.primitive("string", Codecs.INT);
+            final FieldInfo field1 = FieldInfo.create("health", false, falseCodecStringType, "player.health");
+            final FieldInfo field2 = FieldInfo.create("health", false, Type.STRING, "player.health");
+
+            assertThat(field1).isNotEqualTo(field2);
+        }
+
+        @Test
+        @DisplayName("equals returns false for different Type.ref and Type.describe")
+        void equalsReturnsFalseForDifferentTypeDescribe() {
+            var falseNameStringType = Type.primitive("int", Codecs.STRING);
+            final FieldInfo field1 = FieldInfo.create("health", false, falseNameStringType, "player.health");
+            final FieldInfo field2 = FieldInfo.create("health", false, Type.STRING, "player.health");
+
+            assertThat(field1).isNotEqualTo(field2);
         }
     }
 
