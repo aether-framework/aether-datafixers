@@ -55,4 +55,16 @@ git push origin feature/new-awesome-feature
 ## 📢 Need Help?
 If you have any questions, feel free to open an **Issue** or join our **Discussions** section.
 
+## ✨ Developer Certificate of Origin (DCO)
+
+This project uses the [Developer Certificate of Origin (DCO)](DCO) instead of a traditional CLA. By contributing, you certify that you have the right to submit your work under the project's [MIT License](LICENSE).
+
+To sign off on your commits, add the `-s` flag:
+
+```sh
+git commit -s -m "Your commit message"
+```
+
+This adds a `Signed-off-by: Your Name <your.email@example.com>` line to your commit, confirming that you agree to the DCO.
+
 🚀 **Happy Coding!**

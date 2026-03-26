@@ -1,0 +1,14 @@
+require:
+  members: false
+
+allowRemediationCommits:
+  individual: true
+  thirdParty: true
+
+exemptOrgs:
+  - dependabot
+  - github-actions
+
+exemptBots:
+  - dependabot[bot]
+  - copilot-swe-agent[bot]
