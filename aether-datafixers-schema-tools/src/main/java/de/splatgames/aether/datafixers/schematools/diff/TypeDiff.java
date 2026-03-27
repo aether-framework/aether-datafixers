@@ -199,7 +199,7 @@ public final class TypeDiff {
 
     /**
      * Returns only the removed fields.
-     *f
+     *
      * @return a list of field diffs with kind REMOVED, never {@code null}
      */
     @NotNull

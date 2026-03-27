@@ -135,7 +135,7 @@ public final class DataVersion implements Comparable<DataVersion> {
      * }</pre>
      *
      * @param o the data version to compare against; must not be {@code null}
-     * @return a negative integer if this version is less than the specified version, zero if they are equal, or a al,
+     * @return a negative integer if this version is less than the specified version, zero if they are equal,
      * or a positive integer if this version is greater than the specified version
      * @throws NullPointerException if the specified data version is {@code null}
      */
