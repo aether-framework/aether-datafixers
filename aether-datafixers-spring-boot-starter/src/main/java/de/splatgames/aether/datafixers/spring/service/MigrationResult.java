@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -120,8 +121,8 @@ import java.util.Optional;
  * shared between threads without synchronization.</p>
  *
  * <h2>Equality and Hashing</h2>
- * <p>This class does not override {@code equals()} and {@code hashCode()}.
- * Each instance is unique and identity-based comparison is used.</p>
+ * <p>Two {@code MigrationResult} instances are considered equal if they have the same
+ * success status, source and target versions, domain, and duration.</p>
  *
  * @author Erik Pförtner
  * @see MigrationService
@@ -427,6 +428,46 @@ public final class MigrationResult {
      */
     public int getVersionSpan() {
         return Math.abs(this.toVersion.getVersion() - this.fromVersion.getVersion());
+    }
+
+    /**
+     * Indicates whether some other object is "equal to" this migration result.
+     *
+     * <p>Two {@code MigrationResult} instances are considered equal if and only if they
+     * have the same success status, source version, target version, domain, and duration.</p>
+     *
+     * @param obj the reference object with which to compare; may be {@code null}
+     * @return {@code true} if this result is equal to the specified object; {@code false} otherwise
+     * @see #hashCode()
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof MigrationResult other)) {
+            return false;
+        }
+        return this.success == other.success
+                && Objects.equals(this.fromVersion, other.fromVersion)
+                && Objects.equals(this.toVersion, other.toVersion)
+                && Objects.equals(this.domain, other.domain)
+                && Objects.equals(this.duration, other.duration);
+    }
+
+    /**
+     * Returns a hash code value for this migration result.
+     *
+     * <p>The hash code is computed based on the success status, source version, target version,
+     * domain, and duration. This implementation satisfies the general contract of
+     * {@link Object#hashCode()}.</p>
+     *
+     * @return a hash code value for this migration result
+     * @see #equals(Object)
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.success, this.fromVersion, this.toVersion, this.domain, this.duration);
     }
 
     /**
