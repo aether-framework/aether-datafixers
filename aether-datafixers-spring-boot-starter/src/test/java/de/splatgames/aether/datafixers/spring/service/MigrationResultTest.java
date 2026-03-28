@@ -238,6 +238,83 @@ class MigrationResultTest {
     }
 
     @Nested
+    @DisplayName("equals and hashCode")
+    class EqualsAndHashCode {
+
+        @Test
+        @DisplayName("equals() returns true for same values")
+        void equalsReturnsTrueForSameValues() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult a = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult b = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(a).isEqualTo(b);
+        }
+
+        @Test
+        @DisplayName("equals() returns false for different success status")
+        void equalsReturnsFalseForDifferentSuccess() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult success = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult failure = MigrationResult.failure(
+                    FROM_VERSION, TO_VERSION, DOMAIN, DURATION, new RuntimeException("error")
+            );
+
+            assertThat(success).isNotEqualTo(failure);
+        }
+
+        @Test
+        @DisplayName("equals() returns false for different versions")
+        void equalsReturnsFalseForDifferentVersions() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult a = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult b = MigrationResult.success(
+                    data, FROM_VERSION, new DataVersion(300), DOMAIN, DURATION
+            );
+
+            assertThat(a).isNotEqualTo(b);
+        }
+
+        @Test
+        @DisplayName("hashCode() is consistent for equal objects")
+        void hashCodeConsistentForEqualObjects() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult a = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult b = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(a.hashCode()).isEqualTo(b.hashCode());
+        }
+
+        @Test
+        @DisplayName("equals() returns false for null")
+        void equalsReturnsFalseForNull() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(result).isNotEqualTo(null);
+        }
+    }
+
+    @Nested
     @DisplayName("toString")
     class ToStringMethod {
 
