@@ -1,0 +1,41 @@
+name: Retarget PRs from main to develop
+
+on:
+  pull_request:
+    types: [opened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  retarget:
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.head_ref, 'release/') }}
+    steps:
+      - name: Retarget PR to develop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "::notice::PR #${{ github.event.pull_request.number }} targets main from '${{ github.head_ref }}' — retargeting to develop."
+          gh pr edit ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --base develop
+
+      - name: Leave a comment explaining the retarget
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --body "$(cat <<'EOF'
+          🔀 **This PR has been automatically retargeted from `main` to `develop`.**
+
+          In this project, `develop` is the integration branch for all feature and fix contributions. Only `release/*` branches may target `main` directly.
+
+          If this retarget was a mistake (e.g., you intended to create a release PR), please update the base branch manually.
+
+          See [CONTRIBUTING.md](../blob/develop/CONTRIBUTING.md) for details on our branching strategy.
+          EOF
+          )"

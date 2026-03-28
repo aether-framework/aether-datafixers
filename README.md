@@ -546,7 +546,7 @@ java -jar aether-datafixers-benchmarks/target/benchmarks.jar
 
 We welcome contributions of all kinds — bug fixes, features, documentation improvements, and discussions.
 
-Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a pull request. This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a pull request. This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). For AI-assisted contributions, please review our [AI Usage Guidelines](AI_USAGE.md).
 
 ## 🔒 Security
 
