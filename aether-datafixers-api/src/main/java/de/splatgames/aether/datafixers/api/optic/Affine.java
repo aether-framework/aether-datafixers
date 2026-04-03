@@ -34,7 +34,7 @@ import java.util.function.Function;
  *
  * <p>An {@code Affine} is the generalization of both {@link Lens} and {@link Prism}. Like a lens,
  * it can set values within a structure. Like a prism, the focus may not exist. This makes affines ideal for optional
- * fields within product types—fields that might be present but aren't guaranteed.</p>
+ * fields within product types-fields that might be present but aren't guaranteed.</p>
  *
  * <h2>When to Use an Affine</h2>
  * <p>Use an affine when you need to:</p>

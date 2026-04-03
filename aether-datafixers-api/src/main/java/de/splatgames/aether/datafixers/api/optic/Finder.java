@@ -197,11 +197,11 @@ public interface Finder<A> {
      * Dynamic<?> updated = firstScoreFinder.set(data, data.createInt(100));
      * // updated: {"scores": [100, 92, 78]}
      *
-     * // Out-of-range (positive) index — get returns null, set returns root unchanged
+     * // Out-of-range (positive) index - get returns null, set returns root unchanged
      * Finder<?> outOfBounds = scoresFinder.then(Finder.index(10));
      * Dynamic<?> missing = outOfBounds.get(data);  // null
      *
-     * // Negative index — throws IllegalArgumentException immediately
+     * // Negative index - throws IllegalArgumentException immediately
      * Finder.index(-1);  // throws IllegalArgumentException
      * }</pre>
      *
@@ -259,7 +259,7 @@ public interface Finder<A> {
     /**
      * Creates an identity finder that focuses on the root dynamic value itself.
      *
-     * <p>The identity finder is the simplest possible finder—it returns the entire
+     * <p>The identity finder is the simplest possible finder-it returns the entire
      * root as its focus and replaces the entire root when set. This is useful as a starting point for composition or as
      * a neutral element in finder chains.</p>
      *
