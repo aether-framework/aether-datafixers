@@ -123,7 +123,8 @@ class DataFixerEndpointTest {
 
             DataFixerEndpoint.DataFixersSummary summary = endpoint.summary();
 
-            assertThat(summary.domains().get("game").status()).startsWith("DOWN:");
+            assertThat(summary.domains().get("game").status()).isEqualTo("DOWN");
+            assertThat(summary.domains().get("game").error()).isEqualTo("Error");
             assertThat(summary.domains().get("game").currentVersion()).isEqualTo(-1);
         }
     }
@@ -167,7 +168,8 @@ class DataFixerEndpointTest {
             assertThat(details).isNotNull();
             assertThat(details.domain()).isEqualTo("game");
             assertThat(details.currentVersion()).isEqualTo(-1);
-            assertThat(details.status()).contains("DOWN").contains("Init failed");
+            assertThat(details.status()).isEqualTo("DOWN");
+            assertThat(details.error()).isEqualTo("Init failed");
         }
     }
 
@@ -179,7 +181,7 @@ class DataFixerEndpointTest {
         @DisplayName("DataFixersSummary record works correctly")
         void dataFixersSummaryRecordWorks() {
             var domains = java.util.Map.of(
-                    "game", new DataFixerEndpoint.DomainSummary(200, "UP")
+                    "game", new DataFixerEndpoint.DomainSummary(200, "UP", null)
             );
             var summary = new DataFixerEndpoint.DataFixersSummary(domains);
 
@@ -190,20 +192,22 @@ class DataFixerEndpointTest {
         @Test
         @DisplayName("DomainSummary record works correctly")
         void domainSummaryRecordWorks() {
-            var summary = new DataFixerEndpoint.DomainSummary(200, "UP");
+            var summary = new DataFixerEndpoint.DomainSummary(200, "UP", null);
 
             assertThat(summary.currentVersion()).isEqualTo(200);
             assertThat(summary.status()).isEqualTo("UP");
+            assertThat(summary.error()).isNull();
         }
 
         @Test
         @DisplayName("DomainDetails record works correctly")
         void domainDetailsRecordWorks() {
-            var details = new DataFixerEndpoint.DomainDetails("game", 200, "UP");
+            var details = new DataFixerEndpoint.DomainDetails("game", 200, "UP", null);
 
             assertThat(details.domain()).isEqualTo("game");
             assertThat(details.currentVersion()).isEqualTo(200);
             assertThat(details.status()).isEqualTo("UP");
+            assertThat(details.error()).isNull();
         }
     }
 }

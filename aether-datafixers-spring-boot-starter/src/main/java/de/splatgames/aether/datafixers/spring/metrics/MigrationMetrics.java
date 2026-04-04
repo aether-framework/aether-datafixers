@@ -320,6 +320,10 @@ public class MigrationMetrics {
         // Record timing (even for failures)
         getOrCreateTimer(domain).record(duration);
 
+        // Record version span (even for failures, to correlate failure rates with migration span)
+        final int span = Math.abs(toVersion - fromVersion);
+        getOrCreateVersionSpan(domain).record(span);
+
         // Record failure count with error type
         getOrCreateFailureCounter(domain, error.getClass().getSimpleName()).increment();
     }

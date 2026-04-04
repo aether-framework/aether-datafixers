@@ -235,20 +235,18 @@ class MigrationMetricsTest {
         }
 
         @Test
-        @DisplayName("does not record version span on failure")
-        void doesNotRecordVersionSpanOnFailure() {
+        @DisplayName("records version span on failure")
+        void recordsVersionSpanOnFailure() {
             metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
                     new RuntimeException("Test"));
 
-            // Version span should not exist or be zero
             DistributionSummary summary = registry.find("aether.datafixers.migrations.version.span")
                     .tag("domain", "game")
                     .summary();
 
-            // Either null or count 0
-            if (summary != null) {
-                assertThat(summary.count()).isZero();
-            }
+            assertThat(summary).isNotNull();
+            assertThat(summary.count()).isEqualTo(1);
+            assertThat(summary.totalAmount()).isEqualTo(100.0);
         }
 
         @Test
