@@ -181,11 +181,15 @@ public final class AssertingContext implements DataFixerContext {
         if (args == null || args.length == 0) {
             return message;
         }
-        String result = message;
+        final StringBuilder result = new StringBuilder(message);
         for (final Object arg : args) {
-            result = result.replaceFirst("\\{}", String.valueOf(arg));
+            final int idx = result.indexOf("{}");
+            if (idx < 0) {
+                break;
+            }
+            result.replace(idx, idx + 2, String.valueOf(arg));
         }
-        return result;
+        return result.toString();
     }
 
     private enum Mode {
