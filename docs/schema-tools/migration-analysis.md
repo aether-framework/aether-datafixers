@@ -6,9 +6,9 @@ The `schematools.analysis` package provides utilities for analyzing migration pa
 
 Migration analysis helps ensure your migrations are complete and well-structured:
 
-- **Path Analysis** — Understand the sequence of steps from one version to another
-- **Coverage Analysis** — Identify schema changes without corresponding DataFixes
-- **Gap Detection** — Find types or fields that might not be migrated correctly
+- **Path Analysis** - Understand the sequence of steps from one version to another
+- **Coverage Analysis** - Identify schema changes without corresponding DataFixes
+- **Gap Detection** - Find types or fields that might not be migrated correctly
 
 ## Core Components
 
@@ -73,7 +73,7 @@ if (coverage.isFullyCovered()) {
 
 ### From Bootstrap
 
-The most common approach — analyzes the bootstrap's schemas and fixes:
+The most common approach - analyzes the bootstrap's schemas and fixes:
 
 ```java
 MigrationAnalyzer analyzer = MigrationAnalyzer.forBootstrap(bootstrap);
@@ -386,15 +386,15 @@ public class MigrationSummary {
 
 ## Best Practices
 
-1. **Run coverage analysis in CI** — Catch missing fixes before release
-2. **Use field-level analysis for thorough checks** — Detect subtle field changes
-3. **Review orphan fixes** — They might indicate outdated code or schema mismatches
-4. **Generate migration summaries for releases** — Document what changes for users
+1. **Run coverage analysis in CI** - Catch missing fixes before release
+2. **Use field-level analysis for thorough checks** - Detect subtle field changes
+3. **Review orphan fixes** - They might indicate outdated code or schema mismatches
+4. **Generate migration summaries for releases** - Document what changes for users
 
 ---
 
 ## Related
 
-- [Schema Diffing](schema-diffing.md) — Understanding how diffs are computed
-- [Schema Validation](schema-validation.md) — Validating schema structure
-- [DataFix System](../concepts/datafix-system.md) — Core DataFix concepts
+- [Schema Diffing](schema-diffing.md) - Understanding how diffs are computed
+- [Schema Validation](schema-validation.md) - Validating schema structure
+- [DataFix System](../concepts/datafix-system.md) - Core DataFix concepts

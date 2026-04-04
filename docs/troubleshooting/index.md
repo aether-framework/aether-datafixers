@@ -4,9 +4,9 @@ Solutions to common issues with Aether Datafixers.
 
 ## Quick Links
 
-- [Common Errors](common-errors.md) — Error messages and solutions
-- [Debugging Tips](debugging-tips.md) — Strategies for finding issues
-- [FAQ](faq.md) — Frequently asked questions
+- [Common Errors](common-errors.md) - Error messages and solutions
+- [Debugging Tips](debugging-tips.md) - Strategies for finding issues
+- [FAQ](faq.md) - Frequently asked questions
 
 ## Operations Runbook
 

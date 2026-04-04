@@ -20,7 +20,7 @@ This file lists contributors who joined the project in each release version.
 
 | New Contributor         | Contribution |
 |-------------------------|--------------|
-| *(No new contributors)* | —            |
+| *(No new contributors)* | -            |
 
 ---
 
@@ -28,7 +28,7 @@ This file lists contributors who joined the project in each release version.
 
 | New Contributor         | Contribution |
 |-------------------------|--------------|
-| *(No new contributors)* | —            |
+| *(No new contributors)* | -            |
 
 ---
 
@@ -36,7 +36,7 @@ This file lists contributors who joined the project in each release version.
 
 | New Contributor         | Contribution |
 |-------------------------|--------------|
-| *(No new contributors)* | —            |
+| *(No new contributors)* | -            |
 
 ---
 
@@ -44,7 +44,7 @@ This file lists contributors who joined the project in each release version.
 
 | New Contributor         | Contribution |
 |-------------------------|--------------|
-| *(No new contributors)* | —            |
+| *(No new contributors)* | -            |
 
 ---
 

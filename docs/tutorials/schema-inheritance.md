@@ -436,7 +436,7 @@ Each schema should only contain changed types. If a schema is getting large, con
 
 ## Next Steps
 
-- **[Polymorphic Data](polymorphic-data.md)** — Handle sum types
-- **[Nested Transformations](nested-transformations.md)** — Complex restructuring
-- **[DSL Reference](../concepts/dsl.md)** — All type templates
+- **[Polymorphic Data](polymorphic-data.md)** - Handle sum types
+- **[Nested Transformations](nested-transformations.md)** - Complex restructuring
+- **[DSL Reference](../concepts/dsl.md)** - All type templates
 

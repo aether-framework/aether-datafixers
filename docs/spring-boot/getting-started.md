@@ -391,11 +391,11 @@ Response includes:
 
 ## What's Next?
 
-- [Configuration Reference](configuration.md) — Learn all available configuration options
-- [MigrationService API](migration-service.md) — Deep dive into the fluent migration API
-- [Multi-Domain Setup](multi-domain.md) — Configure multiple independent DataFixers
-- [Actuator Integration](actuator.md) — Health checks, endpoints, and monitoring
-- [Metrics Integration](metrics.md) — Track migration performance with Micrometer
+- [Configuration Reference](configuration.md) - Learn all available configuration options
+- [MigrationService API](migration-service.md) - Deep dive into the fluent migration API
+- [Multi-Domain Setup](multi-domain.md) - Configure multiple independent DataFixers
+- [Actuator Integration](actuator.md) - Health checks, endpoints, and monitoring
+- [Metrics Integration](metrics.md) - Track migration performance with Micrometer
 
 ---
 

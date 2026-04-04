@@ -1,6 +1,6 @@
 # How to Restructure Data
 
-This guide shows how to change the structure of your data — nesting, flattening, merging, and splitting objects.
+This guide shows how to change the structure of your data - nesting, flattening, merging, and splitting objects.
 
 ## Nesting Flat Fields
 

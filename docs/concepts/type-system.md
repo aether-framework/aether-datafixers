@@ -466,7 +466,7 @@ registerType(TypeReferences.CONFIG, DSL.and(
 
 ## Related
 
-- [Schema System](schema-system.md) — Where types are registered
-- [DSL](dsl.md) — Type template language
-- [Codec System](codec-system.md) — Encoding/decoding types
+- [Schema System](schema-system.md) - Where types are registered
+- [DSL](dsl.md) - Type template language
+- [Codec System](codec-system.md) - Encoding/decoding types
 

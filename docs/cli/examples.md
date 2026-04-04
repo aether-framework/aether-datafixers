@@ -437,5 +437,5 @@ docker run -v $(pwd)/data:/data aether-cli migrate \
 
 ## Next Steps
 
-→ [Command Reference](commands.md) — Full option documentation
-→ [Format Handlers](format-handlers.md) — Support additional formats
+→ [Command Reference](commands.md) - Full option documentation
+→ [Format Handlers](format-handlers.md) - Support additional formats

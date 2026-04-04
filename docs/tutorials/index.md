@@ -33,37 +33,37 @@ This section contains step-by-step tutorials that guide you through common tasks
 
 If you're new to data migration, follow this path:
 
-1. **[Basic Migration](basic-migration.md)** — Learn the fundamentals
-2. **[Multi-Version Migration](multi-version-migration.md)** — Handle version chains
-3. **[Schema Inheritance](schema-inheritance.md)** — Organize your schemas
+1. **[Basic Migration](basic-migration.md)** - Learn the fundamentals
+2. **[Multi-Version Migration](multi-version-migration.md)** - Handle version chains
+3. **[Schema Inheritance](schema-inheritance.md)** - Organize your schemas
 
 ### For JSON/Data Processing
 
 If you're focused on data processing:
 
-1. **[Using Codecs](using-codecs.md)** — Encode and decode data
-2. **[RecordCodecBuilder](record-codec-builder.md)** — Build complex codecs
-3. **[Custom DynamicOps](custom-dynamicops.md)** — Add format support
+1. **[Using Codecs](using-codecs.md)** - Encode and decode data
+2. **[RecordCodecBuilder](record-codec-builder.md)** - Build complex codecs
+3. **[Custom DynamicOps](custom-dynamicops.md)** - Add format support
 
 ### For Complex Migrations
 
 If you need advanced migration patterns:
 
-1. **[Schema Inheritance](schema-inheritance.md)** — Efficient schema organization
-2. **[Polymorphic Data](polymorphic-data.md)** — Handle type variants
-3. **[Nested Transformations](nested-transformations.md)** — Deep restructuring
+1. **[Schema Inheritance](schema-inheritance.md)** - Efficient schema organization
+2. **[Polymorphic Data](polymorphic-data.md)** - Handle type variants
+3. **[Nested Transformations](nested-transformations.md)** - Deep restructuring
 
 ## Tutorial Format
 
 Each tutorial follows a consistent format:
 
-1. **Goal** — What you'll accomplish
-2. **Prerequisites** — What you need to know
-3. **Setup** — Project configuration
-4. **Step-by-Step Instructions** — Detailed walkthrough
-5. **Complete Code** — Full working example
-6. **Testing** — How to verify it works
-7. **Next Steps** — Where to go from here
+1. **Goal** - What you'll accomplish
+2. **Prerequisites** - What you need to know
+3. **Setup** - Project configuration
+4. **Step-by-Step Instructions** - Detailed walkthrough
+5. **Complete Code** - Full working example
+6. **Testing** - How to verify it works
+7. **Next Steps** - Where to go from here
 
 ## Quick Reference
 

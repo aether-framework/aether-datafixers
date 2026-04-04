@@ -15,8 +15,8 @@ public interface Prism<S, A> extends Optic<S, A> {
 ```
 
 **Type Parameters:**
-- `S` — The sum type (the whole)
-- `A` — The focused case type (the part)
+- `S` - The sum type (the whole)
+- `A` - The focused case type (the part)
 
 ## Conceptual Model
 
@@ -333,8 +333,8 @@ public List<Entity> levelUpPlayers(List<Entity> entities) {
 
 ## Related
 
-- [Lens](lens.md) — For product type fields
-- [Affine](affine.md) — For optional access
-- [Iso](iso.md) — For bidirectional conversion
-- [Optics Overview](index.md) — Optic hierarchy
+- [Lens](lens.md) - For product type fields
+- [Affine](affine.md) - For optional access
+- [Iso](iso.md) - For bidirectional conversion
+- [Optics Overview](index.md) - Optic hierarchy
 

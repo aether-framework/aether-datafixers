@@ -463,7 +463,7 @@ private Dynamic<?> maybeAddLevel(Dynamic<?> player) {
 
 ## Next Steps
 
-- **[Schema Inheritance](schema-inheritance.md)** — Efficient schema organization
-- **[Nested Transformations](nested-transformations.md)** — Complex restructuring
-- **[Testing Migrations](../how-to/test-migrations.md)** — Write robust tests
+- **[Schema Inheritance](schema-inheritance.md)** - Efficient schema organization
+- **[Nested Transformations](nested-transformations.md)** - Complex restructuring
+- **[Testing Migrations](../how-to/test-migrations.md)** - Write robust tests
 

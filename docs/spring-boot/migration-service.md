@@ -438,7 +438,7 @@ public class MigrationConfig {
 
 - `MigrationService` is **thread-safe** and can be shared across threads
 - Each `migrate()` call returns a new builder instance
-- `MigrationRequestBuilder` is **NOT thread-safe** — use separate instances per thread
+- `MigrationRequestBuilder` is **NOT thread-safe** - use separate instances per thread
 - `MigrationResult` is **immutable** and thread-safe
 
 ```java
@@ -473,12 +473,12 @@ When `MigrationMetrics` is available, the service automatically records:
 - **Duration timer**: Records migration duration
 - **Version span**: Records the number of versions migrated
 
-No additional code is needed — metrics are recorded transparently.
+No additional code is needed - metrics are recorded transparently.
 
 ---
 
 ## Related Documentation
 
-- [Configuration Reference](configuration.md) — Configure service behavior
-- [Multi-Domain Setup](multi-domain.md) — Working with multiple domains
-- [Metrics Integration](metrics.md) — Detailed metrics reference
+- [Configuration Reference](configuration.md) - Configure service behavior
+- [Multi-Domain Setup](multi-domain.md) - Working with multiple domains
+- [Metrics Integration](metrics.md) - Detailed metrics reference

@@ -6,7 +6,7 @@ This tutorial walks you through creating a complete data migration system with s
 
 You're building a game that saves player data. Over time, the data format evolves:
 
-**Version 1.0.0 (ID: 100)** — Initial release
+**Version 1.0.0 (ID: 100)** - Initial release
 ```json
 {
   "playerName": "Steve",
@@ -18,7 +18,7 @@ You're building a game that saves player data. Over time, the data format evolve
 }
 ```
 
-**Version 1.1.0 (ID: 110)** — Restructured
+**Version 1.1.0 (ID: 110)** - Restructured
 ```json
 {
   "name": "Steve",
@@ -412,7 +412,7 @@ Congratulations! You've built your first complete migration system.
 
 Continue learning:
 
-- [Schema System](../concepts/schema-system.md) — Deep dive into schemas
-- [DataFix System](../concepts/datafix-system.md) — Understanding fixes
-- [Rewrite Rules](../concepts/rewrite-rules.md) — Rule combinators
-- [Multi-Version Migration](../tutorials/multi-version-migration.md) — Chain multiple fixes
+- [Schema System](../concepts/schema-system.md) - Deep dive into schemas
+- [DataFix System](../concepts/datafix-system.md) - Understanding fixes
+- [Rewrite Rules](../concepts/rewrite-rules.md) - Rule combinators
+- [Multi-Version Migration](../tutorials/multi-version-migration.md) - Chain multiple fixes

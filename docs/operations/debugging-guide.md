@@ -496,7 +496,7 @@ report.fixExecutions().stream()
 
 ## Related
 
-- [Error Scenarios](error-scenarios.md) — Exception handling reference
-- [How to Use Diagnostics](../how-to/use-diagnostics.md) — Full API reference
-- [How to Debug Migrations](../how-to/debug-migrations.md) — Basic debugging tips
-- [Monitoring & Alerting](monitoring-alerting.md) — Production monitoring
+- [Error Scenarios](error-scenarios.md) - Exception handling reference
+- [How to Use Diagnostics](../how-to/use-diagnostics.md) - Full API reference
+- [How to Debug Migrations](../how-to/debug-migrations.md) - Basic debugging tips
+- [Monitoring & Alerting](monitoring-alerting.md) - Production monitoring

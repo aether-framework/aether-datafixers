@@ -6,10 +6,10 @@ This guide covers integrating secure Aether Datafixers usage with Spring Boot an
 
 When using the `aether-datafixers-spring-boot-starter`, additional security measures should be implemented at the Spring level:
 
-1. **Secure Bean Configuration** — Configure secure parsers as Spring beans
-2. **Request Validation** — Validate payloads before they reach migration endpoints
-3. **Rate Limiting** — Prevent abuse of migration endpoints
-4. **Audit Logging** — Track migration attempts for security monitoring
+1. **Secure Bean Configuration** - Configure secure parsers as Spring beans
+2. **Request Validation** - Validate payloads before they reach migration endpoints
+3. **Rate Limiting** - Prevent abuse of migration endpoints
+4. **Audit Logging** - Track migration attempts for security monitoring
 
 ---
 

@@ -6,7 +6,7 @@ Production monitoring setup for Aether Datafixers using Micrometer, Prometheus, 
 
 | Metric                                      | Type         | Tags                   | Alert Threshold | Description           |
 |---------------------------------------------|--------------|------------------------|-----------------|-----------------------|
-| `aether.datafixers.migrations.success`      | Counter      | `domain`               | —               | Successful migrations |
+| `aether.datafixers.migrations.success`      | Counter      | `domain`               | -               | Successful migrations |
 | `aether.datafixers.migrations.failure`      | Counter      | `domain`, `error_type` | > 0/min         | Failed migrations     |
 | `aether.datafixers.migrations.duration`     | Timer        | `domain`               | p99 > 1s        | Execution time        |
 | `aether.datafixers.migrations.version.span` | Distribution | `domain`               | avg > 50        | Version distance      |
@@ -42,8 +42,8 @@ aether_datafixers_migrations_failure_total{domain="game",error_type="DecodeExcep
 ```
 
 **Tags:**
-- `domain` — DataFixer domain name
-- `error_type` — Exception class simple name
+- `domain` - DataFixer domain name
+- `error_type` - Exception class simple name
 
 ### Duration Timer
 
@@ -640,7 +640,7 @@ public class ExtendedMigrationMetrics extends MigrationMetrics {
 
 ## Related
 
-- [Spring Boot Metrics](../spring-boot/metrics.md) — Complete metrics reference
-- [Spring Boot Actuator](../spring-boot/actuator.md) — Actuator integration
-- [Debugging Guide](debugging-guide.md) — Diagnosing issues
-- [Recovery Procedures](recovery-procedures.md) — Responding to alerts
+- [Spring Boot Metrics](../spring-boot/metrics.md) - Complete metrics reference
+- [Spring Boot Actuator](../spring-boot/actuator.md) - Actuator integration
+- [Debugging Guide](debugging-guide.md) - Diagnosing issues
+- [Recovery Procedures](recovery-procedures.md) - Responding to alerts

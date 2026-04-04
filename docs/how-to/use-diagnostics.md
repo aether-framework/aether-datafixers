@@ -10,7 +10,7 @@ Migration Diagnostics provides structured reports about what happens during a mi
 - Individual rule applications
 - Before/after snapshots of data
 
-Diagnostics are **opt-in** — migrations without a `DiagnosticContext` have zero overhead.
+Diagnostics are **opt-in** - migrations without a `DiagnosticContext` have zero overhead.
 
 ## Basic Usage
 
@@ -265,7 +265,7 @@ public class MigrationService {
 
 ## Performance Considerations
 
-- **Without diagnostics**: Zero overhead — migrations run at full speed
+- **Without diagnostics**: Zero overhead - migrations run at full speed
 - **With minimal options**: Small overhead for timing measurement
 - **With snapshots**: Additional overhead for serialization (use for debugging only)
 

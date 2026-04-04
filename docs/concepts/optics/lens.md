@@ -20,8 +20,8 @@ public interface Lens<S, A> extends Optic<S, A> {
 ```
 
 **Type Parameters:**
-- `S` — The source type (whole structure)
-- `A` — The focus type (the part you're accessing)
+- `S` - The source type (whole structure)
+- `A` - The focus type (the part you're accessing)
 
 ## Creating Lenses
 
@@ -334,8 +334,8 @@ Player player = modifyIf(playerLevel, player, level -> level < 100, level -> lev
 
 ## Related
 
-- [Affine](affine.md) — For optional fields
-- [Prism](prism.md) — For sum type cases
-- [Iso](iso.md) — For bidirectional conversion
-- [Optics Overview](index.md) — Optic hierarchy
+- [Affine](affine.md) - For optional fields
+- [Prism](prism.md) - For sum type cases
+- [Iso](iso.md) - For bidirectional conversion
+- [Optics Overview](index.md) - Optic hierarchy
 

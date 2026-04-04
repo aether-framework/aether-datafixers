@@ -39,7 +39,7 @@ The following types are immutable and fully thread-safe:
 
 ### Dynamic Operations
 
-`Dynamic` is immutable — all operations return new instances:
+`Dynamic` is immutable - all operations return new instances:
 
 ```java
 Dynamic<JsonElement> original = new Dynamic<>(GsonOps.INSTANCE, json);
@@ -304,7 +304,7 @@ For high-throughput scenarios:
 
 ## Related
 
-- [DataFix System](datafix-system.md) — Creating thread-safe fixes
-- [Dynamic System](dynamic-system.md) — Immutable data wrapper
-- [Architecture Overview](architecture-overview.md) — Framework design
+- [DataFix System](datafix-system.md) - Creating thread-safe fixes
+- [Dynamic System](dynamic-system.md) - Immutable data wrapper
+- [Architecture Overview](architecture-overview.md) - Framework design
 

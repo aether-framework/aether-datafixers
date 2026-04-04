@@ -474,7 +474,7 @@ When removing an entity type:
 
 ## Next Steps
 
-- **[Nested Transformations](nested-transformations.md)** — Complex restructuring
-- **[DSL Reference](../concepts/dsl.md)** — TaggedChoice details
-- **[Prism Optic](../concepts/optics/prism.md)** — Sum type optics
+- **[Nested Transformations](nested-transformations.md)** - Complex restructuring
+- **[DSL Reference](../concepts/dsl.md)** - TaggedChoice details
+- **[Prism Optic](../concepts/optics/prism.md)** - Sum type optics
 

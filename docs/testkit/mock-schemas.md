@@ -256,10 +256,10 @@ SchemaTester.forSchema(schema)
 
 ## Best Practices
 
-1. **Use minimal schemas for simple tests** — When you don't need registered types
-2. **Use the builder for complex scenarios** — When types are needed
-3. **Chain schemas for migration tests** — Set up proper parent relationships
-4. **Validate with SchemaTester** — Ensure schema configuration is correct
+1. **Use minimal schemas for simple tests** - When you don't need registered types
+2. **Use the builder for complex scenarios** - When types are needed
+3. **Chain schemas for migration tests** - Set up proper parent relationships
+4. **Validate with SchemaTester** - Ensure schema configuration is correct
 
 ## Related
 

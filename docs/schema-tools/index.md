@@ -6,10 +6,10 @@ The **Aether Datafixers Schema Tools** module provides utilities for analyzing, 
 
 Schema Tools (`aether-datafixers-schema-tools`) is designed for:
 
-- **Schema Diffing** — Compare two schemas to see what types and fields changed
-- **Migration Analysis** — Analyze migration paths and verify fix coverage
-- **Validation** — Validate schema structure and enforce naming conventions
-- **Introspection** — Inspect type structures and extract field metadata
+- **Schema Diffing** - Compare two schemas to see what types and fields changed
+- **Migration Analysis** - Analyze migration paths and verify fix coverage
+- **Validation** - Validate schema structure and enforce naming conventions
+- **Introspection** - Inspect type structures and extract field metadata
 
 ## Quick Start
 
@@ -125,13 +125,13 @@ for (TypeDiff typeDiff : diff.typeDiffs().values()) {
 
 ## In This Section
 
-- [Schema Diffing](schema-diffing.md) — Compare schemas and detect changes
-- [Migration Analysis](migration-analysis.md) — Analyze migration paths and fix coverage
-- [Schema Validation](schema-validation.md) — Validate structure and conventions
-- [Type Introspection](type-introspection.md) — Inspect type structures
+- [Schema Diffing](schema-diffing.md) - Compare schemas and detect changes
+- [Migration Analysis](migration-analysis.md) - Analyze migration paths and fix coverage
+- [Schema Validation](schema-validation.md) - Validate structure and conventions
+- [Type Introspection](type-introspection.md) - Inspect type structures
 
 ---
 
 ## Next Steps
 
-→ [Schema Diffing](schema-diffing.md) — Learn how to compare schemas
+→ [Schema Diffing](schema-diffing.md) - Learn how to compare schemas

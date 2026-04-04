@@ -216,4 +216,4 @@ java -version
 
 ## Next Steps
 
-→ [Command Reference](commands.md) — Learn all available options
+→ [Command Reference](commands.md) - Learn all available options

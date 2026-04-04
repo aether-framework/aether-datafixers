@@ -291,7 +291,7 @@ public <T> TaggedDynamic updateIfNeeded(
 
 ## Related
 
-- [TypeReference](type-reference.md) — Type identifiers for data routing
-- [Schema System](schema-system.md) — Associating versions with type definitions
-- [DataFix System](datafix-system.md) — Creating migrations between versions
+- [TypeReference](type-reference.md) - Type identifiers for data routing
+- [Schema System](schema-system.md) - Associating versions with type definitions
+- [DataFix System](datafix-system.md) - Creating migrations between versions
 

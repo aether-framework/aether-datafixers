@@ -8,10 +8,10 @@ Multi-domain setups allow you to manage multiple independent DataFixer instances
 
 Use multi-domain setups when:
 
-- **Different data types evolve independently** — Game saves, user profiles, and configuration files may change at different rates
-- **Isolated version histories** — You want clear separation between migration paths
-- **Different migration strategies** — Some data types may require different approaches
-- **Modular architecture** — Different teams manage different data types
+- **Different data types evolve independently** - Game saves, user profiles, and configuration files may change at different rates
+- **Isolated version histories** - You want clear separation between migration paths
+- **Different migration strategies** - Some data types may require different approaches
+- **Modular architecture** - Different teams manage different data types
 
 ---
 
@@ -512,7 +512,7 @@ public final class UserTypeReferences {
 
 ### 4. Use MigrationService Over Direct Injection
 
-Prefer `MigrationService` for migrations — it provides metrics, error handling, and async support:
+Prefer `MigrationService` for migrations - it provides metrics, error handling, and async support:
 
 ```java
 // Preferred
@@ -607,7 +607,7 @@ public class DataMigrationFacade {
 
 ## Related Documentation
 
-- [Configuration Reference](configuration.md) — Per-domain property settings
-- [MigrationService API](migration-service.md) — Using `usingDomain()` method
-- [Actuator Integration](actuator.md) — Domain-specific health and endpoints
-- [Metrics Integration](metrics.md) — Domain-tagged metrics
+- [Configuration Reference](configuration.md) - Per-domain property settings
+- [MigrationService API](migration-service.md) - Using `usingDomain()` method
+- [Actuator Integration](actuator.md) - Domain-specific health and endpoints
+- [Metrics Integration](metrics.md) - Domain-tagged metrics

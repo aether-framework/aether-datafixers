@@ -14,8 +14,8 @@ All properties use the prefix `aether.datafixers`.
 | `default-format`          | enum    | `GSON`  | Default serialization format      |
 | `default-current-version` | Integer | `null`  | Fallback version for all domains  |
 | `domains.<name>.*`        | Map     | `{}`    | Per-domain configuration          |
-| `actuator.*`              | object  | —       | Actuator settings                 |
-| `metrics.*`               | object  | —       | Metrics settings                  |
+| `actuator.*`              | object  | -       | Actuator settings                 |
+| `metrics.*`               | object  | -       | Metrics settings                  |
 
 ---
 
@@ -54,8 +54,8 @@ aether:
 ```
 
 **Values**:
-- `GSON` — Use `GsonOps` for JSON serialization
-- `JACKSON` — Use `JacksonJsonOps` for JSON serialization
+- `GSON` - Use `GsonOps` for JSON serialization
+- `JACKSON` - Use `JacksonJsonOps` for JSON serialization
 
 **Note**: The corresponding library must be on the classpath. If only one is present, it is used automatically regardless of this setting.
 
@@ -401,7 +401,7 @@ public class DataFixerConfig {
 
 ## Related Documentation
 
-- [MigrationService API](migration-service.md) — Using the fluent migration API
-- [Multi-Domain Setup](multi-domain.md) — Configuring multiple DataFixer domains
-- [Actuator Integration](actuator.md) — Health indicators and endpoints
-- [Metrics Integration](metrics.md) — Micrometer metrics reference
+- [MigrationService API](migration-service.md) - Using the fluent migration API
+- [Multi-Domain Setup](multi-domain.md) - Configuring multiple DataFixer domains
+- [Actuator Integration](actuator.md) - Health indicators and endpoints
+- [Metrics Integration](metrics.md) - Micrometer metrics reference

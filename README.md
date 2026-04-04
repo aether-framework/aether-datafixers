@@ -19,7 +19,7 @@
 
 Aether Datafixers is a data migration framework that enables **forward patching** of serialized data through versioned schema definitions and composable fixers. It is inspired by Minecraft's [DataFixer Upper (DFU)](docs/appendix/comparison-with-dfu.md) but designed from the ground up for **simplicity**, **clarity**, and **ease of use**.
 
-The framework is **format-agnostic** — it works with JSON, YAML, TOML, XML, or any custom serialization format through the `Dynamic<T>` and `DynamicOps<T>` abstraction layer. All core types are **immutable and thread-safe**, making Aether Datafixers suitable for concurrent, high-throughput environments. The modular architecture lets you pick exactly what you need: just the core, or add the CLI, Spring Boot integration, testkit, schema analysis tools, and more.
+The framework is **format-agnostic** - it works with JSON, YAML, TOML, XML, or any custom serialization format through the `Dynamic<T>` and `DynamicOps<T>` abstraction layer. All core types are **immutable and thread-safe**, making Aether Datafixers suitable for concurrent, high-throughput environments. The modular architecture lets you pick exactly what you need: just the core, or add the CLI, Spring Boot integration, testkit, schema analysis tools, and more.
 
 ## 📋 Table of Contents
 
@@ -207,7 +207,7 @@ dependencies {
 | **TypeReference**   | String-based key for routing data to the correct fixes (e.g., `"player"`, `"entity"`) |
 | **Schema**          | Associates a `DataVersion` with a `TypeRegistry` defining the types at that version   |
 | **DataFix**         | A transformation that migrates data from one version to another                       |
-| **Dynamic\<T\>**    | Format-agnostic data wrapper — manipulate data without knowing the underlying format  |
+| **Dynamic\<T\>**    | Format-agnostic data wrapper - manipulate data without knowing the underlying format  |
 | **DynamicOps\<T\>** | Operations interface for a specific format (Gson, Jackson, SnakeYAML, etc.)           |
 | **Codec**           | Bidirectional transformation between typed Java objects and `Dynamic` representations |
 | **TypeRewriteRule** | Composable rule defining how data is rewritten during a fix                           |
@@ -220,11 +220,11 @@ dependencies {
 |------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
 | [**aether-datafixers-api**](aether-datafixers-api)                                 | Core interfaces and API contracts                                                                       |
 | [**aether-datafixers-core**](aether-datafixers-core)                               | Default implementations of the API interfaces                                                           |
-| [**aether-datafixers-codec**](aether-datafixers-codec)                             | Multi-format DynamicOps — JSON (Gson, Jackson), YAML (SnakeYAML, Jackson), TOML, XML                    |
-| [**aether-datafixers-testkit**](aether-datafixers-testkit)                         | Fluent test builders, AssertJ assertions, DataFix test harnesses — [docs](docs/testkit/index.md)        |
-| [**aether-datafixers-cli**](aether-datafixers-cli)                                 | Command-line migration and validation tool — [docs](docs/cli/index.md)                                  |
-| [**aether-datafixers-schema-tools**](aether-datafixers-schema-tools)               | Schema diffing, validation, migration analysis — [docs](docs/schema-tools/index.md)                     |
-| [**aether-datafixers-spring-boot-starter**](aether-datafixers-spring-boot-starter) | Spring Boot 3.x auto-config, MigrationService, Actuator, Micrometer — [docs](docs/spring-boot/index.md) |
+| [**aether-datafixers-codec**](aether-datafixers-codec)                             | Multi-format DynamicOps - JSON (Gson, Jackson), YAML (SnakeYAML, Jackson), TOML, XML                    |
+| [**aether-datafixers-testkit**](aether-datafixers-testkit)                         | Fluent test builders, AssertJ assertions, DataFix test harnesses - [docs](docs/testkit/index.md)        |
+| [**aether-datafixers-cli**](aether-datafixers-cli)                                 | Command-line migration and validation tool - [docs](docs/cli/index.md)                                  |
+| [**aether-datafixers-schema-tools**](aether-datafixers-schema-tools)               | Schema diffing, validation, migration analysis - [docs](docs/schema-tools/index.md)                     |
+| [**aether-datafixers-spring-boot-starter**](aether-datafixers-spring-boot-starter) | Spring Boot 3.x auto-config, MigrationService, Actuator, Micrometer - [docs](docs/spring-boot/index.md) |
 | [**aether-datafixers-examples**](aether-datafixers-examples)                       | Runnable usage examples demonstrating real-world patterns                                               |
 | [**aether-datafixers-bom**](aether-datafixers-bom)                                 | Bill of Materials for coordinated version management                                                    |
 | [**aether-datafixers-benchmarks**](aether-datafixers-benchmarks)                   | JMH microbenchmarks for performance validation                                                          |
@@ -248,7 +248,7 @@ Each DataFix transforms Dynamic<T> using composable TypeRewriteRules
 Output: migrated Dynamic<T> at the target version
 ```
 
-The framework handles version ordering, type routing, and rule composition automatically. You define schemas and fixes — Aether Datafixers handles the rest.
+The framework handles version ordering, type routing, and rule composition automatically. You define schemas and fixes - Aether Datafixers handles the rest.
 
 ## 💡 Code Examples
 
@@ -510,7 +510,7 @@ Person moved = cityLens.set(alice, "Seattle");  // Alice now in Seattle
 | [Tutorials](docs/tutorials/index.md) | Step-by-step guides for common scenarios |
 | [How-To Guides](docs/how-to/index.md) | Focused guides for specific operations (rename, add, remove, transform, batch, ...) |
 | [Advanced Topics](docs/advanced/custom-optics.md) | Custom optics, concurrent migrations, recursive types, traversal strategies |
-| [Codec Formats](docs/codec/index.md) | JSON, YAML, TOML, XML — format comparison and usage |
+| [Codec Formats](docs/codec/index.md) | JSON, YAML, TOML, XML - format comparison and usage |
 | [CLI](docs/cli/index.md) | Commands, format handlers, usage examples |
 | [Schema Tools](docs/schema-tools/index.md) | Diffing, migration analysis, validation, introspection |
 | [Spring Boot](docs/spring-boot/index.md) | Auto-configuration, MigrationService, Actuator, Metrics |
@@ -544,7 +544,7 @@ java -jar aether-datafixers-benchmarks/target/benchmarks.jar
 
 ## 🤝 Contributing
 
-We welcome contributions of all kinds — bug fixes, features, documentation improvements, and discussions.
+We welcome contributions of all kinds - bug fixes, features, documentation improvements, and discussions.
 
 Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a pull request. This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). For AI-assisted contributions, please review our [AI Usage Guidelines](AI_USAGE.md).
 

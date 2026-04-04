@@ -15,7 +15,7 @@ public interface Finder<A> {
 ```
 
 **Type Parameter:**
-- `A` — The type of value being extracted
+- `A` - The type of value being extracted
 
 ## Conceptual Model
 
@@ -366,7 +366,7 @@ public List<String> extractNames(Dynamic<?> data) {
 
 ## Related
 
-- [Dynamic System](../dynamic-system.md) — The data Finder navigates
-- [Affine](affine.md) — Similar optional semantics
-- [Optics Overview](index.md) — Optic hierarchy
+- [Dynamic System](../dynamic-system.md) - The data Finder navigates
+- [Affine](affine.md) - Similar optional semantics
+- [Optics Overview](index.md) - Optic hierarchy
 

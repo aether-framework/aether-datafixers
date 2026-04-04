@@ -122,7 +122,7 @@ public class PlayerV2ToV3Fix extends SchemaDataFix {
 
 ## Pattern 2: Flattening Nested Objects
 
-Going the other direction — extracting nested fields to top level:
+Going the other direction - extracting nested fields to top level:
 
 ```java
 private Dynamic<?> flattenPosition(Dynamic<?> player) {
@@ -422,7 +422,7 @@ void testNestPosition() {
 
 ## Next Steps
 
-- **[Custom DynamicOps](custom-dynamicops.md)** — Support new formats
-- **[Rewrite Rules](../concepts/rewrite-rules.md)** — Rule combinators
-- **[How-To: Restructure Data](../how-to/restructure-data.md)** — More patterns
+- **[Custom DynamicOps](custom-dynamicops.md)** - Support new formats
+- **[Rewrite Rules](../concepts/rewrite-rules.md)** - Rule combinators
+- **[How-To: Restructure Data](../how-to/restructure-data.md)** - More patterns
 

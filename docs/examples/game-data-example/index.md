@@ -60,11 +60,11 @@ This example shows how to migrate game player data:
 
 This example consists of:
 
-1. **[TypeReferences](type-references.md)** — Centralized type identifiers
-2. **[Schemas](schemas.md)** — Version-specific type definitions
-3. **[Fixes](fixes.md)** — Migration logic
-4. **[Bootstrap](bootstrap.md)** — Wiring it all together
-5. **[Complete Example](complete-example.md)** — Full working code
+1. **[TypeReferences](type-references.md)** - Centralized type identifiers
+2. **[Schemas](schemas.md)** - Version-specific type definitions
+3. **[Fixes](fixes.md)** - Migration logic
+4. **[Bootstrap](bootstrap.md)** - Wiring it all together
+5. **[Complete Example](complete-example.md)** - Full working code
 
 ## Quick Start
 

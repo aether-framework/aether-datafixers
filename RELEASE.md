@@ -1,4 +1,4 @@
-# 🚀 **Aether Datafixers v0.5.0 — API Freeze & Release Readiness**
+# 🚀 **Aether Datafixers v0.5.0 - API Freeze & Release Readiness**
 
 The API freeze release with stabilized public interfaces, comprehensive validation tooling, extended codec support, and full multi-format integration across all modules.
 
@@ -6,19 +6,19 @@ The API freeze release with stabilized public interfaces, comprehensive validati
 
 ## 🎯 Highlights in v0.5.0
 
-- ✅ **API Freeze** — Public API is now stable; no breaking changes expected before v1.0.0
-- ✅ **Schema Validation Integration** — Full `MigrationAnalyzer` integration for fix coverage validation
-- ✅ **MigrationService.withOps()** — Custom `DynamicOps` support for format conversion during migrations
-- ✅ **Extended Codec Support** — Multi-format DynamicOps integration for CLI, Testkit and Spring Boot modules
-- ✅ **Functional Tests Module** — New `aether-datafixers-functional-tests` with E2E and integration tests
-- ✅ **Comprehensive Documentation** — Complete documentation suite covering all modules and features
+- ✅ **API Freeze** - Public API is now stable; no breaking changes expected before v1.0.0
+- ✅ **Schema Validation Integration** - Full `MigrationAnalyzer` integration for fix coverage validation
+- ✅ **MigrationService.withOps()** - Custom `DynamicOps` support for format conversion during migrations
+- ✅ **Extended Codec Support** - Multi-format DynamicOps integration for CLI, Testkit and Spring Boot modules
+- ✅ **Functional Tests Module** - New `aether-datafixers-functional-tests` with E2E and integration tests
+- ✅ **Comprehensive Documentation** - Complete documentation suite covering all modules and features
 
 ---
 
 ## 📦 Installation
 
 > [!TIP]
-> All Aether artifacts are available on **Maven Central** — no extra repository required.
+> All Aether artifacts are available on **Maven Central** - no extra repository required.
 
 ### Maven
 
@@ -204,9 +204,9 @@ mvn verify -Pit
 
 **Deprecations (removal planned for v1.0.0)**
 
-- `de.splatgames.aether.datafixers.codec.gson.GsonOps` — Use `codec.json.gson.GsonOps`
-- `de.splatgames.aether.datafixers.codec.jackson.JacksonOps` — Use `codec.json.jackson.JacksonJsonOps` for JSON, or the format-specific classes (`JacksonYamlOps`, `JacksonTomlOps`, `JacksonXmlOps`)
-- `TestData.jackson()` — Use `TestData.jacksonJson()` instead
+- `de.splatgames.aether.datafixers.codec.gson.GsonOps` - Use `codec.json.gson.GsonOps`
+- `de.splatgames.aether.datafixers.codec.jackson.JacksonOps` - Use `codec.json.jackson.JacksonJsonOps` for JSON, or the format-specific classes (`JacksonYamlOps`, `JacksonTomlOps`, `JacksonXmlOps`)
+- `TestData.jackson()` - Use `TestData.jacksonJson()` instead
 
 **Full Changelog:** [v0.4.0...v0.5.0](https://github.com/aether-framework/aether-datafixers/compare/v0.4.0...v0.5.0)
 
@@ -236,12 +236,12 @@ import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 
 ### v1.0.0 (next)
 
-- **Stable Release** — Production-ready with semantic versioning guarantees
-- **Performance Benchmarks** — Published benchmark suite
-- **Extended Documentation** — Video tutorials and cookbook examples
+- **Stable Release** - Production-ready with semantic versioning guarantees
+- **Performance Benchmarks** - Published benchmark suite
+- **Extended Documentation** - Video tutorials and cookbook examples
 
 ---
 
 ## 📜 License
 
-**MIT** — see `LICENSE`.
+**MIT** - see `LICENSE`.
