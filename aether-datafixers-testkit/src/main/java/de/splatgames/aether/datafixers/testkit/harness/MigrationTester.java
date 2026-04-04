@@ -31,6 +31,9 @@ import de.splatgames.aether.datafixers.api.fix.DataFixer;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -298,12 +301,10 @@ public final class MigrationTester<T> {
      */
     public static final class FixerSetup {
 
-        private final DataFixerBuilder builder;
+        private final List<Map.Entry<TypeReference, DataFix<?>>> pendingFixes = new ArrayList<>();
         private int maxVersion = 1;
 
         FixerSetup() {
-            // Start with a placeholder version, will be updated
-            this.builder = new DataFixerBuilder(new DataVersion(Integer.MAX_VALUE));
         }
 
         /**
@@ -317,7 +318,7 @@ public final class MigrationTester<T> {
         public FixerSetup addFix(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
             Preconditions.checkNotNull(type, "type must not be null");
             Preconditions.checkNotNull(fix, "fix must not be null");
-            this.builder.addFix(type, fix);
+            this.pendingFixes.add(Map.entry(type, fix));
             this.maxVersion = Math.max(this.maxVersion, fix.toVersion().getVersion());
             return this;
         }
@@ -337,7 +338,11 @@ public final class MigrationTester<T> {
         }
 
         DataFixer build() {
-            return this.builder.build();
+            final DataFixerBuilder actualBuilder = new DataFixerBuilder(new DataVersion(this.maxVersion));
+            for (final Map.Entry<TypeReference, DataFix<?>> entry : this.pendingFixes) {
+                actualBuilder.addFix(entry.getKey(), entry.getValue());
+            }
+            return actualBuilder.build();
         }
     }
 }

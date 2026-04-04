@@ -223,11 +223,7 @@ public final class DataFixTester<T> {
     public Dynamic<T> apply() {
         this.validateConfiguration();
 
-        final DataFixerContext effectiveContext = this.useRecordingContext
-                ? new RecordingContext()
-                : this.context;
-
-        return this.fix.apply(this.typeReference, this.input, effectiveContext);
+        return this.fix.apply(this.typeReference, this.input, this.resolveContext());
     }
 
     /**
@@ -241,19 +237,8 @@ public final class DataFixTester<T> {
     public DataFixVerification<T> verify() {
         this.validateConfiguration();
 
-        final RecordingContext recordingContext;
-        final DataFixerContext effectiveContext;
-
-        if (this.useRecordingContext) {
-            recordingContext = new RecordingContext();
-            effectiveContext = recordingContext;
-        } else if (this.context instanceof RecordingContext rc) {
-            recordingContext = rc;
-            effectiveContext = rc;
-        } else {
-            recordingContext = null;
-            effectiveContext = this.context;
-        }
+        final DataFixerContext effectiveContext = this.resolveContext();
+        final RecordingContext recordingContext = effectiveContext instanceof RecordingContext rc ? rc : null;
 
         final Dynamic<T> result = this.fix.apply(this.typeReference, this.input, effectiveContext);
 
@@ -270,6 +255,20 @@ public final class DataFixTester<T> {
         }
 
         return new DataFixVerification<>(result, recordingContext, true);
+    }
+
+    // ==================== Internal ====================
+
+    /**
+     * Resolves the effective context, ensuring a single instance is used
+     * across both apply() and verify().
+     */
+    @NotNull
+    private DataFixerContext resolveContext() {
+        if (this.useRecordingContext) {
+            return new RecordingContext();
+        }
+        return this.context;
     }
 
     // ==================== Validation ====================

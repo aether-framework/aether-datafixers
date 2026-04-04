@@ -117,6 +117,16 @@ public final class StructureValidator {
 
         // Check parent chain
         if (schema.parent() != null) {
+            // Check that parent exists in the registry if one is provided
+            if (registry != null) {
+                final int parentVersion = schema.parent().version().getVersion();
+                if (registry.get(new de.splatgames.aether.datafixers.api.DataVersion(parentVersion)) == null) {
+                    result.add(ValidationIssue.error(STRUCTURE_MISSING_PARENT,
+                                    "Parent schema v" + parentVersion + " not found in registry")
+                            .at(location)
+                            .withContext("parentVersion", parentVersion));
+                }
+            }
             validateParentChain(schema, registry, result, location);
         }
 

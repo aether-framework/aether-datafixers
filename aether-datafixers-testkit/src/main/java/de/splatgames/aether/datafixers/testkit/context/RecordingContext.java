@@ -266,11 +266,15 @@ public final class RecordingContext implements DataFixerContext {
             if (this.args == null || this.args.length == 0) {
                 return this.message;
             }
-            String result = this.message;
+            final StringBuilder result = new StringBuilder(this.message);
             for (final Object arg : this.args) {
-                result = result.replaceFirst("\\{}", String.valueOf(arg));
+                final int idx = result.indexOf("{}");
+                if (idx < 0) {
+                    break;
+                }
+                result.replace(idx, idx + 2, String.valueOf(arg));
             }
-            return result;
+            return result.toString();
         }
 
         @Override
