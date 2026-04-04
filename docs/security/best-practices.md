@@ -4,13 +4,13 @@ This document provides general security best practices for processing untrusted 
 
 ## Defense in Depth
 
-Security should be implemented in layers. No single control is sufficient—combine multiple measures:
+Security should be implemented in layers. No single control is sufficient-combine multiple measures:
 
-1. **Input Validation** — Check size and format before parsing
-2. **Safe Parser Configuration** — Use security-hardened parser settings
-3. **Resource Limits** — Enforce depth, size, and time limits
-4. **Monitoring** — Log and alert on suspicious activity
-5. **Sandboxing** — Isolate high-risk processing
+1. **Input Validation** - Check size and format before parsing
+2. **Safe Parser Configuration** - Use security-hardened parser settings
+3. **Resource Limits** - Enforce depth, size, and time limits
+4. **Monitoring** - Log and alert on suspicious activity
+5. **Sandboxing** - Isolate high-risk processing
 
 ---
 

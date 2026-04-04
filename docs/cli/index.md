@@ -89,13 +89,13 @@ Custom format handlers can be added via the ServiceLoader SPI.
 
 ## In This Section
 
-- [Installation](installation.md) — Build and run the CLI
-- [Command Reference](commands.md) — Detailed options for each command
-- [Format Handlers](format-handlers.md) — Create custom format handlers
-- [Examples](examples.md) — Real-world usage examples
+- [Installation](installation.md) - Build and run the CLI
+- [Command Reference](commands.md) - Detailed options for each command
+- [Format Handlers](format-handlers.md) - Create custom format handlers
+- [Examples](examples.md) - Real-world usage examples
 
 ---
 
 ## Next Steps
 
-→ [Installation](installation.md) — Set up the CLI tool
+→ [Installation](installation.md) - Set up the CLI tool

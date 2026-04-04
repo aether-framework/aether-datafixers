@@ -246,19 +246,19 @@ Lens<PlayerRecord, String> recordName = ...;
 
 ## Detailed Guides
 
-- [Lens](lens.md) — Focus on exactly one field
-- [Prism](prism.md) — Focus on a variant
-- [Iso](iso.md) — Bidirectional conversion
-- [Affine](affine.md) — Optional focus
-- [Traversal](traversal.md) — Multiple focus points
-- [Getter](getter.md) — Read-only access
-- [Finder](finder.md) — Dynamic data navigation
+- [Lens](lens.md) - Focus on exactly one field
+- [Prism](prism.md) - Focus on a variant
+- [Iso](iso.md) - Bidirectional conversion
+- [Affine](affine.md) - Optional focus
+- [Traversal](traversal.md) - Multiple focus points
+- [Getter](getter.md) - Read-only access
+- [Finder](finder.md) - Dynamic data navigation
 
 ---
 
 ## Related
 
-- [DSL](../dsl.md) — Type definitions with optic support
-- [Dynamic System](../dynamic-system.md) — Where Finder is used
-- [Rewrite Rules](../rewrite-rules.md) — Rules use optics internally
+- [DSL](../dsl.md) - Type definitions with optic support
+- [Dynamic System](../dynamic-system.md) - Where Finder is used
+- [Rewrite Rules](../rewrite-rules.md) - Rules use optics internally
 

@@ -17,10 +17,10 @@ Operational guidance for running Aether Datafixers in production environments. T
 
 Exception handling reference for production troubleshooting:
 - Exception hierarchy and context fields
-- `FixException` — Migration logic failures
-- `DecodeException` — Deserialization failures
-- `EncodeException` — Serialization failures
-- `RegistryException` — Missing type or version
+- `FixException` - Migration logic failures
+- `DecodeException` - Deserialization failures
+- `EncodeException` - Serialization failures
+- `RegistryException` - Missing type or version
 - Schema mismatch detection and resolution
 
 ### [Debugging Guide](debugging-guide.md)
@@ -54,25 +54,25 @@ Handling failures and data recovery:
 
 ### Migration Completely Failed
 
-1. **Check metrics** — Look at `aether.datafixers.migrations.failure` counter
-2. **Extract context** — See [Error Scenarios](error-scenarios.md#extracting-exception-context)
-3. **Enable DEBUG** — Set log level for `de.splatgames.aether.datafixers`
-4. **Capture diagnostics** — Use `DiagnosticContext` on a sample record
-5. **Restore if needed** — See [Recovery Procedures](recovery-procedures.md)
+1. **Check metrics** - Look at `aether.datafixers.migrations.failure` counter
+2. **Extract context** - See [Error Scenarios](error-scenarios.md#extracting-exception-context)
+3. **Enable DEBUG** - Set log level for `de.splatgames.aether.datafixers`
+4. **Capture diagnostics** - Use `DiagnosticContext` on a sample record
+5. **Restore if needed** - See [Recovery Procedures](recovery-procedures.md)
 
 ### High Failure Rate Alert
 
-1. **Check error breakdown** — Query failures by `error_type` tag
-2. **Identify pattern** — Same exception? Same data version?
-3. **Isolate bad records** — Query for records at problematic version
-4. **Apply targeted fix** — Fix data or code, retry migration
+1. **Check error breakdown** - Query failures by `error_type` tag
+2. **Identify pattern** - Same exception? Same data version?
+3. **Isolate bad records** - Query for records at problematic version
+4. **Apply targeted fix** - Fix data or code, retry migration
 
 ### Slow Migration Alert
 
-1. **Check version span** — Large version jumps take longer
-2. **Profile fixes** — Use `MigrationReport.fixExecutions()` timing
-3. **Check data size** — Large objects slow down processing
-4. **Consider batching** — Process in smaller batches
+1. **Check version span** - Large version jumps take longer
+2. **Profile fixes** - Use `MigrationReport.fixExecutions()` timing
+3. **Check data size** - Large objects slow down processing
+4. **Consider batching** - Process in smaller batches
 
 ---
 
@@ -111,7 +111,7 @@ readinessProbe:
 
 | Metric                                      | Type         | Alert Threshold |
 |---------------------------------------------|--------------|-----------------|
-| `aether.datafixers.migrations.success`      | Counter      | —               |
+| `aether.datafixers.migrations.success`      | Counter      | -               |
 | `aether.datafixers.migrations.failure`      | Counter      | > 0 per minute  |
 | `aether.datafixers.migrations.duration`     | Timer        | p99 > 1s        |
 | `aether.datafixers.migrations.version.span` | Distribution | avg > 50        |
@@ -122,7 +122,7 @@ See [Monitoring & Alerting](monitoring-alerting.md) for complete metrics referen
 
 ## Related
 
-- [Troubleshooting](../troubleshooting/index.md) — Basic troubleshooting tips
-- [Spring Boot Metrics](../spring-boot/metrics.md) — Detailed metrics reference
-- [Spring Boot Actuator](../spring-boot/actuator.md) — Actuator integration
-- [How to Use Diagnostics](../how-to/use-diagnostics.md) — Diagnostic API reference
+- [Troubleshooting](../troubleshooting/index.md) - Basic troubleshooting tips
+- [Spring Boot Metrics](../spring-boot/metrics.md) - Detailed metrics reference
+- [Spring Boot Actuator](../spring-boot/actuator.md) - Actuator integration
+- [How to Use Diagnostics](../how-to/use-diagnostics.md) - Diagnostic API reference

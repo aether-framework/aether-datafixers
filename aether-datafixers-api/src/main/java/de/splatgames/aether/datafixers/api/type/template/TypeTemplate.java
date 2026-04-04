@@ -162,7 +162,7 @@ public interface TypeTemplate {
      * {@code "name=originalDescription"}. This is primarily useful for debugging and logging, making it easier to
      * identify templates in error messages.</p>
      *
-     * <p>The template's behavior is unchanged—only its {@link #describe()} output
+     * <p>The template's behavior is unchanged-only its {@link #describe()} output
      * is affected.</p>
      *
      * <h4>Example</h4>

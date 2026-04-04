@@ -205,10 +205,10 @@ registerType(TypeReferences.PLAYER, DSL.and(
 
 ## Best Practices
 
-1. **Document removed fields** — Keep a record of what was removed and why
-2. **Consider archiving** — For important data, archive instead of delete
-3. **Test thoroughly** — Ensure removal doesn't break dependent data
-4. **Update all schemas** — Make sure new schema doesn't expect the field
+1. **Document removed fields** - Keep a record of what was removed and why
+2. **Consider archiving** - For important data, archive instead of delete
+3. **Test thoroughly** - Ensure removal doesn't break dependent data
+4. **Update all schemas** - Make sure new schema doesn't expect the field
 
 ## Related
 

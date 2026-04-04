@@ -256,7 +256,7 @@ This includes auto-configuration for:
 - Health indicators and Actuator endpoints
 - Micrometer metrics integration
 
-→ [Spring Boot Quick Start](../spring-boot/getting-started.md) — Get started with Spring Boot integration
+→ [Spring Boot Quick Start](../spring-boot/getting-started.md) - Get started with Spring Boot integration
 
 ---
 
@@ -264,7 +264,7 @@ This includes auto-configuration for:
 
 For command-line usage without writing Java code, see the dedicated CLI documentation:
 
-→ [CLI Installation](../cli/installation.md) — Build and run the CLI tool
+→ [CLI Installation](../cli/installation.md) - Build and run the CLI tool
 
 ---
 
@@ -279,7 +279,7 @@ For schema analysis, validation, and migration coverage checking:
 </dependency>
 ```
 
-→ [Schema Tools Overview](../schema-tools/index.md) — Learn about schema diffing, validation, and analysis
+→ [Schema Tools Overview](../schema-tools/index.md) - Learn about schema diffing, validation, and analysis
 
 ---
 
@@ -287,4 +287,4 @@ For schema analysis, validation, and migration coverage checking:
 
 Now that you have Aether Datafixers installed, proceed to:
 
-→ [Quick Start](quick-start.md) — Get a working example in 5 minutes
+→ [Quick Start](quick-start.md) - Get a working example in 5 minutes

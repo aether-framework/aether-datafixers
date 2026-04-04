@@ -33,7 +33,7 @@ import java.util.function.Function;
  *
  * <p>An {@code Iso} (isomorphism) is the most powerful optic, representing a 1-to-1
  * correspondence between two types. It can convert from S to A and back to S without any loss of information. Because
- * of this bidirectional nature, an iso is simultaneously both a {@link Lens} and a {@link Prism}—it can be used
+ * of this bidirectional nature, an iso is simultaneously both a {@link Lens} and a {@link Prism}-it can be used
  * anywhere either is expected.</p>
  *
  * <h2>When to Use an Iso</h2>

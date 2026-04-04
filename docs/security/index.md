@@ -1,6 +1,6 @@
 # Security Overview
 
-This section provides guidance for securely handling untrusted data with Aether Datafixers. When processing data from external sources—user uploads, APIs, message queues, or file imports—proper security measures are essential to prevent attacks.
+This section provides guidance for securely handling untrusted data with Aether Datafixers. When processing data from external sources-user uploads, APIs, message queues, or file imports-proper security measures are essential to prevent attacks.
 
 ## Quick Reference
 
@@ -17,11 +17,11 @@ This section provides guidance for securely handling untrusted data with Aether 
 
 Apply the security recommendations in this documentation when:
 
-- **User Uploads** — Processing files uploaded by users (game saves, configs, data imports)
-- **External APIs** — Consuming data from third-party APIs
-- **Message Queues** — Processing messages from queues (Kafka, RabbitMQ, etc.)
-- **Database Blobs** — Migrating serialized data stored in databases
-- **File Imports** — Reading configuration or data files from untrusted sources
+- **User Uploads** - Processing files uploaded by users (game saves, configs, data imports)
+- **External APIs** - Consuming data from third-party APIs
+- **Message Queues** - Processing messages from queues (Kafka, RabbitMQ, etc.)
+- **Database Blobs** - Migrating serialized data stored in databases
+- **File Imports** - Reading configuration or data files from untrusted sources
 
 ## Documentation Structure
 
@@ -35,9 +35,9 @@ Understand the attack vectors and trust boundaries:
 ### [Format-Specific Security](format-considerations/index.md)
 
 Security considerations for each serialization format:
-- [SnakeYAML Security](format-considerations/snakeyaml.md) — **Critical: RCE prevention**
-- [Jackson Security](format-considerations/jackson.md) — XXE, polymorphic typing, depth limits
-- [Gson Security](format-considerations/gson.md) — Safe defaults and validation
+- [SnakeYAML Security](format-considerations/snakeyaml.md) - **Critical: RCE prevention**
+- [Jackson Security](format-considerations/jackson.md) - XXE, polymorphic typing, depth limits
+- [Gson Security](format-considerations/gson.md) - Safe defaults and validation
 
 ### [Best Practices](best-practices.md)
 

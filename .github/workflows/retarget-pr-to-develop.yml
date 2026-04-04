@@ -18,7 +18,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "::notice::PR #${{ github.event.pull_request.number }} targets main from '${{ github.head_ref }}' — retargeting to develop."
+          echo "::notice::PR #${{ github.event.pull_request.number }} targets main from '${{ github.head_ref }}' - retargeting to develop."
           gh pr edit ${{ github.event.pull_request.number }} \
             --repo ${{ github.repository }} \
             --base develop

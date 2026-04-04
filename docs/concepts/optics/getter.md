@@ -1,6 +1,6 @@
 # Getter
 
-A **Getter** is the simplest optic — it provides read-only access to a value. Unlike a Lens, a Getter cannot update the focused value; it can only extract it.
+A **Getter** is the simplest optic - it provides read-only access to a value. Unlike a Lens, a Getter cannot update the focused value; it can only extract it.
 
 ## Definition
 
@@ -12,8 +12,8 @@ public interface Getter<S, A> extends Optic<S, A> {
 ```
 
 **Type Parameters:**
-- `S` — The source type (whole structure)
-- `A` — The focus type (the part being read)
+- `S` - The source type (whole structure)
+- `A` - The focus type (the part being read)
 
 ## Conceptual Model
 
@@ -269,7 +269,7 @@ A Getter cannot be "promoted" to a Lens because it lacks update capability.
 
 ## Related
 
-- [Lens](lens.md) — Read-write access
-- [Affine](affine.md) — Optional read-write
-- [Optics Overview](index.md) — Optic hierarchy
+- [Lens](lens.md) - Read-write access
+- [Affine](affine.md) - Optional read-write
+- [Optics Overview](index.md) - Optic hierarchy
 

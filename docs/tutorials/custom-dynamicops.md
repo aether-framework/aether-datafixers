@@ -582,8 +582,8 @@ public static final SimpleMapOps INSTANCE = new SimpleMapOps();
 
 ## Next Steps
 
-- **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** — Full interface
-- **[Dynamic System](../concepts/dynamic-system.md)** — How it all fits together
+- **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** - Full interface
+- **[Dynamic System](../concepts/dynamic-system.md)** - How it all fits together
 
 ## Built-in Implementations
 

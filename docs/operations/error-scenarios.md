@@ -37,11 +37,11 @@ fix=rename_player_name, version=100->200, type=player
 
 ### Common Causes
 
-1. **Invalid input data** — Data doesn't match expected schema
-2. **Missing required field** — Fix expects a field that doesn't exist
-3. **Type mismatch** — Expected string but found number
-4. **Rule application failure** — TypeRewriteRule failed to apply
-5. **Null pointer** — Fix logic encountered null unexpectedly
+1. **Invalid input data** - Data doesn't match expected schema
+2. **Missing required field** - Fix expects a field that doesn't exist
+3. **Type mismatch** - Expected string but found number
+4. **Rule application failure** - TypeRewriteRule failed to apply
+5. **Null pointer** - Fix logic encountered null unexpectedly
 
 ### Resolution Steps
 
@@ -120,17 +120,17 @@ type=player, path=inventory[0].item.name
 ### Path Notation
 
 The path uses dot notation with array indices:
-- `player.name` — Field `name` in object `player`
-- `inventory[0]` — First element of array `inventory`
-- `inventory[0].item.damage` — Nested field access
+- `player.name` - Field `name` in object `player`
+- `inventory[0]` - First element of array `inventory`
+- `inventory[0].item.damage` - Nested field access
 
 ### Common Causes
 
-1. **Missing required field** — Schema expects field that doesn't exist
-2. **Invalid field type** — Expected number, got string
-3. **Malformed data** — Corrupt or truncated input
-4. **Schema mismatch** — Data version doesn't match expected schema
-5. **Null value** — Non-nullable field is null
+1. **Missing required field** - Schema expects field that doesn't exist
+2. **Invalid field type** - Expected number, got string
+3. **Malformed data** - Corrupt or truncated input
+4. **Schema mismatch** - Data version doesn't match expected schema
+5. **Null value** - Non-nullable field is null
 
 ### Resolution Steps
 
@@ -198,10 +198,10 @@ type=player
 
 ### Common Causes
 
-1. **Null value** — Required field is null
-2. **Unsupported type** — Codec doesn't support the value type
-3. **Codec misconfiguration** — Encoder not properly set up
-4. **Circular reference** — Object graph contains cycles
+1. **Null value** - Required field is null
+2. **Unsupported type** - Codec doesn't support the value type
+3. **Codec misconfiguration** - Encoder not properly set up
+4. **Circular reference** - Object graph contains cycles
 
 ### Resolution Steps
 
@@ -263,10 +263,10 @@ type=custom_entity, version=150
 
 ### Common Causes
 
-1. **Type not registered** — Forgot to register type in bootstrap
-2. **Schema not registered** — Version not registered in SchemaRegistry
-3. **Version gap** — No schema exists for intermediate version
-4. **Typo in TypeReference** — Type ID doesn't match registration
+1. **Type not registered** - Forgot to register type in bootstrap
+2. **Schema not registered** - Version not registered in SchemaRegistry
+3. **Version gap** - No schema exists for intermediate version
+4. **Typo in TypeReference** - Type ID doesn't match registration
 
 ### Resolution Steps
 
@@ -453,7 +453,7 @@ try {
 
 ## Related
 
-- [Debugging Guide](debugging-guide.md) — Systematic debugging approach
-- [Recovery Procedures](recovery-procedures.md) — How to recover from failures
-- [Common Errors](../troubleshooting/common-errors.md) — Quick error reference
-- [How to Use Diagnostics](../how-to/use-diagnostics.md) — Diagnostic API reference
+- [Debugging Guide](debugging-guide.md) - Systematic debugging approach
+- [Recovery Procedures](recovery-procedures.md) - How to recover from failures
+- [Common Errors](../troubleshooting/common-errors.md) - Quick error reference
+- [How to Use Diagnostics](../how-to/use-diagnostics.md) - Diagnostic API reference

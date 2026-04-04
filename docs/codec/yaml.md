@@ -140,10 +140,10 @@ Object data = yaml.load(untrustedYaml);
 
 **Critical security measures for untrusted YAML:**
 
-1. **Always use `SafeConstructor`** — Prevents arbitrary class instantiation
-2. **Limit alias expansion** — Set `maxAliasesForCollections` to prevent Billion Laughs attacks
-3. **Limit nesting depth** — Set `nestingDepthLimit` to prevent stack overflow
-4. **Limit input size** — Set `codePointLimit` to prevent memory exhaustion
+1. **Always use `SafeConstructor`** - Prevents arbitrary class instantiation
+2. **Limit alias expansion** - Set `maxAliasesForCollections` to prevent Billion Laughs attacks
+3. **Limit nesting depth** - Set `nestingDepthLimit` to prevent stack overflow
+4. **Limit input size** - Set `codePointLimit` to prevent memory exhaustion
 
 ```java
 // Secure configuration for untrusted YAML

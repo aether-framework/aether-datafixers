@@ -44,14 +44,14 @@ Measures the cost of applying one `DataFix` to a `Dynamic` value.
 | singleRenameFix       | SMALL    |                3.633 |             0.281 |
 | singleRenameFix       | MEDIUM   |                3.376 |             0.300 |
 | singleRenameFix       | LARGE    |                3.233 |             0.311 |
-| playerDataFix         | —        |                0.109 |             9.147 |
-| playerDataFixEndToEnd | —        |                0.032 |            31.194 |
+| playerDataFix         | -        |                0.109 |             9.147 |
+| playerDataFixEndToEnd | -        |                0.032 |            31.194 |
 
 **Key takeaways:**
 
 - **Framework overhead is ~0.25 µs** per fix invocation (identity fix baseline).
 - A simple rename adds only ~0.03–0.06 µs on top of the framework overhead.
-- Payload size has minimal impact on simple field operations — the cost scales with fix complexity, not data size.
+- Payload size has minimal impact on simple field operations - the cost scales with fix complexity, not data size.
 - A realistic domain fix (player data with multiple field transformations) takes ~9 µs.
 - End-to-end migration (including schema lookup and type routing) adds ~22 µs overhead on top of the raw fix.
 
@@ -110,7 +110,7 @@ Measures `SchemaRegistry` lookup speed with varying registry sizes.
 
 - **latestLookup is O(1)**: Near-constant time regardless of registry size. Always use `getCurrentVersion()` when you know you need the latest schema.
 - **exactLookup and floorLookup are O(log n)**: Based on `TreeMap` lookups. Even with 500 schemas, lookup takes only ~50 ns.
-- **sequentialLookup is O(n)**: Iterates through all schemas — 10.8 µs at 500 schemas. Avoid sequential iteration in hot paths.
+- **sequentialLookup is O(n)**: Iterates through all schemas - 10.8 µs at 500 schemas. Avoid sequential iteration in hot paths.
 
 ---
 
@@ -125,8 +125,8 @@ Measures raw field read, set, and object generation performance per `DynamicOps`
 | Format         |  SMALL |  MEDIUM |  LARGE |
 |----------------|-------:|--------:|-------:|
 | SnakeYamlOps   |  116.5 |   108.3 |  116.1 |
-| JacksonTomlOps |   62.3 |    62.4 |      — |
-| JacksonXmlOps  |   61.0 |    62.3 |      — |
+| JacksonTomlOps |   62.3 |    62.4 |      - |
+| JacksonXmlOps  |   61.0 |    62.3 |      - |
 | JacksonJsonOps |   60.1 |    60.7 |   62.0 |
 | JacksonYamlOps |   59.1 |    61.6 |   60.9 |
 | GsonOps        |   37.1 |    38.9 |   33.4 |
@@ -136,28 +136,28 @@ Measures raw field read, set, and object generation performance per `DynamicOps`
 | Format         |  SMALL |  MEDIUM |  LARGE |
 |----------------|-------:|--------:|-------:|
 | SnakeYamlOps   |  5.597 |   1.205 |  0.525 |
-| JacksonXmlOps  |  0.891 |   0.127 |      — |
+| JacksonXmlOps  |  0.891 |   0.127 |      - |
 | JacksonYamlOps |  0.888 |   0.126 |  0.014 |
 | JacksonJsonOps |  0.883 |   0.126 |  0.014 |
-| JacksonTomlOps |  0.880 |   0.129 |      — |
+| JacksonTomlOps |  0.880 |   0.129 |      - |
 | GsonOps        |  0.650 |   0.086 |  0.011 |
 
 #### Object Generation (ops/µs, higher is better)
 
 | Format         |  SMALL |  MEDIUM |  LARGE |
 |----------------|-------:|--------:|-------:|
-| JacksonXmlOps  |  0.150 |   0.015 |      — |
+| JacksonXmlOps  |  0.150 |   0.015 |      - |
 | JacksonYamlOps |  0.149 |   0.015 | 0.0019 |
 | JacksonJsonOps |  0.148 |   0.015 | 0.0019 |
-| JacksonTomlOps |  0.148 |   0.015 |      — |
+| JacksonTomlOps |  0.148 |   0.015 |      - |
 | GsonOps        |  0.106 |   0.007 | 0.0008 |
 | SnakeYamlOps   |  0.107 |   0.012 | 0.0014 |
 
 **Key takeaways:**
 
-- **SnakeYamlOps is the fastest for field reads** — 2–3x faster than Jackson-based implementations. This is because SnakeYaml uses native Java `Map`/`List` types with direct `HashMap.get()` lookups, while Jackson and Gson use tree node wrappers (`ObjectNode`, `JsonObject`).
-- **SnakeYamlOps is also the fastest for field sets** — 6x faster than Jackson at SMALL payloads, because Java `HashMap.put()` is an in-place mutation, while Jackson's `ObjectNode.set()` involves tree copying.
-- **All Jackson-based formats perform identically** for in-memory operations. JacksonJsonOps, JacksonYamlOps, JacksonTomlOps, and JacksonXmlOps share the same `ObjectNode`/`ArrayNode` tree model — format differences only matter during serialization/deserialization.
+- **SnakeYamlOps is the fastest for field reads** - 2–3x faster than Jackson-based implementations. This is because SnakeYaml uses native Java `Map`/`List` types with direct `HashMap.get()` lookups, while Jackson and Gson use tree node wrappers (`ObjectNode`, `JsonObject`).
+- **SnakeYamlOps is also the fastest for field sets** - 6x faster than Jackson at SMALL payloads, because Java `HashMap.put()` is an in-place mutation, while Jackson's `ObjectNode.set()` involves tree copying.
+- **All Jackson-based formats perform identically** for in-memory operations. JacksonJsonOps, JacksonYamlOps, JacksonTomlOps, and JacksonXmlOps share the same `ObjectNode`/`ArrayNode` tree model - format differences only matter during serialization/deserialization.
 - **GsonOps is consistently the slowest** for field operations due to `JsonObject.deepCopy()` on mutations.
 
 ### Migration Throughput
@@ -169,9 +169,9 @@ Measures end-to-end `DataFixer.update()` throughput per format (single rename fi
 | JacksonJsonOps |           3.709 |            3.759 |           3.734 |
 | JacksonYamlOps |           3.728 |            3.733 |           3.585 |
 | SnakeYamlOps   |           3.730 |            3.726 |           3.636 |
-| JacksonTomlOps |           3.633 |            3.636 |               — |
+| JacksonTomlOps |           3.633 |            3.636 |               - |
 | GsonOps        |           3.628 |            3.314 |           3.231 |
-| JacksonXmlOps  |           3.620 |            3.644 |               — |
+| JacksonXmlOps  |           3.620 |            3.644 |               - |
 
 **Key takeaway:** Migration throughput is nearly identical across all formats (~3.6–3.7 ops/µs). The DataFixer framework overhead dominates over format-specific differences. Choose your format based on your application's needs, not migration speed.
 
@@ -222,7 +222,7 @@ Measures encode and decode throughput for individual primitive values.
 
 **Key takeaways:**
 
-- String, Integer, and Boolean codecs operate at ~4 ns per operation — effectively free in the context of a migration.
+- String, Integer, and Boolean codecs operate at ~4 ns per operation - effectively free in the context of a migration.
 - Float, Long, and Double are ~40% slower due to boxing and number conversion overhead but still under 7 ns per operation.
 - Encoding is consistently ~5–10% faster than decoding.
 
@@ -248,7 +248,7 @@ Measures how list codec performance scales with collection size.
 
 **Key takeaways:**
 
-- Collection codecs scale linearly — 10x the items costs ~10x the time.
+- Collection codecs scale linearly - 10x the items costs ~10x the time.
 - Decoding is ~1.7x faster than encoding for both types.
 - String lists are slightly faster than integer lists due to avoiding unboxing overhead.
 - **Functional vs. direct round-trip**: Performance is identical for integer lists. For string lists, the functional API is ~15% slower at small sizes but converges at larger sizes.
@@ -265,8 +265,8 @@ Measures migration throughput under concurrent load.
 |--------------------------|---------------------:|---------------------:|---------------------:|
 | Single fix (SMALL)       |                12.32 |                12.32 |                12.54 |
 | Single fix (MEDIUM)      |                11.54 |                11.49 |                11.47 |
-| Chain migration (SMALL)  |                 1.91 |                    — |                    — |
-| Chain migration (MEDIUM) |                 1.77 |                    — |                    — |
+| Chain migration (SMALL)  |                 1.91 |                    - |                    - |
+| Chain migration (MEDIUM) |                 1.77 |                    - |                    - |
 
 ### Concurrent Registry Operations
 
@@ -277,7 +277,7 @@ Measures migration throughput under concurrent load.
 
 **Key takeaways:**
 
-- **DataFixer is fully thread-safe** with zero lock contention. Throughput stays constant from 2 to 8 threads — the framework scales linearly with available cores.
+- **DataFixer is fully thread-safe** with zero lock contention. Throughput stays constant from 2 to 8 threads - the framework scales linearly with available cores.
 - **Registry lookups are lock-free**: 481 ops/µs for latest lookup even under contention (2+ threads reading concurrently).
 - Migration throughput at 8 threads: **~12 million SMALL fix applications per second** and **~11.5 million MEDIUM fix applications per second**.
 - Payload size matters more than thread count: SMALL → MEDIUM causes ~7% throughput reduction, while doubling threads has no measurable impact.
@@ -310,7 +310,7 @@ java \
 ```
 
 - **`AlwaysPreTouch`**: Pre-allocates heap memory at startup, avoiding page faults during migration.
-- **`MaxGCPauseMillis=200`**: Keeps GC pauses under 200 ms — suitable for batch processing.
+- **`MaxGCPauseMillis=200`**: Keeps GC pauses under 200 ms - suitable for batch processing.
 - **`G1HeapRegionSize=16m`**: Larger regions reduce overhead for workloads with many medium-sized objects.
 
 ### Streaming vs. In-Memory Processing
@@ -318,13 +318,13 @@ java \
 For very large datasets, avoid loading all records into memory at once:
 
 ```java
-// In-memory: loads everything — fine for < 100k records
+// In-memory: loads everything - fine for < 100k records
 List<TaggedDynamic> all = loadAll();
 List<TaggedDynamic> migrated = all.stream()
     .map(item -> fixer.update(item, fromVersion, toVersion))
     .toList();
 
-// Streaming: processes one record at a time — use for > 100k records
+// Streaming: processes one record at a time - use for > 100k records
 try (Stream<TaggedDynamic> stream = loadStream()) {
     stream
         .map(item -> fixer.update(item, fromVersion, toVersion))
@@ -355,7 +355,7 @@ processBatch(batch); // remaining items
 
 ### Parallel Processing
 
-DataFixer is thread-safe — use parallel streams for CPU-bound migrations:
+DataFixer is thread-safe - use parallel streams for CPU-bound migrations:
 
 ```java
 List<TaggedDynamic> items = loadItems();
@@ -405,7 +405,7 @@ try (BufferedReader reader = Files.newBufferedReader(path)) {
 
 ### Lazy Schema Initialization
 
-Schemas are initialized lazily by default. Only schemas accessed during migration are fully constructed — no upfront cost for unused versions.
+Schemas are initialized lazily by default. Only schemas accessed during migration are fully constructed - no upfront cost for unused versions.
 
 ### Minimize Dynamic Operations
 
@@ -460,9 +460,9 @@ if (elapsed > THRESHOLD_NANOS) {
 
 Based on the [schema lookup benchmarks](#schema-lookup-performance):
 
-- Use `getCurrentVersion()` for the latest schema — **O(1), 5.7 ns**
-- Use `getSchema(version)` for a specific version — **O(log n), 9–52 ns**
-- Avoid iterating schemas sequentially — **O(n), up to 10.8 µs at 500 schemas**
+- Use `getCurrentVersion()` for the latest schema - **O(1), 5.7 ns**
+- Use `getSchema(version)` for a specific version - **O(log n), 9–52 ns**
+- Avoid iterating schemas sequentially - **O(n), up to 10.8 µs at 500 schemas**
 
 ---
 
@@ -471,4 +471,4 @@ Based on the [schema lookup benchmarks](#schema-lookup-performance):
 - [Concurrent Migrations](concurrent-migrations.md)
 - [Debug Migrations](../how-to/debug-migrations.md)
 - [Monitoring & Alerting](../operations/monitoring-alerting.md)
-- [Benchmark Module](../../aether-datafixers-benchmarks/) — JMH benchmark source code
+- [Benchmark Module](../../aether-datafixers-benchmarks/) - JMH benchmark source code

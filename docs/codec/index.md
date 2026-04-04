@@ -222,10 +222,10 @@ migrator.migrate(xmlDynamic, v1, v2);    // XML
 
 ## Related Documentation
 
-- [JSON Support](json.md) — GsonOps and JacksonJsonOps details
-- [YAML Support](yaml.md) — SnakeYamlOps and JacksonYamlOps details
-- [TOML Support](toml.md) — JacksonTomlOps details
-- [XML Support](xml.md) — JacksonXmlOps details
-- [Dynamic System](../concepts/dynamic-system.md) — Core Dynamic concepts
-- [Codec System](../concepts/codec-system.md) — Encoding and decoding
-- [Custom DynamicOps](../tutorials/custom-dynamicops.md) — Create your own implementation
+- [JSON Support](json.md) - GsonOps and JacksonJsonOps details
+- [YAML Support](yaml.md) - SnakeYamlOps and JacksonYamlOps details
+- [TOML Support](toml.md) - JacksonTomlOps details
+- [XML Support](xml.md) - JacksonXmlOps details
+- [Dynamic System](../concepts/dynamic-system.md) - Core Dynamic concepts
+- [Codec System](../concepts/codec-system.md) - Encoding and decoding
+- [Custom DynamicOps](../tutorials/custom-dynamicops.md) - Create your own implementation

@@ -31,7 +31,7 @@ import java.util.function.Function;
  * A getter is a read-only optic that extracts a value from a source without modification capability.
  *
  * <p>A {@code Getter} represents the most basic form of optic: a simple function from a
- * source type to a focus type. Unlike a {@link Lens}, a getter provides no way to modify the source—it is purely for
+ * source type to a focus type. Unlike a {@link Lens}, a getter provides no way to modify the source-it is purely for
  * extraction. This makes getters ideal when you want to explicitly communicate that a transformation is one-way and
  * read-only.</p>
  *

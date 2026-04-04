@@ -169,7 +169,7 @@ if (result.result().isPresent()) {
 
 ## Modifying Values
 
-`Dynamic` is **immutable** — all operations return new instances:
+`Dynamic` is **immutable** - all operations return new instances:
 
 ### Setting Fields
 
@@ -517,8 +517,8 @@ See [Codec Module Documentation](../codec/index.md) for detailed usage of each i
 
 ## Related
 
-- [Codec System](codec-system.md) — Encoding/decoding typed data
-- [Codec Module](../codec/index.md) — All DynamicOps implementations
-- [DataFix System](datafix-system.md) — Using Dynamic in fixes
-- [DSL](dsl.md) — Type templates with remainder
+- [Codec System](codec-system.md) - Encoding/decoding typed data
+- [Codec Module](../codec/index.md) - All DynamicOps implementations
+- [DataFix System](datafix-system.md) - Using Dynamic in fixes
+- [DSL](dsl.md) - Type templates with remainder
 

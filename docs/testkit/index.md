@@ -15,7 +15,7 @@ Writing tests for data migrations shouldn't require extensive boilerplate. The t
 
 | Package             | Description                                                               |
 |---------------------|---------------------------------------------------------------------------|
-| `testkit`           | `TestData`, `TestDataBuilder`, `TestDataListBuilder` — Test data creation |
+| `testkit`           | `TestData`, `TestDataBuilder`, `TestDataListBuilder` - Test data creation |
 | `testkit.assertion` | `AetherAssertions`, `DynamicAssert`, `DataResultAssert`, `TypedAssert`    |
 | `testkit.harness`   | `DataFixTester`, `MigrationTester`, `SchemaTester`                        |
 | `testkit.factory`   | `QuickFix`, `MockSchemas`                                                 |
@@ -118,11 +118,11 @@ DataFix<JsonElement> transform = QuickFix.transformField(
 
 ## Guides
 
-- [Test Data Builders](test-data-builders.md) — Creating test data without boilerplate
-- [Custom Assertions](assertions.md) — AssertJ assertions for Dynamic, DataResult, Typed
-- [DataFixTester](datafix-tester.md) — Test harness for isolated DataFix testing
-- [QuickFix Factories](quick-fix.md) — Factory methods for common fix patterns
-- [Mock Schemas](mock-schemas.md) — Mock schema utilities for testing
+- [Test Data Builders](test-data-builders.md) - Creating test data without boilerplate
+- [Custom Assertions](assertions.md) - AssertJ assertions for Dynamic, DataResult, Typed
+- [DataFixTester](datafix-tester.md) - Test harness for isolated DataFix testing
+- [QuickFix Factories](quick-fix.md) - Factory methods for common fix patterns
+- [Mock Schemas](mock-schemas.md) - Mock schema utilities for testing
 
 ## Example: Complete DataFix Test
 
@@ -211,6 +211,6 @@ class PlayerFixTest {
 
 ## Related
 
-- [How to Test Migrations](../how-to/test-migrations.md) — Task-oriented testing guide
-- [DataFix System](../concepts/datafix-system.md) — Understanding DataFix
-- [Dynamic System](../concepts/dynamic-system.md) — Understanding Dynamic
+- [How to Test Migrations](../how-to/test-migrations.md) - Task-oriented testing guide
+- [DataFix System](../concepts/datafix-system.md) - Understanding DataFix
+- [Dynamic System](../concepts/dynamic-system.md) - Understanding Dynamic

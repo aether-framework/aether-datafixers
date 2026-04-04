@@ -103,7 +103,7 @@ registerType(TypeReferences.PLAYER, DSL.and(
 ));
 ```
 
-No fix needed — old data with the field still works.
+No fix needed - old data with the field still works.
 
 ## Convert Optional to Required
 
@@ -194,10 +194,10 @@ return Rules.transform(TypeReferences.PLAYER, player -> {
 
 ## Best Practices
 
-1. **Always use orElse** — Never assume a field exists
-2. **Provide sensible defaults** — Defaults should be safe values
-3. **Document optionality** — Note which fields are optional in schemas
-4. **Test both cases** — Test with and without optional fields
+1. **Always use orElse** - Never assume a field exists
+2. **Provide sensible defaults** - Defaults should be safe values
+3. **Document optionality** - Note which fields are optional in schemas
+4. **Test both cases** - Test with and without optional fields
 
 ## Related
 

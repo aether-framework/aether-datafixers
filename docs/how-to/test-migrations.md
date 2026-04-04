@@ -385,9 +385,9 @@ class FullMigrationTest {
 
 ## Related
 
-- [Testkit Overview](../testkit/index.md) — Complete testkit documentation
-- [Test Data Builders](../testkit/test-data-builders.md) — Creating test data
-- [Custom Assertions](../testkit/assertions.md) — Available assertions
-- [QuickFix Factories](../testkit/quick-fix.md) — Factory methods
+- [Testkit Overview](../testkit/index.md) - Complete testkit documentation
+- [Test Data Builders](../testkit/test-data-builders.md) - Creating test data
+- [Custom Assertions](../testkit/assertions.md) - Available assertions
+- [QuickFix Factories](../testkit/quick-fix.md) - Factory methods
 - [Debug Migrations](debug-migrations.md)
 - [DataFix System](../concepts/datafix-system.md)

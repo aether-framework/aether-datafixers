@@ -467,7 +467,7 @@ Schema definitions should never change after release. If you need to modify a ty
 
 ## Related
 
-- [Type System](type-system.md) — Type and TypeRegistry details
-- [DSL](dsl.md) — Type template language reference
-- [DataFix System](datafix-system.md) — Using schemas in fixes
+- [Type System](type-system.md) - Type and TypeRegistry details
+- [DSL](dsl.md) - Type template language reference
+- [DataFix System](datafix-system.md) - Using schemas in fixes
 

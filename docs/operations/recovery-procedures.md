@@ -577,7 +577,7 @@ void verifyMigrationSuccess() {
 
 ## Related
 
-- [Error Scenarios](error-scenarios.md) — Exception handling reference
-- [Debugging Guide](debugging-guide.md) — Diagnosing issues
-- [Monitoring & Alerting](monitoring-alerting.md) — Detecting problems
-- [Troubleshooting](../troubleshooting/index.md) — Quick fixes
+- [Error Scenarios](error-scenarios.md) - Exception handling reference
+- [Debugging Guide](debugging-guide.md) - Diagnosing issues
+- [Monitoring & Alerting](monitoring-alerting.md) - Detecting problems
+- [Troubleshooting](../troubleshooting/index.md) - Quick fixes

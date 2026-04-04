@@ -6,10 +6,10 @@ The `schematools.introspection` package provides utilities for inspecting the in
 
 Type introspection enables:
 
-- **Structure Analysis** — Understand the shape of complex nested types
-- **Field Extraction** — Get metadata about all fields in a type
-- **Type Classification** — Categorize types (primitive, list, product, etc.)
-- **Comparison Support** — Create normalized structures for equality checking
+- **Structure Analysis** - Understand the shape of complex nested types
+- **Field Extraction** - Get metadata about all fields in a type
+- **Type Classification** - Categorize types (primitive, list, product, etc.)
+- **Comparison Support** - Create normalized structures for equality checking
 
 ## Core Components
 
@@ -374,16 +374,16 @@ public class DependencyAnalyzer {
 
 ## Performance Notes
 
-- **Introspection is recursive** — Complex nested types require more processing
-- **Results are immutable** — Safe to cache `TypeStructure` and `FieldInfo` instances
-- **Field extraction traverses all levels** — For large types, consider limiting depth
-- **Use `hasField()` for simple checks** — Faster than extracting all fields
+- **Introspection is recursive** - Complex nested types require more processing
+- **Results are immutable** - Safe to cache `TypeStructure` and `FieldInfo` instances
+- **Field extraction traverses all levels** - For large types, consider limiting depth
+- **Use `hasField()` for simple checks** - Faster than extracting all fields
 
 ---
 
 ## Related
 
-- [Schema Diffing](schema-diffing.md) — Uses introspection for field-level diffs
-- [Schema Validation](schema-validation.md) — Uses introspection for convention checking
-- [Type System](../concepts/type-system.md) — Core type concepts
-- [DSL](../concepts/dsl.md) — How types are defined
+- [Schema Diffing](schema-diffing.md) - Uses introspection for field-level diffs
+- [Schema Validation](schema-validation.md) - Uses introspection for convention checking
+- [Type System](../concepts/type-system.md) - Core type concepts
+- [DSL](../concepts/dsl.md) - How types are defined

@@ -162,9 +162,9 @@ After: {"name":"Steve","experience":1500}
 
 ## Key Points
 
-- **DataVersion** is just an integer — use any numbering scheme (e.g., 1, 2, 3 or 100, 200, 300)
+- **DataVersion** is just an integer - use any numbering scheme (e.g., 1, 2, 3 or 100, 200, 300)
 - **TypeReference** routes data to the correct fixes
-- **Dynamic** operations are immutable — they return new instances
+- **Dynamic** operations are immutable - they return new instances
 - **DataFix** defines the actual transformation logic
 
 ---
@@ -177,6 +177,6 @@ This was a minimal example. For production use, you'll want:
 - **SchemaDataFix** base class for rule-based transformations
 - **DSL** for declaring type structures
 
-→ [Your First Migration](your-first-migration.md) — Complete tutorial with schemas
+→ [Your First Migration](your-first-migration.md) - Complete tutorial with schemas
 
-→ [Concepts Overview](../concepts/index.md) — Understand the framework in depth
+→ [Concepts Overview](../concepts/index.md) - Understand the framework in depth

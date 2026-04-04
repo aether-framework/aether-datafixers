@@ -14,7 +14,7 @@ This project follows a **Git Flow**-inspired branching model with two long-lived
 
 | Branch    | Purpose                                                                                                                                                                                              |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `main`    | 🔒 **Production-ready code only.** Represents the latest stable release. Direct commits and PRs from feature/fix branches are **not allowed** — only `release/*` branches may be merged into `main`. |
+| `main`    | 🔒 **Production-ready code only.** Represents the latest stable release. Direct commits and PRs from feature/fix branches are **not allowed** - only `release/*` branches may be merged into `main`. |
 | `develop` | 🔧 **Integration branch.** All feature and fix contributions are merged here. This is the **default target** for your PRs.                                                                           |
 
 ### Short-Lived Branches
@@ -64,8 +64,8 @@ git checkout -b feature/new-awesome-feature
 ```
 
 Use a meaningful branch name with the appropriate prefix:
-- `feature/` — for new features (e.g., `feature/optic-integration`)
-- `bugfix/` — for bug fixes (e.g., `bugfix/builder-null-pointer`)
+- `feature/` - for new features (e.g., `feature/optic-integration`)
+- `bugfix/` - for bug fixes (e.g., `bugfix/builder-null-pointer`)
 
 ### 3️⃣ Implement Your Changes
 - Follow the coding style of the project.
@@ -115,7 +115,7 @@ This adds a `Signed-off-by: Your Name <your.email@example.com>` line to your com
 
 ## 🤖 AI-Assisted Contributions
 
-We allow AI-assisted contributions under strict conditions. If you use AI tools (GitHub Copilot, Claude, ChatGPT, etc.), you **must** follow our [AI Usage Guidelines](AI_USAGE.md) — including mandatory disclosure and quality standards.
+We allow AI-assisted contributions under strict conditions. If you use AI tools (GitHub Copilot, Claude, ChatGPT, etc.), you **must** follow our [AI Usage Guidelines](AI_USAGE.md) - including mandatory disclosure and quality standards.
 
 ---
 

@@ -22,8 +22,8 @@ public interface Affine<S, A> extends Optic<S, A> {
 ```
 
 **Type Parameters:**
-- `S` — The source type (whole structure)
-- `A` — The focus type (the optional part)
+- `S` - The source type (whole structure)
+- `A` - The focus type (the optional part)
 
 ## Conceptual Model
 
@@ -332,8 +332,8 @@ assert userEmail.set(user, email.get()).equals(user);
 
 ## Related
 
-- [Lens](lens.md) — For required fields
-- [Prism](prism.md) — For sum type cases
-- [Finder](finder.md) — For Dynamic data navigation
-- [Optics Overview](index.md) — Optic hierarchy
+- [Lens](lens.md) - For required fields
+- [Prism](prism.md) - For sum type cases
+- [Finder](finder.md) - For Dynamic data navigation
+- [Optics Overview](index.md) - Optic hierarchy
 
