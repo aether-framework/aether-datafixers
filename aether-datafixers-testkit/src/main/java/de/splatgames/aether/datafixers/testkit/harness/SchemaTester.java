@@ -292,6 +292,10 @@ public final class SchemaTester {
      */
     @NotNull
     public SchemaTester hasNoParent() {
+        if (this.expectedParent != null) {
+            throw new IllegalStateException(
+                    "Contradictory configuration: hasNoParent() called after inheritsFrom()");
+        }
         this.expectHasParent = false;
         return this;
     }
@@ -306,6 +310,10 @@ public final class SchemaTester {
     @NotNull
     public SchemaTester inheritsFrom(@NotNull final Schema parent) {
         Preconditions.checkNotNull(parent, "parent must not be null");
+        if (Boolean.FALSE.equals(this.expectHasParent)) {
+            throw new IllegalStateException(
+                    "Contradictory configuration: inheritsFrom() called after hasNoParent()");
+        }
         this.expectedParent = parent;
         this.expectHasParent = true;
         return this;
@@ -369,7 +377,8 @@ public final class SchemaTester {
 
         // Validate parent existence
         if (this.expectHasParent != null) {
-            final boolean hasParent = this.schema.parent() != null;
+            final Schema actualParentRef = this.schema.parent();
+            final boolean hasParent = actualParentRef != null;
             if (this.expectHasParent && !hasParent) {
                 throw new AssertionError(String.format(
                         "Schema v%d has no parent, but one was expected",
@@ -380,7 +389,7 @@ public final class SchemaTester {
                 throw new AssertionError(String.format(
                         "Schema v%d has a parent (v%d), but none was expected",
                         this.schema.version().getVersion(),
-                        this.schema.parent().version().getVersion()
+                        actualParentRef.version().getVersion()
                 ));
             }
         }

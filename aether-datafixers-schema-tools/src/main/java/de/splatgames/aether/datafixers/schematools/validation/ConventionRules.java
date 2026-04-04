@@ -80,8 +80,8 @@ public final class ConventionRules {
      * </ul>
      */
     public static final ConventionRules STRICT = builder()
-            .typeNamePattern(Pattern.compile("^[a-z][a-z0-9_]*$"))
-            .fieldNamePattern(Pattern.compile("^[a-z][a-z0-9_]*$"))
+            .typeNamePattern(Pattern.compile("^[a-z_][a-z0-9_]*$"))
+            .fieldNamePattern(Pattern.compile("^[a-z_][a-z0-9_]*$"))
             .schemaClassPrefix("Schema")
             .fixClassSuffix("Fix")
             .treatViolationsAsErrors(true)
@@ -249,11 +249,7 @@ public final class ConventionRules {
         }
 
         // Check custom validator
-        if (this.customTypeValidator != null && !this.customTypeValidator.test(typeName)) {
-            return false;
-        }
-
-        return true;
+        return this.customTypeValidator == null || this.customTypeValidator.test(typeName);
     }
 
     /**
@@ -275,11 +271,7 @@ public final class ConventionRules {
         }
 
         // Check custom validator
-        if (this.customFieldValidator != null && !this.customFieldValidator.test(fieldName)) {
-            return false;
-        }
-
-        return true;
+        return this.customFieldValidator == null || this.customFieldValidator.test(fieldName);
     }
 
     /**
@@ -304,11 +296,7 @@ public final class ConventionRules {
         }
 
         // Check suffix
-        if (this.schemaClassSuffix != null && !className.endsWith(this.schemaClassSuffix)) {
-            return false;
-        }
-
-        return true;
+        return this.schemaClassSuffix == null || className.endsWith(this.schemaClassSuffix);
     }
 
     /**
@@ -333,11 +321,7 @@ public final class ConventionRules {
         }
 
         // Check suffix
-        if (this.fixClassSuffix != null && !className.endsWith(this.fixClassSuffix)) {
-            return false;
-        }
-
-        return true;
+        return this.fixClassSuffix == null || className.endsWith(this.fixClassSuffix);
     }
 
     /**

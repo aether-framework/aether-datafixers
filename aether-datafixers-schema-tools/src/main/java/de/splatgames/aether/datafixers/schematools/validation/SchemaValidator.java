@@ -190,9 +190,14 @@ public final class SchemaValidator {
 
         // Bootstrap into capturing registries
         final SchemaRegistry schemaRegistry = new SimpleSchemaRegistry();
-        final DataFixerBuilder fixerBuilder = new DataFixerBuilder(new DataVersion(Integer.MAX_VALUE));
-
         bootstrap.registerSchemas(schemaRegistry);
+
+        final int maxVersion = schemaRegistry.stream()
+                .mapToInt(s -> s.version().getVersion())
+                .max()
+                .orElse(0);
+
+        final DataFixerBuilder fixerBuilder = new DataFixerBuilder(new DataVersion(maxVersion));
         bootstrap.registerFixes(fixerBuilder);
 
         return new SchemaValidator(null, schemaRegistry, fixerBuilder);
@@ -390,11 +395,11 @@ public final class SchemaValidator {
         final int minVersion = schemas.stream()
                 .map(s -> s.version().getVersion())
                 .min(Comparator.naturalOrder())
-                .orElse(0);
+                .orElseThrow();
         final int maxVersion = schemas.stream()
                 .map(s -> s.version().getVersion())
                 .max(Comparator.naturalOrder())
-                .orElse(0);
+                .orElseThrow();
 
         if (minVersion == maxVersion) {
             return ValidationResult.empty();

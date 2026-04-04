@@ -616,10 +616,21 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     public DynamicAssert<T> containsStringValues(@NotNull final String... expected) {
         isNotNull();
         this.isList();
-        final List<String> actualValues = this.actual.asListStream()
+        final List<Dynamic<T>> elements = this.actual.asListStream()
                 .result()
-                .map(s -> s.map(d -> d.asString().orElse(null)).collect(Collectors.toList()))
+                .map(s -> s.collect(Collectors.toList()))
                 .orElse(List.of());
+
+        final List<String> actualValues = new java.util.ArrayList<>();
+        for (int i = 0; i < elements.size(); i++) {
+            final Dynamic<T> element = elements.get(i);
+            final String value = element.asString().orElse(null);
+            if (value == null && !element.isString()) {
+                failWithMessage("Expected%s element [%d] to be a string but was: %s",
+                        this.pathInfo(), i, this.describeElement(element));
+            }
+            actualValues.add(value);
+        }
 
         for (final String exp : expected) {
             if (!actualValues.contains(exp)) {
@@ -640,10 +651,21 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     public DynamicAssert<T> containsIntValues(final int... expected) {
         isNotNull();
         this.isList();
-        final List<Integer> actualValues = this.actual.asListStream()
+        final List<Dynamic<T>> elements = this.actual.asListStream()
                 .result()
-                .map(s -> s.map(d -> d.asInt().orElse(null)).collect(Collectors.toList()))
+                .map(s -> s.collect(Collectors.toList()))
                 .orElse(List.of());
+
+        final List<Integer> actualValues = new java.util.ArrayList<>();
+        for (int i = 0; i < elements.size(); i++) {
+            final Dynamic<T> element = elements.get(i);
+            final Integer value = element.asInt().orElse(null);
+            if (value == null && !element.isNumber()) {
+                failWithMessage("Expected%s element [%d] to be an integer but was: %s",
+                        this.pathInfo(), i, this.describeElement(element));
+            }
+            actualValues.add(value);
+        }
 
         for (final int exp : expected) {
             if (!actualValues.contains(exp)) {
@@ -723,6 +745,15 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     private String availableFields() {
         final List<String> fields = this.availableFieldsList();
         return fields.isEmpty() ? "(none)" : String.join(", ", fields);
+    }
+
+    private String describeElement(final Dynamic<T> element) {
+        if (element.isString()) return "string: " + element.asString().orElse("?");
+        if (element.isNumber()) return "number: " + element.asNumber().orElse(null);
+        if (element.isBoolean()) return "boolean: " + element.asBoolean().orElse(null);
+        if (element.isMap()) return "map";
+        if (element.isList()) return "list";
+        return "unknown: " + element.value();
     }
 
     private String fieldsOf(final Dynamic<T> d) {

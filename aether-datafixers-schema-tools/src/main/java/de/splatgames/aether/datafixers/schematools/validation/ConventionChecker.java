@@ -143,6 +143,11 @@ public final class ConventionChecker {
             final Type<?> type = schema.types().get(ref);
             if (type != null) {
                 checkFieldNames(type, typeName, schemaLocation, rules, result);
+            } else {
+                result.add(ValidationIssue.warning(
+                        CONVENTION_TYPE_NAME,
+                        "Type '" + typeName + "' is registered but resolves to null"
+                ).at(schemaLocation + "/" + typeName));
             }
         }
 

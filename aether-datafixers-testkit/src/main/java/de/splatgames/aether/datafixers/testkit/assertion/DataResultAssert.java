@@ -194,7 +194,7 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
     @NotNull
     public DataResultAssert<A> hasValueSatisfying(@NotNull final Consumer<A> requirements) {
         this.isSuccess();
-        requirements.accept(this.actual.result().orElse(null));
+        requirements.accept(this.actual.result().orElseThrow());
         return this;
     }
 
