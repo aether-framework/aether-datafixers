@@ -35,6 +35,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -232,6 +233,11 @@ public class ValidateCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() {
+        if (this.toVersion < 0) {
+            System.err.println("Error: --to version must be non-negative, got: " + this.toVersion);
+            return 1;
+        }
+
         try {
             final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
             final DataVersion targetVersion = new DataVersion(this.toVersion);
@@ -314,7 +320,14 @@ public class ValidateCommand implements Callable<Integer> {
             final DataVersion targetVersion
     ) {
         try {
-            final String content = Files.readString(file.toPath());
+            final long fileSize = Files.size(file.toPath());
+            if (fileSize > 100 * 1024 * 1024) {
+                throw new IOException("File exceeds maximum size (100MB): " + file);
+            }
+            String content = Files.readString(file.toPath());
+            if (content.startsWith("\uFEFF")) {
+                content = content.substring(1);
+            }
             final T data = handler.parse(content);
 
             final DataVersion fileVersion = VersionExtractor.extract(

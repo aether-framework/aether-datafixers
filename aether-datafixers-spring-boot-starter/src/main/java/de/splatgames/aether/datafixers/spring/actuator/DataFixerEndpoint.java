@@ -245,7 +245,9 @@ public class DataFixerEndpoint {
     public DomainDetails domainDetails(@Selector final String domain) {
         final AetherDataFixer fixer = this.registry.get(domain);
         if (fixer == null) {
-            return null; // Spring will return 404
+            // Returning null from @ReadOperation with @Selector produces HTTP 404
+            // (Spring Boot Actuator convention for missing resources)
+            return null;
         }
 
         try {

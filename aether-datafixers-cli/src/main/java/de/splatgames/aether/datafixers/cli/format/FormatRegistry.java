@@ -158,7 +158,7 @@ public final class FormatRegistry {
      * @param handler the format handler to register, must not be {@code null}
      * @see FormatHandler#formatId()
      */
-    public static void register(@NotNull final FormatHandler<?> handler) {
+    public static synchronized void register(@NotNull final FormatHandler<?> handler) {
         Preconditions.checkNotNull(handler, "handler must not be null");
 
         final String id = handler.formatId();
