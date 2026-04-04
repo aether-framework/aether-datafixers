@@ -50,7 +50,7 @@ Measures the cost of applying one `DataFix` to a `Dynamic` value.
 **Key takeaways:**
 
 - **Framework overhead is ~0.25 µs** per fix invocation (identity fix baseline).
-- A simple rename adds only ~0.03–0.06 µs on top of the framework overhead.
+- A simple rename adds only ~0.03-0.06 µs on top of the framework overhead.
 - Payload size has minimal impact on simple field operations - the cost scales with fix complexity, not data size.
 - A realistic domain fix (player data with multiple field transformations) takes ~9 µs.
 - End-to-end migration (including schema lookup and type routing) adds ~22 µs overhead on top of the raw fix.
@@ -155,7 +155,7 @@ Measures raw field read, set, and object generation performance per `DynamicOps`
 
 **Key takeaways:**
 
-- **SnakeYamlOps is the fastest for field reads** - 2–3x faster than Jackson-based implementations. This is because SnakeYaml uses native Java `Map`/`List` types with direct `HashMap.get()` lookups, while Jackson and Gson use tree node wrappers (`ObjectNode`, `JsonObject`).
+- **SnakeYamlOps is the fastest for field reads** - 2-3x faster than Jackson-based implementations. This is because SnakeYaml uses native Java `Map`/`List` types with direct `HashMap.get()` lookups, while Jackson and Gson use tree node wrappers (`ObjectNode`, `JsonObject`).
 - **SnakeYamlOps is also the fastest for field sets** - 6x faster than Jackson at SMALL payloads, because Java `HashMap.put()` is an in-place mutation, while Jackson's `ObjectNode.set()` involves tree copying.
 - **All Jackson-based formats perform identically** for in-memory operations. JacksonJsonOps, JacksonYamlOps, JacksonTomlOps, and JacksonXmlOps share the same `ObjectNode`/`ArrayNode` tree model - format differences only matter during serialization/deserialization.
 - **GsonOps is consistently the slowest** for field operations due to `JsonObject.deepCopy()` on mutations.
@@ -173,7 +173,7 @@ Measures end-to-end `DataFixer.update()` throughput per format (single rename fi
 | GsonOps        |           3.628 |            3.314 |           3.231 |
 | JacksonXmlOps  |           3.620 |            3.644 |               - |
 
-**Key takeaway:** Migration throughput is nearly identical across all formats (~3.6–3.7 ops/µs). The DataFixer framework overhead dominates over format-specific differences. Choose your format based on your application's needs, not migration speed.
+**Key takeaway:** Migration throughput is nearly identical across all formats (~3.6-3.7 ops/µs). The DataFixer framework overhead dominates over format-specific differences. Choose your format based on your application's needs, not migration speed.
 
 ### Cross-Format Conversion
 
@@ -224,7 +224,7 @@ Measures encode and decode throughput for individual primitive values.
 
 - String, Integer, and Boolean codecs operate at ~4 ns per operation - effectively free in the context of a migration.
 - Float, Long, and Double are ~40% slower due to boxing and number conversion overhead but still under 7 ns per operation.
-- Encoding is consistently ~5–10% faster than decoding.
+- Encoding is consistently ~5-10% faster than decoding.
 
 ### Collection Scaling
 
@@ -272,7 +272,7 @@ Measures migration throughput under concurrent load.
 
 | Operation       |   2 Threads (ops/µs) |
 |-----------------|---------------------:|
-| Latest lookup   |        481.9 – 490.7 |
+| Latest lookup   |        481.9 - 490.7 |
 | Registry lookup |                111.1 |
 
 **Key takeaways:**
@@ -290,9 +290,9 @@ Measures migration throughput under concurrent load.
 
 | Workload   |             Records |  Recommended Heap | JVM Flags                                             |
 |------------|--------------------:|------------------:|-------------------------------------------------------|
-| Small      |             < 1,000 |   256 MB – 512 MB | `-Xms256m -Xmx512m`                                   |
-| Medium     |     1,000 – 100,000 |       1 GB – 2 GB | `-Xms1g -Xmx2g`                                       |
-| Large      | 100,000 – 1,000,000 |       2 GB – 4 GB | `-Xms2g -Xmx4g -XX:+UseG1GC`                          |
+| Small      |             < 1,000 |   256 MB - 512 MB | `-Xms256m -Xmx512m`                                   |
+| Medium     |     1,000 - 100,000 |       1 GB - 2 GB | `-Xms1g -Xmx2g`                                       |
+| Large      | 100,000 - 1,000,000 |       2 GB - 4 GB | `-Xms2g -Xmx4g -XX:+UseG1GC`                          |
 | Very large |         > 1,000,000 |             4 GB+ | `-Xms4g -Xmx8g -XX:+UseG1GC -XX:MaxGCPauseMillis=200` |
 
 ### GC Tuning for Migration Workloads
@@ -461,7 +461,7 @@ if (elapsed > THRESHOLD_NANOS) {
 Based on the [schema lookup benchmarks](#schema-lookup-performance):
 
 - Use `getCurrentVersion()` for the latest schema - **O(1), 5.7 ns**
-- Use `getSchema(version)` for a specific version - **O(log n), 9–52 ns**
+- Use `getSchema(version)` for a specific version - **O(log n), 9-52 ns**
 - Avoid iterating schemas sequentially - **O(n), up to 10.8 µs at 500 schemas**
 
 ---

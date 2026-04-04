@@ -23,10 +23,10 @@ If you are using an older version, we **strongly recommend upgrading** to the la
 
 This project uses multiple automated security tools:
 
-- **GitHub CodeQL** – Static Application Security Testing (SAST)
-- **OWASP Dependency-Check** – Known vulnerability detection in dependencies
-- **GitHub Dependency Review** – Pull request dependency analysis
-- **Dependabot** – Automated dependency updates
+- **GitHub CodeQL** - Static Application Security Testing (SAST)
+- **OWASP Dependency-Check** - Known vulnerability detection in dependencies
+- **GitHub Dependency Review** - Pull request dependency analysis
+- **Dependabot** - Automated dependency updates
 
 All scans are executed automatically in CI pipelines on every pull request and release build.
 
@@ -93,10 +93,10 @@ If you discover a security vulnerability in **Aether Datafixers**, please report
 
 | Severity                 | Acknowledgment | Fix Timeline |
 |--------------------------|----------------|--------------|
-| Critical (CVSS 9.0–10.0) | 24 hours       | 72 hours     |
-| High (CVSS 7.0–8.9)      | 48 hours       | 14 days      |
-| Medium (CVSS 4.0–6.9)    | 48 hours       | 30 days      |
-| Low (CVSS 0.1–3.9)       | 72 hours       | Next release |
+| Critical (CVSS 9.0-10.0) | 24 hours       | 72 hours     |
+| High (CVSS 7.0-8.9)      | 48 hours       | 14 days      |
+| Medium (CVSS 4.0-6.9)    | 48 hours       | 30 days      |
+| Low (CVSS 0.1-3.9)       | 72 hours       | Next release |
 
 ---
 

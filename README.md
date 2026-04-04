@@ -558,4 +558,4 @@ To report a vulnerability, see our [Security Policy](SECURITY.md).
 
 This project is licensed under the [MIT License](LICENSE).
 
-Copyright (c) 2025–2026 [Splatgames.de Software](https://software.splatgames.de) and Contributors.
+Copyright (c) 2025-2026 [Splatgames.de Software](https://software.splatgames.de) and Contributors.
