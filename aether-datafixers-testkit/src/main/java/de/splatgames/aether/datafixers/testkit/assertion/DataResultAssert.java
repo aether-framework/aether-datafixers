@@ -326,7 +326,7 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
     @NotNull
     public AbstractObjectAssert<?, A> extractingValue() {
         this.isSuccess();
-        return Assertions.assertThat(this.actual.result().orElse(null));
+        return Assertions.assertThat(this.actual.result().orElseThrow());
     }
 
     /**

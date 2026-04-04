@@ -434,6 +434,16 @@ public class MigrateCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
+            // 0. Validate version range
+            if (this.toVersion < 0) {
+                System.err.println("Error: --to version must be non-negative, got: " + this.toVersion);
+                return 1;
+            }
+            if (this.fromVersion != null && this.fromVersion < 0) {
+                System.err.println("Error: --from version must be non-negative, got: " + this.fromVersion);
+                return 1;
+            }
+
             // 1. Load bootstrap
             final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
 
@@ -545,8 +555,17 @@ public class MigrateCommand implements Callable<Integer> {
 
         final Instant startTime = Instant.now();
 
-        // Read input
-        final String content = Files.readString(inputFile.toPath());
+        // Check file size to prevent OOM on very large files
+        final long fileSize = Files.size(inputFile.toPath());
+        if (fileSize > 100 * 1024 * 1024) {
+            throw new IOException("File exceeds maximum size (100MB): " + inputFile);
+        }
+
+        // Read input (strip UTF-8 BOM if present)
+        String content = Files.readString(inputFile.toPath());
+        if (content.startsWith("\uFEFF")) {
+            content = content.substring(1);
+        }
         final T data = handler.parse(content);
 
         // Determine source version
@@ -638,7 +657,14 @@ public class MigrateCommand implements Callable<Integer> {
         Preconditions.checkNotNull(inputFile, "inputFile must not be null");
         Preconditions.checkNotNull(content, "content must not be null");
         if (this.output != null) {
-            // Write to specified output
+            // Validate output path: reject path traversal via unnormalized segments
+            final Path outputPath = this.output.toPath();
+            if (!outputPath.normalize().equals(outputPath)
+                    || outputPath.toString().contains("..")) {
+                throw new IOException(
+                        "Output path contains path traversal: " + this.output);
+            }
+
             if (this.output.isDirectory()) {
                 final Path outPath = this.output.toPath().resolve(inputFile.getName());
                 Files.writeString(outPath, content);
@@ -648,17 +674,25 @@ public class MigrateCommand implements Callable<Integer> {
                 throw new IllegalArgumentException(
                         "Output must be a directory when multiple input files are specified");
             }
-        } else if (this.inputFiles.size() == 1 && this.output == null) {
+        } else if (this.inputFiles.size() == 1) {
             // Single file with no output: stdout
             System.out.println(content);
         } else {
-            // Multiple files: in-place with backup
-            if (this.backup) {
-                final Path backupPath = inputFile.toPath().resolveSibling(
-                        inputFile.getName() + ".bak");
-                Files.copy(inputFile.toPath(), backupPath, StandardCopyOption.REPLACE_EXISTING);
+            // Multiple files: in-place with atomic write via temp file
+            final Path tempPath = Files.createTempFile(
+                    inputFile.toPath().getParent(), "migrate_", ".tmp");
+            try {
+                Files.writeString(tempPath, content);
+                if (this.backup) {
+                    final Path backupPath = inputFile.toPath().resolveSibling(
+                            inputFile.getName() + ".bak");
+                    Files.move(inputFile.toPath(), backupPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                Files.move(tempPath, inputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (final IOException e) {
+                Files.deleteIfExists(tempPath);
+                throw e;
             }
-            Files.writeString(inputFile.toPath(), content);
         }
     }
 

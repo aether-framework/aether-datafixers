@@ -215,9 +215,16 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
     @NotNull
     public <T> DynamicAssert<T> encodedWith(@NotNull final DynamicOps<T> ops) {
         isNotNull();
-        final Dynamic<T> encoded = this.actual.encode(ops)
-                .getOrThrow(msg -> new AssertionError("Failed to encode Typed value: " + msg));
-        return new DynamicAssert<>(encoded);
+        try {
+            final Dynamic<T> encoded = this.actual.encode(ops)
+                    .getOrThrow(msg -> new AssertionError("Failed to encode Typed value: " + msg));
+            return new DynamicAssert<>(encoded);
+        } catch (final AssertionError e) {
+            throw e;
+        } catch (final Exception e) {
+            // Preserve the original exception stack trace as the cause
+            throw new AssertionError("Failed to encode Typed value: " + e.getMessage(), e);
+        }
     }
 
     // ==================== Extraction ====================

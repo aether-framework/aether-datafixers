@@ -25,6 +25,8 @@ package de.splatgames.aether.datafixers.cli.bootstrap;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.ServiceLoader;
@@ -69,6 +71,8 @@ import java.util.ServiceLoader;
  */
 public final class BootstrapLoader {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BootstrapLoader.class);
+
     /**
      * Private constructor to prevent instantiation.
      *
@@ -110,6 +114,11 @@ public final class BootstrapLoader {
     @NotNull
     public static DataFixerBootstrap load(@NotNull final String className) {
         Preconditions.checkNotNull(className, "className must not be null");
+
+        // Security note: Class.forName() will load and instantiate any class on the classpath
+        // that implements DataFixerBootstrap. Only use bootstrap classes from trusted sources.
+        LOG.warn("Loading bootstrap class '{}' via reflection. "
+                + "Ensure this class is from a trusted source.", className);
 
         try {
             final Class<?> clazz = Class.forName(className);
