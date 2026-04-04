@@ -29,7 +29,6 @@ import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry;
 import de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -410,8 +409,12 @@ public class DefaultMigrationService implements MigrationService {
             final DataVersion from = this.fromVersion;
             final DataVersion to = this.toLatest ? fixer.currentVersion() : this.toVersion;
 
-            assert from != null : "fromVersion must be set";
-            assert to != null : "toVersion must be set";
+            if (from == null) {
+                throw new IllegalStateException("fromVersion must be set");
+            }
+            if (to == null) {
+                throw new IllegalStateException("toVersion must be set");
+            }
 
             LOG.debug("Starting migration from v{} to v{} in domain '{}'",
                     from.getVersion(), to.getVersion(), this.domain);

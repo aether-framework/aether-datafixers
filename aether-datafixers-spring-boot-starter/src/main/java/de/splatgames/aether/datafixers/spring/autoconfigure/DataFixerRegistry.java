@@ -151,12 +151,12 @@ public class DataFixerRegistry {
     public void register(@NotNull final String domain, @NotNull final AetherDataFixer fixer) {
         Preconditions.checkNotNull(domain, "domain must not be null");
         Preconditions.checkNotNull(fixer, "fixer must not be null");
-        if (this.fixers.containsKey(domain)) {
+        final AetherDataFixer existing = this.fixers.putIfAbsent(domain, fixer);
+        if (existing != null) {
             throw new IllegalArgumentException(
                     "DataFixer already registered for domain: " + domain
             );
         }
-        this.fixers.put(domain, fixer);
     }
 
     /**

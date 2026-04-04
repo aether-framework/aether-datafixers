@@ -93,7 +93,8 @@ import java.util.Map;
  * {
  *   "domain": "game",
  *   "currentVersion": -1,
- *   "status": "DOWN: Schema not initialized"
+ *   "status": "DOWN",
+ *   "error": "Schema not initialized"
  * }
  * }</pre>
  *
@@ -201,12 +202,14 @@ public class DataFixerEndpoint {
             try {
                 domains.put(domain, new DomainSummary(
                         fixer.currentVersion().getVersion(),
-                        "UP"
+                        "UP",
+                        null
                 ));
             } catch (final Exception e) {
                 domains.put(domain, new DomainSummary(
                         -1,
-                        "DOWN: " + e.getMessage()
+                        "DOWN",
+                        e.getMessage()
                 ));
             }
         }
@@ -249,13 +252,15 @@ public class DataFixerEndpoint {
             return new DomainDetails(
                     domain,
                     fixer.currentVersion().getVersion(),
-                    "UP"
+                    "UP",
+                    null
             );
         } catch (final Exception e) {
             return new DomainDetails(
                     domain,
                     -1,
-                    "DOWN: " + e.getMessage()
+                    "DOWN",
+                    e.getMessage()
             );
         }
     }
@@ -303,7 +308,7 @@ public class DataFixerEndpoint {
      * <p><b>Status Values</b></p>
      * <ul>
      *   <li>{@code "UP"} - The DataFixer is operational and responding normally</li>
-     *   <li>{@code "DOWN: {message}"} - The DataFixer failed with the given error message</li>
+     *   <li>{@code "DOWN"} - The DataFixer failed; see {@code error} for details</li>
      * </ul>
      *
      * <p><b>Version Semantics</b></p>
@@ -313,11 +318,12 @@ public class DataFixerEndpoint {
      * </ul>
      *
      * @param currentVersion the current schema version of the domain, or -1 on error
-     * @param status         the operational status ("UP" or "DOWN: {error}")
+     * @param status         the operational status ("UP" or "DOWN")
+     * @param error          the error message if status is "DOWN", or {@code null} if healthy
      * @author Erik Pförtner
      * @since 0.4.0
      */
-    public record DomainSummary(int currentVersion, String status) {
+    public record DomainSummary(int currentVersion, String status, @Nullable String error) {
     }
 
     /**
@@ -339,14 +345,16 @@ public class DataFixerEndpoint {
      *
      * @param domain         the domain name (echoed from the request path)
      * @param currentVersion the current schema version of the domain, or -1 on error
-     * @param status         the operational status ("UP" or "DOWN: {error}")
+     * @param status         the operational status ("UP" or "DOWN")
+     * @param error          the error message if status is "DOWN", or {@code null} if healthy
      * @author Erik Pförtner
      * @since 0.4.0
      */
     public record DomainDetails(
             String domain,
             int currentVersion,
-            String status
+            String status,
+            @Nullable String error
     ) {
     }
 }
