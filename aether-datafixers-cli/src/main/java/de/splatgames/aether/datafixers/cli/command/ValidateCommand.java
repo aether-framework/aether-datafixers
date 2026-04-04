@@ -235,8 +235,10 @@ public class ValidateCommand implements Callable<Integer> {
         try {
             final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
             final DataVersion targetVersion = new DataVersion(this.toVersion);
-            new DataFixerRuntimeFactory()
-                    .create(targetVersion, bootstrap);
+            // Validate that the bootstrap configuration is correct by creating a DataFixer.
+            // The instance itself is not needed for version checking, but creation verifies
+            // that schemas and fixes register without errors.
+            new DataFixerRuntimeFactory().create(targetVersion, bootstrap);
 
             final FormatHandler<?> handler = FormatRegistry.get(this.format);
             if (handler == null) {

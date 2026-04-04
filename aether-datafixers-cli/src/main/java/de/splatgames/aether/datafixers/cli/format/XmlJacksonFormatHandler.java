@@ -25,11 +25,14 @@ package de.splatgames.aether.datafixers.cli.format;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
 import org.jetbrains.annotations.NotNull;
+
+import javax.xml.stream.XMLInputFactory;
 
 /**
  * Format handler for XML using the Jackson Dataformat XML library.
@@ -77,19 +80,35 @@ public class XmlJacksonFormatHandler implements FormatHandler<JsonNode> {
     /**
      * XmlMapper instance for compact XML serialization.
      *
-     * <p>Uses default Jackson XML configuration.</p>
+     * <p>Configured with XXE protection disabled to prevent XML External Entity attacks.</p>
      */
-    private static final XmlMapper MAPPER = new XmlMapper();
+    private static final XmlMapper MAPPER = createSecureMapper(false);
 
     /**
      * XmlMapper instance for pretty-printed XML serialization.
      *
      * <p>Configured with {@link SerializationFeature#INDENT_OUTPUT} to produce
-     * human-readable output with indentation.</p>
+     * human-readable output with indentation, and XXE protection disabled.</p>
      */
-    private static final XmlMapper MAPPER_PRETTY = XmlMapper.builder()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-            .build();
+    private static final XmlMapper MAPPER_PRETTY = createSecureMapper(true);
+
+    /**
+     * Creates a secure XmlMapper with XXE protection disabled.
+     *
+     * @param prettyPrint whether to enable indented output
+     * @return a configured XmlMapper instance
+     */
+    private static XmlMapper createSecureMapper(final boolean prettyPrint) {
+        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
+        final XmlMapper.Builder builder = XmlMapper.builder(new XmlFactory(inputFactory, null));
+        if (prettyPrint) {
+            builder.enable(SerializationFeature.INDENT_OUTPUT);
+        }
+        return builder.build();
+    }
 
     /**
      * {@inheritDoc}

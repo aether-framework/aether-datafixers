@@ -185,14 +185,14 @@ class MigrationMetricsTest {
     class FailureRecording {
 
         @Test
-        @DisplayName("records failure counter with error type")
-        void recordsFailureCounterWithErrorType() {
+        @DisplayName("records failure counter with classified error type")
+        void recordsFailureCounterWithClassifiedErrorType() {
             metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
                     new RuntimeException("Test"));
 
             Counter counter = registry.find("aether.datafixers.migrations.failure")
                     .tag("domain", "game")
-                    .tag("error_type", "RuntimeException")
+                    .tag("error_type", "unknown_error")
                     .counter();
 
             assertThat(counter).isNotNull();
@@ -200,24 +200,31 @@ class MigrationMetricsTest {
         }
 
         @Test
-        @DisplayName("differentiates failure counters by error type")
-        void differentiatesFailureCountersByErrorType() {
+        @DisplayName("classifies errors into bounded categories")
+        void classifiesErrorsIntoBoundedCategories() {
+            metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
+                    new de.splatgames.aether.datafixers.api.exception.FixException("Test"));
+            metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
+                    new de.splatgames.aether.datafixers.api.exception.DecodeException("Test"));
             metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
                     new RuntimeException("Test"));
-            metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
-                    new IllegalStateException("Test"));
 
-            Counter runtimeCounter = registry.find("aether.datafixers.migrations.failure")
+            Counter fixCounter = registry.find("aether.datafixers.migrations.failure")
                     .tag("domain", "game")
-                    .tag("error_type", "RuntimeException")
+                    .tag("error_type", "fix_error")
                     .counter();
-            Counter illegalStateCounter = registry.find("aether.datafixers.migrations.failure")
+            Counter decodeCounter = registry.find("aether.datafixers.migrations.failure")
                     .tag("domain", "game")
-                    .tag("error_type", "IllegalStateException")
+                    .tag("error_type", "decode_error")
+                    .counter();
+            Counter unknownCounter = registry.find("aether.datafixers.migrations.failure")
+                    .tag("domain", "game")
+                    .tag("error_type", "unknown_error")
                     .counter();
 
-            assertThat(runtimeCounter.count()).isEqualTo(1.0);
-            assertThat(illegalStateCounter.count()).isEqualTo(1.0);
+            assertThat(fixCounter.count()).isEqualTo(1.0);
+            assertThat(decodeCounter.count()).isEqualTo(1.0);
+            assertThat(unknownCounter.count()).isEqualTo(1.0);
         }
 
         @Test
@@ -359,8 +366,8 @@ class MigrationMetricsTest {
         }
 
         @Test
-        @DisplayName("handles custom exception classes")
-        void handlesCustomExceptionClasses() {
+        @DisplayName("classifies custom exception as unknown_error")
+        void classifiesCustomExceptionAsUnknownError() {
             class CustomMigrationException extends RuntimeException {
                 CustomMigrationException(String msg) {
                     super(msg);
@@ -371,23 +378,21 @@ class MigrationMetricsTest {
                     new CustomMigrationException("Test"));
 
             Counter counter = registry.find("aether.datafixers.migrations.failure")
-                    .tag("error_type", "CustomMigrationException")
+                    .tag("error_type", "unknown_error")
                     .counter();
 
             assertThat(counter.count()).isEqualTo(1.0);
         }
 
         @Test
-        @DisplayName("handles anonymous exception classes")
-        void handlesAnonymousExceptionClasses() {
-            Exception anonymousException = new RuntimeException("Test") {
-            };
+        @DisplayName("classifies DataFixerException subtypes correctly")
+        void classifiesDataFixerExceptionSubtypes() {
+            metrics.recordFailure("game", 100, 200, Duration.ofMillis(50),
+                    new de.splatgames.aether.datafixers.api.exception.FixException("Test"));
 
-            metrics.recordFailure("game", 100, 200, Duration.ofMillis(50), anonymousException);
-
-            // Anonymous classes have empty simple name, so it uses the base class
             Counter counter = registry.find("aether.datafixers.migrations.failure")
                     .tag("domain", "game")
+                    .tag("error_type", "fix_error")
                     .counter();
 
             assertThat(counter.count()).isEqualTo(1.0);
@@ -456,7 +461,7 @@ class MigrationMetricsTest {
 
             Counter counter = registry.find("aether.datafixers.migrations.failure")
                     .tag("domain", "game")
-                    .tag("error_type", "RuntimeException")
+                    .tag("error_type", "unknown_error")
                     .counter();
 
             assertThat(counter.count()).isEqualTo(threadCount * recordsPerThread);

@@ -23,6 +23,11 @@
 package de.splatgames.aether.datafixers.spring.metrics;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.exception.DataFixerException;
+import de.splatgames.aether.datafixers.api.exception.DecodeException;
+import de.splatgames.aether.datafixers.api.exception.EncodeException;
+import de.splatgames.aether.datafixers.api.exception.FixException;
+import de.splatgames.aether.datafixers.api.exception.RegistryException;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -324,8 +329,38 @@ public class MigrationMetrics {
         final int span = Math.abs(toVersion - fromVersion);
         getOrCreateVersionSpan(domain).record(span);
 
-        // Record failure count with error type
-        getOrCreateFailureCounter(domain, error.getClass().getSimpleName()).increment();
+        // Record failure count with classified error type (bounded cardinality)
+        getOrCreateFailureCounter(domain, classifyError(error)).increment();
+    }
+
+    /**
+     * Classifies an error into a bounded set of categories for use as a metric tag.
+     *
+     * <p>This prevents unbounded cardinality in Micrometer metrics, which can cause
+     * memory leaks when many distinct exception types are thrown. All errors are
+     * mapped to one of a fixed set of known categories.</p>
+     *
+     * @param error the throwable to classify, must not be {@code null}
+     * @return a bounded category string for use as a metric tag
+     */
+    @NotNull
+    private static String classifyError(@NotNull final Throwable error) {
+        if (error instanceof FixException) {
+            return "fix_error";
+        }
+        if (error instanceof DecodeException) {
+            return "decode_error";
+        }
+        if (error instanceof EncodeException) {
+            return "encode_error";
+        }
+        if (error instanceof RegistryException) {
+            return "registry_error";
+        }
+        if (error instanceof DataFixerException) {
+            return "datafixer_error";
+        }
+        return "unknown_error";
     }
 
     /**
