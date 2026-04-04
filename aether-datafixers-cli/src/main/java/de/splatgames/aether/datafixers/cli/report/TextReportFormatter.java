@@ -82,13 +82,7 @@ public class TextReportFormatter implements ReportFormatter {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
 
-        return String.format(
-                "Migration: %s [%s] v%d -> v%d (%dms)",
-                fileName,
-                type,
-                fromVersion,
-                toVersion,
-                duration.toMillis()
-        );
+        return "Migration: " + fileName + " [" + type + "] v" + fromVersion
+                + " -> v" + toVersion + " (" + duration.toMillis() + "ms)";
     }
 }

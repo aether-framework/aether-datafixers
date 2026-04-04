@@ -186,13 +186,13 @@ public class InfoCommand implements Callable<Integer> {
         }
 
         if (this.bootstrapClass != null) {
+            if (this.toVersion == null) {
+                System.err.println("Error: --to version is required when using --bootstrap");
+                return 1;
+            }
+
             try {
                 final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
-
-                if (this.toVersion == null) {
-                    System.err.println("Error: --to version is required when using --bootstrap");
-                    return 1;
-                }
 
                 final AetherDataFixer fixer = new DataFixerRuntimeFactory()
                         .create(new de.splatgames.aether.datafixers.api.DataVersion(this.toVersion), bootstrap);

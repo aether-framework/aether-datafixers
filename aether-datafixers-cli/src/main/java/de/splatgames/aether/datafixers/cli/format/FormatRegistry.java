@@ -161,7 +161,15 @@ public final class FormatRegistry {
     public static void register(@NotNull final FormatHandler<?> handler) {
         Preconditions.checkNotNull(handler, "handler must not be null");
 
-        HANDLERS.put(handler.formatId(), handler);
+        final String id = handler.formatId();
+        Preconditions.checkArgument(!id.isEmpty(),
+                "formatId must not be null or empty");
+
+        final String[] extensions = handler.fileExtensions();
+        Preconditions.checkArgument(extensions != null && extensions.length > 0,
+                "fileExtensions must not be null or empty");
+
+        HANDLERS.put(id, handler);
     }
 
     /**
