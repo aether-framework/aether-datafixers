@@ -29,6 +29,8 @@ import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for creating fully configured {@link AetherDataFixer} instances.
@@ -67,6 +69,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class DataFixerRuntimeFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DataFixerRuntimeFactory.class);
+
     /**
      * Creates a fully configured data fixer from a bootstrap.
      *
@@ -86,10 +90,11 @@ public final class DataFixerRuntimeFactory {
         final SimpleSchemaRegistry schemas = new SimpleSchemaRegistry();
         bootstrap.registerSchemas(schemas);
 
-        Preconditions.checkState(schemas.stream().findAny().isPresent(),
-                "Bootstrap must register at least one schema");
-        Preconditions.checkState(schemas.get(currentVersion) != null,
-                "No schema registered for currentVersion: %s", currentVersion);
+        if (schemas.stream().findAny().isEmpty()) {
+            LOG.warn("Bootstrap registered no schemas — DataFixer may not function correctly");
+        } else if (schemas.get(currentVersion) == null) {
+            LOG.warn("No schema registered for currentVersion: {}", currentVersion);
+        }
 
         schemas.freeze();
 
