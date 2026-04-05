@@ -216,7 +216,7 @@ public final class DataFixRegistry {
      *
      * <p>This method is idempotent - calling it multiple times has no effect after the first call.</p>
      */
-    public void freeze() {
+    public synchronized void freeze() {
         if (!this.frozen) {
             // Create an immutable deep copy
             final Map<TypeReference, NavigableMap<DataVersion, List<DataFix<?>>>> immutableCopy = new HashMap<>();

@@ -68,7 +68,7 @@ public final class MigrationReportImpl implements MigrationReport {
         this.fromVersion = builder.fromVersion;
         this.toVersion = builder.toVersion;
         this.startTime = builder.startTime;
-        this.endTime = Instant.now();
+        this.endTime = builder.endTime;
         this.fixExecutions = List.copyOf(builder.fixExecutions);
         this.touchedTypes = Set.copyOf(builder.touchedTypes);
         this.warnings = List.copyOf(builder.warnings);
@@ -164,6 +164,7 @@ public final class MigrationReportImpl implements MigrationReport {
         private DataVersion fromVersion;
         private DataVersion toVersion;
         private Instant startTime;
+        private Instant endTime;
         private final List<FixExecution> fixExecutions = new ArrayList<>();
         private final Set<TypeReference> touchedTypes = new LinkedHashSet<>();
         private final List<String> warnings = new ArrayList<>();
@@ -259,14 +260,22 @@ public final class MigrationReportImpl implements MigrationReport {
             this.fixExecutions.add(execution);
 
             // Reset current fix tracking
+            this.resetFixState();
+
+            return this;
+        }
+
+        /**
+         * Resets fix-tracking state. Called after endFix() or on error paths
+         * to prevent stale state from corrupting subsequent fix records.
+         */
+        private void resetFixState() {
             this.currentFixName = null;
             this.currentFixFromVersion = null;
             this.currentFixToVersion = null;
             this.currentFixStartTime = null;
             this.currentRuleApplications.clear();
             this.currentFixBeforeSnapshot = null;
-
-            return this;
         }
 
         @Override
@@ -301,6 +310,7 @@ public final class MigrationReportImpl implements MigrationReport {
                 );
             }
 
+            this.endTime = Instant.now();
             return new MigrationReportImpl(this);
         }
     }
