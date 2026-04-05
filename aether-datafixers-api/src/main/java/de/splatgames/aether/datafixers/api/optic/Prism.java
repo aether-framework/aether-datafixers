@@ -270,6 +270,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      * @throws NullPointerException if {@code source} or {@code modifier} is {@code null}
      */
     @NotNull
+    // Safe cast: for monomorphic prisms (S == T), the source is returned unchanged
+    // when getOption returns empty, preserving the original type.
     @SuppressWarnings("unchecked")
     default T modify(@NotNull final S source,
                      @NotNull final Function<A, B> modifier) {
@@ -301,6 +303,8 @@ public interface Prism<S, T, A, B> extends Optic<S, T, A, B> {
      * @throws NullPointerException if {@code source} or {@code value} is {@code null}
      */
     @NotNull
+    // Safe cast: for monomorphic prisms (S == T), the source is returned unchanged
+    // when getOption returns empty, preserving the original type.
     @SuppressWarnings("unchecked")
     default T set(@NotNull final S source, @NotNull final B value) {
         Preconditions.checkNotNull(source, "source must not be null");

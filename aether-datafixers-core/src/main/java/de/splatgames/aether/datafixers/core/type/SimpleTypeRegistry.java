@@ -93,7 +93,7 @@ public final class SimpleTypeRegistry implements TypeRegistry {
     }
 
     @Override
-    public void freeze() {
+    public synchronized void freeze() {
         if (!this.frozen) {
             this.types = Map.copyOf(this.types);
             this.frozen = true;

@@ -85,6 +85,12 @@ public final class DataFixerRuntimeFactory {
 
         final SimpleSchemaRegistry schemas = new SimpleSchemaRegistry();
         bootstrap.registerSchemas(schemas);
+
+        Preconditions.checkState(schemas.stream().findAny().isPresent(),
+                "Bootstrap must register at least one schema");
+        Preconditions.checkState(schemas.get(currentVersion) != null,
+                "No schema registered for currentVersion: %s", currentVersion);
+
         schemas.freeze();
 
         final DataFixerBuilder builder = new DataFixerBuilder(currentVersion);

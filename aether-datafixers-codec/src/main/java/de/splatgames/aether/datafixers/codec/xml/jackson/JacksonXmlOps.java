@@ -1557,6 +1557,23 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
     }
 
     /**
+     * Validates that the given node is suitable for XML serialization.
+     *
+     * <p>XML requires exactly one root element. This method checks that the given
+     * node is an object (map) node, which will become the root element when serialized.</p>
+     *
+     * @param node the node to validate, must not be {@code null}
+     * @throws IllegalArgumentException if the node is not suitable for XML serialization
+     */
+    public static void validateForSerialization(@NotNull final JsonNode node) {
+        Preconditions.checkNotNull(node, "node must not be null");
+        if (!node.isObject()) {
+            throw new IllegalArgumentException(
+                    "XML serialization requires an object node as root, but got: " + node.getNodeType());
+        }
+    }
+
+    /**
      * Returns a string representation of this {@code DynamicOps} instance.
      *
      * <p>This method returns a fixed string identifying the implementation, useful for

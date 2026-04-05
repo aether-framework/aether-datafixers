@@ -87,7 +87,7 @@ public final class SimpleCodecRegistry implements CodecRegistry {
     }
 
     @Override
-    public void freeze() {
+    public synchronized void freeze() {
         if (!this.frozen) {
             this.codecs = Map.copyOf(this.codecs);
             this.frozen = true;
