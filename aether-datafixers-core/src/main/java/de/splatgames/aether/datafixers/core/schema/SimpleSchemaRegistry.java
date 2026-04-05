@@ -129,7 +129,7 @@ public final class SimpleSchemaRegistry implements SchemaRegistry {
     }
 
     @Override
-    public void freeze() {
+    public synchronized void freeze() {
         if (!this.frozen) {
             this.schemas = Collections.unmodifiableNavigableMap(new TreeMap<>(this.schemas));
             this.frozen = true;

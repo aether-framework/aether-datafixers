@@ -93,14 +93,15 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
             return this.delegate.rewrite(type, input);
         }
 
-        final Instant start = Instant.now();
+        final Instant timestamp = Instant.now();
+        final long startNano = System.nanoTime();
         final Optional<Typed<?>> result = this.delegate.rewrite(type, input);
-        final Duration duration = Duration.between(start, Instant.now());
+        final Duration duration = Duration.ofNanos(System.nanoTime() - startNano);
 
         final RuleApplication application = new RuleApplication(
                 this.delegate.toString(),
                 type.describe(),
-                start,
+                timestamp,
                 duration,
                 result.isPresent(),
                 null

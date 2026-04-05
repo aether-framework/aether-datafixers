@@ -26,7 +26,7 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -204,9 +204,9 @@ public final class ValidationIssue {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
 
-        final Map<String, Object> newContext = new HashMap<>(this.context);
+        final Map<String, Object> newContext = new LinkedHashMap<>(this.context);
         newContext.put(key, value);
-        return new ValidationIssue(this.severity, this.code, this.message, this.location, newContext);
+        return new ValidationIssue(this.severity, this.code, this.message, this.location, Map.copyOf(newContext));
     }
 
     /**

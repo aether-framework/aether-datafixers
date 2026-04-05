@@ -381,10 +381,8 @@ public final class MigrationAnalyzer {
         ).schemaDiff(diff)
                 .affectedTypes(affectedTypes);
 
-        // Add first fix if present (simplified - in reality there might be multiple)
-        if (!fixes.isEmpty()) {
-            stepBuilder.fix(fixes.get(0));
-        }
+        // Add all applicable fixes for this migration step
+        stepBuilder.fixes(fixes);
 
         return stepBuilder.build();
     }

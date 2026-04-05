@@ -181,6 +181,10 @@ public final class AetherDataFixer {
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkArgument(
+                fromVersion.compareTo(toVersion) <= 0,
+                "fromVersion (%s) must be <= toVersion (%s)", fromVersion, toVersion
+        );
 
         @SuppressWarnings("unchecked") final Dynamic<Object> dyn = (Dynamic<Object>) input.value();
 
