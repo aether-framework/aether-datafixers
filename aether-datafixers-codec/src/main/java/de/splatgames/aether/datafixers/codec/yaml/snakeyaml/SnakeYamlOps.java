@@ -1244,6 +1244,16 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *       are immutable in Java)</li>
      * </ul>
      *
+     * <p><b>Performance Note:</b> Unlike Jackson-based implementations which delegate to
+     * the optimized {@code JsonNode.deepCopy()}, this method performs a manual recursive
+     * copy using Java reflection-free iteration. For very large data structures, this may
+     * be measurably slower. Consider using Jackson-based implementations
+     * ({@link de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps}) for
+     * performance-sensitive use cases.</p>
+     *
+     * <ul>
+     * </ul>
+     *
      * <p><b>Performance Note</b></p>
      * <p>Deep copying has O(n) time and space complexity where n is the total number of
      * elements in the structure. For large data structures, this can be significant.

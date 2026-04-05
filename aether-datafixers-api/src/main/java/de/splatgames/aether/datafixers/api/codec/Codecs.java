@@ -567,6 +567,11 @@ public final class Codecs {
      *     GsonOps.INSTANCE, jsonElement);
      * }</pre>
      *
+     * <p><b>Null handling:</b> The inner codec must never decode to {@code null}.
+     * If the inner codec successfully decodes but produces a null value, this codec
+     * returns a {@link DataResult} error. To handle absent values, the inner codec
+     * should fail (returning an error), which this codec maps to {@code Optional.empty()}.</p>
+     *
      * @param codec the base codec for the optional value, must not be {@code null}
      * @param <A>   the type of the optional value
      * @return a new codec for {@code Optional<A>}, never {@code null}

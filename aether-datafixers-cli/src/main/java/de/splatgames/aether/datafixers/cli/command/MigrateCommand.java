@@ -378,13 +378,17 @@ public class MigrateCommand implements Callable<Integer> {
      *   <li>Full stack traces for errors</li>
      * </ul>
      *
+     * <p><b>Security note:</b> Full stack traces may expose internal implementation
+     * details, file paths, and class names. Do not expose verbose output to untrusted
+     * users if the CLI is wrapped in a service or web interface.</p>
+     *
      * <p>Default value: {@code false}</p>
      *
      * <p>CLI usage: {@code -v} or {@code --verbose}</p>
      */
     @Option(
             names = {"-v", "--verbose"},
-            description = "Enable verbose output."
+            description = "Enable verbose output (includes stack traces; see security note in docs)."
     )
     private boolean verbose;
 

@@ -960,7 +960,7 @@ public sealed interface DataResult<A> {
                 if (result.isSuccess()) {
                     return new Error<>(this.message, result.result().orElse(null));
                 }
-                return new Error<>(this.message + "; " + result.error().orElse(""), result.partialResult().orElse(null));
+                return new Error<>(this.message + "\n  caused by: " + result.error().orElse(""), result.partialResult().orElse(null));
             }
             return (DataResult<B>) this;
         }

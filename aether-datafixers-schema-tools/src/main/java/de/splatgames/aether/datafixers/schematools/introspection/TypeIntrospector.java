@@ -128,6 +128,12 @@ public final class TypeIntrospector {
      *   <li>Primitive: Returns an empty list</li>
      * </ul>
      *
+     * <p><b>Recursive behavior:</b> Fields are extracted recursively from nested types.
+     * The result includes both parent fields and their nested children using dot-notation
+     * paths. For example, a type with field "player" containing nested field "position"
+     * with sub-field "x" produces entries: {@code ["player", "player.position",
+     * "player.position.x"]}.</p>
+     *
      * @param type the type to extract fields from, must not be {@code null}
      * @return a list of fields found in the type, never {@code null}
      * @throws NullPointerException if {@code type} is {@code null}

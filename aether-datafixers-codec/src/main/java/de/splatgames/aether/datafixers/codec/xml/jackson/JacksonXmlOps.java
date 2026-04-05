@@ -156,6 +156,12 @@ import java.util.stream.StreamSupport;
  * become child elements, but this can be customized with Jackson annotations or mapper
  * configuration.</p>
  *
+ * <p><b>Important:</b> The {@code DynamicOps<JsonNode>} model treats all properties uniformly
+ * as map entries. XML attribute information is <b>not preserved</b> through Dynamic round-trips.
+ * Attributes become nested map entries indistinguishable from child elements, and re-serialized
+ * XML may differ structurally from the original. For use cases requiring attribute fidelity,
+ * process XML directly with Jackson's XML annotations rather than through the Dynamic API.</p>
+ *
  * <h3>Arrays and Repeated Elements</h3>
  * <p>XML has no native array type. Arrays are typically represented as repeated elements
  * with the same name or wrapped in a container element. The {@link XmlMapper}'s
