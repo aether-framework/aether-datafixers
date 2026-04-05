@@ -828,7 +828,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
                 return; // Skip entries with null keys
             }
             final String key = keyObj.toString();
-            map.put(key, valueObj);
+            map.put(key, valueObj == null ? YamlNull.INSTANCE : valueObj);
         });
         return map;
     }
@@ -1254,9 +1254,21 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * @return a deep copy of the value, or the value itself if it is immutable;
      *         {@code null} if the input is {@code null}
      */
+    private static final int MAX_DEEP_COPY_DEPTH = 512;
+
     @Nullable
     @SuppressWarnings("unchecked")
     private Object deepCopy(@Nullable final Object value) {
+        return deepCopy(value, 0);
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    private Object deepCopy(@Nullable final Object value, final int depth) {
+        if (depth > MAX_DEEP_COPY_DEPTH) {
+            throw new IllegalStateException(
+                    "YAML structure too deeply nested (depth > " + MAX_DEEP_COPY_DEPTH + ")");
+        }
         if (value == null) {
             return null;
         }
@@ -1267,7 +1279,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
             final Map<String, Object> original = (Map<String, Object>) value;
             final Map<String, Object> copy = new LinkedHashMap<>();
             for (final Map.Entry<String, Object> entry : original.entrySet()) {
-                copy.put(entry.getKey(), deepCopy(entry.getValue()));
+                copy.put(entry.getKey(), deepCopy(entry.getValue(), depth + 1));
             }
             return copy;
         }
@@ -1275,7 +1287,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
             final List<Object> original = (List<Object>) value;
             final List<Object> copy = new ArrayList<>();
             for (final Object element : original) {
-                copy.add(deepCopy(element));
+                copy.add(deepCopy(element, depth + 1));
             }
             return copy;
         }

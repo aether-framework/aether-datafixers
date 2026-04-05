@@ -935,6 +935,12 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
             return DataResult.error("Not an array: " + list);
         }
         final ArrayNode result = list.isNull() ? this.nodeFactory.arrayNode() : ((ArrayNode) list).deepCopy();
+        // TOML requires homogeneous arrays — validate element type consistency
+        if (!result.isEmpty() && result.get(0).getNodeType() != value.getNodeType()) {
+            return DataResult.error(
+                    "TOML requires homogeneous arrays: expected "
+                            + result.get(0).getNodeType() + " but got " + value.getNodeType());
+        }
         result.add(value);
         return DataResult.success(result);
     }
@@ -1088,6 +1094,10 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         }
         if (!key.isTextual()) {
             return DataResult.error("Key is not a string: " + key);
+        }
+        // TOML does not support null values
+        if (value.isNull()) {
+            return DataResult.error("TOML does not support null values for key: " + key.asText());
         }
         final ObjectNode result = map.isNull() ? this.nodeFactory.objectNode() : ((ObjectNode) map).deepCopy();
         result.set(key.asText(), value);

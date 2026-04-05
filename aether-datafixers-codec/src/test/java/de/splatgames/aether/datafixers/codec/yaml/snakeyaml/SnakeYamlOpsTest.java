@@ -959,7 +959,7 @@ class SnakeYamlOpsTest {
 
             @SuppressWarnings("unchecked")
             final Map<String, Object> resultMap = (Map<String, Object>) map;
-            assertThat(resultMap.get("key")).isNull();
+            assertThat(resultMap.get("key")).isSameAs(SnakeYamlOps.NULL);
         }
     }
 }

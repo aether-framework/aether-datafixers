@@ -187,8 +187,16 @@ public final class DataFixerImpl implements DataFixer {
                     diagCtx.reportBuilder().endFix(fix, duration, afterSnapshot);
                 }
             } catch (final FixException e) {
+                if (diagCtx != null) {
+                    final Duration duration = Duration.between(fixStart, Instant.now());
+                    diagCtx.reportBuilder().endFix(fix, duration, null);
+                }
                 throw e; // Re-throw FixException as-is
             } catch (final Exception e) {
+                if (diagCtx != null) {
+                    final Duration duration = Duration.between(fixStart, Instant.now());
+                    diagCtx.reportBuilder().endFix(fix, duration, null);
+                }
                 throw new FixException(
                         "Fix '" + fix.name() + "' failed: " + e.getMessage(),
                         fix.name(),

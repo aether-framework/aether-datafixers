@@ -27,6 +27,7 @@ import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
+import de.splatgames.aether.datafixers.api.exception.FixException;
 import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
@@ -169,6 +170,13 @@ public abstract class SchemaDataFix implements DataFix<Object> {
         @SuppressWarnings("unchecked")
         final Typed<?> typedIn = new Typed<>((Type<Object>) logical, input);
         final Typed<?> typedOut = rule.apply(typedIn);
+
+        if (!(typedOut.value() instanceof Dynamic)) {
+            throw new FixException(
+                    "Rule produced non-Dynamic output for type '" + type.getId()
+                            + "' in fix '" + this.name() + "': " + typedOut.value().getClass().getName()
+            );
+        }
 
         @SuppressWarnings("unchecked")
         final Dynamic<Object> result = (Dynamic<Object>) typedOut.value();

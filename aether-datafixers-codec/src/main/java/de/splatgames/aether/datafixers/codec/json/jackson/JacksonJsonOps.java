@@ -25,7 +25,9 @@ package de.splatgames.aether.datafixers.codec.json.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
@@ -43,6 +45,8 @@ import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Spliterator;
@@ -688,6 +692,12 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         }
         if (value instanceof Byte) {
             return ShortNode.valueOf(value.byteValue());
+        }
+        if (value instanceof BigDecimal bd) {
+            return DecimalNode.valueOf(bd);
+        }
+        if (value instanceof BigInteger bi) {
+            return BigIntegerNode.valueOf(bi);
         }
         return DoubleNode.valueOf(value.doubleValue());
     }
