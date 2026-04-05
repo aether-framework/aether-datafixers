@@ -451,9 +451,13 @@ public final class MigrationAnalyzer {
      * but no DataFix is registered to handle the type at this version,
      * a coverage gap is recorded.</p>
      *
-     * <p><b>Note:</b> This implementation checks for the presence of any fix
-     * for the type. A more sophisticated implementation could verify that
-     * the fix actually handles all specific field changes.</p>
+     * <p><b>Known Limitation:</b> This implementation only checks whether <i>any</i> fix
+     * exists for the type at this version. It does <b>not</b> verify that the fix handles
+     * all specific field changes (e.g., a fix may handle field 'armor' but not 'health').
+     * This can produce false negatives where a gap exists at the field level but is not
+     * reported because a type-level fix is present. Verifying field-level coverage would
+     * require metadata in {@link DataFix} about which fields it modifies, which is not
+     * currently part of the API.</p>
      *
      * @param type            the type being analyzed, must not be {@code null}
      * @param sourceSchema    the source schema, must not be {@code null}

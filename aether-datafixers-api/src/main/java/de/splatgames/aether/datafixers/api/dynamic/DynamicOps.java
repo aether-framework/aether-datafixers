@@ -391,6 +391,18 @@ public interface DynamicOps<T> {
     /**
      * Converts a value from another DynamicOps representation.
      *
+     * <p><b>Cross-format edge cases:</b> Converting between different format representations
+     * may lose information or fail for format-specific features:</p>
+     * <ul>
+     *   <li><b>Null values:</b> TOML has no null representation; nulls may be lost or cause errors</li>
+     *   <li><b>Array types:</b> TOML requires homogeneous arrays; heterogeneous arrays will fail</li>
+     *   <li><b>XML attributes:</b> Attribute/element distinction is lost through Dynamic round-trips</li>
+     *   <li><b>Numeric precision:</b> BigDecimal handling varies between implementations</li>
+     *   <li><b>Key types:</b> SnakeYAML uses raw strings, Jackson uses TextNode for map keys</li>
+     * </ul>
+     * <p>For maximum compatibility, use data shapes that are valid across all target formats:
+     * string/number/boolean primitives, homogeneous arrays, and non-null values.</p>
+     *
      * @param ops   the source ops
      * @param input the input value
      * @param <U>   the source value type

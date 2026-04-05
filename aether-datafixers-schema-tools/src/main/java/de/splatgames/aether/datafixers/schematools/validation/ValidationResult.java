@@ -121,6 +121,18 @@ public final class ValidationResult {
         this.infoCount = infos;
     }
 
+    private ValidationResult(
+            @NotNull final List<ValidationIssue> issues,
+            final int errorCount,
+            final int warningCount,
+            final int infoCount
+    ) {
+        this.issues = List.copyOf(Preconditions.checkNotNull(issues, "issues must not be null"));
+        this.errorCount = errorCount;
+        this.warningCount = warningCount;
+        this.infoCount = infoCount;
+    }
+
     /**
      * Returns an empty validation result (no issues).
      *
@@ -321,7 +333,10 @@ public final class ValidationResult {
         final List<ValidationIssue> merged = new ArrayList<>(this.issues.size() + other.issues.size());
         merged.addAll(this.issues);
         merged.addAll(other.issues);
-        return new ValidationResult(merged);
+        return new ValidationResult(merged,
+                this.errorCount + other.errorCount,
+                this.warningCount + other.warningCount,
+                this.infoCount + other.infoCount);
     }
 
     @Override

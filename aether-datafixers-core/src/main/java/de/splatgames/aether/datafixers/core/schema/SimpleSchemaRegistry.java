@@ -61,8 +61,9 @@ import java.util.stream.Stream;
  * }</pre>
  *
  * <h2>Thread Safety</h2>
- * <p>This implementation is not thread-safe. For concurrent access, external
- * synchronization is required.</p>
+ * <p>Thread-safe for concurrent reads after {@link #freeze()} is called.
+ * Registration methods ({@link #register}) are not thread-safe and should
+ * only be called during single-threaded initialization.</p>
  *
  * @author Erik Pförtner
  * @see SchemaRegistry
