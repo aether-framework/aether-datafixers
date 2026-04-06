@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -288,7 +289,7 @@ public final class TestDataBuilder<T> {
     public TestDataBuilder<T> put(@NotNull final String key, @NotNull final Dynamic<T> value) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-        Preconditions.checkArgument(this.ops == value.ops(),
+        Preconditions.checkArgument(Objects.equals(this.ops, value.ops()),
                 "Dynamic uses different DynamicOps");
         this.ensureObjectMode();
         this.fields.put(key, value);

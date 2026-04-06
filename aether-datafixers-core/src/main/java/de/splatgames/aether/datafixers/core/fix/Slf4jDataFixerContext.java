@@ -112,17 +112,15 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
-        if (this.logger.isInfoEnabled()) {
-            this.logger.info(formatMessage(message, args));
-        }
+        // Delegate directly to SLF4J which handles {} placeholder formatting lazily
+        this.logger.info(message, args);
     }
 
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
-        if (this.logger.isWarnEnabled()) {
-            this.logger.warn(formatMessage(message, args));
-        }
+        // Delegate directly to SLF4J which handles {} placeholder formatting lazily
+        this.logger.warn(message, args);
     }
 
     /**

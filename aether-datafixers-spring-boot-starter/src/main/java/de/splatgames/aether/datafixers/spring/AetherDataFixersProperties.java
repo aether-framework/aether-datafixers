@@ -522,6 +522,7 @@ public class AetherDataFixersProperties {
          * @throws NullPointerException if domainTag is {@code null}
          */
         public void setDomainTag(@NotNull final String domainTag) {
+            Preconditions.checkArgument(!domainTag.isEmpty(), "domainTag must not be empty");
             this.domainTag = domainTag;
         }
     }

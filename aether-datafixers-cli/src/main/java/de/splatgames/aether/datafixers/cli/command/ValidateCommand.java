@@ -36,6 +36,7 @@ import picocli.CommandLine.Parameters;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -328,7 +329,7 @@ public class ValidateCommand implements Callable<Integer> {
             if (fileSize > 100 * 1024 * 1024) {
                 throw new IOException("File exceeds maximum size (100MB): " + file);
             }
-            String content = Files.readString(file.toPath());
+            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
             if (content.startsWith("\uFEFF")) {
                 content = content.substring(1);
             }

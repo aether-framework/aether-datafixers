@@ -353,7 +353,7 @@ public class DataFixerAutoConfiguration {
      */
     @SuppressFBWarnings(
             value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification = "Null check for getCurrentVersion() is performed before access on line 363."
+            justification = "Null check for Field.get() result is performed before access via isAssignableFrom check."
     )
     @NotNull
     private static DataVersion resolveVersion(

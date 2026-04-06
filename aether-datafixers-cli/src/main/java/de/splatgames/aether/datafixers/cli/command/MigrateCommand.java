@@ -42,6 +42,7 @@ import picocli.CommandLine.Parameters;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -498,7 +499,7 @@ public class MigrateCommand implements Callable<Integer> {
             if (this.generateReport && !reportBuilder.isEmpty()) {
                 final String reportContent = reportBuilder.toString();
                 if (this.reportFile != null) {
-                    Files.writeString(this.reportFile.toPath(), reportContent);
+                    Files.writeString(this.reportFile.toPath(), reportContent, StandardCharsets.UTF_8);
                 } else {
                     System.err.println(reportContent);
                 }
@@ -569,7 +570,7 @@ public class MigrateCommand implements Callable<Integer> {
         }
 
         // Read input (strip UTF-8 BOM if present)
-        String content = Files.readString(inputFile.toPath());
+        String content = Files.readString(inputFile.toPath(), StandardCharsets.UTF_8);
         if (content.startsWith("\uFEFF")) {
             content = content.substring(1);
         }
@@ -674,9 +675,9 @@ public class MigrateCommand implements Callable<Integer> {
 
             if (this.output.isDirectory()) {
                 final Path outPath = this.output.toPath().resolve(inputFile.getName());
-                Files.writeString(outPath, content);
+                Files.writeString(outPath, content, StandardCharsets.UTF_8);
             } else if (this.inputFiles.size() == 1) {
-                Files.writeString(this.output.toPath(), content);
+                Files.writeString(this.output.toPath(), content, StandardCharsets.UTF_8);
             } else {
                 throw new IllegalArgumentException(
                         "Output must be a directory when multiple input files are specified");
@@ -689,7 +690,7 @@ public class MigrateCommand implements Callable<Integer> {
             final Path tempPath = Files.createTempFile(
                     inputFile.toPath().getParent(), "migrate_", ".tmp");
             try {
-                Files.writeString(tempPath, content);
+                Files.writeString(tempPath, content, StandardCharsets.UTF_8);
                 if (this.backup) {
                     final String timestamp = ZonedDateTime.now(ZoneOffset.UTC)
                             .format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'"));
