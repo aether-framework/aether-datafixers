@@ -24,15 +24,21 @@ package de.splatgames.aether.datafixers.core.diagnostic;
 
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperationType;
+import de.splatgames.aether.datafixers.api.diagnostic.RuleApplication;
+import de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule;
 import de.splatgames.aether.datafixers.api.rewrite.Rules;
 import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -305,6 +311,143 @@ class DiagnosticRuleWrapperTest {
             String result = wrapper.toString();
 
             assertThat(result).contains("testRule");
+        }
+    }
+
+    @Nested
+    @DisplayName("Field-Level Metadata")
+    class FieldLevelMetadata {
+
+        @Test
+        @DisplayName("extracts field operations from FieldAwareRule delegate")
+        void extractsFieldOperationsFromFieldAwareRule() {
+            // Create a FieldAwareRule via a field-aware rule factory method
+            TypeRewriteRule fieldAwareRule = new TypeRewriteRule() {
+                @NotNull
+                @Override
+                public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                                  @NotNull final Typed<?> input) {
+                    return Optional.of(input);
+                }
+            };
+            // Wrap it manually as FieldAwareRule
+            TypeRewriteRule delegate = createFieldAwareDelegate(
+                    List.of(FieldOperation.rename("old", "new"))
+            );
+
+            context.reportBuilder().startMigration(PLAYER, new de.splatgames.aether.datafixers.api.DataVersion(1),
+                    new de.splatgames.aether.datafixers.api.DataVersion(2));
+            context.reportBuilder().startFix(createMockFix());
+
+            DiagnosticRuleWrapper wrapper = new DiagnosticRuleWrapper(delegate, context);
+            wrapper.rewrite(testType, testInput);
+
+            final var mockFix = createMockFix();
+            context.reportBuilder().endFix(mockFix, java.time.Duration.ofMillis(1), null);
+
+            List<RuleApplication> ruleApps = context.reportBuilder()
+                    .build().fixExecutions().get(0).ruleApplications();
+            assertThat(ruleApps).hasSize(1);
+            assertThat(ruleApps.get(0).fieldOperations()).hasSize(1);
+            assertThat(ruleApps.get(0).fieldOperations().get(0).operationType())
+                    .isEqualTo(FieldOperationType.RENAME);
+        }
+
+        @Test
+        @DisplayName("returns empty field operations when captureFieldDetails is false")
+        void returnsEmptyFieldOpsWhenCaptureFieldDetailsDisabled() {
+            DiagnosticContextImpl noFieldDetailsCtx = new DiagnosticContextImpl(
+                    DiagnosticOptions.builder()
+                            .captureRuleDetails(true)
+                            .captureFieldDetails(false)
+                            .build()
+            );
+            TypeRewriteRule delegate = createFieldAwareDelegate(
+                    List.of(FieldOperation.rename("old", "new"))
+            );
+
+            noFieldDetailsCtx.reportBuilder().startMigration(PLAYER,
+                    new de.splatgames.aether.datafixers.api.DataVersion(1),
+                    new de.splatgames.aether.datafixers.api.DataVersion(2));
+            noFieldDetailsCtx.reportBuilder().startFix(createMockFix());
+
+            DiagnosticRuleWrapper wrapper = new DiagnosticRuleWrapper(delegate, noFieldDetailsCtx);
+            wrapper.rewrite(testType, testInput);
+
+            final var mockFix = createMockFix();
+            noFieldDetailsCtx.reportBuilder().endFix(mockFix, java.time.Duration.ofMillis(1), null);
+
+            List<RuleApplication> ruleApps = noFieldDetailsCtx.reportBuilder()
+                    .build().fixExecutions().get(0).ruleApplications();
+            assertThat(ruleApps).hasSize(1);
+            assertThat(ruleApps.get(0).fieldOperations()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("returns empty field operations for non-FieldAwareRule delegate")
+        void returnsEmptyFieldOpsForNonFieldAwareDelegate() {
+            context.reportBuilder().startMigration(PLAYER,
+                    new de.splatgames.aether.datafixers.api.DataVersion(1),
+                    new de.splatgames.aether.datafixers.api.DataVersion(2));
+            final var mockFix = createMockFix();
+            context.reportBuilder().startFix(mockFix);
+
+            DiagnosticRuleWrapper wrapper = new DiagnosticRuleWrapper(delegateRule, context);
+            wrapper.rewrite(testType, testInput);
+
+            context.reportBuilder().endFix(mockFix, java.time.Duration.ofMillis(1), null);
+
+            List<RuleApplication> ruleApps = context.reportBuilder()
+                    .build().fixExecutions().get(0).ruleApplications();
+            assertThat(ruleApps).hasSize(1);
+            assertThat(ruleApps.get(0).fieldOperations()).isEmpty();
+        }
+
+        private TypeRewriteRule createFieldAwareDelegate(List<FieldOperation> ops) {
+            return new FieldAwareTestRule(ops);
+        }
+
+        private de.splatgames.aether.datafixers.api.fix.DataFix<Object> createMockFix() {
+            return new de.splatgames.aether.datafixers.api.fix.DataFix<>() {
+                @Override
+                public @NotNull String name() { return "test-fix"; }
+                @Override
+                public @NotNull de.splatgames.aether.datafixers.api.DataVersion fromVersion() {
+                    return new de.splatgames.aether.datafixers.api.DataVersion(1);
+                }
+                @Override
+                public @NotNull de.splatgames.aether.datafixers.api.DataVersion toVersion() {
+                    return new de.splatgames.aether.datafixers.api.DataVersion(2);
+                }
+                @Override
+                public @NotNull de.splatgames.aether.datafixers.api.dynamic.Dynamic<Object> apply(
+                        @NotNull TypeReference type,
+                        @NotNull de.splatgames.aether.datafixers.api.dynamic.Dynamic<Object> input,
+                        @NotNull de.splatgames.aether.datafixers.api.fix.DataFixerContext ctx) {
+                    return input;
+                }
+            };
+        }
+    }
+
+    /**
+     * A test implementation of both TypeRewriteRule and FieldAwareRule.
+     */
+    private static class FieldAwareTestRule implements TypeRewriteRule, FieldAwareRule {
+        private final List<FieldOperation> fieldOperations;
+
+        FieldAwareTestRule(List<FieldOperation> fieldOperations) {
+            this.fieldOperations = List.copyOf(fieldOperations);
+        }
+
+        @Override
+        public @NotNull Optional<Typed<?>> rewrite(@NotNull Type<?> type, @NotNull Typed<?> input) {
+            return Optional.of(input);
+        }
+
+        @Override
+        public @NotNull List<FieldOperation> fieldOperations() {
+            return this.fieldOperations;
         }
     }
 

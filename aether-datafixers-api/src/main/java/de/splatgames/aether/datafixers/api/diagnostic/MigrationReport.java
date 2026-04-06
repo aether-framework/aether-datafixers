@@ -157,6 +157,18 @@ public interface MigrationReport {
                 .sum();
     }
 
+    /**
+     * Returns the total number of field-level operations across all fixes and rule applications.
+     *
+     * @return total field operation count
+     * @since 1.0.0
+     */
+    default int totalFieldOperationCount() {
+        return this.fixExecutions().stream()
+                .mapToInt(FixExecution::fieldOperationCount)
+                .sum();
+    }
+
     // -------------------------------------------------------------------------
     // Touched Types
     // -------------------------------------------------------------------------

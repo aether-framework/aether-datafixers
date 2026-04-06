@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.api.rewrite;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.optic.Finder;
@@ -31,6 +32,7 @@ import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +140,11 @@ public final class Rules {
      * Typed<?> result = migration.apply(playerData);
      * }</pre>
      *
+     * <h4>Field-Level Diagnostics</h4>
+     * <p>If any child rules implement {@link FieldAwareRule}, the composed rule
+     * aggregates their {@link FieldOperation} metadata. This allows the diagnostic system to report which fields are
+     * affected even through compositions.</p>
+     *
      * @param rules the rules to apply in sequence; if empty, returns identity rule
      * @return a composed rule requiring all rules to match, never {@code null}
      * @throws NullPointerException if {@code rules} or any element is {@code null}
@@ -151,7 +158,8 @@ public final class Rules {
         if (rules.length == 1) {
             return rules[0];
         }
-        return new TypeRewriteRule() {
+        final String ruleName = "seq(" + Arrays.toString(rules) + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -171,9 +179,14 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "seq(" + Arrays.toString(rules) + ")";
+                return ruleName;
             }
         };
+        final List<FieldOperation> aggregated = collectFieldOperations(rules);
+        if (!aggregated.isEmpty()) {
+            return withFieldOps(base, aggregated, ruleName);
+        }
+        return base;
     }
 
     /**
@@ -196,6 +209,10 @@ public final class Rules {
      * Typed<?> result = migration.apply(data);
      * }</pre>
      *
+     * <h4>Field-Level Diagnostics</h4>
+     * <p>If any child rules implement {@link FieldAwareRule}, the composed rule
+     * aggregates their {@link FieldOperation} metadata for diagnostic reporting.</p>
+     *
      * @param rules the rules to try in sequence; non-matching rules are skipped
      * @return a composed rule that always succeeds, never {@code null}
      * @throws NullPointerException if {@code rules} or any element is {@code null}
@@ -203,7 +220,8 @@ public final class Rules {
     @NotNull
     public static TypeRewriteRule seqAll(@NotNull final TypeRewriteRule... rules) {
         Preconditions.checkNotNull(rules, "rules must not be null");
-        return new TypeRewriteRule() {
+        final String ruleName = "seqAll(" + Arrays.toString(rules) + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -219,9 +237,14 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "seqAll(" + Arrays.toString(rules) + ")";
+                return ruleName;
             }
         };
+        final List<FieldOperation> aggregated = collectFieldOperations(rules);
+        if (!aggregated.isEmpty()) {
+            return withFieldOps(base, aggregated, ruleName);
+        }
+        return base;
     }
 
     /**
@@ -244,6 +267,11 @@ public final class Rules {
      * Typed<?> result = versionFix.apply(data);
      * }</pre>
      *
+     * <h4>Field-Level Diagnostics</h4>
+     * <p>If any child rules implement {@link FieldAwareRule}, the composed rule
+     * aggregates their {@link FieldOperation} metadata from all alternatives, since any one of them may match at
+     * runtime.</p>
+     *
      * @param rules the rules to try in order; first match wins
      * @return a composed rule that uses the first matching rule, never {@code null}
      * @throws NullPointerException if {@code rules} or any element is {@code null}
@@ -251,7 +279,8 @@ public final class Rules {
     @NotNull
     public static TypeRewriteRule choice(@NotNull final TypeRewriteRule... rules) {
         Preconditions.checkNotNull(rules, "rules must not be null");
-        return new TypeRewriteRule() {
+        final String ruleName = "choice(" + Arrays.toString(rules) + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -269,9 +298,14 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "choice(" + Arrays.toString(rules) + ")";
+                return ruleName;
             }
         };
+        final List<FieldOperation> aggregated = collectFieldOperations(rules);
+        if (!aggregated.isEmpty()) {
+            return withFieldOps(base, aggregated, ruleName);
+        }
+        return base;
     }
 
     /**
@@ -960,7 +994,8 @@ public final class Rules {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(oldName, "oldName must not be null");
         Preconditions.checkNotNull(newName, "newName must not be null");
-        return new TypeRewriteRule() {
+        final String ruleName = "renameField(" + oldName + " -> " + newName + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -983,9 +1018,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "renameField(" + oldName + " -> " + newName + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.rename(oldName, newName)), ruleName);
     }
 
     /**
@@ -1017,7 +1053,8 @@ public final class Rules {
                                                   @NotNull final String fieldName) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
-        return new TypeRewriteRule() {
+        final String ruleName = "removeField(" + fieldName + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1034,9 +1071,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "removeField(" + fieldName + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.remove(fieldName)), ruleName);
     }
 
     /**
@@ -1077,7 +1115,8 @@ public final class Rules {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
-        return new TypeRewriteRule() {
+        final String ruleName = "addField(" + fieldName + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1100,9 +1139,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "addField(" + fieldName + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.add(fieldName)), ruleName);
     }
 
     /**
@@ -1145,12 +1185,9 @@ public final class Rules {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
-        return updateAt(
-                "transformField(" + fieldName + ")",
-                ops,
-                Finder.field(fieldName),
-                transform
-        );
+        final String ruleName = "transformField(" + fieldName + ")";
+        final TypeRewriteRule base = updateAt(ruleName, ops, Finder.field(fieldName), transform);
+        return withFieldOps(base, List.of(FieldOperation.transform(fieldName)), ruleName);
     }
 
     // ==================== Batch Operations ====================
@@ -1181,6 +1218,10 @@ public final class Rules {
      * );
      * }</pre>
      *
+     * <h4>Field-Level Diagnostics</h4>
+     * <p>The returned rule implements {@link FieldAwareRule} with field operation
+     * metadata derived from the batch operations (rename, remove, set, transform, addIfMissing).</p>
+     *
      * @param <T>     the underlying data format type (e.g., JsonElement)
      * @param ops     the dynamic operations for the data format, must not be {@code null}
      * @param builder a consumer that configures the batch operations, must not be {@code null}
@@ -1202,10 +1243,16 @@ public final class Rules {
             return TypeRewriteRule.identity();
         }
 
-        return dynamicTransform("batch[" + batch.size() + " ops]", ops, dynamic -> {
+        final String ruleName = "batch[" + batch.size() + " ops]";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             return batch.apply(typedDynamic);
         });
+        final List<FieldOperation> fieldOps = batch.diagnosticFieldOperations();
+        if (!fieldOps.isEmpty()) {
+            return withFieldOps(base, fieldOps, ruleName);
+        }
+        return base;
     }
 
     // ==================== Extended Dynamic Transformation Combinators ====================
@@ -1303,8 +1350,8 @@ public final class Rules {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-
-        return new TypeRewriteRule() {
+        final String ruleName = "setField(" + fieldName + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1321,9 +1368,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "setField(" + fieldName + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.set(fieldName)), ruleName);
     }
 
     /**
@@ -1365,7 +1413,8 @@ public final class Rules {
             return TypeRewriteRule.identity();
         }
 
-        return new TypeRewriteRule() {
+        final String ruleName = "renameFields(" + renames + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1390,9 +1439,13 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "renameFields(" + renames + ")";
+                return ruleName;
             }
         };
+        final List<FieldOperation> fieldOps = renames.entrySet().stream()
+                .map(e -> FieldOperation.rename(e.getKey(), e.getValue()))
+                .toList();
+        return withFieldOps(base, fieldOps, ruleName);
     }
 
     /**
@@ -1430,7 +1483,8 @@ public final class Rules {
             return TypeRewriteRule.identity();
         }
 
-        return new TypeRewriteRule() {
+        final String ruleName = "removeFields(" + Arrays.toString(fieldNames) + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1450,9 +1504,13 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "removeFields(" + Arrays.toString(fieldNames) + ")";
+                return ruleName;
             }
         };
+        final List<FieldOperation> fieldOps = Arrays.stream(fieldNames)
+                .map(FieldOperation::remove)
+                .toList();
+        return withFieldOps(base, fieldOps, ruleName);
     }
 
     // ==================== Grouping and Moving Combinators ====================
@@ -1496,7 +1554,8 @@ public final class Rules {
             return TypeRewriteRule.identity();
         }
 
-        return dynamicTransform("groupFields(" + targetField + ")", ops, dynamic -> {
+        final String ruleName = "groupFields(" + targetField + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             @SuppressWarnings("unchecked")
             Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
 
@@ -1516,6 +1575,7 @@ public final class Rules {
             }
             return result.set(targetField, nested);
         });
+        return withFieldOps(base, List.of(FieldOperation.group(targetField, sourceFields)), ruleName);
     }
 
     /**
@@ -1549,7 +1609,8 @@ public final class Rules {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
 
-        return dynamicTransform("flattenField(" + fieldName + ")", ops, dynamic -> {
+        final String ruleName = "flattenField(" + fieldName + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             @SuppressWarnings("unchecked")
             Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
 
@@ -1580,6 +1641,7 @@ public final class Rules {
             }
             return result;
         });
+        return withFieldOps(base, List.of(FieldOperation.flatten(fieldName)), ruleName);
     }
 
     /**
@@ -1620,7 +1682,8 @@ public final class Rules {
         final Finder<?> sourceFinder = parsePath(sourcePath);
         parsePath(targetPath); // Parse and cache target path eagerly to validate the syntax early.
 
-        return dynamicTransform("moveField(" + sourcePath + " -> " + targetPath + ")", ops, dynamic -> {
+        final String ruleName = "moveField(" + sourcePath + " -> " + targetPath + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             final Dynamic<?> value = sourceFinder.get(dynamic);
             if (value == null) {
                 return dynamic; // Source doesn't exist, nothing to move
@@ -1630,6 +1693,7 @@ public final class Rules {
             Dynamic<?> result = removeAtPath(dynamic, sourcePath);
             return setAtPath(result, targetPath, value);
         });
+        return withFieldOps(base, List.of(FieldOperation.move(sourcePath, targetPath)), ruleName);
     }
 
     /**
@@ -1669,7 +1733,8 @@ public final class Rules {
 
         final Finder<?> sourceFinder = parsePath(sourcePath);
 
-        return dynamicTransform("copyField(" + sourcePath + " -> " + targetPath + ")", ops, dynamic -> {
+        final String ruleName = "copyField(" + sourcePath + " -> " + targetPath + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             final Dynamic<?> value = sourceFinder.get(dynamic);
             if (value == null) {
                 return dynamic; // Source doesn't exist, nothing to copy
@@ -1677,6 +1742,7 @@ public final class Rules {
 
             return setAtPath(dynamic, targetPath, value);
         });
+        return withFieldOps(base, List.of(FieldOperation.copy(sourcePath, targetPath)), ruleName);
     }
 
     // ==================== Path-Based Combinators ====================
@@ -1717,7 +1783,9 @@ public final class Rules {
         Preconditions.checkNotNull(transform, "transform must not be null");
 
         final Finder<?> finder = parsePath(path);
-        return updateAt("transformFieldAt(" + path + ")", ops, finder, transform);
+        final String ruleName = "transformFieldAt(" + path + ")";
+        final TypeRewriteRule base = updateAt(ruleName, ops, finder, transform);
+        return withFieldOps(base, List.of(FieldOperation.transformPath(path)), ruleName);
     }
 
     /**
@@ -1765,7 +1833,8 @@ public final class Rules {
         final String oldName = path.substring(lastDot + 1);
         final Finder<?> parentFinder = parsePath(parentPath);
 
-        return dynamicTransform("renameFieldAt(" + path + " -> " + newName + ")", ops, dynamic -> {
+        final String ruleName = "renameFieldAt(" + path + " -> " + newName + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             final Dynamic<?> parent = parentFinder.get(dynamic);
             if (parent == null) {
                 return dynamic;
@@ -1782,6 +1851,7 @@ public final class Rules {
             final Dynamic<?> updatedParent = typedParent.remove(oldName).set(newName, typedValue);
             return parentFinder.set(dynamic, updatedParent);
         });
+        return withFieldOps(base, List.of(FieldOperation.renamePath(path, newName)), ruleName);
     }
 
     /**
@@ -1812,8 +1882,10 @@ public final class Rules {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(path, "path must not be null");
 
-        return dynamicTransform("removeFieldAt(" + path + ")", ops,
+        final String ruleName = "removeFieldAt(" + path + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops,
                 dynamic -> removeAtPath(dynamic, path));
+        return withFieldOps(base, List.of(FieldOperation.removePath(path)), ruleName);
     }
 
     /**
@@ -1852,13 +1924,15 @@ public final class Rules {
 
         final Finder<?> finder = parsePath(path);
 
-        return dynamicTransform("addFieldAt(" + path + ")", ops, dynamic -> {
+        final String ruleName = "addFieldAt(" + path + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             // Only add if field doesn't exist
             if (finder.get(dynamic) != null) {
                 return dynamic;
             }
             return setAtPath(dynamic, path, defaultValue);
         });
+        return withFieldOps(base, List.of(FieldOperation.addPath(path)), ruleName);
     }
 
     // ==================== Conditional Combinators ====================
@@ -1895,7 +1969,8 @@ public final class Rules {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(rule, "rule must not be null");
 
-        return new TypeRewriteRule() {
+        final String ruleName = "ifFieldExists(" + fieldName + ", " + rule + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @NotNull
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1916,9 +1991,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "ifFieldExists(" + fieldName + ", " + rule + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "exists")), ruleName);
     }
 
     /**
@@ -1950,7 +2026,8 @@ public final class Rules {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(rule, "rule must not be null");
 
-        return new TypeRewriteRule() {
+        final String ruleName = "ifFieldMissing(" + fieldName + ", " + rule + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @NotNull
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1971,9 +2048,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "ifFieldMissing(" + fieldName + ", " + rule + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "missing")), ruleName);
     }
 
     /**
@@ -2010,7 +2088,8 @@ public final class Rules {
         Preconditions.checkNotNull(value, "value must not be null");
         Preconditions.checkNotNull(rule, "rule must not be null");
 
-        return new TypeRewriteRule() {
+        final String ruleName = "ifFieldEquals(" + fieldName + " == " + value + ", " + rule + ")";
+        final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
             @NotNull
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -2051,9 +2130,10 @@ public final class Rules {
 
             @Override
             public String toString() {
-                return "ifFieldEquals(" + fieldName + " == " + value + ", " + rule + ")";
+                return ruleName;
             }
         };
+        return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "equals")), ruleName);
     }
 
     // ==================== Single-Pass Conditional Combinators ====================
@@ -2136,13 +2216,15 @@ public final class Rules {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
 
-        return dynamicTransform("ifFieldExists(" + fieldName + ")", ops, dynamic -> {
+        final String ruleName = "ifFieldExists(" + fieldName + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             if (typedDynamic.get(fieldName) != null) {
                 return transform.apply(typedDynamic);
             }
             return dynamic;
         });
+        return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "exists")), ruleName);
     }
 
     /**
@@ -2181,13 +2263,15 @@ public final class Rules {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
 
-        return dynamicTransform("ifFieldMissing(" + fieldName + ")", ops, dynamic -> {
+        final String ruleName = "ifFieldMissing(" + fieldName + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             if (typedDynamic.get(fieldName) == null) {
                 return transform.apply(typedDynamic);
             }
             return dynamic;
         });
+        return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "missing")), ruleName);
     }
 
     /**
@@ -2231,7 +2315,8 @@ public final class Rules {
         Preconditions.checkNotNull(value, "value must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
 
-        return dynamicTransform("ifFieldEquals(" + fieldName + " == " + value + ")", ops, dynamic -> {
+        final String ruleName = "ifFieldEquals(" + fieldName + " == " + value + ")";
+        final TypeRewriteRule base = dynamicTransform(ruleName, ops, dynamic -> {
             @SuppressWarnings("unchecked") final Dynamic<T> typedDynamic = (Dynamic<T>) dynamic;
             final Dynamic<T> field = typedDynamic.get(fieldName);
 
@@ -2246,6 +2331,7 @@ public final class Rules {
             }
             return dynamic;
         });
+        return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "equals")), ruleName);
     }
 
     /**
@@ -2275,7 +2361,44 @@ public final class Rules {
         return false;
     }
 
-    // ==================== Private Helpers ====================
+    // ==================== Field-Aware Wrapper ====================
+
+    /**
+     * Wraps a {@link TypeRewriteRule} with field-level metadata.
+     *
+     * @param rule            the rule to wrap, must not be {@code null}
+     * @param fieldOperations the field operations metadata, must not be {@code null}
+     * @param name            the display name for the wrapped rule, must not be {@code null}
+     * @return a field-aware rule wrapping the delegate
+     * @since 1.0.0
+     */
+    @NotNull
+    private static TypeRewriteRule withFieldOps(@NotNull final TypeRewriteRule rule,
+                                                @NotNull final List<FieldOperation> fieldOperations,
+                                                @NotNull final String name) {
+        return new FieldAwareTypeRewriteRule(rule, fieldOperations, name);
+    }
+
+    /**
+     * Collects field operation metadata from all child rules that implement {@link FieldAwareRule}.
+     *
+     * <p>This is used by composition methods ({@link #seq}, {@link #seqAll}, {@link #choice})
+     * to aggregate field-level metadata from their children into the composed rule.</p>
+     *
+     * @param rules the child rules to inspect
+     * @return an unmodifiable list of aggregated field operations; empty if no children are field-aware
+     * @since 1.0.0
+     */
+    @NotNull
+    private static List<FieldOperation> collectFieldOperations(@NotNull final TypeRewriteRule... rules) {
+        final List<FieldOperation> result = new ArrayList<>();
+        for (final TypeRewriteRule rule : rules) {
+            if (rule instanceof FieldAwareRule fieldAware) {
+                result.addAll(fieldAware.fieldOperations());
+            }
+        }
+        return List.copyOf(result);
+    }
 
     /**
      * Parses a dot-notation path into a composed Finder.
@@ -2297,6 +2420,8 @@ public final class Rules {
     private static Finder<?> parsePath(@NotNull final String path) {
         return PATH_CACHE.computeIfAbsent(path, Rules::parsePathInternal);
     }
+
+    // ==================== Private Helpers ====================
 
     /**
      * Internal method that parses a path without caching. Uses character-based parsing for better performance than
@@ -2451,8 +2576,6 @@ public final class Rules {
         return dynamic.set(part, updatedChild);
     }
 
-    // ==================== Noop and Debug ====================
-
     /**
      * Creates the identity rule.
      *
@@ -2462,6 +2585,8 @@ public final class Rules {
     public static TypeRewriteRule noop() {
         return TypeRewriteRule.identity();
     }
+
+    // ==================== Noop and Debug ====================
 
     /**
      * Creates a rule that logs when applied using the default System.out logger.
@@ -2527,5 +2652,70 @@ public final class Rules {
                 return "log(" + message + ", " + rule + ")";
             }
         };
+    }
+
+    /**
+     * A {@link TypeRewriteRule} wrapper that also implements {@link FieldAwareRule}, providing structured field-level
+     * metadata for diagnostic purposes.
+     *
+     * <p>This wrapper is used internally by the field operation factory methods
+     * (e.g., {@link #renameField}, {@link #removeField}) to annotate the returned rules with metadata about which
+     * fields they affect.</p>
+     *
+     * @param delegate        the underlying rule that performs the actual rewrite logic, must not be {@code null}
+     * @param fieldOperations immutable list of field-level operation metadata describing which fields this rule
+     *                        affects, must not be {@code null}
+     * @param name            display name for this rule, used in {@link #toString()} and diagnostic output, must not be
+     *                        {@code null}
+     * @since 1.0.0
+     */
+    private record FieldAwareTypeRewriteRule(
+            @NotNull TypeRewriteRule delegate,
+            @NotNull List<FieldOperation> fieldOperations,
+            @NotNull String name
+    ) implements TypeRewriteRule, FieldAwareRule {
+
+        /**
+         * Creates a new field-aware rule wrapper.
+         *
+         * @param delegate        the underlying rule to delegate rewrite logic to, must not be {@code null}
+         * @param fieldOperations the field-level operation metadata, must not be {@code null}
+         * @param name            the display name for this rule, must not be {@code null}
+         * @throws NullPointerException if any argument is {@code null}
+         */
+        private FieldAwareTypeRewriteRule {
+            Preconditions.checkNotNull(delegate, "delegate must not be null");
+            Preconditions.checkNotNull(fieldOperations, "fieldOperations must not be null");
+            Preconditions.checkNotNull(name, "name must not be null");
+            fieldOperations = List.copyOf(fieldOperations);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>Delegates to the underlying rule's rewrite logic.</p>
+         *
+         * @param type  the type descriptor of the input, must not be {@code null}
+         * @param input the typed value to potentially rewrite, must not be {@code null}
+         * @return an {@link Optional} containing the rewritten value if this rule applies, or {@link Optional#empty()}
+         * if the rule doesn't match; never {@code null}
+         */
+        @Override
+        @NotNull
+        public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                          @NotNull final Typed<?> input) {
+            return this.delegate.rewrite(type, input);
+        }
+
+        /**
+         * Returns the display name of this rule.
+         *
+         * @return the rule name, never {@code null}
+         */
+        @Override
+        @NotNull
+        public String toString() {
+            return this.name;
+        }
     }
 }

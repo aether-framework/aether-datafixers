@@ -153,6 +153,31 @@ public record FixExecution(
     }
 
     /**
+     * Returns all field operations across all rule applications in this fix.
+     *
+     * @return unmodifiable list of all field operations, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public List<FieldOperation> allFieldOperations() {
+        return this.ruleApplications.stream()
+                .flatMap(r -> r.fieldOperations().stream())
+                .toList();
+    }
+
+    /**
+     * Returns the total number of field operations across all rule applications.
+     *
+     * @return total field operation count
+     * @since 1.0.0
+     */
+    public int fieldOperationCount() {
+        return this.ruleApplications.stream()
+                .mapToInt(r -> r.fieldOperations().size())
+                .sum();
+    }
+
+    /**
      * Returns a human-readable summary of this fix execution.
      *
      * @return formatted summary string

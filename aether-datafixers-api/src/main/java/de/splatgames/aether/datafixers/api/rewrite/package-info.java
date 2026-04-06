@@ -34,6 +34,8 @@
  *       are composable and can be combined to create complex migrations.</li>
  *   <li>{@link de.splatgames.aether.datafixers.api.rewrite.Rules} - Factory class
  *       providing common rewrite rule combinators for typical data transformations.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule} - Marker
+ *       interface for rules that carry structured field-level metadata for diagnostics.</li>
  * </ul>
  *
  * <h2>Common Rules</h2>

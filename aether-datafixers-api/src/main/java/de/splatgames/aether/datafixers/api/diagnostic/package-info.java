@@ -31,6 +31,7 @@
  *   <li>Timing information for the overall migration and individual fixes</li>
  *   <li>Details about each applied {@link de.splatgames.aether.datafixers.api.fix.DataFix}</li>
  *   <li>Individual {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule} applications</li>
+ *   <li>Field-level operation metadata from {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule} implementations</li>
  *   <li>Before/after data snapshots for debugging</li>
  *   <li>Warnings and diagnostic messages</li>
  * </ul>
@@ -52,6 +53,12 @@
  *
  *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions}</dt>
  *   <dd>Configuration for controlling what data is captured</dd>
+ *
+ *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.FieldOperation}</dt>
+ *   <dd>Structured metadata about a single field-level operation within a rule</dd>
+ *
+ *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.FieldOperationType}</dt>
+ *   <dd>Classifies the kind of field-level operation (rename, remove, add, etc.)</dd>
  * </dl>
  *
  * <h2>Usage Example</h2>
