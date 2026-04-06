@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -766,8 +765,8 @@ public final class Codecs {
                 Preconditions.checkNotNull(input, "input must not be null");
                 Preconditions.checkNotNull(ops, "ops must not be null");
                 Preconditions.checkNotNull(prefix, "prefix must not be null");
-                return first.encode(Objects.requireNonNull(input.first()), ops, prefix)
-                        .flatMap(t -> second.encode(Objects.requireNonNull(input.second()), ops, t));
+                return first.encode(Preconditions.checkNotNull(input.first(), "pair first must not be null"), ops, prefix)
+                        .flatMap(t -> second.encode(Preconditions.checkNotNull(input.second(), "pair second must not be null"), ops, t));
             }
 
             @NotNull
@@ -777,13 +776,13 @@ public final class Codecs {
                 Preconditions.checkNotNull(ops, "ops must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
                 return first.decode(ops, input).flatMap(p1 ->
-                        second.decode(ops, Objects.requireNonNull(p1.second())).map(p2 ->
+                        second.decode(ops, Preconditions.checkNotNull(p1.second(), "first decode remainder must not be null")).map(p2 ->
                                 Pair.of(
                                         Pair.of(
-                                                Objects.requireNonNull(p1.first()),
-                                                Objects.requireNonNull(p2.first())
+                                                Preconditions.checkNotNull(p1.first(), "first decode value must not be null"),
+                                                Preconditions.checkNotNull(p2.first(), "second decode value must not be null")
                                         ),
-                                        Objects.requireNonNull(p2.second())
+                                        Preconditions.checkNotNull(p2.second(), "second decode remainder must not be null")
                                 )
                         )
                 );

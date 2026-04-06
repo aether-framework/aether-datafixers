@@ -37,7 +37,9 @@ import java.util.stream.Stream;
  * A fluent builder for creating {@link Dynamic} objects.
  *
  * <p>This builder provides a clean, readable API for constructing test data
- * without the boilerplate of manual JSON construction. It supports primitives,
+ * without the boilerplate of manual JSON construction. Each builder instance should
+ * only be used for a single {@link #build()} call — create a new instance for each
+ * Dynamic value. It supports primitives,
  * nested objects, and lists through method chaining.</p>
  *
  * <h2>Basic Usage</h2>

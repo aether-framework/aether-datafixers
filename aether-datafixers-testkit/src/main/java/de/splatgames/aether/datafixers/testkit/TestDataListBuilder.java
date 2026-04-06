@@ -321,6 +321,22 @@ public final class TestDataListBuilder<T> {
     }
 
     /**
+     * Adds multiple float elements to the list.
+     *
+     * @param values the float values
+     * @return this builder for chaining
+     * @throws NullPointerException if {@code values} is null
+     */
+    @NotNull
+    public TestDataListBuilder<T> addAll(final float... values) {
+        Preconditions.checkNotNull(values, "values must not be null");
+        for (final float value : values) {
+            this.add(value);
+        }
+        return this;
+    }
+
+    /**
      * Adds multiple boolean elements to the list.
      *
      * @param values the boolean values
