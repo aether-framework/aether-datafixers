@@ -28,6 +28,7 @@ import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * Format handler for YAML using the SnakeYAML library.
@@ -174,7 +175,7 @@ public class YamlSnakeYamlFormatHandler implements FormatHandler<Object> {
                 throw new FormatParseException("YAML parsed to null");
             }
             return result;
-        } catch (final Exception e) {
+        } catch (final YAMLException | ClassCastException e) {
             throw new FormatParseException("Failed to parse YAML: " + e.getMessage(), e);
         }
     }

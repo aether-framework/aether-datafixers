@@ -63,11 +63,26 @@ public final class SimpleSystemDataFixerContext implements DataFixerContext {
 
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
-        System.out.printf("[INFO] " + message + "%n", args);
+        System.out.println("[INFO] " + formatMessage(message, args));
     }
 
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
-        System.out.printf("[WARN] " + message + "%n", args);
+        System.err.println("[WARN] " + formatMessage(message, args));
+    }
+
+    private static String formatMessage(final String message, final Object[] args) {
+        if (args == null || args.length == 0) {
+            return message;
+        }
+        final StringBuilder result = new StringBuilder(message);
+        for (final Object arg : args) {
+            final int idx = result.indexOf("{}");
+            if (idx < 0) {
+                break;
+            }
+            result.replace(idx, idx + 2, String.valueOf(arg));
+        }
+        return result.toString();
     }
 }

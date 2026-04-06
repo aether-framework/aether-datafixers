@@ -155,11 +155,7 @@ public final class DataFixerBuilder implements FixRegistrar {
     public DataFixerBuilder addFix(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fix, "fix must not be null");
-        Preconditions.checkArgument(
-                fix.fromVersion().compareTo(fix.toVersion()) <= 0,
-                "fix.fromVersion must be <= fix.toVersion"
-        );
-
+        // Version ordering validation is performed by DataFixRegistry.register()
         this.registry.register(type, fix);
         return this;
     }

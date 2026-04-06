@@ -784,7 +784,7 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return DataResult.success(
                 object.entrySet().stream()
                         .map(entry -> Pair.of(
-                                (JsonElement) new JsonPrimitive(entry.getKey()),
+                                new JsonPrimitive(entry.getKey()),
                                 entry.getValue()
                         ))
         );
