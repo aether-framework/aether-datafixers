@@ -41,11 +41,15 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * CLI command to validate data files and check if migration is needed.
+ * CLI command to check data file versions and determine if migration is needed.
  *
- * <p>The validate command checks data files against a target schema version
- * without performing any modifications. This is useful for batch validation,
- * CI/CD pipelines, and pre-migration checks.</p>
+ * <p>This command validates that data files contain version information and checks
+ * whether the version is at or above the target version. It does <b>not</b> validate
+ * schema compliance — only version numbers are checked. For full schema validation,
+ * use the programmatic {@code SchemaValidator} API from the schema-tools module.</p>
+ *
+ * <p>The command is useful for batch pre-migration checks in CI/CD pipelines
+ * to identify files that need migration without modifying them.</p>
  *
  * <h2>Usage Examples</h2>
  * <pre>{@code
@@ -81,7 +85,7 @@ import java.util.concurrent.Callable;
  */
 @Command(
         name = "validate",
-        description = "Validate data files and check if migration is needed.",
+        description = "Check data file versions and report which files need migration (does not validate schema compliance).",
         mixinStandardHelpOptions = true
 )
 public class ValidateCommand implements Callable<Integer> {

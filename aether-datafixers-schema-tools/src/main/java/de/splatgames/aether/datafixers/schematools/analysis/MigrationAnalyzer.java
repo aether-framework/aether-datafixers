@@ -259,6 +259,13 @@ public final class MigrationAnalyzer {
     /**
      * Analyzes fix coverage for the migration between configured versions.
      *
+     * <p><b>Known limitation:</b> Coverage analysis operates at the <i>type</i> level, not the
+     * <i>field</i> level. While {@link CoverageGap.Reason} defines field-level reasons
+     * ({@code FIELD_ADDED}, {@code FIELD_REMOVED}, {@code FIELD_TYPE_CHANGED}), these are
+     * not currently populated because the analysis cannot determine which specific fields
+     * a DataFix handles. If any fix exists for a type at a given version, all field changes
+     * for that type are considered covered. See {@link #checkTypeDiffCoverage} for details.</p>
+     *
      * @return the coverage analysis result, never {@code null}
      * @throws IllegalStateException if from/to versions are not set
      */

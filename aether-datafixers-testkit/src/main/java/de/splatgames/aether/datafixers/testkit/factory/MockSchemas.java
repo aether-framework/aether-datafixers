@@ -204,6 +204,11 @@ public final class MockSchemas {
 
     /**
      * A builder for creating custom mock schemas.
+     *
+     * <p><b>Note:</b> Parent schema types are <b>not</b> automatically inherited.
+     * You must explicitly add all types needed for each schema version via
+     * {@link #withType}. Setting a parent with {@link #withParent} only establishes
+     * the parent reference for schema chain traversal, not type inheritance.</p>
      */
     public static final class SchemaBuilder {
 

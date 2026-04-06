@@ -186,6 +186,7 @@ public final class TypeIntrospector {
 
         // Check reference ID for other types
         final String refId = type.reference().getId();
+        final String description = type.describe();
 
         // Primitive types
         if (PRIMITIVE_TYPE_IDS.contains(refId)) {
@@ -193,7 +194,7 @@ public final class TypeIntrospector {
         }
 
         // Passthrough
-        if ("passthrough".equals(refId) || "...".equals(type.describe())) {
+        if ("passthrough".equals(refId) || "...".equals(description)) {
             return TypeKind.PASSTHROUGH;
         }
 
@@ -218,7 +219,7 @@ public final class TypeIntrospector {
         }
 
         // Named type (has "=" in description)
-        if (type.describe().contains("=")) {
+        if (description.contains("=")) {
             return TypeKind.NAMED;
         }
 
