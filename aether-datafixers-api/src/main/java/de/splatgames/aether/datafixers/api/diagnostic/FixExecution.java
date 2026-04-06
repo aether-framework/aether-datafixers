@@ -59,8 +59,10 @@ import java.util.Optional;
  * @param startTime        the instant when the fix started
  * @param duration         the total time taken to apply the fix
  * @param ruleApplications list of individual rule applications within this fix
- * @param beforeSnapshot   optional snapshot of data before the fix was applied
- * @param afterSnapshot    optional snapshot of data after the fix was applied
+ * @param beforeSnapshot   snapshot of data before the fix was applied, or {@code null}
+ *                         if snapshot capture was disabled in {@link DiagnosticOptions}
+ * @param afterSnapshot    snapshot of data after the fix was applied, or {@code null}
+ *                         if snapshot capture was disabled or the fix failed
  * @author Erik Pförtner
  * @see RuleApplication
  * @see MigrationReport

@@ -79,9 +79,9 @@ import java.util.function.Function;
  * }</pre>
  *
  * <h2>Supported Field Counts</h2>
- * <p>The builder supports records with 1 to 6 fields via the corresponding
- * {@link Builder1} through {@link Builder6} classes. For records with more fields,
- * consider using nested records or custom codec implementations.</p>
+ * <p>The builder supports records with 1 to 8 fields via the corresponding
+ * {@link Builder1} through {@link Builder8} classes. For records with more than
+ * 8 fields, consider using nested records or custom codec implementations.</p>
  *
  * <h2>Thread Safety</h2>
  * <p>The {@link #create(Function)} method and resulting codecs are thread-safe.</p>
@@ -271,6 +271,66 @@ public final class RecordCodecBuilder {
          * @return the function result
          */
         R apply(A a, B b, C c, D d, E e, F f);
+    }
+
+    /**
+     * A function that takes seven arguments and produces a result.
+     *
+     * @param <A> the type of the first argument
+     * @param <B> the type of the second argument
+     * @param <C> the type of the third argument
+     * @param <D> the type of the fourth argument
+     * @param <E> the type of the fifth argument
+     * @param <F> the type of the sixth argument
+     * @param <G> the type of the seventh argument
+     * @param <R> the type of the result
+     */
+    @FunctionalInterface
+    public interface Function7<A, B, C, D, E, F, G, R> {
+        /**
+         * Applies this function to the given arguments.
+         *
+         * @param a the first argument
+         * @param b the second argument
+         * @param c the third argument
+         * @param d the fourth argument
+         * @param e the fifth argument
+         * @param f the sixth argument
+         * @param g the seventh argument
+         * @return the function result
+         */
+        R apply(A a, B b, C c, D d, E e, F f, G g);
+    }
+
+    /**
+     * A function that takes eight arguments and produces a result.
+     *
+     * @param <A> the type of the first argument
+     * @param <B> the type of the second argument
+     * @param <C> the type of the third argument
+     * @param <D> the type of the fourth argument
+     * @param <E> the type of the fifth argument
+     * @param <F> the type of the sixth argument
+     * @param <G> the type of the seventh argument
+     * @param <H> the type of the eighth argument
+     * @param <R> the type of the result
+     */
+    @FunctionalInterface
+    public interface Function8<A, B, C, D, E, F, G, H, R> {
+        /**
+         * Applies this function to the given arguments.
+         *
+         * @param a the first argument
+         * @param b the second argument
+         * @param c the third argument
+         * @param d the fourth argument
+         * @param e the fifth argument
+         * @param f the sixth argument
+         * @param g the seventh argument
+         * @param h the eighth argument
+         * @return the function result
+         */
+        R apply(A a, B b, C c, D d, E e, F f, G g, H h);
     }
 
     /**
@@ -483,6 +543,66 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(f5, "f5 must not be null");
             Preconditions.checkNotNull(f6, "f6 must not be null");
             return new Builder6<>(f1, f2, f3, f4, f5, f6);
+        }
+
+        /**
+         * Groups seven fields into a builder.
+         *
+         * @param f1  the first field
+         * @param f2  the second field
+         * @param f3  the third field
+         * @param f4  the fourth field
+         * @param f5  the fifth field
+         * @param f6  the sixth field
+         * @param f7  the seventh field
+         * @param <A> the type of the first field
+         * @param <B> the type of the second field
+         * @param <C> the type of the third field
+         * @param <D> the type of the fourth field
+         * @param <E> the type of the fifth field
+         * @param <F> the type of the sixth field
+         * @param <G> the type of the seventh field
+         * @return a {@link Builder7} for applying a constructor, never {@code null}
+         */
+        @NotNull
+        public <A, B, C, D, E, F, G> Builder7<O, A, B, C, D, E, F, G> group(
+                @NotNull final Field<O, A> f1, @NotNull final Field<O, B> f2,
+                @NotNull final Field<O, C> f3, @NotNull final Field<O, D> f4,
+                @NotNull final Field<O, E> f5, @NotNull final Field<O, F> f6,
+                @NotNull final Field<O, G> f7
+        ) {
+            return new Builder7<>(f1, f2, f3, f4, f5, f6, f7);
+        }
+
+        /**
+         * Groups eight fields into a builder.
+         *
+         * @param f1  the first field
+         * @param f2  the second field
+         * @param f3  the third field
+         * @param f4  the fourth field
+         * @param f5  the fifth field
+         * @param f6  the sixth field
+         * @param f7  the seventh field
+         * @param f8  the eighth field
+         * @param <A> the type of the first field
+         * @param <B> the type of the second field
+         * @param <C> the type of the third field
+         * @param <D> the type of the fourth field
+         * @param <E> the type of the fifth field
+         * @param <F> the type of the sixth field
+         * @param <G> the type of the seventh field
+         * @param <H> the type of the eighth field
+         * @return a {@link Builder8} for applying a constructor, never {@code null}
+         */
+        @NotNull
+        public <A, B, C, D, E, F, G, H> Builder8<O, A, B, C, D, E, F, G, H> group(
+                @NotNull final Field<O, A> f1, @NotNull final Field<O, B> f2,
+                @NotNull final Field<O, C> f3, @NotNull final Field<O, D> f4,
+                @NotNull final Field<O, E> f5, @NotNull final Field<O, F> f6,
+                @NotNull final Field<O, G> f7, @NotNull final Field<O, H> f8
+        ) {
+            return new Builder8<>(f1, f2, f3, f4, f5, f6, f7, f8);
         }
 
         /**
@@ -1009,5 +1129,221 @@ public final class RecordCodecBuilder {
      * @param <E> the type of the fifth value
      */
     private record Tuple5<A, B, C, D, E>(A a, B b, C c, D d, E e) {
+    }
+
+    /**
+     * Internal tuple for accumulating 6 decoded values before applying the constructor.
+     */
+    private record Tuple6<A, B, C, D, E, F>(A a, B b, C c, D d, E e, F f) {
+    }
+
+    /**
+     * Internal tuple for accumulating 7 decoded values before applying the constructor.
+     */
+    private record Tuple7<A, B, C, D, E, F, G>(A a, B b, C c, D d, E e, F f, G g) {
+    }
+
+    // ==================== Builder7 ====================
+
+    /**
+     * Intermediate builder holding seven grouped fields for record codec construction.
+     *
+     * <p>Created by {@link Instance#group(Field, Field, Field, Field, Field, Field, Field)}.
+     * Call {@link #apply} with a seven-argument constructor to produce the final codec.</p>
+     *
+     * @param f1  the first field
+     * @param f2  the second field
+     * @param f3  the third field
+     * @param f4  the fourth field
+     * @param f5  the fifth field
+     * @param f6  the sixth field
+     * @param f7  the seventh field
+     * @param <O> the record type
+     * @param <A> the type of the first field
+     * @param <B> the type of the second field
+     * @param <C> the type of the third field
+     * @param <D> the type of the fourth field
+     * @param <E> the type of the fifth field
+     * @param <F> the type of the sixth field
+     * @param <G> the type of the seventh field
+     */
+    public record Builder7<O, A, B, C, D, E, F, G>(
+            @NotNull Field<O, A> f1, @NotNull Field<O, B> f2,
+            @NotNull Field<O, C> f3, @NotNull Field<O, D> f4,
+            @NotNull Field<O, E> f5, @NotNull Field<O, F> f6,
+            @NotNull Field<O, G> f7
+    ) {
+        /**
+         * Creates a new Builder7 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder7 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+            Preconditions.checkNotNull(f5, "f5 must not be null");
+            Preconditions.checkNotNull(f6, "f6 must not be null");
+            Preconditions.checkNotNull(f7, "f7 must not be null");
+        }
+
+        /**
+         * Applies a constructor function to create the final codec.
+         *
+         * @param instance    the builder instance (for type inference)
+         * @param constructor the function to construct the record from the field values
+         * @return a {@link MapCodec} for the record type, never {@code null}
+         */
+        @NotNull
+        public MapCodec<O> apply(@NotNull final Instance<O> instance,
+                                 @NotNull final Function7<A, B, C, D, E, F, G, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
+            return new MapCodec<>() {
+                @NotNull
+                @Override
+                public <T> DataResult<T> encode(@NotNull final O input,
+                                                @NotNull final DynamicOps<T> ops,
+                                                @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
+                    return f1.codec.encode(f1.getter.apply(input), ops, map)
+                            .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m))
+                            .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m))
+                            .flatMap(m -> f4.codec.encode(f4.getter.apply(input), ops, m))
+                            .flatMap(m -> f5.codec.encode(f5.getter.apply(input), ops, m))
+                            .flatMap(m -> f6.codec.encode(f6.getter.apply(input), ops, m))
+                            .flatMap(m -> f7.codec.encode(f7.getter.apply(input), ops, m));
+                }
+
+                @NotNull
+                @Override
+                public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
+                                                @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    final DataResult<A> a = f1.codec.decode(ops, input);
+                    final DataResult<B> b = f2.codec.decode(ops, input);
+                    final DataResult<C> c = f3.codec.decode(ops, input);
+                    final DataResult<D> d = f4.codec.decode(ops, input);
+                    final DataResult<E> e = f5.codec.decode(ops, input);
+                    final DataResult<F> f = f6.codec.decode(ops, input);
+                    final DataResult<G> g = f7.codec.decode(ops, input);
+                    return a.apply2(b, Pair::of)
+                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
+                            .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
+                            .apply2(f, (abcde, fv) -> new Tuple6<>(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv))
+                            .apply2(g, (abcdef, gv) -> constructor.apply(abcdef.a, abcdef.b, abcdef.c, abcdef.d, abcdef.e, abcdef.f, gv));
+                }
+            };
+        }
+    }
+
+    // ==================== Builder8 ====================
+
+    /**
+     * Intermediate builder holding eight grouped fields for record codec construction.
+     *
+     * <p>Created by {@link Instance#group(Field, Field, Field, Field, Field, Field, Field, Field)}.
+     * Call {@link #apply} with an eight-argument constructor to produce the final codec.</p>
+     *
+     * @param f1  the first field
+     * @param f2  the second field
+     * @param f3  the third field
+     * @param f4  the fourth field
+     * @param f5  the fifth field
+     * @param f6  the sixth field
+     * @param f7  the seventh field
+     * @param f8  the eighth field
+     * @param <O> the record type
+     * @param <A> the type of the first field
+     * @param <B> the type of the second field
+     * @param <C> the type of the third field
+     * @param <D> the type of the fourth field
+     * @param <E> the type of the fifth field
+     * @param <F> the type of the sixth field
+     * @param <G> the type of the seventh field
+     * @param <H> the type of the eighth field
+     */
+    public record Builder8<O, A, B, C, D, E, F, G, H>(
+            @NotNull Field<O, A> f1, @NotNull Field<O, B> f2,
+            @NotNull Field<O, C> f3, @NotNull Field<O, D> f4,
+            @NotNull Field<O, E> f5, @NotNull Field<O, F> f6,
+            @NotNull Field<O, G> f7, @NotNull Field<O, H> f8
+    ) {
+        /**
+         * Creates a new Builder8 with validation.
+         *
+         * @throws NullPointerException if any field is {@code null}
+         */
+        public Builder8 {
+            Preconditions.checkNotNull(f1, "f1 must not be null");
+            Preconditions.checkNotNull(f2, "f2 must not be null");
+            Preconditions.checkNotNull(f3, "f3 must not be null");
+            Preconditions.checkNotNull(f4, "f4 must not be null");
+            Preconditions.checkNotNull(f5, "f5 must not be null");
+            Preconditions.checkNotNull(f6, "f6 must not be null");
+            Preconditions.checkNotNull(f7, "f7 must not be null");
+            Preconditions.checkNotNull(f8, "f8 must not be null");
+        }
+
+        /**
+         * Applies a constructor function to create the final codec.
+         *
+         * @param instance    the builder instance (for type inference)
+         * @param constructor the function to construct the record from the field values
+         * @return a {@link MapCodec} for the record type, never {@code null}
+         */
+        @NotNull
+        public MapCodec<O> apply(@NotNull final Instance<O> instance,
+                                 @NotNull final Function8<A, B, C, D, E, F, G, H, O> constructor) {
+            Preconditions.checkNotNull(instance, "instance must not be null");
+            Preconditions.checkNotNull(constructor, "constructor must not be null");
+            return new MapCodec<>() {
+                @NotNull
+                @Override
+                public <T> DataResult<T> encode(@NotNull final O input,
+                                                @NotNull final DynamicOps<T> ops,
+                                                @NotNull final T map) {
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(map, "map must not be null");
+                    return f1.codec.encode(f1.getter.apply(input), ops, map)
+                            .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m))
+                            .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m))
+                            .flatMap(m -> f4.codec.encode(f4.getter.apply(input), ops, m))
+                            .flatMap(m -> f5.codec.encode(f5.getter.apply(input), ops, m))
+                            .flatMap(m -> f6.codec.encode(f6.getter.apply(input), ops, m))
+                            .flatMap(m -> f7.codec.encode(f7.getter.apply(input), ops, m))
+                            .flatMap(m -> f8.codec.encode(f8.getter.apply(input), ops, m));
+                }
+
+                @NotNull
+                @Override
+                public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
+                                                @NotNull final T input) {
+                    Preconditions.checkNotNull(ops, "ops must not be null");
+                    Preconditions.checkNotNull(input, "input must not be null");
+                    final DataResult<A> a = f1.codec.decode(ops, input);
+                    final DataResult<B> b = f2.codec.decode(ops, input);
+                    final DataResult<C> c = f3.codec.decode(ops, input);
+                    final DataResult<D> d = f4.codec.decode(ops, input);
+                    final DataResult<E> e = f5.codec.decode(ops, input);
+                    final DataResult<F> f = f6.codec.decode(ops, input);
+                    final DataResult<G> g = f7.codec.decode(ops, input);
+                    final DataResult<H> h = f8.codec.decode(ops, input);
+                    return a.apply2(b, Pair::of)
+                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
+                            .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
+                            .apply2(f, (abcde, fv) -> new Tuple6<>(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv))
+                            .apply2(g, (abcdef, gv) -> new Tuple7<>(abcdef.a, abcdef.b, abcdef.c, abcdef.d, abcdef.e, abcdef.f, gv))
+                            .apply2(h, (abcdefg, hv) -> constructor.apply(abcdefg.a, abcdefg.b, abcdefg.c, abcdefg.d, abcdefg.e, abcdefg.f, abcdefg.g, hv));
+                }
+            };
+        }
     }
 }
