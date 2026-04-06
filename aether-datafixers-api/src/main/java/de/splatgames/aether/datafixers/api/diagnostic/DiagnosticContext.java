@@ -26,6 +26,8 @@ import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ServiceLoader;
+
 /**
  * A diagnostic-aware context for capturing detailed migration information.
  *
@@ -94,9 +96,14 @@ public interface DiagnosticContext extends DataFixerContext {
     @NotNull
     static DiagnosticContext create(@NotNull final DiagnosticOptions options) {
         Preconditions.checkNotNull(options, "options must not be null");
-        // Use ServiceLoader or direct instantiation
-        // For now, we'll use direct instantiation via the core module
-        // This will be resolved at runtime by the core implementation
+
+        // Discover implementation via ServiceLoader (preferred over reflection)
+        for (final DiagnosticContextFactory factory
+                : ServiceLoader.load(DiagnosticContextFactory.class)) {
+            return factory.create(options);
+        }
+
+        // Fallback to reflection for backward compatibility
         try {
             final Class<?> implClass = Class.forName(
                     "de.splatgames.aether.datafixers.core.diagnostic.DiagnosticContextImpl"
@@ -107,7 +114,8 @@ public interface DiagnosticContext extends DataFixerContext {
         } catch (final ReflectiveOperationException e) {
             throw new IllegalStateException(
                     "Failed to create DiagnosticContext. " +
-                            "Ensure aether-datafixers-core is on the classpath.",
+                            "Ensure aether-datafixers-core is on the classpath "
+                            + "or register a DiagnosticContextFactory via ServiceLoader.",
                     e
             );
         }

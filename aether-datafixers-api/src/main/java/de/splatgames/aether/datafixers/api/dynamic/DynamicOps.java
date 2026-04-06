@@ -99,12 +99,21 @@ public interface DynamicOps<T> {
     // ==================== Empty/Null ====================
 
     /**
-     * Creates an empty value representation.
+     * Creates an empty/null value representation.
      *
-     * <p>Implementations typically return an empty map/object node, but the exact meaning is
-     * defined by the concrete ops.</p>
+     * <p>The returned value is the canonical "null" representation for this format.
+     * Implementations differ in how they represent null:</p>
+     * <ul>
+     *   <li>Jackson-based (JSON, YAML, XML): {@code NullNode.getInstance()}</li>
+     *   <li>SnakeYAML: {@code YamlNull} sentinel object</li>
+     *   <li>TOML: Note that TOML has no null representation — null values may cause
+     *       serialization errors</li>
+     * </ul>
+     * <p>When converting between formats via {@link #convertTo}, null representations
+     * are normalized through this method. Use {@link #isNull(Object)} to check for null
+     * regardless of the underlying representation.</p>
      *
-     * @return an empty value
+     * @return the canonical empty/null value for this format
      */
     @NotNull T empty();
 

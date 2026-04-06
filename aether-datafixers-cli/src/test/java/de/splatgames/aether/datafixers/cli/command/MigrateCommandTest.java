@@ -214,8 +214,13 @@ class MigrateCommandTest {
                     "--from", "1");
 
             assertThat(exitCode).isEqualTo(0);
-            assertThat(Files.exists(file1.resolveSibling("player1.json.bak"))).isTrue();
-            assertThat(Files.exists(file2.resolveSibling("player2.json.bak"))).isTrue();
+            // Backups use timestamped names: player1.json.bak.<timestamp>
+            try (var files1 = Files.list(file1.getParent())) {
+                assertThat(files1.anyMatch(p -> p.getFileName().toString().startsWith("player1.json.bak."))).isTrue();
+            }
+            try (var files2 = Files.list(file2.getParent())) {
+                assertThat(files2.anyMatch(p -> p.getFileName().toString().startsWith("player2.json.bak."))).isTrue();
+            }
         }
 
         @Test

@@ -47,6 +47,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -688,8 +691,10 @@ public class MigrateCommand implements Callable<Integer> {
             try {
                 Files.writeString(tempPath, content);
                 if (this.backup) {
+                    final String timestamp = ZonedDateTime.now(ZoneOffset.UTC)
+                            .format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'"));
                     final Path backupPath = inputFile.toPath().resolveSibling(
-                            inputFile.getName() + ".bak");
+                            inputFile.getName() + ".bak." + timestamp);
                     Files.move(inputFile.toPath(), backupPath, StandardCopyOption.REPLACE_EXISTING);
                 }
                 Files.move(tempPath, inputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

@@ -179,6 +179,11 @@ public final class MigrationReportImpl implements MigrationReport {
         private final List<RuleApplication> currentRuleApplications = new ArrayList<>();
         private String currentFixBeforeSnapshot;
 
+        // Lifecycle state
+        private boolean migrationStarted;
+        private boolean fixInProgress;
+        private boolean built;
+
         BuilderImpl() {
         }
 
@@ -192,7 +197,10 @@ public final class MigrationReportImpl implements MigrationReport {
             Preconditions.checkNotNull(type, "type must not be null");
             Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
             Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+            Preconditions.checkState(!this.built, "Report already built");
+            Preconditions.checkState(!this.migrationStarted, "Migration already started");
 
+            this.migrationStarted = true;
             this.type = type;
             this.fromVersion = fromVersion;
             this.toVersion = toVersion;
@@ -212,6 +220,11 @@ public final class MigrationReportImpl implements MigrationReport {
         @NotNull
         public Builder startFix(@NotNull final DataFix<?> fix) {
             Preconditions.checkNotNull(fix, "fix must not be null");
+            Preconditions.checkState(!this.built, "Report already built");
+            Preconditions.checkState(this.migrationStarted, "Migration not started");
+            Preconditions.checkState(!this.fixInProgress,
+                    "Fix already in progress: " + this.currentFixName);
+            this.fixInProgress = true;
             this.currentFixName = fix.name();
             this.currentFixFromVersion = fix.fromVersion();
             this.currentFixToVersion = fix.toVersion();
@@ -244,6 +257,7 @@ public final class MigrationReportImpl implements MigrationReport {
                 @Nullable final String afterSnapshot
         ) {
             Preconditions.checkNotNull(fix, "fix must not be null");
+            Preconditions.checkState(this.fixInProgress, "No fix in progress");
             Preconditions.checkNotNull(duration, "duration must not be null");
 
             final FixExecution execution = new FixExecution(
@@ -270,6 +284,7 @@ public final class MigrationReportImpl implements MigrationReport {
          * to prevent stale state from corrupting subsequent fix records.
          */
         private void resetFixState() {
+            this.fixInProgress = false;
             this.currentFixName = null;
             this.currentFixFromVersion = null;
             this.currentFixToVersion = null;
@@ -304,6 +319,9 @@ public final class MigrationReportImpl implements MigrationReport {
         @Override
         @NotNull
         public MigrationReport build() {
+            Preconditions.checkState(!this.built, "Report already built");
+            Preconditions.checkState(!this.fixInProgress,
+                    "Cannot build report while fix is in progress: " + this.currentFixName);
             if (this.type == null) {
                 throw new IllegalStateException(
                         "Migration was not started. Call startMigration() first."
@@ -311,6 +329,7 @@ public final class MigrationReportImpl implements MigrationReport {
             }
 
             this.endTime = Instant.now();
+            this.built = true;
             return new MigrationReportImpl(this);
         }
     }

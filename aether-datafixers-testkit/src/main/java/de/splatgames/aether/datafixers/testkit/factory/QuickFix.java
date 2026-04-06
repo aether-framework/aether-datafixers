@@ -175,7 +175,7 @@ public final class QuickFix {
     /**
      * Creates a fix that renames a field.
      *
-     * @param ops         the DynamicOps to use
+     * @param ops         reserved for future use (currently unused), must not be {@code null}
      * @param name        the fix name
      * @param fromVersion the source version
      * @param toVersion   the target version
@@ -212,7 +212,7 @@ public final class QuickFix {
     /**
      * Creates a fix that adds a string field with a default value.
      *
-     * @param ops          the DynamicOps to use
+     * @param ops          reserved for future use (currently unused), must not be {@code null}
      * @param name         the fix name
      * @param fromVersion  the source version
      * @param toVersion    the target version
@@ -246,7 +246,7 @@ public final class QuickFix {
     /**
      * Creates a fix that adds an integer field with a default value.
      *
-     * @param ops          the DynamicOps to use
+     * @param ops          reserved for future use (currently unused), must not be {@code null}
      * @param name         the fix name
      * @param fromVersion  the source version
      * @param toVersion    the target version
@@ -279,7 +279,7 @@ public final class QuickFix {
     /**
      * Creates a fix that adds a boolean field with a default value.
      *
-     * @param ops          the DynamicOps to use
+     * @param ops          reserved for future use (currently unused), must not be {@code null}
      * @param name         the fix name
      * @param fromVersion  the source version
      * @param toVersion    the target version
@@ -314,7 +314,7 @@ public final class QuickFix {
     /**
      * Creates a fix that removes a field.
      *
-     * @param ops         the DynamicOps to use
+     * @param ops         reserved for future use (currently unused), must not be {@code null}
      * @param name        the fix name
      * @param fromVersion the source version
      * @param toVersion   the target version
@@ -342,7 +342,7 @@ public final class QuickFix {
     /**
      * Creates a fix that transforms a field value.
      *
-     * @param ops         the DynamicOps to use
+     * @param ops         reserved for future use (currently unused), must not be {@code null}
      * @param name        the fix name
      * @param fromVersion the source version
      * @param toVersion   the target version
