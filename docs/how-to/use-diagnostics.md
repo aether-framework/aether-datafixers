@@ -80,6 +80,7 @@ Configure what diagnostics to capture:
 DiagnosticOptions options = DiagnosticOptions.builder()
     .captureSnapshots(true)       // Capture before/after data snapshots
     .captureRuleDetails(true)     // Capture individual rule applications
+    .captureFieldDetails(true)    // Capture field-level operation metadata
     .maxSnapshotLength(10000)     // Truncate snapshots longer than this
     .prettyPrintSnapshots(true)   // Pretty-print JSON snapshots
     .build();
@@ -91,14 +92,14 @@ DiagnosticOptions options = DiagnosticOptions.builder()
 // Full diagnostics (default)
 DiagnosticOptions.defaults();
 
-// Minimal overhead (timing only, no snapshots)
+// Minimal overhead (timing only, no snapshots or field details)
 DiagnosticOptions.minimal();
 ```
 
-| Preset       | Snapshots | Rule Details | Pretty Print |
-|--------------|-----------|--------------|--------------|
-| `defaults()` | Yes       | Yes          | Yes          |
-| `minimal()`  | No        | No           | No           |
+| Preset       | Snapshots | Rule Details | Field Details | Pretty Print |
+|--------------|-----------|--------------|---------------|--------------|
+| `defaults()` | Yes       | Yes          | Yes           | Yes          |
+| `minimal()`  | No        | No           | No            | No           |
 
 ## Working with Fix Executions
 
@@ -136,6 +137,41 @@ for (FixExecution fix : report.fixExecutions()) {
             System.out.println("  Description: " + desc));
     }
 }
+```
+
+## Field-Level Diagnostics
+
+Beyond knowing which rules matched, you can inspect exactly which fields each rule affects. Rules created via `Rules.renameField()`, `Rules.removeField()`, and other field operation methods automatically carry structured metadata about their field operations.
+
+For a comprehensive guide, see [Field-Level Diagnostics](field-level-diagnostics.md).
+
+### Inspecting Field Operations
+
+```java
+for (FixExecution fix : report.fixExecutions()) {
+    for (RuleApplication rule : fix.ruleApplications()) {
+        if (rule.hasFieldOperations()) {
+            for (FieldOperation op : rule.fieldOperations()) {
+                System.out.println(op.operationType().displayName() +
+                    " on " + op.fieldPathString());
+            }
+        }
+    }
+}
+```
+
+### Aggregation
+
+```java
+// All field operations across an entire fix
+List<FieldOperation> allOps = fix.allFieldOperations();
+int fieldCount = fix.fieldOperationCount();
+
+// Total across the entire migration
+int totalFieldOps = report.totalFieldOperationCount();
+
+// Filter by type
+List<FieldOperation> renames = rule.fieldOperationsOfType(FieldOperationType.RENAME);
 ```
 
 ## Emitting Warnings from Fixes
@@ -297,56 +333,96 @@ fixer.update(type, data, from, to);  // No context = no overhead
 
 ### MigrationReport
 
-| Method                   | Description                   |
-|--------------------------|-------------------------------|
-| `type()`                 | The migrated TypeReference    |
-| `fromVersion()`          | Source version                |
-| `toVersion()`            | Target version                |
-| `startTime()`            | When migration started        |
-| `totalDuration()`        | Total migration time          |
-| `fixCount()`             | Number of fixes applied       |
-| `fixExecutions()`        | List of FixExecution records  |
-| `ruleApplicationCount()` | Total rule applications       |
-| `touchedTypes()`         | Set of touched TypeReferences |
-| `inputSnapshot()`        | Optional input snapshot       |
-| `outputSnapshot()`       | Optional output snapshot      |
-| `hasWarnings()`          | Whether warnings were emitted |
-| `warnings()`             | List of warning messages      |
-| `toSummary()`            | Human-readable summary string |
+| Method                       | Description                             |
+|------------------------------|-----------------------------------------|
+| `type()`                     | The migrated TypeReference              |
+| `fromVersion()`              | Source version                          |
+| `toVersion()`                | Target version                          |
+| `startTime()`                | When migration started                  |
+| `totalDuration()`            | Total migration time                    |
+| `fixCount()`                 | Number of fixes applied                 |
+| `fixExecutions()`            | List of FixExecution records            |
+| `ruleApplicationCount()`     | Total rule applications                 |
+| `totalFieldOperationCount()` | Total field operations across all fixes |
+| `touchedTypes()`             | Set of touched TypeReferences           |
+| `inputSnapshot()`            | Optional input snapshot                 |
+| `outputSnapshot()`           | Optional output snapshot                |
+| `hasWarnings()`              | Whether warnings were emitted           |
+| `warnings()`                 | List of warning messages                |
+| `toSummary()`                | Human-readable summary string           |
 
 ### FixExecution
 
-| Method                | Description                     |
-|-----------------------|---------------------------------|
-| `fixName()`           | Name of the fix                 |
-| `fromVersion()`       | Fix input version               |
-| `toVersion()`         | Fix output version              |
-| `startTime()`         | When fix started                |
-| `duration()`          | Fix execution time              |
-| `durationMillis()`    | Duration in milliseconds        |
-| `ruleApplications()`  | List of RuleApplication records |
-| `ruleCount()`         | Number of rules                 |
-| `matchedRuleCount()`  | Number of matched rules         |
-| `beforeSnapshotOpt()` | Optional before snapshot        |
-| `afterSnapshotOpt()`  | Optional after snapshot         |
-| `toSummary()`         | Human-readable summary          |
+| Method                  | Description                       |
+|-------------------------|-----------------------------------|
+| `fixName()`             | Name of the fix                   |
+| `fromVersion()`         | Fix input version                 |
+| `toVersion()`           | Fix output version                |
+| `startTime()`           | When fix started                  |
+| `duration()`            | Fix execution time                |
+| `durationMillis()`      | Duration in milliseconds          |
+| `ruleApplications()`    | List of RuleApplication records   |
+| `ruleCount()`           | Number of rules                   |
+| `matchedRuleCount()`    | Number of matched rules           |
+| `allFieldOperations()`  | All field operations across rules |
+| `fieldOperationCount()` | Total field operation count       |
+| `beforeSnapshotOpt()`   | Optional before snapshot          |
+| `afterSnapshotOpt()`    | Optional after snapshot           |
+| `toSummary()`           | Human-readable summary            |
 
 ### RuleApplication
 
-| Method             | Description              |
-|--------------------|--------------------------|
-| `ruleName()`       | Name of the rule         |
-| `typeName()`       | TypeReference name       |
-| `timestamp()`      | When rule was applied    |
-| `duration()`       | Rule execution time      |
-| `durationMillis()` | Duration in milliseconds |
-| `matched()`        | Whether rule matched     |
-| `description()`    | Optional description     |
-| `descriptionOpt()` | Description as Optional  |
-| `toSummary()`      | Human-readable summary   |
+| Method                    | Description                            |
+|---------------------------|----------------------------------------|
+| `ruleName()`              | Name of the rule                       |
+| `typeName()`              | TypeReference name                     |
+| `timestamp()`             | When rule was applied                  |
+| `duration()`              | Rule execution time                    |
+| `durationMillis()`        | Duration in milliseconds               |
+| `matched()`               | Whether rule matched                   |
+| `description()`           | Optional description                   |
+| `descriptionOpt()`        | Description as Optional                |
+| `fieldOperations()`       | List of field-level operations         |
+| `hasFieldOperations()`    | Whether field metadata is present      |
+| `fieldOperationsOfType()` | Filter field ops by FieldOperationType |
+| `toSummary()`             | Human-readable summary                 |
+
+### FieldOperation
+
+| Method               | Description                              |
+|----------------------|------------------------------------------|
+| `operationType()`    | The `FieldOperationType` enum value      |
+| `fieldPath()`        | Path segments as `List<String>`          |
+| `targetFieldName()`  | Target for rename/move/copy (nullable)   |
+| `description()`      | Optional description (nullable)          |
+| `fieldPathString()`  | Dot-notation path (`"position.x"`)       |
+| `isNested()`         | Whether path has multiple segments       |
+| `toSummary()`        | Human-readable summary                   |
+
+### FieldOperationType
+
+| Constant       | Display Name    | Requires Target  | Structural |
+|----------------|-----------------|------------------|------------|
+| `RENAME`       | `"rename"`      | Yes              | No         |
+| `REMOVE`       | `"remove"`      | No               | No         |
+| `ADD`          | `"add"`         | No               | No         |
+| `TRANSFORM`    | `"transform"`   | No               | No         |
+| `SET`          | `"set"`         | No               | No         |
+| `MOVE`         | `"move"`        | Yes              | Yes        |
+| `COPY`         | `"copy"`        | Yes              | Yes        |
+| `GROUP`        | `"group"`       | Yes              | Yes        |
+| `FLATTEN`      | `"flatten"`     | No               | Yes        |
+| `CONDITIONAL`  | `"conditional"` | No               | No         |
+
+### FieldAwareRule
+
+| Method              | Description                                     |
+|---------------------|-------------------------------------------------|
+| `fieldOperations()` | Returns `List<FieldOperation>` for this rule    |
 
 ## Related
 
+- [Field-Level Diagnostics](field-level-diagnostics.md)
 - [Debug Migrations](debug-migrations.md)
 - [Log Migrations](log-migrations.md)
 - [Test Migrations](test-migrations.md)
