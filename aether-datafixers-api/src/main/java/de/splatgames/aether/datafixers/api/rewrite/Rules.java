@@ -2552,7 +2552,13 @@ public final class Rules {
     }
 
     /**
-     * Recursively sets a value at a path, creating intermediate objects.
+     * Recursive helper for setAtPath that navigates the path segments and sets the value at the end.
+     *
+     * @param dynamic the current dynamic object, must not be {@code null}
+     * @param parts   the path segments, must not be {@code null}
+     * @param index   the current index in the path segments
+     * @param value   the value to set at the target path, must not be {@code null}
+     * @return the updated dynamic with the value set at the target path
      */
     @NotNull
     private static Dynamic<Object> setAtPathRecursive(@NotNull final Dynamic<Object> dynamic,
