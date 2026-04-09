@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.spring.service;
 
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -347,6 +348,58 @@ class MigrationResultTest {
             assertThat(result.toString())
                     .contains("success=false")
                     .contains("error=Test error");
+        }
+    }
+
+    @Nested
+    @DisplayName("Diagnostic Report")
+    class DiagnosticReportTests {
+
+        @Test
+        @DisplayName("success result without diagnostics has empty report")
+        void successWithoutDiagnostics() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(result.getDiagnosticReport()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("success result with diagnostics has report")
+        void successWithDiagnostics() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+            MigrationReport report = mock(MigrationReport.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION, report
+            );
+
+            assertThat(result.getDiagnosticReport()).contains(report);
+        }
+
+        @Test
+        @DisplayName("success result with null report has empty optional")
+        void successWithNullReport() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION, null
+            );
+
+            assertThat(result.getDiagnosticReport()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("failure result has empty diagnostic report")
+        void failureHasEmptyDiagnosticReport() {
+            MigrationResult result = MigrationResult.failure(
+                    FROM_VERSION, TO_VERSION, DOMAIN, DURATION, new RuntimeException("error")
+            );
+
+            assertThat(result.getDiagnosticReport()).isEmpty();
         }
     }
 }

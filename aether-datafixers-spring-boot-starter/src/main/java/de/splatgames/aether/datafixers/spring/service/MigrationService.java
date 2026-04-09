@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.spring.service;
 
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.jetbrains.annotations.NotNull;
@@ -367,6 +368,51 @@ public interface MigrationService {
          */
         @NotNull
         <T> MigrationRequestBuilder withOps(@NotNull DynamicOps<T> ops);
+
+        /**
+         * Enables diagnostic capture with default options during migration.
+         *
+         * <p>When enabled, the migration will capture detailed diagnostic information
+         * including fix executions, rule applications, and field-level operations.
+         * The diagnostic report is accessible via
+         * {@link MigrationResult#getDiagnosticReport()} after execution.</p>
+         *
+         * <p>This is equivalent to calling
+         * {@code withDiagnostics(DiagnosticOptions.defaults())} with snapshots disabled
+         * for performance.</p>
+         *
+         * @return this builder for method chaining
+         * @since 1.0.0
+         * @see DiagnosticOptions
+         * @see MigrationResult#getDiagnosticReport()
+         */
+        @NotNull
+        default MigrationRequestBuilder withDiagnostics() {
+            return withDiagnostics(DiagnosticOptions.builder()
+                    .captureSnapshots(false)
+                    .captureRuleDetails(true)
+                    .captureFieldDetails(true)
+                    .build());
+        }
+
+        /**
+         * Enables diagnostic capture with the specified options during migration.
+         *
+         * <p>The provided options control what diagnostic data is captured, allowing
+         * fine-tuning of the balance between detail and performance. The diagnostic
+         * report is accessible via {@link MigrationResult#getDiagnosticReport()}
+         * after execution.</p>
+         *
+         * @param options the diagnostic options controlling what data is captured,
+         *                must not be {@code null}
+         * @return this builder for method chaining
+         * @throws NullPointerException if options is {@code null}
+         * @since 1.0.0
+         * @see DiagnosticOptions
+         * @see MigrationResult#getDiagnosticReport()
+         */
+        @NotNull
+        MigrationRequestBuilder withDiagnostics(@NotNull DiagnosticOptions options);
 
         /**
          * Executes the configured migration synchronously.

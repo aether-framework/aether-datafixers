@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.spring.service;
 
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -174,15 +175,25 @@ public final class MigrationResult {
     private final Throwable error;
 
     /**
+     * The diagnostic migration report. Only present when diagnostics
+     * were enabled via {@link MigrationService.MigrationRequestBuilder#withDiagnostics()}.
+     *
+     * @since 1.0.0
+     */
+    @Nullable
+    private final MigrationReport diagnosticReport;
+
+    /**
      * Private constructor to enforce factory method usage.
      *
-     * @param success     whether the migration succeeded
-     * @param data        the migrated data (null on failure)
-     * @param fromVersion the source version
-     * @param toVersion   the target version
-     * @param domain      the domain name
-     * @param duration    the migration duration
-     * @param error       the error (null on success)
+     * @param success          whether the migration succeeded
+     * @param data             the migrated data (null on failure)
+     * @param fromVersion      the source version
+     * @param toVersion        the target version
+     * @param domain           the domain name
+     * @param duration         the migration duration
+     * @param error            the error (null on success)
+     * @param diagnosticReport the diagnostic report (null if diagnostics were not enabled)
      */
     private MigrationResult(
             final boolean success,
@@ -191,7 +202,8 @@ public final class MigrationResult {
             @NotNull final DataVersion toVersion,
             @NotNull final String domain,
             @NotNull final Duration duration,
-            @Nullable final Throwable error
+            @Nullable final Throwable error,
+            @Nullable final MigrationReport diagnosticReport
     ) {
         this.success = success;
         this.data = data;
@@ -200,6 +212,7 @@ public final class MigrationResult {
         this.domain = Preconditions.checkNotNull(domain, "domain must not be null");
         this.duration = Preconditions.checkNotNull(duration, "duration must not be null");
         this.error = error;
+        this.diagnosticReport = diagnosticReport;
     }
 
     /**
@@ -224,8 +237,38 @@ public final class MigrationResult {
             @NotNull final String domain,
             @NotNull final Duration duration
     ) {
+        return success(data, fromVersion, toVersion, domain, duration, null);
+    }
+
+    /**
+     * Creates a successful migration result with an optional diagnostic report.
+     *
+     * <p>Use this factory method when a migration completes without errors and
+     * diagnostics were optionally enabled. The diagnostic report is accessible
+     * via {@link #getDiagnosticReport()}.</p>
+     *
+     * @param data             the migrated data, must not be {@code null}
+     * @param fromVersion      the source version, must not be {@code null}
+     * @param toVersion        the target version, must not be {@code null}
+     * @param domain           the domain name used, must not be {@code null}
+     * @param duration         the migration duration, must not be {@code null}
+     * @param diagnosticReport the diagnostic report, or {@code null} if diagnostics were not enabled
+     * @return a success result containing the migrated data and optional diagnostics
+     * @throws NullPointerException if any required parameter is {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public static MigrationResult success(
+            @NotNull final TaggedDynamic data,
+            @NotNull final DataVersion fromVersion,
+            @NotNull final DataVersion toVersion,
+            @NotNull final String domain,
+            @NotNull final Duration duration,
+            @Nullable final MigrationReport diagnosticReport
+    ) {
         Preconditions.checkNotNull(data, "data must not be null");
-        return new MigrationResult(true, data, fromVersion, toVersion, domain, duration, null);
+        return new MigrationResult(true, data, fromVersion, toVersion, domain, duration,
+                null, diagnosticReport);
     }
 
     /**
@@ -252,7 +295,7 @@ public final class MigrationResult {
             @NotNull final Throwable error
     ) {
         Preconditions.checkNotNull(error, "error must not be null");
-        return new MigrationResult(false, null, fromVersion, toVersion, domain, duration, error);
+        return new MigrationResult(false, null, fromVersion, toVersion, domain, duration, error, null);
     }
 
     /**
@@ -410,6 +453,38 @@ public final class MigrationResult {
     @NotNull
     public Optional<Throwable> getError() {
         return Optional.ofNullable(this.error);
+    }
+
+    /**
+     * Returns the diagnostic migration report, if diagnostics were enabled.
+     *
+     * <p>The report contains detailed information about each fix execution,
+     * rule application, and field-level operation that occurred during the
+     * migration. The Optional will be empty if diagnostics were not enabled
+     * via {@link MigrationService.MigrationRequestBuilder#withDiagnostics()}.</p>
+     *
+     * <p><b>Example Usage</b></p>
+     * <pre>{@code
+     * result.getDiagnosticReport().ifPresent(report -> {
+     *     System.out.println("Fixes applied: " + report.fixCount());
+     *     System.out.println("Field operations: " + report.totalFieldOperationCount());
+     *     report.fixExecutions().forEach(fix ->
+     *         fix.allFieldOperations().forEach(op ->
+     *             System.out.println("  " + op.toSummary())
+     *         )
+     *     );
+     * });
+     * }</pre>
+     *
+     * @return an Optional containing the diagnostic report if diagnostics were enabled,
+     *         empty otherwise
+     * @since 1.0.0
+     * @see MigrationService.MigrationRequestBuilder#withDiagnostics()
+     * @see MigrationReport
+     */
+    @NotNull
+    public Optional<MigrationReport> getDiagnosticReport() {
+        return Optional.ofNullable(this.diagnosticReport);
     }
 
     /**

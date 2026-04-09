@@ -353,6 +353,18 @@ public class AetherDataFixersProperties {
         private boolean includeFixDetails = true;
 
         /**
+         * Flag to include field-level diagnostic details in actuator responses.
+         *
+         * <p>When enabled and migration diagnostics are captured (via
+         * {@link de.splatgames.aether.datafixers.spring.service.MigrationService.MigrationRequestBuilder#withDiagnostics()}),
+         * the last migration's field operation details are exposed through the
+         * {@code /actuator/datafixers/{domain}} endpoint.</p>
+         *
+         * @since 1.0.0
+         */
+        private boolean includeFieldDetails = true;
+
+        /**
          * Returns whether schema details are included in actuator responses.
          *
          * <p>Schema details include information about registered schemas,
@@ -394,6 +406,30 @@ public class AetherDataFixersProperties {
          */
         public void setIncludeFixDetails(final boolean includeFixDetails) {
             this.includeFixDetails = includeFixDetails;
+        }
+
+        /**
+         * Returns whether field-level diagnostic details are included in actuator responses.
+         *
+         * <p>Field details include information about which fields are affected by each
+         * migration rule (renames, removals, additions, transforms, etc.).</p>
+         *
+         * @return {@code true} if field details are included, {@code false} otherwise
+         * @since 1.0.0
+         */
+        public boolean isIncludeFieldDetails() {
+            return this.includeFieldDetails;
+        }
+
+        /**
+         * Sets whether field-level diagnostic details are included in actuator responses.
+         *
+         * @param includeFieldDetails {@code true} to include field details,
+         *                            {@code false} to exclude them
+         * @since 1.0.0
+         */
+        public void setIncludeFieldDetails(final boolean includeFieldDetails) {
+            this.includeFieldDetails = includeFieldDetails;
         }
     }
 

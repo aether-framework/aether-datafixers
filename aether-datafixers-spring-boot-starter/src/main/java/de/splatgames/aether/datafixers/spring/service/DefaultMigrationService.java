@@ -24,6 +24,9 @@ package de.splatgames.aether.datafixers.spring.service;
 
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
@@ -127,6 +130,12 @@ public class DefaultMigrationService implements MigrationService {
      * Executor used for asynchronous migration operations.
      */
     private final Executor asyncExecutor;
+
+    /**
+     * Store for the most recent diagnostic reports per domain.
+     * Used by the actuator endpoint to expose field-level diagnostics.
+     */
+    private final DiagnosticReportStore diagnosticReportStore = new DiagnosticReportStore();
 
     /**
      * Creates a new DefaultMigrationService with the common ForkJoinPool for async operations.
@@ -242,6 +251,22 @@ public class DefaultMigrationService implements MigrationService {
     }
 
     /**
+     * Returns the diagnostic report store containing the most recent
+     * diagnostic reports per domain.
+     *
+     * <p>This store is populated when migrations are executed with diagnostics
+     * enabled via {@link MigrationRequestBuilder#withDiagnostics()}. It is
+     * used by the actuator endpoint to expose field-level diagnostic information.</p>
+     *
+     * @return the diagnostic report store, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public DiagnosticReportStore getDiagnosticReportStore() {
+        return this.diagnosticReportStore;
+    }
+
+    /**
      * Internal implementation of the migration request builder.
      *
      * <p>This builder collects all configuration and executes the migration when
@@ -301,6 +326,13 @@ public class DefaultMigrationService implements MigrationService {
          */
         @Nullable
         private DynamicOps<?> ops;
+
+        /**
+         * Optional diagnostic options. When set, a DiagnosticContext is created
+         * and passed to the fixer, and the resulting report is included in the result.
+         */
+        @Nullable
+        private DiagnosticOptions diagnosticOptions;
 
         /**
          * Creates a new builder for the given input data.
@@ -385,6 +417,21 @@ public class DefaultMigrationService implements MigrationService {
         /**
          * {@inheritDoc}
          *
+         * @param options the diagnostic options, must not be {@code null}
+         * @return this builder for method chaining
+         * @throws NullPointerException if options is {@code null}
+         * @since 1.0.0
+         */
+        @Override
+        @NotNull
+        public MigrationRequestBuilder withDiagnostics(@NotNull final DiagnosticOptions options) {
+            this.diagnosticOptions = Preconditions.checkNotNull(options, "options must not be null");
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
          * <p>This implementation:</p>
          * <ol>
          *   <li>Validates the builder configuration</li>
@@ -425,7 +472,14 @@ public class DefaultMigrationService implements MigrationService {
                 // Convert to target format if custom ops are specified
                 final TaggedDynamic inputData = convertToTargetOps(this.data);
 
-                final TaggedDynamic result = fixer.update(inputData, from, to);
+                // Create diagnostic context if diagnostics are enabled
+                final DiagnosticContext diagCtx = this.diagnosticOptions != null
+                        ? DiagnosticContext.create(this.diagnosticOptions)
+                        : null;
+
+                final TaggedDynamic result = diagCtx != null
+                        ? fixer.update(inputData, from, to, diagCtx)
+                        : fixer.update(inputData, from, to);
                 final Duration duration = Duration.between(start, Instant.now());
 
                 LOG.debug("Migration completed successfully in {}ms", duration.toMillis());
@@ -436,7 +490,17 @@ public class DefaultMigrationService implements MigrationService {
                             this.domain, from.getVersion(), to.getVersion(), duration);
                 }
 
-                return MigrationResult.success(result, from, to, this.domain, duration);
+                final MigrationReport diagnosticReport =
+                        diagCtx != null ? diagCtx.getReport() : null;
+
+                // Store diagnostic report for actuator endpoint
+                if (diagnosticReport != null) {
+                    DefaultMigrationService.this.diagnosticReportStore
+                            .store(this.domain, diagnosticReport);
+                }
+
+                return MigrationResult.success(
+                        result, from, to, this.domain, duration, diagnosticReport);
 
             } catch (final Exception e) {
                 final Duration duration = Duration.between(start, Instant.now());

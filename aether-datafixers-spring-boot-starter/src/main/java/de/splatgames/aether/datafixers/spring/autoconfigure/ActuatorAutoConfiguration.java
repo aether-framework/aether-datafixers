@@ -27,6 +27,8 @@ import de.splatgames.aether.datafixers.spring.actuator.DataFixerEndpoint;
 import de.splatgames.aether.datafixers.spring.actuator.DataFixerHealthIndicator;
 import de.splatgames.aether.datafixers.spring.actuator.DataFixerInfoContributor;
 import de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics;
+import de.splatgames.aether.datafixers.spring.service.DefaultMigrationService;
+import de.splatgames.aether.datafixers.spring.service.DiagnosticReportStore;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -241,18 +243,26 @@ public class ActuatorAutoConfiguration {
          * <p>The endpoint provides two operations:</p>
          * <ul>
          *   <li>GET /actuator/datafixers - Summary of all domains</li>
-         *   <li>GET /actuator/datafixers/{domain} - Details for specific domain</li>
+         *   <li>GET /actuator/datafixers/{domain} - Details for specific domain
+         *       (includes field-level diagnostics from last diagnostic migration)</li>
          * </ul>
          *
-         * @param registry the DataFixer registry for querying domain information
+         * @param registry         the DataFixer registry for querying domain information
+         * @param migrationService the migration service providing diagnostic report storage,
+         *                         may be {@code null} if not available
          * @return a new DataFixerEndpoint instance
          */
         @Bean
         @ConditionalOnMissingBean
         public DataFixerEndpoint dataFixerEndpoint(
-                final DataFixerRegistry registry
+                final DataFixerRegistry registry,
+                @org.springframework.beans.factory.annotation.Autowired(required = false)
+                final DefaultMigrationService migrationService
         ) {
-            return new DataFixerEndpoint(registry);
+            final DiagnosticReportStore store = migrationService != null
+                    ? migrationService.getDiagnosticReportStore()
+                    : null;
+            return new DataFixerEndpoint(registry, store);
         }
     }
 

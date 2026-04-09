@@ -31,6 +31,7 @@ import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import de.splatgames.aether.datafixers.api.exception.DecodeException;
 import de.splatgames.aether.datafixers.api.exception.EncodeException;
 import de.splatgames.aether.datafixers.api.fix.DataFixer;
+import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.api.type.Type;
@@ -190,6 +191,47 @@ public final class AetherDataFixer {
 
         final Dynamic<Object> updated =
                 this.dataFixer.update(input.type(), dyn, fromVersion, toVersion);
+
+        return new TaggedDynamic(input.type(), updated);
+    }
+
+    /**
+     * Updates data from one version to another using the specified context.
+     *
+     * <p>Applies all registered fixes between the source and target versions
+     * to migrate the data. The provided {@link DataFixerContext} controls
+     * logging and diagnostic behavior during migration. Pass a
+     * {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}
+     * to capture detailed migration diagnostics including field-level operations.</p>
+     *
+     * @param input       the tagged dynamic data to update, must not be {@code null}
+     * @param fromVersion the source version of the data, must not be {@code null}
+     * @param toVersion   the target version to migrate to, must not be {@code null}
+     * @param context     the fixer context for logging and diagnostics, must not be {@code null}
+     * @return a new tagged dynamic with the updated data
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public TaggedDynamic update(
+            @NotNull final TaggedDynamic input,
+            @NotNull final DataVersion fromVersion,
+            @NotNull final DataVersion toVersion,
+            @NotNull final DataFixerContext context
+    ) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkNotNull(context, "context must not be null");
+        Preconditions.checkArgument(
+                fromVersion.compareTo(toVersion) <= 0,
+                "fromVersion (%s) must be <= toVersion (%s)", fromVersion, toVersion
+        );
+
+        @SuppressWarnings("unchecked") final Dynamic<Object> dyn = (Dynamic<Object>) input.value();
+
+        final Dynamic<Object> updated =
+                this.dataFixer.update(input.type(), dyn, fromVersion, toVersion, context);
 
         return new TaggedDynamic(input.type(), updated);
     }
