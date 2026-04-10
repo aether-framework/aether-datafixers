@@ -28,6 +28,7 @@ import de.splatgames.aether.datafixers.cli.format.FormatHandler;
 import de.splatgames.aether.datafixers.cli.format.FormatRegistry;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -171,6 +172,7 @@ public class InfoCommand implements Callable<Integer> {
      * @see BootstrapLoader#load(String)
      */
     @Override
+    @NotNull
     public Integer call() {
         System.out.println("Aether Datafixers CLI v0.3.0");
         System.out.println("============================");

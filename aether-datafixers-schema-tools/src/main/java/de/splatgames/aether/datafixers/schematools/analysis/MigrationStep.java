@@ -30,6 +30,7 @@ import de.splatgames.aether.datafixers.schematools.diff.SchemaDiff;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,7 +288,7 @@ public final class MigrationStep {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -323,6 +324,7 @@ public final class MigrationStep {
      * @return a formatted string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("MigrationStep[");

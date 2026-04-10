@@ -471,6 +471,7 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #processFile(File, AetherDataFixer, FormatHandler, TypeReference, DataVersion)
      */
     @Override
+    @NotNull
     public Integer call() {
         try {
             // 0. Validate version range

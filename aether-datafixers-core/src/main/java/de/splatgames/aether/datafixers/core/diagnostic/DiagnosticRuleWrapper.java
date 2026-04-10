@@ -273,6 +273,7 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
      * @return the delegate rule's string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return this.delegate.toString();
     }

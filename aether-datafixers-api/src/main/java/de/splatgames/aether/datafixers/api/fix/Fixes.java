@@ -147,6 +147,7 @@ public final class Fixes {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }
@@ -210,6 +211,7 @@ public final class Fixes {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }
@@ -309,6 +311,7 @@ public final class Fixes {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "addField(" + fieldName + ")";
             }
@@ -390,6 +393,7 @@ public final class Fixes {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "fixChoice(" + tagField + ", " + fixByTag.keySet() + ")";
             }
@@ -447,6 +451,7 @@ public final class Fixes {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "renameChoice(" + tagField + ": " + oldTag + " -> " + newTag + ")";
             }
@@ -520,6 +525,7 @@ public final class Fixes {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }

@@ -30,6 +30,7 @@ import de.splatgames.aether.datafixers.cli.format.FormatRegistry;
 import de.splatgames.aether.datafixers.cli.util.VersionExtractor;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -237,6 +238,7 @@ public class ValidateCommand implements Callable<Integer> {
      * @see #validateFile(File, FormatHandler, DataVersion)
      */
     @Override
+    @NotNull
     public Integer call() {
         if (this.toVersion < 0) {
             System.err.println("Error: --to version must be non-negative, got: " + this.toVersion);

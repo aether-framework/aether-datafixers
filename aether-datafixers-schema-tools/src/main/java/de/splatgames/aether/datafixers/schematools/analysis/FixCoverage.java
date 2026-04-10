@@ -348,6 +348,7 @@ public final class FixCoverage {
     }
 
     @Override
+    @NotNull
     public String toString() {
         if (isFullyCovered()) {
             return String.format(

@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.api.util;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -621,7 +622,7 @@ public sealed interface Either<L, R> {
          * @return {@code true} if the other object is a Left with an equal value
          */
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(@Nullable final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -646,8 +647,8 @@ public sealed interface Either<L, R> {
          *
          * @return a string in the format "Left[value]"
          */
-        @NotNull
         @Override
+        @NotNull
         public String toString() {
             return "Left[" + this.value + "]";
         }
@@ -898,7 +899,7 @@ public sealed interface Either<L, R> {
          * @return {@code true} if the other object is a Right with an equal value
          */
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(@Nullable final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -923,8 +924,8 @@ public sealed interface Either<L, R> {
          *
          * @return a string in the format "Right[value]"
          */
-        @NotNull
         @Override
+        @NotNull
         public String toString() {
             return "Right[" + this.value + "]";
         }

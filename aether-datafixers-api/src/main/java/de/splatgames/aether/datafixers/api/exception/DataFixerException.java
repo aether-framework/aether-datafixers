@@ -155,6 +155,7 @@ public class DataFixerException extends RuntimeException {
      * @return the message with context, or just the message if no context
      */
     @Override
+    @NotNull
     public String toString() {
         final String base = getClass().getSimpleName() + ": " + getMessage();
         if (this.context != null) {

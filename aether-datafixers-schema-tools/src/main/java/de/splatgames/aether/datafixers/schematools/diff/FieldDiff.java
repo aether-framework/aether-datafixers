@@ -288,7 +288,7 @@ public final class FieldDiff {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -328,6 +328,7 @@ public final class FieldDiff {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return switch (this.kind) {
             case ADDED -> "+" + this.fieldName + ": " + this.targetField.fieldType().describe();

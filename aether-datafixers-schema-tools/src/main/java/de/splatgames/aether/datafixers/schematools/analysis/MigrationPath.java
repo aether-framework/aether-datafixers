@@ -335,6 +335,7 @@ public final class MigrationPath {
     }
 
     @Override
+    @NotNull
     public String toString() {
         return String.format(
                 "MigrationPath[%d -> %d, %d steps, %d fixes, %d types affected]",

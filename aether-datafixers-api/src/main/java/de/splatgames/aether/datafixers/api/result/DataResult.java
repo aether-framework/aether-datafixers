@@ -778,7 +778,7 @@ public sealed interface DataResult<A> {
          * @return {@code true} if the other object is a Success with an equal value
          */
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(@Nullable final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -803,8 +803,8 @@ public sealed interface DataResult<A> {
          *
          * @return a string in the format "DataResult.Success[value]"
          */
-        @NotNull
         @Override
+        @NotNull
         public String toString() {
             return "DataResult.Success[" + this.value + "]";
         }
@@ -1150,7 +1150,7 @@ public sealed interface DataResult<A> {
          * @return {@code true} if the other object is an Error with equal message and partial
          */
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(@Nullable final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -1177,8 +1177,8 @@ public sealed interface DataResult<A> {
          *
          * @return a string in the format "DataResult.Error[message]" or "DataResult.Error[message, partial=value]"
          */
-        @NotNull
         @Override
+        @NotNull
         public String toString() {
             if (this.partial != null) {
                 return "DataResult.Error[" + this.message + ", partial=" + this.partial + "]";

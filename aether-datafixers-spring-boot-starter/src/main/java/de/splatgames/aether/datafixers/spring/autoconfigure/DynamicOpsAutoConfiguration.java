@@ -33,6 +33,8 @@ import de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps;
 import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
 import de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps;
 import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -177,6 +179,7 @@ public class DynamicOpsAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "gsonOps")
+        @NotNull
         public GsonOps gsonOps() {
             return GsonOps.INSTANCE;
         }
@@ -202,7 +205,8 @@ public class DynamicOpsAutoConfiguration {
                 havingValue = "gson",
                 matchIfMissing = true
         )
-        public DynamicOps<?> defaultGsonOps(final GsonOps gsonOps) {
+        @NotNull
+        public DynamicOps<?> defaultGsonOps(@NotNull final GsonOps gsonOps) {
             return gsonOps;
         }
     }
@@ -241,8 +245,9 @@ public class DynamicOpsAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "jacksonOps")
+        @NotNull
         public JacksonJsonOps jacksonOps(
-                @Autowired(required = false) final ObjectMapper objectMapper
+                @Autowired(required = false) @Nullable final ObjectMapper objectMapper
         ) {
             // Use Spring's ObjectMapper if available for consistent configuration
             return objectMapper != null
@@ -270,7 +275,8 @@ public class DynamicOpsAutoConfiguration {
                 name = "default-format",
                 havingValue = "jackson"
         )
-        public DynamicOps<?> defaultJacksonOps(final JacksonJsonOps jacksonOps) {
+        @NotNull
+        public DynamicOps<?> defaultJacksonOps(@NotNull final JacksonJsonOps jacksonOps) {
             return jacksonOps;
         }
     }
@@ -289,8 +295,9 @@ public class DynamicOpsAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "jacksonYamlOps")
+        @NotNull
         public JacksonYamlOps jacksonYamlOps(
-                @Autowired(required = false) final YAMLMapper yamlMapper
+                @Autowired(required = false) @Nullable final YAMLMapper yamlMapper
         ) {
             return yamlMapper != null
                     ? new JacksonYamlOps(yamlMapper)
@@ -305,7 +312,8 @@ public class DynamicOpsAutoConfiguration {
                 name = "default-format",
                 havingValue = "jackson_yaml"
         )
-        public DynamicOps<?> defaultJacksonYamlOps(final JacksonYamlOps jacksonYamlOps) {
+        @NotNull
+        public DynamicOps<?> defaultJacksonYamlOps(@NotNull final JacksonYamlOps jacksonYamlOps) {
             return jacksonYamlOps;
         }
     }
@@ -324,6 +332,7 @@ public class DynamicOpsAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "snakeYamlOps")
+        @NotNull
         public SnakeYamlOps snakeYamlOps() {
             return SnakeYamlOps.INSTANCE;
         }
@@ -336,7 +345,8 @@ public class DynamicOpsAutoConfiguration {
                 name = "default-format",
                 havingValue = "snakeyaml"
         )
-        public DynamicOps<?> defaultSnakeYamlOps(final SnakeYamlOps snakeYamlOps) {
+        @NotNull
+        public DynamicOps<?> defaultSnakeYamlOps(@NotNull final SnakeYamlOps snakeYamlOps) {
             return snakeYamlOps;
         }
     }
@@ -355,8 +365,9 @@ public class DynamicOpsAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "jacksonTomlOps")
+        @NotNull
         public JacksonTomlOps jacksonTomlOps(
-                @Autowired(required = false) final TomlMapper tomlMapper
+                @Autowired(required = false) @Nullable final TomlMapper tomlMapper
         ) {
             return tomlMapper != null
                     ? new JacksonTomlOps(tomlMapper)
@@ -371,7 +382,8 @@ public class DynamicOpsAutoConfiguration {
                 name = "default-format",
                 havingValue = "jackson_toml"
         )
-        public DynamicOps<?> defaultJacksonTomlOps(final JacksonTomlOps jacksonTomlOps) {
+        @NotNull
+        public DynamicOps<?> defaultJacksonTomlOps(@NotNull final JacksonTomlOps jacksonTomlOps) {
             return jacksonTomlOps;
         }
     }
@@ -390,8 +402,9 @@ public class DynamicOpsAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "jacksonXmlOps")
+        @NotNull
         public JacksonXmlOps jacksonXmlOps(
-                @Autowired(required = false) final XmlMapper xmlMapper
+                @Autowired(required = false) @Nullable final XmlMapper xmlMapper
         ) {
             return xmlMapper != null
                     ? new JacksonXmlOps(xmlMapper)
@@ -406,7 +419,8 @@ public class DynamicOpsAutoConfiguration {
                 name = "default-format",
                 havingValue = "jackson_xml"
         )
-        public DynamicOps<?> defaultJacksonXmlOps(final JacksonXmlOps jacksonXmlOps) {
+        @NotNull
+        public DynamicOps<?> defaultJacksonXmlOps(@NotNull final JacksonXmlOps jacksonXmlOps) {
             return jacksonXmlOps;
         }
     }

@@ -32,6 +32,7 @@ import de.splatgames.aether.datafixers.api.util.Either;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -677,7 +678,7 @@ public final class Typed<A> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -693,6 +694,7 @@ public final class Typed<A> {
     }
 
     @Override
+    @NotNull
     public String toString() {
         return "Typed{type=" + this.type.describe() + ", value=" + this.value + "}";
     }

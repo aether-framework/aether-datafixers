@@ -1371,6 +1371,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * @return the string {@code "JacksonJsonOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "JacksonJsonOps";
     }

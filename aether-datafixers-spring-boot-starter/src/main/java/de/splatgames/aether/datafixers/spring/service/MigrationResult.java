@@ -501,7 +501,7 @@ public final class MigrationResult {
      * @see #hashCode()
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -538,6 +538,7 @@ public final class MigrationResult {
      * @return a string representation of this migration result
      */
     @Override
+    @NotNull
     public String toString() {
         return "MigrationResult{" +
                 "success=" + this.success +

@@ -343,7 +343,7 @@ public final class CoverageGap {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -380,6 +380,7 @@ public final class CoverageGap {
      * @return a formatted string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("CoverageGap[");

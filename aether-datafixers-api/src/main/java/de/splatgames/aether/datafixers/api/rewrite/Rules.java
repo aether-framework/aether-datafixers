@@ -178,6 +178,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -236,6 +237,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -297,6 +299,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -343,6 +346,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "checkOnce(" + rule + ")";
             }
@@ -446,6 +450,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "all(" + rule + ")";
             }
@@ -479,6 +484,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "all(" + rule + ")";
             }
@@ -555,6 +561,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "one(" + rule + ")";
             }
@@ -584,6 +591,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "one(" + rule + ")";
             }
@@ -655,6 +663,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "everywhere(" + rule + ")";
             }
@@ -684,6 +693,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "everywhere(" + rule + ")";
             }
@@ -752,6 +762,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "bottomUp(" + rule + ")";
             }
@@ -781,6 +792,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "bottomUp(" + rule + ")";
             }
@@ -851,6 +863,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "topDown(" + rule + ")";
             }
@@ -880,6 +893,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "topDown(" + rule + ")";
             }
@@ -945,8 +959,9 @@ public final class Rules {
         Preconditions.checkNotNull(updater, "updater must not be null");
         return new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -955,6 +970,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name + "[" + finder.id() + "]";
             }
@@ -997,8 +1013,9 @@ public final class Rules {
         final String ruleName = "renameField(" + oldName + " -> " + newName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -1017,6 +1034,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -1056,8 +1074,9 @@ public final class Rules {
         final String ruleName = "removeField(" + fieldName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -1070,6 +1089,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -1118,8 +1138,9 @@ public final class Rules {
         final String ruleName = "addField(" + fieldName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -1138,6 +1159,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -1310,6 +1332,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }
@@ -1353,8 +1376,9 @@ public final class Rules {
         final String ruleName = "setField(" + fieldName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -1367,6 +1391,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -1416,8 +1441,9 @@ public final class Rules {
         final String ruleName = "renameFields(" + renames + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -1438,6 +1464,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -1486,8 +1513,9 @@ public final class Rules {
         final String ruleName = "removeFields(" + Arrays.toString(fieldNames) + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
             @Override
+            @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+            public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
                                                        @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
@@ -1503,6 +1531,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -1990,6 +2019,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -2047,6 +2077,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -2129,6 +2160,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return ruleName;
             }
@@ -2654,6 +2686,7 @@ public final class Rules {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return "log(" + message + ", " + rule + ")";
             }
