@@ -238,19 +238,38 @@ class DataFixerEndpointTest {
             when(fixer.currentVersion()).thenReturn(new DataVersion(200));
             reg.register("game", fixer);
 
-            // Create a mock MigrationReport
+            // Build a real FixExecution record (records are final, so they cannot be mocked)
+            // carrying two field operations.
+            RuleApplication ruleApp = new RuleApplication(
+                    "renameAndRemove",
+                    "player",
+                    Instant.now(),
+                    Duration.ofMillis(5),
+                    true,
+                    null,
+                    List.of(
+                            FieldOperation.rename("oldName", "newName"),
+                            FieldOperation.remove("deprecated")
+                    )
+            );
+            FixExecution fix = new FixExecution(
+                    "test_fix",
+                    new DataVersion(100),
+                    new DataVersion(200),
+                    Instant.now(),
+                    Duration.ofMillis(20),
+                    List.of(ruleApp),
+                    null,
+                    null
+            );
+
+            // The MigrationReport interface is mockable; only the concrete records are not.
             MigrationReport report = mock(MigrationReport.class);
             when(report.fromVersion()).thenReturn(new DataVersion(100));
             when(report.toVersion()).thenReturn(new DataVersion(200));
             when(report.totalDuration()).thenReturn(Duration.ofMillis(42));
             when(report.fixCount()).thenReturn(1);
             when(report.totalFieldOperationCount()).thenReturn(2);
-
-            FixExecution fix = mock(FixExecution.class);
-            when(fix.allFieldOperations()).thenReturn(List.of(
-                    FieldOperation.rename("oldName", "newName"),
-                    FieldOperation.remove("deprecated")
-            ));
             when(report.fixExecutions()).thenReturn(List.of(fix));
             store.store("game", report);
 
