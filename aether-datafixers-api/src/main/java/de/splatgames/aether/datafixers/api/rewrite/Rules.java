@@ -23,7 +23,10 @@
 package de.splatgames.aether.datafixers.api.rewrite;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
 import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperationType;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.optic.Finder;
@@ -43,67 +46,246 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Factory class providing common combinators for building {@link TypeRewriteRule} instances.
+ * Factory class providing combinators and field-level operations for building
+ * {@link TypeRewriteRule} instances.
  *
- * <p>The {@code Rules} class is a comprehensive toolkit for constructing data migration rules.
- * It provides a rich set of combinators that allow complex migration logic to be built from simple, composable
- * primitives. These combinators follow functional programming patterns and enable declarative specification of data
- * transformations.</p>
+ * <p>{@code Rules} is the canonical entry point for constructing data migration
+ * logic in Aether Datafixers. It exposes a rich, type-safe DSL of small,
+ * composable primitives that can be combined into arbitrarily complex
+ * transformations. Every factory method here returns a stateless, thread-safe
+ * {@link TypeRewriteRule} that can be reused across migrations.</p>
+ *
+ * <p>Every field-operation method (rename, remove, add, transform, batch
+ * variants, path-based variants, and conditionals) returns a rule that
+ * implements {@link FieldAwareRule} and carries structured
+ * {@link FieldOperation} metadata. When such a rule runs inside a
+ * {@link DiagnosticContext}, the
+ * resulting {@link MigrationReport
+ * MigrationReport} captures exactly which fields were touched and how — not
+ * merely <i>that</i> a rule ran. The composition combinators
+ * ({@link #seq}, {@link #seqAll}, {@link #choice}, {@link #batch})
+ * transparently aggregate this metadata from their children, so a single
+ * composed rule surfaces all of its sub-operations as a unified group.</p>
  *
  * <h2>Combinator Categories</h2>
+ *
+ * <h3>1. Basic Composition (sequence and choice)</h3>
+ * <p>These combinators stitch other rules together. They preserve and aggregate
+ * field operation metadata from their children, so a {@code seq} of three
+ * field-aware rules surfaces as a single rule whose
+ * {@link FieldAwareRule#fieldOperations()} contains all three operations
+ * flattened in order.</p>
  * <ul>
- *   <li><strong>Basic Combinators:</strong> {@link #seq}, {@link #seqAll}, {@link #choice},
- *       {@link #checkOnce}, {@link #tryOnce}</li>
- *   <li><strong>Traversal Combinators:</strong> {@link #all}, {@link #one}, {@link #everywhere},
- *       {@link #bottomUp}, {@link #topDown}</li>
- *   <li><strong>Type-Specific:</strong> {@link #ifType}, {@link #transformType}</li>
- *   <li><strong>Field Operations:</strong> {@link #renameField}, {@link #removeField},
- *       {@link #addField}, {@link #transformField}</li>
- *   <li><strong>Utilities:</strong> {@link #noop}, {@link #log}</li>
+ *   <li>{@link #seq(TypeRewriteRule...) seq} — Apply rules in order; all must
+ *       succeed. The result of each rule feeds the next (AND semantics).</li>
+ *   <li>{@link #seqAll(TypeRewriteRule...) seqAll} — Like {@code seq}, but
+ *       failures are tolerated and the next rule receives the previous output
+ *       unchanged (forgiving AND).</li>
+ *   <li>{@link #choice(TypeRewriteRule...) choice} — First successful rule wins
+ *       (OR semantics). Field operations from <i>all</i> alternatives are
+ *       aggregated into the metadata, since any of them might match at runtime.</li>
+ *   <li>{@link #checkOnce(TypeRewriteRule) checkOnce} — Apply the inner rule a
+ *       single time without recursing into the result.</li>
+ *   <li>{@link #tryOnce(TypeRewriteRule) tryOnce} — Like {@code checkOnce}, but
+ *       silently swallows failures (returns the input unchanged).</li>
  * </ul>
  *
- * <h2>Usage Example</h2>
+ * <h3>2. Traversal Combinators</h3>
+ * <p>These walk recursive data structures and apply a rule at one or more
+ * positions. Each combinator has two overloads: one with an explicit
+ * {@link DynamicOps} for {@link Dynamic}-based traversal, and a higher-level
+ * overload that operates on the {@link Type} system.</p>
+ * <ul>
+ *   <li>{@link #all(TypeRewriteRule) all} — Apply the rule to every immediate
+ *       child of the current node. All children must succeed.</li>
+ *   <li>{@link #one(TypeRewriteRule) one} — Apply the rule to exactly one
+ *       child; succeed as soon as one match is found.</li>
+ *   <li>{@link #everywhere(TypeRewriteRule) everywhere} — Apply the rule at the
+ *       current node and recursively at every descendant.</li>
+ *   <li>{@link #bottomUp(TypeRewriteRule) bottomUp} — Recurse first, then apply
+ *       the rule on the way back up (leaves before parents).</li>
+ *   <li>{@link #topDown(TypeRewriteRule) topDown} — Apply the rule to the
+ *       current node first, then recurse into the result (parents before leaves).</li>
+ * </ul>
+ *
+ * <h3>3. Type Filters and Type-Aware Updates</h3>
+ * <ul>
+ *   <li>{@link #ifType(Type, TypeRewriteRule) ifType} — Apply the inner rule
+ *       only if the current value matches the given {@link Type}; otherwise
+ *       leave the value unchanged.</li>
+ *   <li>{@link #transformType(String, Type, Function) transformType} — Apply a
+ *       value-level {@code A -> A} transformation to every occurrence of a
+ *       given {@link Type} in the structure, named for diagnostics.</li>
+ *   <li>{@link #updateAt(String, DynamicOps, Finder, Function) updateAt} —
+ *       Update the {@link Dynamic} at a position located by a {@link Finder},
+ *       leaving everything else intact.</li>
+ * </ul>
+ *
+ * <h3>4. Top-Level Field Operations</h3>
+ * <p>These are the most common building blocks. Each operates on a single,
+ * top-level field of a {@link Dynamic} map and returns a
+ * {@link FieldAwareRule} carrying the corresponding {@link FieldOperation}.</p>
+ * <ul>
+ *   <li>{@link #renameField(DynamicOps, String, String) renameField} — Rename
+ *       a field, preserving its value.</li>
+ *   <li>{@link #removeField(DynamicOps, String) removeField} — Drop a field
+ *       entirely.</li>
+ *   <li>{@link #addField(DynamicOps, String, Dynamic) addField} — Add a field
+ *       with a default value, only if it does not already exist.</li>
+ *   <li>{@link #transformField(DynamicOps, String, Function) transformField} —
+ *       Apply a {@code Dynamic -> Dynamic} function to an existing field.</li>
+ *   <li>{@link #setField(DynamicOps, String, Dynamic) setField} — Unconditionally
+ *       set a field's value, overwriting any existing value.</li>
+ * </ul>
+ *
+ * <h3>5. Batch Field Operations</h3>
+ * <p>Equivalents that operate on many fields at once for performance — useful
+ * when migrating dozens of fields in the same step. They return a single rule
+ * whose field-operation metadata contains one entry per affected field.</p>
+ * <ul>
+ *   <li>{@link #renameFields(DynamicOps, Map) renameFields} — Rename many
+ *       fields in a single pass, given an old-name → new-name map.</li>
+ *   <li>{@link #removeFields(DynamicOps, String...) removeFields} — Remove
+ *       multiple fields in a single pass.</li>
+ *   <li>{@link #groupFields(DynamicOps, String, String...) groupFields} —
+ *       Collapse a set of flat fields into a nested object.</li>
+ *   <li>{@link #flattenField(DynamicOps, String) flattenField} — The inverse:
+ *       lift the entries of a nested object into the parent.</li>
+ *   <li>{@link #moveField(DynamicOps, String, String) moveField} — Relocate a
+ *       field (possibly across nesting levels), removing the source.</li>
+ *   <li>{@link #copyField(DynamicOps, String, String) copyField} — Like
+ *       {@code moveField} but keeps the source intact.</li>
+ *   <li>{@link #batch(DynamicOps, Consumer) batch} — Imperative builder for
+ *       composing many of the above operations into a single rule with shared
+ *       metadata; useful for very large per-step migrations.</li>
+ * </ul>
+ *
+ * <h3>6. Path-Based (Nested) Field Operations</h3>
+ * <p>Variants of the top-level operations that accept a dot-notation path
+ * (e.g. {@code "position.x"}) for navigating into nested objects. Internally
+ * they use {@link Finder} optics; the resulting rule carries a
+ * {@link FieldOperation} whose {@code fieldPath} reflects the nested structure.</p>
+ * <ul>
+ *   <li>{@link #transformFieldAt(DynamicOps, String, Function) transformFieldAt}</li>
+ *   <li>{@link #renameFieldAt(DynamicOps, String, String) renameFieldAt}</li>
+ *   <li>{@link #removeFieldAt(DynamicOps, String) removeFieldAt}</li>
+ *   <li>{@link #addFieldAt(DynamicOps, String, Dynamic) addFieldAt}</li>
+ * </ul>
+ *
+ * <h3>7. Conditional Field Operations</h3>
+ * <p>Apply an inner rule only when a field-level condition is satisfied. These
+ * are typically composed with the field combinators above to express "migrate
+ * X only when Y looks like Z" patterns. The diagnostic metadata records the
+ * condition itself as a {@link FieldOperation} of type
+ * {@link FieldOperationType#CONDITIONAL}.</p>
+ * <ul>
+ *   <li>{@link #ifFieldExists(DynamicOps, String, TypeRewriteRule) ifFieldExists} —
+ *       Apply the inner rule only when a named field is present.</li>
+ *   <li>{@link #ifFieldMissing(DynamicOps, String, TypeRewriteRule) ifFieldMissing} —
+ *       Apply the inner rule only when a named field is absent.</li>
+ *   <li>{@link #ifFieldEquals(DynamicOps, String, Object, TypeRewriteRule) ifFieldEquals} —
+ *       Apply the inner rule only when a field equals a given value.</li>
+ *   <li>{@link #conditionalTransform(DynamicOps, Predicate, Function) conditionalTransform} —
+ *       General-purpose predicate-based transformation for cases the
+ *       specialised helpers do not cover.</li>
+ * </ul>
+ *
+ * <h3>8. Escape Hatches and Utilities</h3>
+ * <ul>
+ *   <li>{@link #dynamicTransform(String, DynamicOps, Function) dynamicTransform} —
+ *       Wrap an arbitrary {@code Dynamic -> Dynamic} function as a rule. Use
+ *       this when none of the higher-level combinators fits; the resulting
+ *       rule does <i>not</i> carry field-operation metadata, so the diagnostic
+ *       system reports it as opaque.</li>
+ *   <li>{@link #noop() noop} — A rule that returns its input unchanged. Useful
+ *       as a placeholder or as the {@code else}-branch of a choice.</li>
+ *   <li>{@link #log(String, TypeRewriteRule) log} — Wrap a rule in SLF4J
+ *       logging for debugging migrations.</li>
+ * </ul>
+ *
+ * <h2>Putting It Together — A Realistic Migration</h2>
  * <pre>{@code
- * // Build a complex migration rule using combinators
- * TypeRewriteRule migration = Rules.seq(
- *     // First, rename the old field
+ * // Migrate a player save from v1 to v2:
+ * //   - rename "playerName" to "name"
+ * //   - drop the legacy "lastSeen" field
+ * //   - regroup x/y/z coordinates into a nested "position" object
+ * //   - add a default "health" field
+ * //   - bump "level" by one — but only if it currently exists
+ * //   - all bundled into a single sequence so the diagnostics report
+ * //     attributes every change to the migration step.
+ * TypeRewriteRule playerV1ToV2 = Rules.seq(
  *     Rules.renameField(GsonOps.INSTANCE, "playerName", "name"),
- *
- *     // Then add a default score if missing
- *     Rules.addField(GsonOps.INSTANCE, "score",
- *         new Dynamic<>(GsonOps.INSTANCE, JsonPrimitive(0))),
- *
- *     // Finally, transform the level field
- *     Rules.transformField(GsonOps.INSTANCE, "level",
- *         d -> d.createInt(d.asInt().orElse(0) + 1))
+ *     Rules.removeField(GsonOps.INSTANCE, "lastSeen"),
+ *     Rules.groupFields(GsonOps.INSTANCE, "position", "x", "y", "z"),
+ *     Rules.addField(GsonOps.INSTANCE, "health",
+ *         new Dynamic<>(GsonOps.INSTANCE, GsonOps.INSTANCE.createInt(100))),
+ *     Rules.ifFieldExists(GsonOps.INSTANCE, "level",
+ *         Rules.transformField(GsonOps.INSTANCE, "level",
+ *             d -> d.createInt(d.asInt().result().orElse(0) + 1)))
  * );
  *
- * // Apply the migration
- * Typed<?> result = migration.apply(inputData);
+ * // When run with a DiagnosticContext, the resulting MigrationReport contains
+ * // one FieldOperation per top-level rule above (5 entries: RENAME, REMOVE,
+ * // GROUP, ADD, CONDITIONAL — the inner TRANSFORM is recorded under the
+ * // CONDITIONAL wrapper).
  * }</pre>
  *
- * <h2>Sequencing vs Choice</h2>
+ * <h2>Sequencing vs Choice — Quick Reference</h2>
  * <ul>
- *   <li>{@link #seq} - All rules must succeed (AND-like)</li>
- *   <li>{@link #seqAll} - Apply all rules, continue on failure (forgiving AND)</li>
- *   <li>{@link #choice} - First successful rule wins (OR-like)</li>
+ *   <li>{@link #seq} — All rules must succeed (AND-like). The output of each
+ *       rule feeds the next.</li>
+ *   <li>{@link #seqAll} — Apply all rules, but tolerate individual failures
+ *       (forgiving AND). The next rule always sees the previous output.</li>
+ *   <li>{@link #choice} — First successful rule wins (OR-like). Subsequent
+ *       alternatives are not evaluated.</li>
  * </ul>
  *
- * <h2>Traversal Strategies</h2>
- * <p>For recursive data structures:</p>
+ * <h2>Traversal Strategies — Quick Reference</h2>
+ * <p>For recursive structures (lists, nested maps, sums of types):</p>
  * <ul>
- *   <li>{@link #topDown} - Apply rule to parent first, then children</li>
- *   <li>{@link #bottomUp} - Apply rule to children first, then parent</li>
- *   <li>{@link #everywhere} - Apply rule at all levels</li>
+ *   <li>{@link #topDown} — Apply the rule at the parent first, then recurse
+ *       into the result. Use when the migration changes the shape of children
+ *       and the parent rule must see the original structure.</li>
+ *   <li>{@link #bottomUp} — Recurse into children first, then apply the rule
+ *       at the parent. Use when the parent rule needs the already-migrated
+ *       children to make a decision.</li>
+ *   <li>{@link #everywhere} — Apply at every node, parents and children, in a
+ *       single combined pass.</li>
  * </ul>
+ *
+ * <h2>Custom Rules and the Field-Aware Marker</h2>
+ * <p>Rules created via {@link #dynamicTransform} or by hand-implementing
+ * {@link TypeRewriteRule} are <i>not</i> field-aware by default — the
+ * diagnostic system records them but cannot break them down by field. If you
+ * write a custom rule and want diagnostic visibility, also implement
+ * {@link FieldAwareRule} and return the operations your rule performs from
+ * {@link FieldAwareRule#fieldOperations()}.</p>
  *
  * <h2>Thread Safety</h2>
- * <p>All factory methods return stateless, thread-safe rules. The same rule
- * instance can be used concurrently for multiple migrations.</p>
+ * <p>All factory methods return stateless, thread-safe rules. A rule built
+ * once at application start can be reused concurrently for any number of
+ * migrations. The internal {@link Finder} cache used by the path-based
+ * methods is also thread-safe.</p>
+ *
+ * <h2>Performance Notes</h2>
+ * <ul>
+ *   <li>Path parsing for {@code *FieldAt} methods is cached, so repeating the
+ *       same path across many rules has no per-call cost after the first.</li>
+ *   <li>Composition combinators construct flat metadata lists eagerly when the
+ *       rule is built, not at apply time, so diagnostic capture imposes
+ *       essentially zero overhead per migration.</li>
+ *   <li>Prefer the batch variants ({@link #renameFields}, {@link #removeFields},
+ *       {@link #batch}) over many individual calls when migrating many fields
+ *       in the same step — they avoid repeated map traversals.</li>
+ * </ul>
  *
  * @author Erik Pförtner
  * @see TypeRewriteRule
+ * @see FieldAwareRule
+ * @see FieldOperation
  * @see Finder
+ * @see MigrationReport
+ * @see DiagnosticContext
  * @since 0.1.0
  */
 public final class Rules {
