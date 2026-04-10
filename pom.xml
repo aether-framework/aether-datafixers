@@ -64,6 +64,10 @@
         <plugin.owasp.version>12.2.0</plugin.owasp.version>
         <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
 
+        <!-- Nullability enforcement (NullAway via Error Prone) -->
+        <errorprone.version>2.36.0</errorprone.version>
+        <nullaway.version>0.12.7</nullaway.version>
+
         <!-- QA configuration -->
         <jacoco.skip>false</jacoco.skip>
         <jacoco.coverage.minimum>0.75</jacoco.coverage.minimum>
@@ -549,6 +553,61 @@
                             <includeTestScope>false</includeTestScope>
                             <includeLicenseText>false</includeLicenseText>
                             <outputFormat>all</outputFormat>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Nullability Profile: NullAway via Error Prone -->
+        <!--
+            Activate with: mvn compile -Pnullability
+            Treats all unannotated reference types as @NotNull and fails the build
+            on any null-safety violation in the de.splatgames.aether.datafixers packages.
+            New code is automatically checked; legacy gaps surface as build errors.
+        -->
+        <profile>
+            <id>nullability</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${plugin.compiler.version}</version>
+                        <configuration>
+                            <source>${maven.compiler.release}</source>
+                            <target>${maven.compiler.release}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <showWarnings>true</showWarnings>
+                            <fork>true</fork>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>--should-stop=ifError=FLOW</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=de.splatgames.aether.datafixers</arg>
+                                <!-- Required JVM exports for ErrorProne on JDK 17+ -->
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${errorprone.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>com.uber.nullaway</groupId>
+                                    <artifactId>nullaway</artifactId>
+                                    <version>${nullaway.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
                         </configuration>
                     </plugin>
                 </plugins>

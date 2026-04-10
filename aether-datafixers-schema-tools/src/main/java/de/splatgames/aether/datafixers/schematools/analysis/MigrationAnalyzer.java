@@ -383,6 +383,7 @@ public final class MigrationAnalyzer {
      * @param sourceSchema  the source schema for this step, must not be {@code null}
      * @param targetSchema  the target schema for this step, must not be {@code null}
      * @param reportBuilder the builder accumulating fix entries, must not be {@code null}
+     * @since 1.0.0
      */
     private void collectStepFieldOperations(
             @NotNull final Schema sourceSchema,
@@ -417,6 +418,7 @@ public final class MigrationAnalyzer {
      * @param sourceSchema the schema corresponding to the fix's source version, must not be {@code null}
      * @param targetSchema the schema corresponding to the fix's target version, must not be {@code null}
      * @return the field operations entry for this fix, never {@code null}
+     * @since 1.0.0
      */
     @NotNull
     private FixFieldOperations introspectFix(
