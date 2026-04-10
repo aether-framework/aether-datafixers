@@ -65,13 +65,11 @@ public interface ReportFormatter {
      * @return the formatted report string
      */
     @NotNull
-    String formatSimple(
-            @NotNull String fileName,
-            @NotNull String type,
-            int fromVersion,
-            int toVersion,
-            @NotNull Duration duration
-    );
+    String formatSimple(@NotNull final String fileName,
+                        @NotNull final String type,
+                        final int fromVersion,
+                        final int toVersion,
+                        @NotNull final Duration duration);
 
     /**
      * Formats a diagnostic migration report including field-level operation details.
@@ -84,13 +82,11 @@ public interface ReportFormatter {
      * @param type     the type reference ID
      * @param report   the diagnostic migration report
      * @return the formatted diagnostic report string
+     * @since 0.1.0
      */
     @NotNull
-    String formatDiagnostic(
-            @NotNull String fileName,
-            @NotNull String type,
-            @NotNull MigrationReport report
-    );
+    String formatDiagnostic(@NotNull final String fileName,
+                            @NotNull final String type, @NotNull final MigrationReport report);
 
     /**
      * Gets a formatter by format name.
@@ -102,9 +98,10 @@ public interface ReportFormatter {
     static ReportFormatter forFormat(@NotNull final String format) {
         Preconditions.checkNotNull(format, "format must not be null");
 
-        return switch (format.toLowerCase()) {
-            case "json" -> new JsonReportFormatter();
-            default -> new TextReportFormatter();
-        };
+        if (format.equalsIgnoreCase("json")) {
+            return new JsonReportFormatter();
+        } else {
+            return new TextReportFormatter();
+        }
     }
 }

@@ -42,8 +42,8 @@ import org.jetbrains.annotations.NotNull;
  * High-level facade for the Aether DataFixers system.
  *
  * <p>{@code AetherDataFixer} provides a unified interface for encoding, decoding,
- * and migrating data across versions. It combines a {@link SchemaRegistry} for
- * type definitions with a {@link DataFixer} for version migrations.</p>
+ * and migrating data across versions. It combines a {@link SchemaRegistry} for type definitions with a
+ * {@link DataFixer} for version migrations.</p>
  *
  * <h2>Core Operations</h2>
  * <ul>
@@ -87,9 +87,19 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.1.0
  */
 public final class AetherDataFixer {
-
+    /**
+     * The current (latest) data version. This is used as the default target version for encoding and can be used to
+     * determine the latest schema for decoding. It should be set to the highest version number that has a registered
+     * schema in the SchemaRegistry.
+     */
     private final DataVersion currentVersion;
+    /**
+     * The schema registry containing all schemas and type definitions.
+     */
     private final SchemaRegistry schemaRegistry;
+    /**
+     * The underlying data fixer responsible for applying registered fixes during updates.
+     */
     private final DataFixer dataFixer;
 
     /**
@@ -100,11 +110,9 @@ public final class AetherDataFixer {
      * @param dataFixer      the underlying data fixer for migrations, must not be {@code null}
      * @throws NullPointerException if any argument is {@code null}
      */
-    public AetherDataFixer(
-            @NotNull final DataVersion currentVersion,
-            @NotNull final SchemaRegistry schemaRegistry,
-            @NotNull final DataFixer dataFixer
-    ) {
+    public AetherDataFixer(@NotNull final DataVersion currentVersion,
+                           @NotNull final SchemaRegistry schemaRegistry,
+                           @NotNull final DataFixer dataFixer) {
         Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
         Preconditions.checkNotNull(schemaRegistry, "schemaRegistry must not be null");
         Preconditions.checkNotNull(dataFixer, "dataFixer must not be null");
@@ -141,12 +149,10 @@ public final class AetherDataFixer {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public <A, T> TaggedDynamic encode(
-            @NotNull final DataVersion targetVersion,
-            @NotNull final TypeReference typeRef,
-            @NotNull final A value,
-            @NotNull final DynamicOps<T> ops
-    ) {
+    public <A, T> TaggedDynamic encode(@NotNull final DataVersion targetVersion,
+                                       @NotNull final TypeReference typeRef,
+                                       @NotNull final A value,
+                                       @NotNull final DynamicOps<T> ops) {
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(typeRef, "typeRef must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
@@ -174,11 +180,9 @@ public final class AetherDataFixer {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public TaggedDynamic update(
-            @NotNull final TaggedDynamic input,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion
-    ) {
+    public TaggedDynamic update(@NotNull final TaggedDynamic input,
+                                @NotNull final DataVersion fromVersion,
+                                @NotNull final DataVersion toVersion) {
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         Preconditions.checkNotNull(toVersion, "toVersion must not be null");
@@ -199,10 +203,9 @@ public final class AetherDataFixer {
      * Updates data from one version to another using the specified context.
      *
      * <p>Applies all registered fixes between the source and target versions
-     * to migrate the data. The provided {@link DataFixerContext} controls
-     * logging and diagnostic behavior during migration. Pass a
-     * {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}
-     * to capture detailed migration diagnostics including field-level operations.</p>
+     * to migrate the data. The provided {@link DataFixerContext} controls logging and diagnostic behavior during
+     * migration. Pass a {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext} to capture detailed
+     * migration diagnostics including field-level operations.</p>
      *
      * @param input       the tagged dynamic data to update, must not be {@code null}
      * @param fromVersion the source version of the data, must not be {@code null}
@@ -213,12 +216,10 @@ public final class AetherDataFixer {
      * @since 1.0.0
      */
     @NotNull
-    public TaggedDynamic update(
-            @NotNull final TaggedDynamic input,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final DataFixerContext context
-    ) {
+    public TaggedDynamic update(@NotNull final TaggedDynamic input,
+                                @NotNull final DataVersion fromVersion,
+                                @NotNull final DataVersion toVersion,
+                                @NotNull final DataFixerContext context) {
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         Preconditions.checkNotNull(toVersion, "toVersion must not be null");
@@ -250,10 +251,8 @@ public final class AetherDataFixer {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public <A> A decode(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final TaggedDynamic input
-    ) {
+    public <A> A decode(@NotNull final DataVersion sourceVersion,
+                        @NotNull final TaggedDynamic input) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(input, "input must not be null");
 

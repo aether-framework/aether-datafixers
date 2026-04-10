@@ -172,7 +172,7 @@ public interface MigrationService {
      * @throws NullPointerException if data is {@code null}
      */
     @NotNull
-    MigrationRequestBuilder migrate(@NotNull TaggedDynamic data);
+    MigrationRequestBuilder migrate(@NotNull final TaggedDynamic data);
 
     /**
      * Returns the current (latest) version for the default domain.
@@ -199,7 +199,7 @@ public interface MigrationService {
      * @throws NullPointerException     if domain is {@code null}
      */
     @NotNull
-    DataVersion getCurrentVersion(@NotNull String domain);
+    DataVersion getCurrentVersion(@NotNull final String domain);
 
     /**
      * Checks whether a specific domain is available for migrations.
@@ -212,7 +212,7 @@ public interface MigrationService {
      *         {@code false} otherwise
      * @throws NullPointerException if domain is {@code null}
      */
-    boolean hasDomain(@NotNull String domain);
+    boolean hasDomain(@NotNull final String domain);
 
     /**
      * Returns all available domain names registered with this service.
@@ -280,7 +280,7 @@ public interface MigrationService {
          * @throws NullPointerException if version is {@code null}
          */
         @NotNull
-        MigrationRequestBuilder from(@NotNull DataVersion version);
+        MigrationRequestBuilder from(@NotNull final DataVersion version);
 
         /**
          * Specifies the source data version by integer value.
@@ -308,7 +308,7 @@ public interface MigrationService {
          * @throws NullPointerException if version is {@code null}
          */
         @NotNull
-        MigrationRequestBuilder to(@NotNull DataVersion version);
+        MigrationRequestBuilder to(@NotNull final DataVersion version);
 
         /**
          * Specifies the target data version by integer value.
@@ -352,7 +352,7 @@ public interface MigrationService {
          * @see de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry
          */
         @NotNull
-        MigrationRequestBuilder usingDomain(@NotNull String domain);
+        MigrationRequestBuilder usingDomain(@NotNull final String domain);
 
         /**
          * Specifies custom DynamicOps to use for the migration.
@@ -367,7 +367,7 @@ public interface MigrationService {
          * @throws NullPointerException if ops is {@code null}
          */
         @NotNull
-        <T> MigrationRequestBuilder withOps(@NotNull DynamicOps<T> ops);
+        <T> MigrationRequestBuilder withOps(@NotNull final DynamicOps<T> ops);
 
         /**
          * Enables diagnostic capture with default options during migration.
@@ -412,7 +412,7 @@ public interface MigrationService {
          * @see MigrationResult#getDiagnosticReport()
          */
         @NotNull
-        MigrationRequestBuilder withDiagnostics(@NotNull DiagnosticOptions options);
+        MigrationRequestBuilder withDiagnostics(@NotNull final DiagnosticOptions options);
 
         /**
          * Executes the configured migration synchronously.

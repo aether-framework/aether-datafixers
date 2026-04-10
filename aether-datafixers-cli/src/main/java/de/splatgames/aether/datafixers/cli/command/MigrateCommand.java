@@ -50,6 +50,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -546,8 +547,8 @@ public class MigrateCommand implements Callable<Integer> {
                 if (this.reportFile != null) {
                     Files.writeString(this.reportFile.toPath(), diagnosticContent,
                             StandardCharsets.UTF_8,
-                            java.nio.file.StandardOpenOption.CREATE,
-                            java.nio.file.StandardOpenOption.APPEND);
+                            StandardOpenOption.CREATE,
+                            StandardOpenOption.APPEND);
                 } else {
                     System.err.println(diagnosticContent);
                 }

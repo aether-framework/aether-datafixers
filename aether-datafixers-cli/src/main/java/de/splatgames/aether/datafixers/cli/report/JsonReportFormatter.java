@@ -107,13 +107,11 @@ public class JsonReportFormatter implements ReportFormatter {
      */
     @Override
     @NotNull
-    public String formatSimple(
-            @NotNull final String fileName,
-            @NotNull final String type,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Duration duration
-    ) {
+    public String formatSimple(@NotNull final String fileName,
+                               @NotNull final String type,
+                               final int fromVersion,
+                               final int toVersion,
+                               @NotNull final Duration duration) {
         Preconditions.checkNotNull(fileName, "fileName must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
@@ -172,14 +170,13 @@ public class JsonReportFormatter implements ReportFormatter {
      * @param type     the type reference ID (e.g., "player", "world")
      * @param report   the diagnostic migration report containing fix and field operation details
      * @return a pretty-printed JSON string representing the diagnostic report
+     * @since 1.0.0
      */
     @Override
     @NotNull
-    public String formatDiagnostic(
-            @NotNull final String fileName,
-            @NotNull final String type,
-            @NotNull final MigrationReport report
-    ) {
+    public String formatDiagnostic(@NotNull final String fileName,
+                                   @NotNull final String type,
+                                   @NotNull final MigrationReport report) {
         Preconditions.checkNotNull(fileName, "fileName must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(report, "report must not be null");

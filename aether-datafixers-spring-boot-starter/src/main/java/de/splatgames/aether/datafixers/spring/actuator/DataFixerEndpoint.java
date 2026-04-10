@@ -202,10 +202,8 @@ public class DataFixerEndpoint {
      * @throws NullPointerException if registry is {@code null}
      * @since 1.0.0
      */
-    public DataFixerEndpoint(
-            @NotNull final DataFixerRegistry registry,
-            @Nullable final DiagnosticReportStore diagnosticReportStore
-    ) {
+    public DataFixerEndpoint(@NotNull final DataFixerRegistry registry,
+                             @Nullable final DiagnosticReportStore diagnosticReportStore) {
         this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
         this.diagnosticReportStore = diagnosticReportStore;
     }
@@ -320,9 +318,7 @@ public class DataFixerEndpoint {
      * @return the field diagnostics summary
      */
     @NotNull
-    private static FieldDiagnosticsSummary buildFieldDiagnosticsSummary(
-            @NotNull final MigrationReport report
-    ) {
+    private static FieldDiagnosticsSummary buildFieldDiagnosticsSummary(@NotNull final MigrationReport report) {
         final List<FieldOperationSummary> operations = report.fixExecutions().stream()
                 .flatMap(fix -> fix.allFieldOperations().stream()
                         .map(op -> new FieldOperationSummary(
@@ -439,12 +435,11 @@ public class DataFixerEndpoint {
      * @author Erik Pförtner
      * @since 0.4.0
      */
-    public record DomainDetails(
-            String domain,
-            int currentVersion,
-            String status,
-            @Nullable String error,
-            @Nullable FieldDiagnosticsSummary lastDiagnostics
+    public record DomainDetails(String domain,
+                                int currentVersion,
+                                String status,
+                                @Nullable String error,
+                                @Nullable FieldDiagnosticsSummary lastDiagnostics
     ) {
     }
 
@@ -463,13 +458,12 @@ public class DataFixerEndpoint {
      * @author Erik Pförtner
      * @since 1.0.0
      */
-    public record FieldDiagnosticsSummary(
-            int fromVersion,
-            int toVersion,
-            long durationMs,
-            int fixCount,
-            int fieldOperationCount,
-            List<FieldOperationSummary> fieldOperations
+    public record FieldDiagnosticsSummary(int fromVersion,
+                                          int toVersion,
+                                          long durationMs,
+                                          int fixCount,
+                                          int fieldOperationCount,
+                                          List<FieldOperationSummary> fieldOperations
     ) {
 
         /**
@@ -490,11 +484,10 @@ public class DataFixerEndpoint {
      * @author Erik Pförtner
      * @since 1.0.0
      */
-    public record FieldOperationSummary(
-            String type,
-            String field,
-            @Nullable String target,
-            @Nullable String description
+    public record FieldOperationSummary(String type,
+                                        String field,
+                                        @Nullable String target,
+                                        @Nullable String description
     ) {
     }
 }

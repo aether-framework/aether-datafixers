@@ -30,6 +30,7 @@ import de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics;
 import de.splatgames.aether.datafixers.spring.service.DefaultMigrationService;
 import de.splatgames.aether.datafixers.spring.service.DiagnosticReportStore;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
@@ -186,9 +187,7 @@ public class ActuatorAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "dataFixerHealthIndicator")
-        public DataFixerHealthIndicator dataFixerHealthIndicator(
-                final DataFixerRegistry registry
-        ) {
+        public DataFixerHealthIndicator dataFixerHealthIndicator(final DataFixerRegistry registry) {
             return new DataFixerHealthIndicator(registry);
         }
     }
@@ -217,9 +216,7 @@ public class ActuatorAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "dataFixerInfoContributor")
-        public DataFixerInfoContributor dataFixerInfoContributor(
-                final DataFixerRegistry registry
-        ) {
+        public DataFixerInfoContributor dataFixerInfoContributor(final DataFixerRegistry registry) {
             return new DataFixerInfoContributor(registry);
         }
     }
@@ -254,10 +251,9 @@ public class ActuatorAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean
-        public DataFixerEndpoint dataFixerEndpoint(
-                final DataFixerRegistry registry,
-                @org.springframework.beans.factory.annotation.Autowired(required = false)
-                final DefaultMigrationService migrationService
+        public DataFixerEndpoint dataFixerEndpoint(final DataFixerRegistry registry,
+                                                   @Autowired(required = false)
+                                                   final DefaultMigrationService migrationService
         ) {
             final DiagnosticReportStore store = migrationService != null
                     ? migrationService.getDiagnosticReportStore()
