@@ -145,6 +145,58 @@ public abstract class SchemaDataFix implements DataFix<Object> {
             @NotNull Schema outputSchema
     );
 
+    /**
+     * Introspects the rule produced by this fix without executing a migration.
+     *
+     * <p>This method exposes the {@link TypeRewriteRule} that this fix would apply
+     * for the given input and output schemas. It is intended for static analysis
+     * tools (e.g.,
+     * {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule field-level
+     * diagnostic analyzers}) that need to inspect what a fix does without actually
+     * running it on data.</p>
+     *
+     * <p>Unlike {@link #apply(TypeReference, Dynamic, DataFixerContext)}, this method:</p>
+     * <ul>
+     *   <li>Does not require any input data</li>
+     *   <li>Does not invoke {@code rule.apply()}</li>
+     *   <li>Does not wrap the rule with diagnostic instrumentation</li>
+     *   <li>Returns the unmodified result of {@link #makeRule(Schema, Schema)}</li>
+     * </ul>
+     *
+     * <h4>Usage Example</h4>
+     * <pre>{@code
+     * Schema inputSchema = registry.require(new DataVersion(100));
+     * Schema outputSchema = registry.require(new DataVersion(200));
+     * TypeRewriteRule rule = fix.introspectRule(inputSchema, outputSchema);
+     *
+     * if (rule instanceof FieldAwareRule fieldAware) {
+     *     for (FieldOperation op : fieldAware.fieldOperations()) {
+     *         System.out.println(op.toSummary());
+     *     }
+     * }
+     * }</pre>
+     *
+     * <p>Callers are responsible for providing schemas consistent with the fix's
+     * declared {@link #fromVersion()} and {@link #toVersion()}; passing mismatched
+     * schemas may yield rules that reference unknown types.</p>
+     *
+     * @param inputSchema  the schema for the source version, must not be {@code null}
+     * @param outputSchema the schema for the target version, must not be {@code null}
+     * @return the rewrite rule that this fix would apply, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @see #makeRule(Schema, Schema)
+     * @see de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule
+     * @since 1.0.0
+     */
+    public final @NotNull TypeRewriteRule introspectRule(
+            @NotNull final Schema inputSchema,
+            @NotNull final Schema outputSchema
+    ) {
+        Preconditions.checkNotNull(inputSchema, "inputSchema must not be null");
+        Preconditions.checkNotNull(outputSchema, "outputSchema must not be null");
+        return this.makeRule(inputSchema, outputSchema);
+    }
+
     @Override
     public final @NotNull Dynamic<Object> apply(
             @NotNull final TypeReference type,

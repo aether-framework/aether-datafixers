@@ -22,10 +22,13 @@
 
 package de.splatgames.aether.datafixers.testkit.assertion;
 
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.result.DataResult;
+import de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule;
 import de.splatgames.aether.datafixers.api.type.Typed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Entry point for Aether Datafixers custom AssertJ assertions.
@@ -75,10 +78,27 @@ import org.jetbrains.annotations.NotNull;
  *     .hasStringField("id", "sword");
  * }</pre>
  *
+ * <h2>Field-Level Diagnostics</h2>
+ * <pre>{@code
+ * // Assert on a captured FieldOperation record
+ * assertThat(operation)
+ *     .hasOperationType(FieldOperationType.RENAME)
+ *     .hasFieldPath("oldName")
+ *     .hasTargetFieldName("newName");
+ *
+ * // Assert on a FieldAwareRule (e.g., from Rules.renameField, seq, choice)
+ * assertThat((FieldAwareRule) rule)
+ *     .hasFieldOperationCount(2)
+ *     .containsRename("oldName", "newName")
+ *     .containsRemove("deprecated");
+ * }</pre>
+ *
  * @author Erik Pförtner
  * @see DynamicAssert
  * @see DataResultAssert
  * @see TypedAssert
+ * @see FieldOperationAssert
+ * @see FieldAwareRuleAssert
  * @since 0.2.0
  */
 public final class AetherAssertions {
@@ -121,5 +141,34 @@ public final class AetherAssertions {
     @NotNull
     public static <A> TypedAssert<A> assertThat(final Typed<A> actual) {
         return new TypedAssert<>(actual);
+    }
+
+    /**
+     * Creates assertions for a {@link FieldOperation} record.
+     *
+     * @param actual the field operation to assert on, may be {@code null}
+     * @return a new {@link FieldOperationAssert}, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public static FieldOperationAssert assertThat(@Nullable final FieldOperation actual) {
+        return new FieldOperationAssert(actual);
+    }
+
+    /**
+     * Creates assertions for a {@link FieldAwareRule} instance.
+     *
+     * <p>Use this when you have a rule produced by
+     * {@link de.splatgames.aether.datafixers.api.rewrite.Rules Rules} factory methods
+     * (e.g., {@code renameField}, {@code seq}, {@code choice}) and want to inspect
+     * the field operations it carries.</p>
+     *
+     * @param actual the field-aware rule to assert on, may be {@code null}
+     * @return a new {@link FieldAwareRuleAssert}, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public static FieldAwareRuleAssert assertThat(@Nullable final FieldAwareRule actual) {
+        return new FieldAwareRuleAssert(actual);
     }
 }

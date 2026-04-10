@@ -25,7 +25,6 @@ package de.splatgames.aether.datafixers.spring.service;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
