@@ -68,6 +68,17 @@
         <errorprone.version>2.36.0</errorprone.version>
         <nullaway.version>0.12.7</nullaway.version>
 
+        <!-- Aether Style Guard (opt-in via -Pstyleguard) -->
+        <aether-style-guard.version>0.1.0-SNAPSHOT</aether-style-guard.version>
+        <!--
+            Extra Error Prone flags appended to the -Xplugin:ErrorProne arg in the
+            styleguard profile. Empty by default. Override on the command line to
+            enable Error Prone's patch mode for bulk auto-fix:
+                mvn compile -Pstyleguard -pl aether-datafixers-api \
+                    -Dstyleguard.extra.args="-XepPatchChecks:RequireThisPrefix,RequireParameterNullness,RequireFinalParameter,RequireMethodReturnNullness -XepPatchLocation:IN_PLACE"
+        -->
+        <styleguard.extra.args/>
+
         <!-- QA configuration -->
         <jacoco.skip>false</jacoco.skip>
         <jacoco.coverage.minimum>0.75</jacoco.coverage.minimum>
@@ -606,6 +617,73 @@
                                     <groupId>com.uber.nullaway</groupId>
                                     <artifactId>nullaway</artifactId>
                                     <version>${nullaway.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Style Guard Profile: Aether Style Guard via Error Prone -->
+        <!--
+            Activate with: mvn compile -Pstyleguard
+            Enforces the five Aether Style Guard rules (this-prefix, parameter
+            nullness, final parameters, method return nullness, complete Javadoc)
+            as guard rails for AI-generated Java code.
+
+            WARNING: This is an opt-in profile that is NOT run by default. Enabling
+            it on the existing codebase will produce a large number of errors that
+            reflect legacy drift from the new rules. Recommended adoption path:
+
+              1. mvn compile -Pstyleguard -pl <single-module>  (scope the blast radius)
+              2. mvn compile -Pstyleguard -DcompilerArgument="-XepPatchChecks:RequireThisPrefix,RequireParameterNullness,RequireFinalParameter,RequireMethodReturnNullness -XepPatchLocation:IN_PLACE"
+                 (bulk auto-fix one module at a time)
+              3. Review the diff, commit, move to the next module
+
+            The Javadoc checkers do not currently ship an auto-fix; their
+            warnings/errors have to be addressed manually.
+        -->
+        <profile>
+            <id>styleguard</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${plugin.compiler.version}</version>
+                        <configuration>
+                            <source>${maven.compiler.release}</source>
+                            <target>${maven.compiler.release}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <showWarnings>true</showWarnings>
+                            <fork>true</fork>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>--should-stop=ifError=FLOW</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:RequireThisPrefix:ERROR -Xep:RequireParameterNullness:ERROR -Xep:RequireFinalParameter:ERROR -Xep:RequireMethodReturnNullness:ERROR -Xep:RequireJavadocPresent:WARN -Xep:RequireJavadocComplete:ERROR -XepOpt:AetherStyleGuard:NotNull=org.jetbrains.annotations.NotNull -XepOpt:AetherStyleGuard:Nullable=org.jetbrains.annotations.Nullable ${styleguard.extra.args}</arg>
+                                <!-- Required JVM exports for ErrorProne on JDK 17+ -->
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${errorprone.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>de.splatgames.aether.styleguard.labs</groupId>
+                                    <artifactId>aether-style-guard</artifactId>
+                                    <version>${aether-style-guard.version}</version>
                                 </path>
                             </annotationProcessorPaths>
                         </configuration>
