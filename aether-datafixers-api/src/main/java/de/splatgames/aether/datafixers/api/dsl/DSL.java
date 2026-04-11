@@ -1130,11 +1130,11 @@ public final class DSL {
         /**
          * Creates a new constant template with the given name and type.
          *
-         * @param name the human-readable name for descriptions
-         * @param type the fixed type to return on every application
+         * @param name the human-readable name for descriptions, must not be {@code null}
+         * @param type the fixed type to return on every application, must not be {@code null}
          */
-        ConstTemplate(final String name,
-                      final Type<?> type) {
+        ConstTemplate(@NotNull final String name,
+                      @NotNull final Type<?> type) {
             this.name = name;
             this.type = type;
         }
@@ -1238,11 +1238,11 @@ public final class DSL {
         /**
          * Creates a new product template combining two sub-templates.
          *
-         * @param first  the template for the first component
-         * @param second the template for the second component
+         * @param first  the template for the first component, must not be {@code null}
+         * @param second the template for the second component, must not be {@code null}
          */
-        ProductTemplate(final TypeTemplate first,
-                        final TypeTemplate second) {
+        ProductTemplate(@NotNull final TypeTemplate first,
+                        @NotNull final TypeTemplate second) {
             this.first = first;
             this.second = second;
         }
@@ -1295,11 +1295,11 @@ public final class DSL {
         /**
          * Creates a new sum template with two alternatives.
          *
-         * @param left  the template for the left alternative
-         * @param right the template for the right alternative
+         * @param left  the template for the left alternative, must not be {@code null}
+         * @param right the template for the right alternative, must not be {@code null}
          */
-        SumTemplate(final TypeTemplate left,
-                    final TypeTemplate right) {
+        SumTemplate(@NotNull final TypeTemplate left,
+                    @NotNull final TypeTemplate right) {
             this.left = left;
             this.right = right;
         }
@@ -1346,9 +1346,9 @@ public final class DSL {
         /**
          * Creates a new list template for elements of the given type.
          *
-         * @param element the template for list elements
+         * @param element the template for list elements, must not be {@code null}
          */
-        ListTemplate(final TypeTemplate element) {
+        ListTemplate(@NotNull final TypeTemplate element) {
             this.element = element;
         }
 
@@ -1395,9 +1395,9 @@ public final class DSL {
         /**
          * Creates a new optional template wrapping the given type.
          *
-         * @param element the template for the optional element
+         * @param element the template for the optional element, must not be {@code null}
          */
-        OptionalTemplate(final TypeTemplate element) {
+        OptionalTemplate(@NotNull final TypeTemplate element) {
             this.element = element;
         }
 
@@ -1454,12 +1454,12 @@ public final class DSL {
         /**
          * Creates a new field template with the given name and type.
          *
-         * @param name     the field name in the object structure
-         * @param type     the template for the field's value type
+         * @param name     the field name in the object structure, must not be {@code null}
+         * @param type     the template for the field's value type, must not be {@code null}
          * @param optional whether the field is optional
          */
-        FieldTemplate(final String name,
-                      final TypeTemplate type,
+        FieldTemplate(@NotNull final String name,
+                      @NotNull final TypeTemplate type,
                       final boolean optional) {
             this.name = name;
             this.type = type;
@@ -1514,11 +1514,11 @@ public final class DSL {
         /**
          * Creates a named wrapper around the given template.
          *
-         * @param name     the symbolic name for the type
-         * @param template the underlying type template
+         * @param name     the symbolic name for the type, must not be {@code null}
+         * @param template the underlying type template, must not be {@code null}
          */
-        NamedTemplate(final String name,
-                      final TypeTemplate template) {
+        NamedTemplate(@NotNull final String name,
+                      @NotNull final TypeTemplate template) {
             this.name = name;
             this.template = template;
         }
@@ -1605,11 +1605,11 @@ public final class DSL {
         /**
          * Creates a tagged choice template with the given tag field and choices.
          *
-         * @param tagField the name of the discriminator field
-         * @param choices  mapping from tag values to type templates
+         * @param tagField the name of the discriminator field, must not be {@code null}
+         * @param choices  mapping from tag values to type templates, must not be {@code null}
          */
-        TaggedChoiceTemplate(final String tagField,
-                             final Map<String, TypeTemplate> choices) {
+        TaggedChoiceTemplate(@NotNull final String tagField,
+                             @NotNull final Map<String, TypeTemplate> choices) {
             this.tagField = tagField;
             this.choices = Map.copyOf(choices);
         }
@@ -1639,7 +1639,7 @@ public final class DSL {
         @NotNull
         @Override
         public String describe() {
-            final String choicesStr = choices.entrySet().stream()
+            final String choicesStr = this.choices.entrySet().stream()
                     .map(e -> e.getKey() + " -> " + e.getValue().describe())
                     .collect(Collectors.joining(", "));
             return "TaggedChoice<" + this.tagField + ">{" + choicesStr + "}";
@@ -1671,11 +1671,11 @@ public final class DSL {
         /**
          * Creates a recursive template with the given name and definition.
          *
-         * @param name       the name for the recursive type
-         * @param definition function receiving self-reference, returning the type body
+         * @param name       the name for the recursive type, must not be {@code null}
+         * @param definition function receiving self-reference, returning the type body, must not be {@code null}
          */
-        RecursiveTemplate(final String name,
-                          final Function<TypeTemplate, TypeTemplate> definition) {
+        RecursiveTemplate(@NotNull final String name,
+                          @NotNull final Function<TypeTemplate, TypeTemplate> definition) {
             this.name = name;
             this.definition = definition;
         }

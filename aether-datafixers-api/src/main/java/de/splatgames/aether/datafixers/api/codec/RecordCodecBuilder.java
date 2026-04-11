@@ -189,12 +189,13 @@ public final class RecordCodecBuilder {
         /**
          * Applies this function to the given arguments.
          *
-         * @param a the first argument
-         * @param b the second argument
-         * @param c the third argument
-         * @return the function result
+         * @param a the first argument, must not be {@code null}
+         * @param b the second argument, must not be {@code null}
+         * @param c the third argument, must not be {@code null}
+         * @return the function result, never {@code null}
          */
-        R apply(A a, B b, C c);
+        @NotNull
+        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c);
     }
 
     /**
@@ -211,13 +212,14 @@ public final class RecordCodecBuilder {
         /**
          * Applies this function to the given arguments.
          *
-         * @param a the first argument
-         * @param b the second argument
-         * @param c the third argument
-         * @param d the fourth argument
-         * @return the function result
+         * @param a the first argument, must not be {@code null}
+         * @param b the second argument, must not be {@code null}
+         * @param c the third argument, must not be {@code null}
+         * @param d the fourth argument, must not be {@code null}
+         * @return the function result, never {@code null}
          */
-        R apply(A a, B b, C c, D d);
+        @NotNull
+        R apply(@NotNull A a, @NotNull B b, @NotNull C c, @NotNull D d);
     }
 
     // ==================== Builder Classes ====================
@@ -237,14 +239,15 @@ public final class RecordCodecBuilder {
         /**
          * Applies this function to the given arguments.
          *
-         * @param a the first argument
-         * @param b the second argument
-         * @param c the third argument
-         * @param d the fourth argument
-         * @param e the fifth argument
-         * @return the function result
+         * @param a the first argument, must not be {@code null}
+         * @param b the second argument, must not be {@code null}
+         * @param c the third argument, must not be {@code null}
+         * @param d the fourth argument, must not be {@code null}
+         * @param e the fifth argument, must not be {@code null}
+         * @return the function result, never {@code null}
          */
-        R apply(A a, B b, C c, D d, E e);
+        @NotNull
+        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e);
     }
 
     /**
@@ -263,15 +266,16 @@ public final class RecordCodecBuilder {
         /**
          * Applies this function to the given arguments.
          *
-         * @param a the first argument
-         * @param b the second argument
-         * @param c the third argument
-         * @param d the fourth argument
-         * @param e the fifth argument
-         * @param f the sixth argument
-         * @return the function result
+         * @param a the first argument, must not be {@code null}
+         * @param b the second argument, must not be {@code null}
+         * @param c the third argument, must not be {@code null}
+         * @param d the fourth argument, must not be {@code null}
+         * @param e the fifth argument, must not be {@code null}
+         * @param f the sixth argument, must not be {@code null}
+         * @return the function result, never {@code null}
          */
-        R apply(A a, B b, C c, D d, E e, F f);
+        @NotNull
+        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e, @NotNull final F f);
     }
 
     /**
@@ -291,16 +295,17 @@ public final class RecordCodecBuilder {
         /**
          * Applies this function to the given arguments.
          *
-         * @param a the first argument
-         * @param b the second argument
-         * @param c the third argument
-         * @param d the fourth argument
-         * @param e the fifth argument
-         * @param f the sixth argument
-         * @param g the seventh argument
-         * @return the function result
+         * @param a the first argument, must not be {@code null}
+         * @param b the second argument, must not be {@code null}
+         * @param c the third argument, must not be {@code null}
+         * @param d the fourth argument, must not be {@code null}
+         * @param e the fifth argument, must not be {@code null}
+         * @param f the sixth argument, must not be {@code null}
+         * @param g the seventh argument, must not be {@code null}
+         * @return the function result, never {@code null}
          */
-        R apply(A a, B b, C c, D d, E e, F f, G g);
+        @NotNull
+        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e, @NotNull final F f, @NotNull final G g);
     }
 
     /**
@@ -321,17 +326,18 @@ public final class RecordCodecBuilder {
         /**
          * Applies this function to the given arguments.
          *
-         * @param a the first argument
-         * @param b the second argument
-         * @param c the third argument
-         * @param d the fourth argument
-         * @param e the fifth argument
-         * @param f the sixth argument
-         * @param g the seventh argument
-         * @param h the eighth argument
-         * @return the function result
+         * @param a the first argument, must not be {@code null}
+         * @param b the second argument, must not be {@code null}
+         * @param c the third argument, must not be {@code null}
+         * @param d the fourth argument, must not be {@code null}
+         * @param e the fifth argument, must not be {@code null}
+         * @param f the sixth argument, must not be {@code null}
+         * @param g the seventh argument, must not be {@code null}
+         * @param h the eighth argument, must not be {@code null}
+         * @return the function result, never {@code null}
          */
-        R apply(A a, B b, C c, D d, E e, F f, G g, H h);
+        @NotNull
+        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e, @NotNull final F f, @NotNull final G g, @NotNull final H h);
     }
 
     /**

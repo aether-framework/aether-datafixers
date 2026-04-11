@@ -1040,6 +1040,7 @@ public interface Type<A> {
          *
          * @return the field name, never {@code null}
          */
+        @NotNull
         public String name() {
             return this.name;
         }
@@ -1079,6 +1080,7 @@ public interface Type<A> {
          *
          * @return the type of the field's value, never {@code null}
          */
+        @NotNull
         @SuppressFBWarnings(
                 value = "EI_EXPOSE_REP",
                 justification = "Type instances are immutable descriptors intended to be shared. Exposing the inner type is part of the API contract."
@@ -1308,6 +1310,7 @@ public interface Type<A> {
          *
          * @return the tag field name, never {@code null}
          */
+        @NotNull
         public String tagField() {
             return this.tagField;
         }
@@ -1335,6 +1338,7 @@ public interface Type<A> {
          *
          * @return an unmodifiable map of tag values to types, never {@code null}
          */
+        @NotNull
         public Map<String, Type<?>> choices() {
             return this.choices;
         }

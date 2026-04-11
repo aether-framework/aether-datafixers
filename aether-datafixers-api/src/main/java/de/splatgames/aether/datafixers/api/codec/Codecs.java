@@ -124,6 +124,7 @@ public final class Codecs {
      * @see DynamicOps#createBoolean(boolean)
      * @see DynamicOps#getBooleanValue(Object)
      */
+    @NotNull
     public static final Codec<Boolean> BOOL = new Codec<>() {
         @NotNull
         @Override
@@ -167,6 +168,7 @@ public final class Codecs {
      * @see DynamicOps#getNumberValue(Object)
      * @see #intRange(int, int)
      */
+    @NotNull
     public static final Codec<Integer> INT = new Codec<>() {
         @NotNull
         @Override
@@ -207,6 +209,7 @@ public final class Codecs {
      * @see DynamicOps#createLong(long)
      * @see DynamicOps#getNumberValue(Object)
      */
+    @NotNull
     public static final Codec<Long> LONG = new Codec<>() {
         @NotNull
         @Override
@@ -248,6 +251,7 @@ public final class Codecs {
      * @see DynamicOps#getNumberValue(Object)
      * @see #floatRange(float, float)
      */
+    @NotNull
     public static final Codec<Float> FLOAT = new Codec<>() {
         @NotNull
         @Override
@@ -289,6 +293,7 @@ public final class Codecs {
      * @see DynamicOps#getNumberValue(Object)
      * @see #doubleRange(double, double)
      */
+    @NotNull
     public static final Codec<Double> DOUBLE = new Codec<>() {
         @NotNull
         @Override
@@ -329,6 +334,7 @@ public final class Codecs {
      * @see DynamicOps#createByte(byte)
      * @see DynamicOps#getNumberValue(Object)
      */
+    @NotNull
     public static final Codec<Byte> BYTE = new Codec<>() {
         @NotNull
         @Override
@@ -369,6 +375,7 @@ public final class Codecs {
      * @see DynamicOps#createShort(short)
      * @see DynamicOps#getNumberValue(Object)
      */
+    @NotNull
     public static final Codec<Short> SHORT = new Codec<>() {
         @NotNull
         @Override
@@ -409,6 +416,7 @@ public final class Codecs {
      * @see DynamicOps#getStringValue(Object)
      * @see #nonEmptyString()
      */
+    @NotNull
     public static final Codec<String> STRING = new Codec<>() {
         @NotNull
         @Override

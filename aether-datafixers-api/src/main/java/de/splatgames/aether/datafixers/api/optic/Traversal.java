@@ -479,7 +479,8 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
          * @param modifier the function to apply to each focused element, must not be {@code null}
          * @return a new source with all focused elements transformed, never {@code null}
          */
-        S apply(final S source,
-                final Function<A, A> modifier);
+        @NotNull
+        S apply(@NotNull final S source,
+                @NotNull final Function<A, A> modifier);
     }
 }

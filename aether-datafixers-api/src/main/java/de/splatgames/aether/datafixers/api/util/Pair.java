@@ -173,11 +173,12 @@ public final class Pair<F, S> {
      * // result = "value=42"
      * }</pre>
      *
-     * @param function the bi-function to apply to the pair's values
+     * @param function the bi-function to apply to the pair's values, must not be {@code null}
      * @param <R>      the return type of the function
-     * @return the result of applying the function to both values
+     * @return the result of applying the function to both values, never {@code null}
      * @throws NullPointerException if {@code function} is {@code null}
      */
+    @NotNull
     public <R> R apply(@NotNull final BiFunction<? super F, ? super S, ? extends R> function) {
         Preconditions.checkNotNull(function, "function must not be null");
         return function.apply(this.first, this.second);
