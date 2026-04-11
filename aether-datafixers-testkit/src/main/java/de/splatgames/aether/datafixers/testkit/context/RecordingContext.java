@@ -278,6 +278,7 @@ public final class RecordingContext implements DataFixerContext {
         }
 
         @Override
+        @NotNull
         public String toString() {
             return "[" + this.level + "] " + this.formattedMessage();
         }

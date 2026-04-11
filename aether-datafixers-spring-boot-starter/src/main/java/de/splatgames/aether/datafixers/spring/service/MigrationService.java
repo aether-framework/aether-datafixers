@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.spring.service;
 
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.jetbrains.annotations.NotNull;
@@ -171,7 +172,7 @@ public interface MigrationService {
      * @throws NullPointerException if data is {@code null}
      */
     @NotNull
-    MigrationRequestBuilder migrate(@NotNull TaggedDynamic data);
+    MigrationRequestBuilder migrate(@NotNull final TaggedDynamic data);
 
     /**
      * Returns the current (latest) version for the default domain.
@@ -198,7 +199,7 @@ public interface MigrationService {
      * @throws NullPointerException     if domain is {@code null}
      */
     @NotNull
-    DataVersion getCurrentVersion(@NotNull String domain);
+    DataVersion getCurrentVersion(@NotNull final String domain);
 
     /**
      * Checks whether a specific domain is available for migrations.
@@ -211,7 +212,7 @@ public interface MigrationService {
      *         {@code false} otherwise
      * @throws NullPointerException if domain is {@code null}
      */
-    boolean hasDomain(@NotNull String domain);
+    boolean hasDomain(@NotNull final String domain);
 
     /**
      * Returns all available domain names registered with this service.
@@ -279,7 +280,7 @@ public interface MigrationService {
          * @throws NullPointerException if version is {@code null}
          */
         @NotNull
-        MigrationRequestBuilder from(@NotNull DataVersion version);
+        MigrationRequestBuilder from(@NotNull final DataVersion version);
 
         /**
          * Specifies the source data version by integer value.
@@ -307,7 +308,7 @@ public interface MigrationService {
          * @throws NullPointerException if version is {@code null}
          */
         @NotNull
-        MigrationRequestBuilder to(@NotNull DataVersion version);
+        MigrationRequestBuilder to(@NotNull final DataVersion version);
 
         /**
          * Specifies the target data version by integer value.
@@ -351,7 +352,7 @@ public interface MigrationService {
          * @see de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry
          */
         @NotNull
-        MigrationRequestBuilder usingDomain(@NotNull String domain);
+        MigrationRequestBuilder usingDomain(@NotNull final String domain);
 
         /**
          * Specifies custom DynamicOps to use for the migration.
@@ -366,7 +367,52 @@ public interface MigrationService {
          * @throws NullPointerException if ops is {@code null}
          */
         @NotNull
-        <T> MigrationRequestBuilder withOps(@NotNull DynamicOps<T> ops);
+        <T> MigrationRequestBuilder withOps(@NotNull final DynamicOps<T> ops);
+
+        /**
+         * Enables diagnostic capture with default options during migration.
+         *
+         * <p>When enabled, the migration will capture detailed diagnostic information
+         * including fix executions, rule applications, and field-level operations.
+         * The diagnostic report is accessible via
+         * {@link MigrationResult#getDiagnosticReport()} after execution.</p>
+         *
+         * <p>This is equivalent to calling
+         * {@code withDiagnostics(DiagnosticOptions.defaults())} with snapshots disabled
+         * for performance.</p>
+         *
+         * @return this builder for method chaining
+         * @since 1.0.0
+         * @see DiagnosticOptions
+         * @see MigrationResult#getDiagnosticReport()
+         */
+        @NotNull
+        default MigrationRequestBuilder withDiagnostics() {
+            return withDiagnostics(DiagnosticOptions.builder()
+                    .captureSnapshots(false)
+                    .captureRuleDetails(true)
+                    .captureFieldDetails(true)
+                    .build());
+        }
+
+        /**
+         * Enables diagnostic capture with the specified options during migration.
+         *
+         * <p>The provided options control what diagnostic data is captured, allowing
+         * fine-tuning of the balance between detail and performance. The diagnostic
+         * report is accessible via {@link MigrationResult#getDiagnosticReport()}
+         * after execution.</p>
+         *
+         * @param options the diagnostic options controlling what data is captured,
+         *                must not be {@code null}
+         * @return this builder for method chaining
+         * @throws NullPointerException if options is {@code null}
+         * @since 1.0.0
+         * @see DiagnosticOptions
+         * @see MigrationResult#getDiagnosticReport()
+         */
+        @NotNull
+        MigrationRequestBuilder withDiagnostics(@NotNull final DiagnosticOptions options);
 
         /**
          * Executes the configured migration synchronously.

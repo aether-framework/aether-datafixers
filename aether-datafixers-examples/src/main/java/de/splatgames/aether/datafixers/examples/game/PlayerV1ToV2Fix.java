@@ -240,6 +240,7 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }

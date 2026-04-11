@@ -1316,6 +1316,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * @return the string {@code "SnakeYamlOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "SnakeYamlOps";
     }

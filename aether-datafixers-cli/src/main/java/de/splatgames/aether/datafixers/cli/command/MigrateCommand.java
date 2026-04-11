@@ -28,6 +28,9 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
+import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.cli.bootstrap.BootstrapLoader;
 import de.splatgames.aether.datafixers.cli.format.FormatHandler;
 import de.splatgames.aether.datafixers.cli.format.FormatRegistry;
@@ -36,6 +39,7 @@ import de.splatgames.aether.datafixers.cli.util.VersionExtractor;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -46,6 +50,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -397,6 +402,32 @@ public class MigrateCommand implements Callable<Integer> {
     private boolean verbose;
 
     /**
+     * Whether to enable field-level diagnostics output.
+     *
+     * <p>When {@code true}, a detailed diagnostic report is generated for each
+     * migrated file, including information about every fix execution, rule
+     * application, and field-level operation (renames, removals, additions,
+     * transforms, etc.).</p>
+     *
+     * <p>Diagnostics output is written alongside the migration report: to
+     * {@link #reportFile} if specified, or to stderr otherwise. The output
+     * format follows the selected {@link #reportFormat}.</p>
+     *
+     * <p>Default value: {@code false}</p>
+     *
+     * <p>CLI usage: {@code --diagnostics}</p>
+     *
+     * @see DiagnosticContext
+     * @see de.splatgames.aether.datafixers.api.diagnostic.FieldOperation
+     * @since 1.0.0
+     */
+    @Option(
+            names = {"--diagnostics"},
+            description = "Enable field-level diagnostics output showing detailed fix and field operation information."
+    )
+    private boolean diagnostics;
+
+    /**
      * Whether to pretty-print the output JSON.
      *
      * <p>When {@code true}, output is formatted with indentation and line breaks
@@ -440,6 +471,7 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #processFile(File, AetherDataFixer, FormatHandler, TypeReference, DataVersion)
      */
     @Override
+    @NotNull
     public Integer call() {
         try {
             // 0. Validate version range
@@ -474,6 +506,8 @@ public class MigrateCommand implements Callable<Integer> {
             int errorCount = 0;
             final StringBuilder reportBuilder = new StringBuilder();
 
+            final StringBuilder diagnosticBuilder = new StringBuilder();
+
             for (final File inputFile : this.inputFiles) {
                 try {
                     final MigrationResult result = processFile(
@@ -482,6 +516,9 @@ public class MigrateCommand implements Callable<Integer> {
 
                     if (this.generateReport) {
                         reportBuilder.append(result.report).append("\n");
+                    }
+                    if (this.diagnostics && !result.diagnosticOutput.isEmpty()) {
+                        diagnosticBuilder.append(result.diagnosticOutput).append("\n");
                     }
                 } catch (final Exception e) {
                     errorCount++;
@@ -502,6 +539,19 @@ public class MigrateCommand implements Callable<Integer> {
                     Files.writeString(this.reportFile.toPath(), reportContent, StandardCharsets.UTF_8);
                 } else {
                     System.err.println(reportContent);
+                }
+            }
+
+            // Write diagnostic output
+            if (this.diagnostics && !diagnosticBuilder.isEmpty()) {
+                final String diagnosticContent = diagnosticBuilder.toString();
+                if (this.reportFile != null) {
+                    Files.writeString(this.reportFile.toPath(), diagnosticContent,
+                            StandardCharsets.UTF_8,
+                            StandardOpenOption.CREATE,
+                            StandardOpenOption.APPEND);
+                } else {
+                    System.err.println(diagnosticContent);
                 }
             }
 
@@ -590,15 +640,24 @@ public class MigrateCommand implements Callable<Integer> {
                 System.err.println("Skipping " + inputFile + " (already at v"
                         + sourceVersion.getVersion() + ")");
             }
-            return new MigrationResult("", Duration.ZERO);
+            return new MigrationResult("", Duration.ZERO, "");
         }
 
         // Create dynamic and migrate
         final Dynamic<T> dynamic = new Dynamic<>(handler.ops(), data);
         final TaggedDynamic tagged = new TaggedDynamic(typeRef, dynamic);
 
-        // Perform migration
-        final TaggedDynamic migrated = fixer.update(tagged, sourceVersion, targetVersion);
+        // Perform migration (with diagnostics if enabled)
+        final DiagnosticContext diagCtx = this.diagnostics
+                ? DiagnosticContext.create(DiagnosticOptions.builder()
+                        .captureSnapshots(false)
+                        .captureRuleDetails(true)
+                        .captureFieldDetails(true)
+                        .build())
+                : null;
+        final TaggedDynamic migrated = diagCtx != null
+                ? fixer.update(tagged, sourceVersion, targetVersion, diagCtx)
+                : fixer.update(tagged, sourceVersion, targetVersion);
 
         // Extract result
         @SuppressWarnings("unchecked")
@@ -631,7 +690,19 @@ public class MigrateCommand implements Callable<Integer> {
             );
         }
 
-        return new MigrationResult(report, duration);
+        // Generate diagnostic report
+        final MigrationReport diagnosticReport = diagCtx != null ? diagCtx.getReport() : null;
+        String diagnosticOutput = "";
+        if (diagnosticReport != null) {
+            final ReportFormatter formatter = ReportFormatter.forFormat(this.reportFormat);
+            diagnosticOutput = formatter.formatDiagnostic(
+                    inputFile.getName(),
+                    typeRef.getId(),
+                    diagnosticReport
+            );
+        }
+
+        return new MigrationResult(report, duration, diagnosticOutput);
     }
 
     /**
@@ -719,6 +790,21 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #processFile(File, AetherDataFixer, FormatHandler, TypeReference, DataVersion)
      * @see ReportFormatter
      */
-    private record MigrationResult(String report, Duration duration) {
+    /**
+     * Holds the result of a single file migration operation.
+     *
+     * <p>This record captures the outcome of migrating one file, including
+     * the formatted report string (if reporting is enabled), the time
+     * taken for the migration, and the optional diagnostic output (if
+     * {@code --diagnostics} was enabled).</p>
+     *
+     * @param report           the formatted migration report string, empty if reporting is disabled
+     *                         or if the file was skipped (already at target version)
+     * @param duration         the time elapsed during the migration process, including file I/O
+     * @param diagnosticOutput the formatted diagnostic report string, empty if diagnostics are disabled
+     * @see #processFile(File, AetherDataFixer, FormatHandler, TypeReference, DataVersion)
+     * @see ReportFormatter
+     */
+    private record MigrationResult(String report, Duration duration, String diagnosticOutput) {
     }
 }

@@ -27,6 +27,7 @@ import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixer;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -171,7 +172,7 @@ public final class DataVersion implements Comparable<DataVersion> {
      * @see #hashCode()
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -222,6 +223,7 @@ public final class DataVersion implements Comparable<DataVersion> {
      * @return a string representation of this data version in the format {@code "DataVersion{version=N}"}
      */
     @Override
+    @NotNull
     public String toString() {
         return "DataVersion{" + "version=" + this.version + '}';
     }

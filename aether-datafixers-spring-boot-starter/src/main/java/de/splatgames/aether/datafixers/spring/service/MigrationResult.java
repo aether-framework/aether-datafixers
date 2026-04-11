@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.spring.service;
 
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +37,8 @@ import java.util.Optional;
  * Immutable result object representing the outcome of a data migration operation.
  *
  * <p>This class encapsulates all information about a completed migration, whether
- * successful or failed. It follows the Result pattern, providing a type-safe way
- * to handle migration outcomes without relying on exceptions for control flow.</p>
+ * successful or failed. It follows the Result pattern, providing a type-safe way to handle migration outcomes without
+ * relying on exceptions for control flow.</p>
  *
  * <h2>Key Information</h2>
  * <p>A MigrationResult contains:</p>
@@ -167,32 +168,40 @@ public final class MigrationResult {
     private final Duration duration;
 
     /**
-     * The error that caused the migration to fail. Only present when
-     * {@link #success} is {@code false}.
+     * The error that caused the migration to fail. Only present when {@link #success} is {@code false}.
      */
     @Nullable
     private final Throwable error;
 
     /**
+     * The diagnostic migration report. Only present when diagnostics were enabled via
+     * {@link MigrationService.MigrationRequestBuilder#withDiagnostics()}.
+     *
+     * @since 1.0.0
+     */
+    @Nullable
+    private final MigrationReport diagnosticReport;
+
+    /**
      * Private constructor to enforce factory method usage.
      *
-     * @param success     whether the migration succeeded
-     * @param data        the migrated data (null on failure)
-     * @param fromVersion the source version
-     * @param toVersion   the target version
-     * @param domain      the domain name
-     * @param duration    the migration duration
-     * @param error       the error (null on success)
+     * @param success          whether the migration succeeded
+     * @param data             the migrated data (null on failure)
+     * @param fromVersion      the source version
+     * @param toVersion        the target version
+     * @param domain           the domain name
+     * @param duration         the migration duration
+     * @param error            the error (null on success)
+     * @param diagnosticReport the diagnostic report (null if diagnostics were not enabled)
      */
-    private MigrationResult(
-            final boolean success,
-            @Nullable final TaggedDynamic data,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final String domain,
-            @NotNull final Duration duration,
-            @Nullable final Throwable error
-    ) {
+    private MigrationResult(final boolean success,
+                            @Nullable final TaggedDynamic data,
+                            @NotNull final DataVersion fromVersion,
+                            @NotNull final DataVersion toVersion,
+                            @NotNull final String domain,
+                            @NotNull final Duration duration,
+                            @Nullable final Throwable error,
+                            @Nullable final MigrationReport diagnosticReport) {
         this.success = success;
         this.data = data;
         this.fromVersion = Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
@@ -200,6 +209,7 @@ public final class MigrationResult {
         this.domain = Preconditions.checkNotNull(domain, "domain must not be null");
         this.duration = Preconditions.checkNotNull(duration, "duration must not be null");
         this.error = error;
+        this.diagnosticReport = diagnosticReport;
     }
 
     /**
@@ -217,23 +227,47 @@ public final class MigrationResult {
      * @throws NullPointerException if any parameter is {@code null}
      */
     @NotNull
-    public static MigrationResult success(
-            @NotNull final TaggedDynamic data,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final String domain,
-            @NotNull final Duration duration
-    ) {
+    public static MigrationResult success(@NotNull final TaggedDynamic data,
+                                          @NotNull final DataVersion fromVersion,
+                                          @NotNull final DataVersion toVersion,
+                                          @NotNull final String domain,
+                                          @NotNull final Duration duration) {
+        return success(data, fromVersion, toVersion, domain, duration, null);
+    }
+
+    /**
+     * Creates a successful migration result with an optional diagnostic report.
+     *
+     * <p>Use this factory method when a migration completes without errors and
+     * diagnostics were optionally enabled. The diagnostic report is accessible via {@link #getDiagnosticReport()}.</p>
+     *
+     * @param data             the migrated data, must not be {@code null}
+     * @param fromVersion      the source version, must not be {@code null}
+     * @param toVersion        the target version, must not be {@code null}
+     * @param domain           the domain name used, must not be {@code null}
+     * @param duration         the migration duration, must not be {@code null}
+     * @param diagnosticReport the diagnostic report, or {@code null} if diagnostics were not enabled
+     * @return a success result containing the migrated data and optional diagnostics
+     * @throws NullPointerException if any required parameter is {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public static MigrationResult success(@NotNull final TaggedDynamic data,
+                                          @NotNull final DataVersion fromVersion,
+                                          @NotNull final DataVersion toVersion,
+                                          @NotNull final String domain,
+                                          @NotNull final Duration duration,
+                                          @Nullable final MigrationReport diagnosticReport) {
         Preconditions.checkNotNull(data, "data must not be null");
-        return new MigrationResult(true, data, fromVersion, toVersion, domain, duration, null);
+        return new MigrationResult(true, data, fromVersion, toVersion, domain, duration,
+                null, diagnosticReport);
     }
 
     /**
      * Creates a failed migration result.
      *
      * <p>Use this factory method when a migration fails due to an error.
-     * The error that caused the failure must be provided and will be accessible
-     * via {@link #getError()}.</p>
+     * The error that caused the failure must be provided and will be accessible via {@link #getError()}.</p>
      *
      * @param fromVersion the source version, must not be {@code null}
      * @param toVersion   the target version, must not be {@code null}
@@ -244,15 +278,13 @@ public final class MigrationResult {
      * @throws NullPointerException if any parameter is {@code null}
      */
     @NotNull
-    public static MigrationResult failure(
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final String domain,
-            @NotNull final Duration duration,
-            @NotNull final Throwable error
-    ) {
+    public static MigrationResult failure(@NotNull final DataVersion fromVersion,
+                                          @NotNull final DataVersion toVersion,
+                                          @NotNull final String domain,
+                                          @NotNull final Duration duration,
+                                          @NotNull final Throwable error) {
         Preconditions.checkNotNull(error, "error must not be null");
-        return new MigrationResult(false, null, fromVersion, toVersion, domain, duration, error);
+        return new MigrationResult(false, null, fromVersion, toVersion, domain, duration, error, null);
     }
 
     /**
@@ -291,8 +323,8 @@ public final class MigrationResult {
      * Returns the migrated data.
      *
      * <p>This method should only be called after verifying the migration was successful
-     * using {@link #isSuccess()}. Calling this method on a failed result will throw
-     * an {@link IllegalStateException} with details about the failure.</p>
+     * using {@link #isSuccess()}. Calling this method on a failed result will throw an {@link IllegalStateException}
+     * with details about the failure.</p>
      *
      * <p>For safer access, consider using {@link #getDataOptional()} instead.</p>
      *
@@ -306,7 +338,7 @@ public final class MigrationResult {
         if (!this.success || this.data == null) {
             throw new IllegalStateException(
                     "Cannot get data from failed migration. Error: " +
-                    (this.error != null ? this.error.getMessage() : "unknown")
+                            (this.error != null ? this.error.getMessage() : "unknown")
             );
         }
         return this.data;
@@ -352,8 +384,7 @@ public final class MigrationResult {
      * Returns the target version to which the data was migrated.
      *
      * <p>This is the version that was specified when configuring the migration
-     * via {@link MigrationService.MigrationRequestBuilder#to(DataVersion)} or
-     * resolved automatically when using
+     * via {@link MigrationService.MigrationRequestBuilder#to(DataVersion)} or resolved automatically when using
      * {@link MigrationService.MigrationRequestBuilder#toLatest()}.</p>
      *
      * @return the target data version, never {@code null}
@@ -380,8 +411,8 @@ public final class MigrationResult {
      * Returns the wall-clock duration of the migration operation.
      *
      * <p>This duration includes the time spent applying all data fixes from
-     * the source version to the target version. It can be used for performance
-     * monitoring and identifying slow migrations.</p>
+     * the source version to the target version. It can be used for performance monitoring and identifying slow
+     * migrations.</p>
      *
      * @return the migration duration, never {@code null}
      */
@@ -394,8 +425,7 @@ public final class MigrationResult {
      * Returns the error that caused the migration to fail, if any.
      *
      * <p>The Optional will contain the error for failed migrations and will
-     * be empty for successful migrations. Use this for error logging, metrics,
-     * or exception chaining.</p>
+     * be empty for successful migrations. Use this for error logging, metrics, or exception chaining.</p>
      *
      * <p><b>Example Usage</b></p>
      * <pre>{@code
@@ -413,11 +443,41 @@ public final class MigrationResult {
     }
 
     /**
+     * Returns the diagnostic migration report, if diagnostics were enabled.
+     *
+     * <p>The report contains detailed information about each fix execution,
+     * rule application, and field-level operation that occurred during the migration. The Optional will be empty if
+     * diagnostics were not enabled via {@link MigrationService.MigrationRequestBuilder#withDiagnostics()}.</p>
+     *
+     * <p><b>Example Usage</b></p>
+     * <pre>{@code
+     * result.getDiagnosticReport().ifPresent(report -> {
+     *     System.out.println("Fixes applied: " + report.fixCount());
+     *     System.out.println("Field operations: " + report.totalFieldOperationCount());
+     *     report.fixExecutions().forEach(fix ->
+     *         fix.allFieldOperations().forEach(op ->
+     *             System.out.println("  " + op.toSummary())
+     *         )
+     *     );
+     * });
+     * }</pre>
+     *
+     * @return an Optional containing the diagnostic report if diagnostics were enabled, empty otherwise
+     * @see MigrationService.MigrationRequestBuilder#withDiagnostics()
+     * @see MigrationReport
+     * @since 1.0.0
+     */
+    @NotNull
+    public Optional<MigrationReport> getDiagnosticReport() {
+        return Optional.ofNullable(this.diagnosticReport);
+    }
+
+    /**
      * Returns the version span (absolute difference between target and source versions).
      *
      * <p>The version span indicates how many version increments the migration covered.
-     * Larger spans typically indicate more fixes to apply and potentially longer
-     * migration times. This metric is useful for:</p>
+     * Larger spans typically indicate more fixes to apply and potentially longer migration times. This metric is useful
+     * for:</p>
      * <ul>
      *   <li>Performance analysis (correlating span with duration)</li>
      *   <li>Alerting on large migrations</li>
@@ -441,7 +501,7 @@ public final class MigrationResult {
      * @see #hashCode()
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -459,8 +519,7 @@ public final class MigrationResult {
      * Returns a hash code value for this migration result.
      *
      * <p>The hash code is computed based on the success status, source version, target version,
-     * domain, and duration. This implementation satisfies the general contract of
-     * {@link Object#hashCode()}.</p>
+     * domain, and duration. This implementation satisfies the general contract of {@link Object#hashCode()}.</p>
      *
      * @return a hash code value for this migration result
      * @see #equals(Object)
@@ -474,12 +533,12 @@ public final class MigrationResult {
      * Returns a human-readable string representation of this result.
      *
      * <p>The string includes the success status, version information, domain,
-     * duration, and error message (if applicable). This is useful for logging
-     * and debugging.</p>
+     * duration, and error message (if applicable). This is useful for logging and debugging.</p>
      *
      * @return a string representation of this migration result
      */
     @Override
+    @NotNull
     public String toString() {
         return "MigrationResult{" +
                 "success=" + this.success +

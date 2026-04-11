@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.cli.report;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -64,13 +65,28 @@ public interface ReportFormatter {
      * @return the formatted report string
      */
     @NotNull
-    String formatSimple(
-            @NotNull String fileName,
-            @NotNull String type,
-            int fromVersion,
-            int toVersion,
-            @NotNull Duration duration
-    );
+    String formatSimple(@NotNull final String fileName,
+                        @NotNull final String type,
+                        final int fromVersion,
+                        final int toVersion,
+                        @NotNull final Duration duration);
+
+    /**
+     * Formats a diagnostic migration report including field-level operation details.
+     *
+     * <p>When diagnostics are enabled, the report includes comprehensive information
+     * about each fix execution and its field-level operations (renames, removals,
+     * additions, transforms, etc.).</p>
+     *
+     * @param fileName the name of the migrated file
+     * @param type     the type reference ID
+     * @param report   the diagnostic migration report
+     * @return the formatted diagnostic report string
+     * @since 0.1.0
+     */
+    @NotNull
+    String formatDiagnostic(@NotNull final String fileName,
+                            @NotNull final String type, @NotNull final MigrationReport report);
 
     /**
      * Gets a formatter by format name.
@@ -82,9 +98,10 @@ public interface ReportFormatter {
     static ReportFormatter forFormat(@NotNull final String format) {
         Preconditions.checkNotNull(format, "format must not be null");
 
-        return switch (format.toLowerCase()) {
-            case "json" -> new JsonReportFormatter();
-            default -> new TextReportFormatter();
-        };
+        if (format.equalsIgnoreCase("json")) {
+            return new JsonReportFormatter();
+        } else {
+            return new TextReportFormatter();
+        }
     }
 }

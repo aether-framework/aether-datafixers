@@ -166,6 +166,7 @@ public class DataFixerHealthIndicator implements HealthIndicator {
      * @return the health status with detailed domain information
      */
     @Override
+    @NotNull
     public Health health() {
         final Map<String, AetherDataFixer> fixers = this.registry.getAll();
 

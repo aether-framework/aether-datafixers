@@ -212,6 +212,7 @@ public class DataFixerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @NotNull
     public DataFixerRegistry dataFixerRegistry() {
         return new DataFixerRegistry();
     }
@@ -238,10 +239,11 @@ public class DataFixerAutoConfiguration {
     @Primary
     @ConditionalOnSingleCandidate(DataFixerBootstrap.class)
     @ConditionalOnMissingBean(AetherDataFixer.class)
+    @NotNull
     public AetherDataFixer aetherDataFixer(
-            final DataFixerBootstrap bootstrap,
-            final AetherDataFixersProperties properties,
-            final DataFixerRegistry registry
+            @NotNull final DataFixerBootstrap bootstrap,
+            @NotNull final AetherDataFixersProperties properties,
+            @NotNull final DataFixerRegistry registry
     ) {
         LOG.info("Creating primary AetherDataFixer from bootstrap: {}",
                 bootstrap.getClass().getName());

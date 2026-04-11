@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -206,6 +207,22 @@ public final class DataFixRegistry {
         }
 
         return !fixesByVersion.subMap(fromExclusive, false, toInclusive, true).isEmpty();
+    }
+
+    /**
+     * Returns the set of all type references that have at least one registered fix.
+     *
+     * <p>This method enables enumeration of all types known to the registry,
+     * which is useful for analyzers that need to walk every fix regardless of
+     * schema changes (e.g., field-level diagnostic analyzers in
+     * {@link de.splatgames.aether.datafixers.schematools schema-tools}).</p>
+     *
+     * @return an unmodifiable snapshot of the registered type references, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public Set<TypeReference> registeredTypes() {
+        return Set.copyOf(this.fixesByType.keySet());
     }
 
     /**

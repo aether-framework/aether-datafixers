@@ -27,6 +27,7 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.type.Type;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -265,7 +266,7 @@ public final class TypeDiff {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -298,6 +299,7 @@ public final class TypeDiff {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "TypeDiff{" +
                 "reference=" + this.reference +

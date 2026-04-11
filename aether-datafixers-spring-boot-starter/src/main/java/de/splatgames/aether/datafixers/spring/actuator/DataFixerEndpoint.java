@@ -23,8 +23,13 @@
 package de.splatgames.aether.datafixers.spring.actuator;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
+import de.splatgames.aether.datafixers.api.diagnostic.FixExecution;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
+import de.splatgames.aether.datafixers.api.diagnostic.RuleApplication;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.autoconfigure.DataFixerRegistry;
+import de.splatgames.aether.datafixers.spring.service.DiagnosticReportStore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -32,6 +37,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -161,17 +167,45 @@ public class DataFixerEndpoint {
     private final DataFixerRegistry registry;
 
     /**
+     * Optional store for diagnostic reports. May be null if no DefaultMigrationService
+     * is available.
+     */
+    @Nullable
+    private final DiagnosticReportStore diagnosticReportStore;
+
+    /**
      * Creates a new DataFixerEndpoint with the specified registry.
      *
      * <p>The endpoint will expose information about all DataFixers registered
-     * in the provided registry through its operations.</p>
+     * in the provided registry through its operations. No diagnostic report
+     * store is attached; field-level diagnostics will not be available.</p>
      *
      * @param registry the DataFixer registry containing all domain fixers,
      *                 must not be {@code null}
      * @throws NullPointerException if registry is {@code null}
      */
     public DataFixerEndpoint(@NotNull final DataFixerRegistry registry) {
+        this(registry, null);
+    }
+
+    /**
+     * Creates a new DataFixerEndpoint with the specified registry and diagnostic report store.
+     *
+     * <p>The endpoint will expose information about all DataFixers registered
+     * in the provided registry. When a diagnostic report store is provided,
+     * the domain details response will include field-level operation summaries
+     * from the most recent diagnostic migration.</p>
+     *
+     * @param registry              the DataFixer registry containing all domain fixers,
+     *                              must not be {@code null}
+     * @param diagnosticReportStore the store for diagnostic reports, may be {@code null}
+     * @throws NullPointerException if registry is {@code null}
+     * @since 1.0.0
+     */
+    public DataFixerEndpoint(@NotNull final DataFixerRegistry registry,
+                             @Nullable final DiagnosticReportStore diagnosticReportStore) {
         this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
+        this.diagnosticReportStore = diagnosticReportStore;
     }
 
     /**
@@ -251,20 +285,58 @@ public class DataFixerEndpoint {
         }
 
         try {
+            // Build field diagnostics summary if available
+            final FieldDiagnosticsSummary fieldDiagnostics =
+                    this.diagnosticReportStore != null
+                            ? this.diagnosticReportStore.get(domain)
+                                    .map(DataFixerEndpoint::buildFieldDiagnosticsSummary)
+                                    .orElse(null)
+                            : null;
+
             return new DomainDetails(
                     domain,
                     fixer.currentVersion().getVersion(),
                     "UP",
-                    null
+                    null,
+                    fieldDiagnostics
             );
         } catch (final Exception e) {
             return new DomainDetails(
                     domain,
                     -1,
                     "DOWN",
-                    e.getMessage()
+                    e.getMessage(),
+                    null
             );
         }
+    }
+
+    /**
+     * Builds a field diagnostics summary from a migration report.
+     *
+     * @param report the migration report to summarize
+     * @return the field diagnostics summary
+     */
+    @NotNull
+    private static FieldDiagnosticsSummary buildFieldDiagnosticsSummary(@NotNull final MigrationReport report) {
+        final List<FieldOperationSummary> operations = report.fixExecutions().stream()
+                .flatMap(fix -> fix.allFieldOperations().stream()
+                        .map(op -> new FieldOperationSummary(
+                                op.operationType().name(),
+                                op.fieldPathString(),
+                                op.targetFieldName(),
+                                op.description()
+                        )))
+                .toList();
+
+        return new FieldDiagnosticsSummary(
+                report.fromVersion().getVersion(),
+                report.toVersion().getVersion(),
+                report.totalDuration().toMillis(),
+                report.fixCount(),
+                report.totalFieldOperationCount(),
+                operations
+        );
     }
 
     /**
@@ -333,7 +405,8 @@ public class DataFixerEndpoint {
      *
      * <p>This record provides comprehensive details about a specific domain,
      * returned by the {@link #domainDetails(String)} operation. It includes
-     * the domain name for clarity, along with version and status information.</p>
+     * the domain name for clarity, version, status information, and optionally
+     * field-level diagnostics from the most recent diagnostic migration.</p>
      *
      * <p><b>JSON Serialization</b></p>
      * <p>When serialized to JSON, this record produces:</p>
@@ -341,22 +414,80 @@ public class DataFixerEndpoint {
      * {
      *   "domain": "game",
      *   "currentVersion": 150,
-     *   "status": "UP"
+     *   "status": "UP",
+     *   "lastDiagnostics": {
+     *     "fromVersion": 100,
+     *     "toVersion": 150,
+     *     "durationMs": 42,
+     *     "fixCount": 2,
+     *     "fieldOperationCount": 5,
+     *     "fieldOperations": [...]
+     *   }
      * }
      * }</pre>
      *
-     * @param domain         the domain name (echoed from the request path)
-     * @param currentVersion the current schema version of the domain, or -1 on error
-     * @param status         the operational status ("UP" or "DOWN")
-     * @param error          the error message if status is "DOWN", or {@code null} if healthy
+     * @param domain          the domain name (echoed from the request path)
+     * @param currentVersion  the current schema version of the domain, or -1 on error
+     * @param status          the operational status ("UP" or "DOWN")
+     * @param error           the error message if status is "DOWN", or {@code null} if healthy
+     * @param lastDiagnostics summary of the most recent diagnostic migration, or {@code null}
+     *                        if no diagnostic migration has been performed
      * @author Erik Pförtner
      * @since 0.4.0
      */
-    public record DomainDetails(
-            String domain,
-            int currentVersion,
-            String status,
-            @Nullable String error
+    public record DomainDetails(String domain,
+                                int currentVersion,
+                                String status,
+                                @Nullable String error,
+                                @Nullable FieldDiagnosticsSummary lastDiagnostics
+    ) {
+    }
+
+    /**
+     * Summary of field-level diagnostics from the most recent diagnostic migration.
+     *
+     * <p>This record provides an overview of what field operations were performed
+     * during the last migration that had diagnostics enabled.</p>
+     *
+     * @param fromVersion         the source version of the diagnostic migration
+     * @param toVersion           the target version of the diagnostic migration
+     * @param durationMs          the migration duration in milliseconds
+     * @param fixCount            the number of fixes applied
+     * @param fieldOperationCount the total number of field operations
+     * @param fieldOperations     the individual field operation summaries
+     * @author Erik Pförtner
+     * @since 1.0.0
+     */
+    public record FieldDiagnosticsSummary(int fromVersion,
+                                          int toVersion,
+                                          long durationMs,
+                                          int fixCount,
+                                          int fieldOperationCount,
+                                          List<FieldOperationSummary> fieldOperations
+    ) {
+
+        /**
+         * Compact constructor that creates a defensive copy of the field operations list.
+         */
+        public FieldDiagnosticsSummary {
+            fieldOperations = fieldOperations != null ? List.copyOf(fieldOperations) : List.of();
+        }
+    }
+
+    /**
+     * Summary of a single field-level operation.
+     *
+     * @param type        the operation type (e.g., "RENAME", "REMOVE", "ADD", "TRANSFORM")
+     * @param field       the affected field path in dot-notation
+     * @param target      the target field name for operations that have one, or {@code null}
+     * @param description optional description providing additional context, or {@code null}
+     * @author Erik Pförtner
+     * @since 1.0.0
+     */
+    public record FieldOperationSummary(String type,
+                                        String field,
+                                        @Nullable String target,
+                                        @Nullable String description
     ) {
     }
 }

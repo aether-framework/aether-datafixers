@@ -1133,6 +1133,7 @@ public final class GsonOps implements DynamicOps<JsonElement> {
      * @return the string {@code "GsonOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "GsonOps";
     }

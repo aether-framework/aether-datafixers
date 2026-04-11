@@ -216,6 +216,7 @@ public interface TypeRewriteRule {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }
@@ -272,6 +273,7 @@ public interface TypeRewriteRule {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name + "[" + targetType.describe() + "]";
             }
@@ -530,6 +532,7 @@ public interface TypeRewriteRule {
             }
 
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }

@@ -24,7 +24,9 @@ package de.splatgames.aether.datafixers.core.diagnostic;
 
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
 import de.splatgames.aether.datafixers.api.diagnostic.RuleApplication;
+import de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule;
 import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.Typed;
@@ -32,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -59,7 +62,14 @@ import java.util.Optional;
  */
 public final class DiagnosticRuleWrapper implements TypeRewriteRule {
 
+    /**
+     * The underlying rule that performs the actual rewrite logic.
+     */
     private final TypeRewriteRule delegate;
+
+    /**
+     * The diagnostic context used for recording rule application events.
+     */
     private final DiagnosticContext context;
 
     /**
@@ -80,6 +90,20 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         this.context = context;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Intercepts the rewrite call to capture diagnostic information including
+     * timing, match status, and field-level operation metadata from
+     * {@link FieldAwareRule} delegates. If {@code captureRuleDetails} is disabled,
+     * delegates directly without recording.</p>
+     *
+     * @param type  the type descriptor of the input, must not be {@code null}
+     * @param input the typed value to potentially rewrite, must not be {@code null}
+     * @return an {@link Optional} containing the rewritten value if the rule applies,
+     *         or {@link Optional#empty()} if it doesn't match; never {@code null}
+     * @throws NullPointerException if {@code type} or {@code input} is {@code null}
+     */
     @Override
     @NotNull
     public Optional<Typed<?>> rewrite(
@@ -98,13 +122,22 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         final Optional<Typed<?>> result = this.delegate.rewrite(type, input);
         final Duration duration = Duration.ofNanos(System.nanoTime() - startNano);
 
+        final List<FieldOperation> fieldOps;
+        if (this.context.options().captureFieldDetails()
+                && this.delegate instanceof FieldAwareRule fieldAware) {
+            fieldOps = fieldAware.fieldOperations();
+        } else {
+            fieldOps = List.of();
+        }
+
         final RuleApplication application = new RuleApplication(
                 this.delegate.toString(),
                 type.describe(),
                 timestamp,
                 duration,
                 result.isPresent(),
-                null
+                null,
+                fieldOps
         );
 
         this.context.reportBuilder().recordRuleApplication(application);
@@ -112,6 +145,16 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Delegates to {@link #rewrite(Type, Typed)} to ensure diagnostics are captured,
+     * returning the original input if the rule doesn't match.</p>
+     *
+     * @param input the typed value to transform, must not be {@code null}
+     * @return the rewritten result if matched, or the original input unchanged; never {@code null}
+     * @throws NullPointerException if {@code input} is {@code null}
+     */
     @Override
     @NotNull
     public Typed<?> apply(@NotNull final Typed<?> input) {
@@ -120,6 +163,17 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         return this.rewrite(input.type(), input).orElse(input);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Delegates to {@link #rewrite(Type, Typed)} to ensure diagnostics are captured,
+     * throwing if the rule doesn't match.</p>
+     *
+     * @param input the typed value to transform, must not be {@code null}
+     * @return the rewritten result, never {@code null}
+     * @throws IllegalStateException if the rule doesn't match the input type
+     * @throws NullPointerException  if {@code input} is {@code null}
+     */
     @Override
     @NotNull
     public Typed<?> applyOrThrow(@NotNull final Typed<?> input) {
@@ -130,6 +184,16 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
                 ));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Composes this rule with the next rule, wrapping the result in a new
+     * {@link DiagnosticRuleWrapper} to maintain diagnostic capture across compositions.</p>
+     *
+     * @param next the rule to apply after this rule succeeds, must not be {@code null}
+     * @return a composed diagnostic rule applying both rules in sequence, never {@code null}
+     * @throws NullPointerException if {@code next} is {@code null}
+     */
     @Override
     @NotNull
     public TypeRewriteRule andThen(@NotNull final TypeRewriteRule next) {
@@ -138,6 +202,16 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         return new DiagnosticRuleWrapper(this.delegate.andThen(unwrap(next)), this.context);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Creates a fallback composition, wrapping the result in a new
+     * {@link DiagnosticRuleWrapper} to maintain diagnostic capture.</p>
+     *
+     * @param fallback the rule to try if this rule doesn't match, must not be {@code null}
+     * @return a composed diagnostic rule with fallback behavior, never {@code null}
+     * @throws NullPointerException if {@code fallback} is {@code null}
+     */
     @Override
     @NotNull
     public TypeRewriteRule orElse(@NotNull final TypeRewriteRule fallback) {
@@ -145,12 +219,30 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         return new DiagnosticRuleWrapper(this.delegate.orElse(unwrap(fallback)), this.context);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Makes this rule always succeed, wrapping the result in a new
+     * {@link DiagnosticRuleWrapper} to maintain diagnostic capture.</p>
+     *
+     * @return a diagnostic rule that always succeeds, never {@code null}
+     */
     @Override
     @NotNull
     public TypeRewriteRule orKeep() {
         return new DiagnosticRuleWrapper(this.delegate.orKeep(), this.context);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Adds a type filter, wrapping the result in a new {@link DiagnosticRuleWrapper}
+     * to maintain diagnostic capture.</p>
+     *
+     * @param targetType the type that must match for the rule to apply, must not be {@code null}
+     * @return a filtered diagnostic rule, never {@code null}
+     * @throws NullPointerException if {@code targetType} is {@code null}
+     */
     @Override
     @NotNull
     public TypeRewriteRule ifType(@NotNull final Type<?> targetType) {
@@ -158,6 +250,16 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         return new DiagnosticRuleWrapper(this.delegate.ifType(targetType), this.context);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Adds a name for debugging, wrapping the result in a new {@link DiagnosticRuleWrapper}
+     * to maintain diagnostic capture.</p>
+     *
+     * @param name a descriptive name for this rule, must not be {@code null}
+     * @return a named diagnostic rule, never {@code null}
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
     @Override
     @NotNull
     public TypeRewriteRule named(@NotNull final String name) {
@@ -165,7 +267,13 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
         return new DiagnosticRuleWrapper(this.delegate.named(name), this.context);
     }
 
+    /**
+     * Returns the string representation of the underlying delegate rule.
+     *
+     * @return the delegate rule's string representation, never {@code null}
+     */
     @Override
+    @NotNull
     public String toString() {
         return this.delegate.toString();
     }

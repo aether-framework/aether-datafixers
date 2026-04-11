@@ -1392,6 +1392,7 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
      * @return the string {@code "JacksonYamlOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "JacksonYamlOps";
     }

@@ -155,7 +155,7 @@ public class DataFixerInfoContributor implements InfoContributor {
      * @param builder the info builder to add details to
      */
     @Override
-    public void contribute(final Info.Builder builder) {
+    public void contribute(@NotNull final Info.Builder builder) {
         final Map<String, Object> datafixersInfo = new LinkedHashMap<>();
         final Map<String, AetherDataFixer> fixers = this.registry.getAll();
 

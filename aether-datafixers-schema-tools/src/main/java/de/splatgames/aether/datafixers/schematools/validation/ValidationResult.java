@@ -340,6 +340,7 @@ public final class ValidationResult {
     }
 
     @Override
+    @NotNull
     public String toString() {
         if (this.issues.isEmpty()) {
             return "ValidationResult[valid, no issues]";

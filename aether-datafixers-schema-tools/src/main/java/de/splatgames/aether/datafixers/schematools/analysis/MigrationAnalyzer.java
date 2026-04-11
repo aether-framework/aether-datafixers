@@ -26,11 +26,15 @@ import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
 import de.splatgames.aether.datafixers.api.fix.DataFix;
+import de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule;
+import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.core.fix.DataFixRegistry;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
+import de.splatgames.aether.datafixers.core.fix.SchemaDataFix;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
 import de.splatgames.aether.datafixers.schematools.diff.SchemaDiff;
 import de.splatgames.aether.datafixers.schematools.diff.SchemaDiffer;
@@ -40,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -287,6 +292,151 @@ public final class MigrationAnalyzer {
         }
 
         return coverageBuilder.build();
+    }
+
+    /**
+     * Statically analyzes the field-level operations performed by all fixes in
+     * the configured version range.
+     *
+     * <p>This method walks every migration step between {@link #from} and
+     * {@link #to}, collects the unique {@link DataFix} instances applicable to
+     * each step, and introspects each one to extract the
+     * {@link FieldOperation field operations} its rule would perform — without
+     * running any data through the fixer.</p>
+     *
+     * <h4>Introspection Mechanism</h4>
+     * <p>For each fix, the analyzer:</p>
+     * <ol>
+     *   <li>Checks whether it extends
+     *       {@link SchemaDataFix} — only such fixes can be statically introspected</li>
+     *   <li>If yes, calls
+     *       {@link SchemaDataFix#introspectRule(Schema, Schema)} to obtain its rule</li>
+     *   <li>Tests the rule with {@code instanceof FieldAwareRule}; composition
+     *       combinators ({@code seq}, {@code choice}, etc.) already aggregate child
+     *       field operations flat into the wrapper rule, so a single
+     *       {@code instanceof} check is sufficient — no recursive walking needed</li>
+     *   <li>Records the operations in a {@link FixFieldOperations} entry</li>
+     * </ol>
+     *
+     * <p>Fixes that do not extend {@code SchemaDataFix} are recorded as opaque
+     * entries (see {@link FixFieldOperations#opaque}) and counted in
+     * {@link FieldOperationReport#opaqueFixCount()}.</p>
+     *
+     * <h4>Usage Example</h4>
+     * <pre>{@code
+     * FieldOperationReport report = MigrationAnalyzer.forBootstrap(bootstrap)
+     *     .from(100).to(200)
+     *     .analyzeFieldOperations();
+     *
+     * System.out.println(report.toSummary());
+     * report.affectedFieldPaths().forEach(System.out::println);
+     *
+     * if (!report.isFullyIntrospectable()) {
+     *     System.out.println(report.opaqueFixCount() + " opaque fixes - "
+     *         + "consider extending SchemaDataFix to enable static analysis");
+     * }
+     * }</pre>
+     *
+     * @return a report of all field operations across the configured version range,
+     *         never {@code null}
+     * @throws IllegalStateException if {@code from} or {@code to} is not set
+     * @see FieldOperationReport
+     * @see FixFieldOperations
+     * @see SchemaDataFix#introspectRule(Schema, Schema)
+     * @since 1.0.0
+     */
+    @NotNull
+    public FieldOperationReport analyzeFieldOperations() {
+        validateVersionRange();
+
+        final List<Schema> schemas = getSchemasInRange();
+        if (schemas.size() < 2) {
+            return FieldOperationReport.empty();
+        }
+
+        final FieldOperationReport.Builder reportBuilder =
+                FieldOperationReport.builder(this.fromVersion, this.toVersion);
+
+        for (int i = 0; i < schemas.size() - 1; i++) {
+            final Schema sourceSchema = schemas.get(i);
+            final Schema targetSchema = schemas.get(i + 1);
+            collectStepFieldOperations(sourceSchema, targetSchema, reportBuilder);
+        }
+
+        return reportBuilder.build();
+    }
+
+    /**
+     * Collects all unique fixes applicable at a single migration step and adds
+     * their field operations to the report builder.
+     *
+     * <p>Unlike {@link #analyzeStep}, this method walks <i>every</i> registered
+     * type in the {@link DataFixRegistry} and asks whether a fix is registered
+     * at the source version of the step. This is the correct semantic for
+     * field-operation analysis: a fix can exist for a type even when its schema
+     * hasn't changed between versions.</p>
+     *
+     * <p>Fixes are deduplicated by reference identity within a step, since the
+     * same {@code DataFix} instance may be registered for multiple types but
+     * always carries the same rule.</p>
+     *
+     * @param sourceSchema  the source schema for this step, must not be {@code null}
+     * @param targetSchema  the target schema for this step, must not be {@code null}
+     * @param reportBuilder the builder accumulating fix entries, must not be {@code null}
+     * @since 1.0.0
+     */
+    private void collectStepFieldOperations(
+            @NotNull final Schema sourceSchema,
+            @NotNull final Schema targetSchema,
+            @NotNull final FieldOperationReport.Builder reportBuilder
+    ) {
+        Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
+        Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
+        Preconditions.checkNotNull(reportBuilder, "reportBuilder must not be null");
+
+        // Walk every registered type and collect fixes for the source version of
+        // this step. Deduplicate by reference identity since the same fix instance
+        // may be registered for multiple types but always carries the same rule.
+        final Set<DataFix<?>> uniqueFixes = new LinkedHashSet<>();
+        for (final TypeReference ref : this.fixRegistry.registeredTypes()) {
+            uniqueFixes.addAll(this.fixRegistry.getStepFixes(ref, sourceSchema.version()));
+        }
+
+        for (final DataFix<?> fix : uniqueFixes) {
+            reportBuilder.addFix(introspectFix(fix, sourceSchema, targetSchema));
+        }
+    }
+
+    /**
+     * Introspects a single fix and produces its {@link FixFieldOperations} entry.
+     *
+     * <p>If the fix extends {@link SchemaDataFix}, its rule is obtained via
+     * {@link SchemaDataFix#introspectRule(Schema, Schema)} and tested for the
+     * {@link FieldAwareRule} marker. Otherwise the fix is recorded as opaque.</p>
+     *
+     * @param fix          the fix to introspect, must not be {@code null}
+     * @param sourceSchema the schema corresponding to the fix's source version, must not be {@code null}
+     * @param targetSchema the schema corresponding to the fix's target version, must not be {@code null}
+     * @return the field operations entry for this fix, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    private FixFieldOperations introspectFix(
+            @NotNull final DataFix<?> fix,
+            @NotNull final Schema sourceSchema,
+            @NotNull final Schema targetSchema
+    ) {
+        if (!(fix instanceof SchemaDataFix schemaFix)) {
+            return FixFieldOperations.opaque(fix.name(), fix.fromVersion(), fix.toVersion());
+        }
+
+        final TypeRewriteRule rule = schemaFix.introspectRule(sourceSchema, targetSchema);
+        final List<FieldOperation> operations = rule instanceof FieldAwareRule fieldAware
+                ? fieldAware.fieldOperations()
+                : List.of();
+
+        return FixFieldOperations.introspectable(
+                fix.name(), fix.fromVersion(), fix.toVersion(), operations);
     }
 
     /**

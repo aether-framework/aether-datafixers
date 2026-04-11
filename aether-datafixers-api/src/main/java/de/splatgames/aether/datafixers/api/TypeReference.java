@@ -28,6 +28,7 @@ import de.splatgames.aether.datafixers.api.fix.FixRegistrar;
 import de.splatgames.aether.datafixers.api.type.Type;
 import de.splatgames.aether.datafixers.api.type.TypeRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A unique identifier for a data type in the data fixing system.
@@ -183,7 +184,7 @@ public final class TypeReference {
      * @see #hashCode()
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -217,6 +218,7 @@ public final class TypeReference {
      * @see #getId()
      */
     @Override
+    @NotNull
     public String toString() {
         return "TypeReference{" + "id='" + this.id + '\'' + '}';
     }

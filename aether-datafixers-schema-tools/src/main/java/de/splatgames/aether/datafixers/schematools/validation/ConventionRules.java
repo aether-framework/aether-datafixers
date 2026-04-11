@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.schematools.validation;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -329,6 +330,7 @@ public final class ConventionRules {
      *
      * @return the pattern, or {@code null} if not set
      */
+    @Nullable
     public Pattern typeNamePattern() {
         return this.typeNamePattern;
     }
@@ -338,6 +340,7 @@ public final class ConventionRules {
      *
      * @return the pattern, or {@code null} if not set
      */
+    @Nullable
     public Pattern fieldNamePattern() {
         return this.fieldNamePattern;
     }
@@ -347,6 +350,7 @@ public final class ConventionRules {
      *
      * @return the prefix, or {@code null} if not required
      */
+    @Nullable
     public String typeNamePrefix() {
         return this.typeNamePrefix;
     }
@@ -356,6 +360,7 @@ public final class ConventionRules {
      *
      * @return the prefix, or {@code null} if not required
      */
+    @Nullable
     public String schemaClassPrefix() {
         return this.schemaClassPrefix;
     }
@@ -365,6 +370,7 @@ public final class ConventionRules {
      *
      * @return the suffix, or {@code null} if not required
      */
+    @Nullable
     public String schemaClassSuffix() {
         return this.schemaClassSuffix;
     }
@@ -374,6 +380,7 @@ public final class ConventionRules {
      *
      * @return the prefix, or {@code null} if not required
      */
+    @Nullable
     public String fixClassPrefix() {
         return this.fixClassPrefix;
     }
@@ -383,6 +390,7 @@ public final class ConventionRules {
      *
      * @return the suffix, or {@code null} if not required
      */
+    @Nullable
     public String fixClassSuffix() {
         return this.fixClassSuffix;
     }
@@ -435,7 +443,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder typeNamePattern(final Pattern pattern) {
+        public Builder typeNamePattern(@Nullable final Pattern pattern) {
             this.typeNamePattern = pattern;
             return this;
         }
@@ -447,7 +455,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fieldNamePattern(final Pattern pattern) {
+        public Builder fieldNamePattern(@Nullable final Pattern pattern) {
             this.fieldNamePattern = pattern;
             return this;
         }
@@ -459,7 +467,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder requireTypePrefix(final String prefix) {
+        public Builder requireTypePrefix(@Nullable final String prefix) {
             this.typeNamePrefix = prefix;
             return this;
         }
@@ -474,7 +482,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder schemaClassPrefix(final String prefix) {
+        public Builder schemaClassPrefix(@Nullable final String prefix) {
             this.schemaClassPrefix = prefix;
             return this;
         }
@@ -486,7 +494,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder schemaClassSuffix(final String suffix) {
+        public Builder schemaClassSuffix(@Nullable final String suffix) {
             this.schemaClassSuffix = suffix;
             return this;
         }
@@ -498,7 +506,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fixClassPrefix(final String prefix) {
+        public Builder fixClassPrefix(@Nullable final String prefix) {
             this.fixClassPrefix = prefix;
             return this;
         }
@@ -513,7 +521,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fixClassSuffix(final String suffix) {
+        public Builder fixClassSuffix(@Nullable final String suffix) {
             this.fixClassSuffix = suffix;
             return this;
         }
@@ -537,7 +545,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder customTypeValidator(final Predicate<String> validator) {
+        public Builder customTypeValidator(@Nullable final Predicate<String> validator) {
             this.customTypeValidator = validator;
             return this;
         }
@@ -549,7 +557,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder customFieldValidator(final Predicate<String> validator) {
+        public Builder customFieldValidator(@Nullable final Predicate<String> validator) {
             this.customFieldValidator = validator;
             return this;
         }

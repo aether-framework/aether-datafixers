@@ -207,7 +207,7 @@ public final class Pair<F, S> {
      * @return {@code true} if the specified object is a pair with equal values
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -238,6 +238,7 @@ public final class Pair<F, S> {
      * @return a string representation of this pair
      */
     @Override
+    @NotNull
     public String toString() {
         return "(" + this.first + ", " + this.second + ")";
     }

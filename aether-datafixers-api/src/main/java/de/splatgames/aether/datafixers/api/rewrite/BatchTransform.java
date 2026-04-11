@@ -23,6 +23,8 @@
 package de.splatgames.aether.datafixers.api.rewrite;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperationType;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -68,6 +70,12 @@ import java.util.function.Function;
  *   <li>{@link #addIfMissing(String, Function)} - Add field only if missing</li>
  * </ul>
  *
+ * <h2>Diagnostics</h2>
+ * <p>The {@link #diagnosticFieldOperations()} method provides structured metadata
+ * about all batch operations for the diagnostic system. When used via {@link Rules#batch},
+ * this metadata is automatically attached to the resulting rule as
+ * {@link FieldOperation} records.</p>
+ *
  * <h2>Thread Safety</h2>
  * <p>This class is not thread-safe during construction. Once built into a
  * {@link TypeRewriteRule} via {@link Rules#batch}, the resulting rule is thread-safe.</p>
@@ -79,7 +87,7 @@ import java.util.function.Function;
  */
 public final class BatchTransform<T> {
 
-    private final List<FieldOperation<T>> operations = new ArrayList<>();
+    private final List<BatchOp<T>> operations = new ArrayList<>();
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP2",
             justification = "DynamicOps is a stateless strategy object stored for future extensions of this builder; exposing/copying is neither required nor meaningful."
@@ -240,7 +248,7 @@ public final class BatchTransform<T> {
         Preconditions.checkNotNull(input, "input must not be null");
 
         Dynamic<T> result = input;
-        for (final FieldOperation<T> op : this.operations) {
+        for (final BatchOp<T> op : this.operations) {
             result = op.apply(result);
         }
         return result;
@@ -264,6 +272,59 @@ public final class BatchTransform<T> {
         return this.operations.isEmpty();
     }
 
+    /**
+     * Returns diagnostic field operation metadata for all operations in this batch.
+     *
+     * <p>This method converts the internal batch operations to
+     * {@link FieldOperation} records
+     * for use by the diagnostic system. Each batch operation is mapped to its
+     * corresponding diagnostic field operation type.</p>
+     *
+     * @return an unmodifiable list of diagnostic field operations, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public List<FieldOperation> diagnosticFieldOperations() {
+        return this.operations.stream()
+                .map(BatchTransform::toDiagnosticFieldOp)
+                .toList();
+    }
+
+    /**
+     * Converts an internal batch operation to a diagnostic field operation record.
+     *
+     * @param op  the internal operation to convert
+     * @param <T> the underlying data format type
+     * @return the corresponding diagnostic field operation
+     * @since 1.0.0
+     */
+    @NotNull
+    private static <T> FieldOperation toDiagnosticFieldOp(
+            @NotNull final BatchOp<T> op) {
+        if (op instanceof RenameOp<T> r) {
+            return FieldOperation.rename(r.from(), r.to());
+        }
+        if (op instanceof RemoveOp<T> r) {
+            return FieldOperation.remove(r.field());
+        }
+        if (op instanceof SetOp<T> r) {
+            return FieldOperation.set(r.field());
+        }
+        if (op instanceof TransformOp<T> r) {
+            return FieldOperation.transform(r.field());
+        }
+        if (op instanceof AddIfMissingOp<T> r) {
+            return FieldOperation.add(r.field());
+        }
+        // Fallback for any future operation types
+        return new FieldOperation(
+                FieldOperationType.TRANSFORM,
+                List.of("unknown"),
+                null,
+                "unknown batch operation"
+        );
+    }
+
     // ==================== Internal Operation Classes ====================
 
     /**
@@ -276,7 +337,7 @@ public final class BatchTransform<T> {
      * @param <T> the underlying data format type
      * @since 0.4.0
      */
-    private interface FieldOperation<T> {
+    private interface BatchOp<T> {
 
         /**
          * Applies this operation to the given dynamic value.
@@ -299,7 +360,7 @@ public final class BatchTransform<T> {
      * @param <T>  the underlying data format type
      * @since 0.4.0
      */
-    private record RenameOp<T>(String from, String to) implements FieldOperation<T> {
+    private record RenameOp<T>(String from, String to) implements BatchOp<T> {
 
         /**
          * {@inheritDoc}
@@ -330,7 +391,7 @@ public final class BatchTransform<T> {
      * @param <T>   the underlying data format type
      * @since 0.4.0
      */
-    private record RemoveOp<T>(String field) implements FieldOperation<T> {
+    private record RemoveOp<T>(String field) implements BatchOp<T> {
 
         /**
          * {@inheritDoc}
@@ -358,7 +419,7 @@ public final class BatchTransform<T> {
      * @param <T>           the underlying data format type
      * @since 0.4.0
      */
-    private record SetOp<T>(String field, Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements FieldOperation<T> {
+    private record SetOp<T>(String field, Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements BatchOp<T> {
 
         /**
          * {@inheritDoc}
@@ -387,7 +448,7 @@ public final class BatchTransform<T> {
      * @since 0.4.0
      */
     private record TransformOp<T>(String field,
-                                  Function<Dynamic<T>, Dynamic<T>> transform) implements FieldOperation<T> {
+                                  Function<Dynamic<T>, Dynamic<T>> transform) implements BatchOp<T> {
 
         /**
          * {@inheritDoc}
@@ -421,7 +482,7 @@ public final class BatchTransform<T> {
      * @since 0.4.0
      */
     private record AddIfMissingOp<T>(String field,
-                                     Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements FieldOperation<T> {
+                                     Function<Dynamic<T>, Dynamic<T>> valueSupplier) implements BatchOp<T> {
 
         /**
          * {@inheritDoc}

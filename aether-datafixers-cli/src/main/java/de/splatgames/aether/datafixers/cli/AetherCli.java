@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.cli;
 import de.splatgames.aether.datafixers.cli.command.InfoCommand;
 import de.splatgames.aether.datafixers.cli.command.MigrateCommand;
 import de.splatgames.aether.datafixers.cli.command.ValidateCommand;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
@@ -99,7 +100,7 @@ public class AetherCli implements Callable<Integer> {
      *             but should not be {@code null}
      * @see CommandLine#execute(String...)
      */
-    public static void main(final String[] args) {
+    public static void main(@NotNull final String[] args) {
         final int exitCode = new CommandLine(new AetherCli())
                 .setCaseInsensitiveEnumValuesAllowed(true)
                 .execute(args);
@@ -121,6 +122,7 @@ public class AetherCli implements Callable<Integer> {
      * @see CommandLine#usage(Object, java.io.PrintStream)
      */
     @Override
+    @NotNull
     public Integer call() {
         // Print help when no subcommand is specified
         CommandLine.usage(this, System.out);

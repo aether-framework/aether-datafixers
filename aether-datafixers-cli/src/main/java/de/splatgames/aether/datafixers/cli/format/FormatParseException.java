@@ -22,6 +22,8 @@
 
 package de.splatgames.aether.datafixers.cli.format;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Exception thrown when parsing input data fails.
  *
@@ -33,19 +35,19 @@ public class FormatParseException extends RuntimeException {
     /**
      * Constructs a new format parse exception with the specified message.
      *
-     * @param message the detail message
+     * @param message the detail message, may be {@code null}
      */
-    public FormatParseException(final String message) {
+    public FormatParseException(@Nullable final String message) {
         super(message);
     }
 
     /**
      * Constructs a new format parse exception with the specified message and cause.
      *
-     * @param message the detail message
-     * @param cause   the cause of this exception
+     * @param message the detail message, may be {@code null}
+     * @param cause   the cause of this exception, may be {@code null}
      */
-    public FormatParseException(final String message, final Throwable cause) {
+    public FormatParseException(@Nullable final String message, @Nullable final Throwable cause) {
         super(message, cause);
     }
 }

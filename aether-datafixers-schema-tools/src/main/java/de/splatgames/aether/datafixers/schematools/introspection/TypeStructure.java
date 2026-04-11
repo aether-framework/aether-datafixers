@@ -310,7 +310,7 @@ public final class TypeStructure {
      * @see #structurallyEquals(TypeStructure)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -346,6 +346,7 @@ public final class TypeStructure {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "TypeStructure{" +
                 "reference=" + this.reference +

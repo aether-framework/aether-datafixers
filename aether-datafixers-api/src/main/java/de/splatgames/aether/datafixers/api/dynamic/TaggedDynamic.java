@@ -25,6 +25,7 @@ package de.splatgames.aether.datafixers.api.dynamic;
 import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link Dynamic} value paired with a {@link TypeReference} identifier.
@@ -200,7 +201,7 @@ public class TaggedDynamic {
      * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -237,6 +238,7 @@ public class TaggedDynamic {
      * @return a string representation of the object
      */
     @Override
+    @NotNull
     public String toString() {
         return "TaggedDynamic{" +
                 "type=" + this.type +
