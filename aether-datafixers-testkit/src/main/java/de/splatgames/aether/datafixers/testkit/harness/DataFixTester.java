@@ -90,10 +90,15 @@ import java.util.Objects;
  */
 public final class DataFixTester<T> {
 
+    @NotNull
     private final DataFix<T> fix;
+    @Nullable
     private Dynamic<T> input;
+    @Nullable
     private TypeReference typeReference;
+    @NotNull
     private DataFixerContext context;
+    @Nullable
     private Dynamic<T> expectedOutput;
     private boolean useRecordingContext;
 
@@ -223,7 +228,10 @@ public final class DataFixTester<T> {
     public Dynamic<T> apply() {
         this.validateConfiguration();
 
-        return this.fix.apply(this.typeReference, this.input, this.resolveContext());
+        return this.fix.apply(
+                Objects.requireNonNull(this.typeReference),
+                Objects.requireNonNull(this.input),
+                this.resolveContext());
     }
 
     /**
@@ -240,7 +248,10 @@ public final class DataFixTester<T> {
         final DataFixerContext effectiveContext = this.resolveContext();
         final RecordingContext recordingContext = effectiveContext instanceof RecordingContext rc ? rc : null;
 
-        final Dynamic<T> result = this.fix.apply(this.typeReference, this.input, effectiveContext);
+        final Dynamic<T> result = this.fix.apply(
+                Objects.requireNonNull(this.typeReference),
+                Objects.requireNonNull(this.input),
+                effectiveContext);
 
         // Verify expected output if set
         if (this.expectedOutput != null) {
@@ -291,7 +302,9 @@ public final class DataFixTester<T> {
      */
     public static final class DataFixVerification<T> {
 
+        @NotNull
         private final Dynamic<T> result;
+        @Nullable
         private final RecordingContext context;
         private final boolean passed;
 

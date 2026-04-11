@@ -92,9 +92,13 @@ import java.util.stream.Collectors;
  */
 public final class SchemaTester {
 
+    @NotNull
     private final Schema schema;
+    @Nullable
     private Integer expectedVersion;
+    @Nullable
     private Schema expectedParent;
+    @Nullable
     private Boolean expectHasParent;
 
     private SchemaTester(@NotNull final Schema schema) {
@@ -378,14 +382,13 @@ public final class SchemaTester {
         // Validate parent existence
         if (this.expectHasParent != null) {
             final Schema actualParentRef = this.schema.parent();
-            final boolean hasParent = actualParentRef != null;
-            if (this.expectHasParent && !hasParent) {
+            if (this.expectHasParent && actualParentRef == null) {
                 throw new AssertionError(String.format(
                         "Schema v%d has no parent, but one was expected",
                         this.schema.version().getVersion()
                 ));
             }
-            if (!this.expectHasParent && hasParent) {
+            if (!this.expectHasParent && actualParentRef != null) {
                 throw new AssertionError(String.format(
                         "Schema v%d has a parent (v%d), but none was expected",
                         this.schema.version().getVersion(),

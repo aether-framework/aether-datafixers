@@ -117,36 +117,43 @@ public final class ConventionRules {
     /**
      * Regex pattern that type names must match, or {@code null} to skip pattern check.
      */
+    @Nullable
     private final Pattern typeNamePattern;
 
     /**
      * Regex pattern that field names must match, or {@code null} to skip pattern check.
      */
+    @Nullable
     private final Pattern fieldNamePattern;
 
     /**
      * Required prefix for type names, or {@code null} if no prefix required.
      */
+    @Nullable
     private final String typeNamePrefix;
 
     /**
      * Expected prefix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
+    @Nullable
     private final String schemaClassPrefix;
 
     /**
      * Expected suffix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
+    @Nullable
     private final String schemaClassSuffix;
 
     /**
      * Expected prefix for fix class names, or {@code null} to skip.
      */
+    @Nullable
     private final String fixClassPrefix;
 
     /**
      * Expected suffix for fix class names (e.g., "Fix"), or {@code null} to skip.
      */
+    @Nullable
     private final String fixClassSuffix;
 
     /**
@@ -157,11 +164,13 @@ public final class ConventionRules {
     /**
      * Custom validation predicate for type names, or {@code null} if not used.
      */
+    @Nullable
     private final Predicate<String> customTypeValidator;
 
     /**
      * Custom validation predicate for field names, or {@code null} if not used.
      */
+    @Nullable
     private final Predicate<String> customFieldValidator;
 
     /**
@@ -183,16 +192,16 @@ public final class ConventionRules {
      */
     private ConventionRules(
             final boolean enabled,
-            final Pattern typeNamePattern,
-            final Pattern fieldNamePattern,
-            final String typeNamePrefix,
-            final String schemaClassPrefix,
-            final String schemaClassSuffix,
-            final String fixClassPrefix,
-            final String fixClassSuffix,
+            @Nullable final Pattern typeNamePattern,
+            @Nullable final Pattern fieldNamePattern,
+            @Nullable final String typeNamePrefix,
+            @Nullable final String schemaClassPrefix,
+            @Nullable final String schemaClassSuffix,
+            @Nullable final String fixClassPrefix,
+            @Nullable final String fixClassSuffix,
             final boolean treatViolationsAsErrors,
-            final Predicate<String> customTypeValidator,
-            final Predicate<String> customFieldValidator
+            @Nullable final Predicate<String> customTypeValidator,
+            @Nullable final Predicate<String> customFieldValidator
     ) {
         this.enabled = enabled;
         this.typeNamePattern = typeNamePattern;
@@ -410,15 +419,24 @@ public final class ConventionRules {
     public static final class Builder {
 
         private boolean enabled = true;
+        @Nullable
         private Pattern typeNamePattern;
+        @Nullable
         private Pattern fieldNamePattern;
+        @Nullable
         private String typeNamePrefix;
+        @Nullable
         private String schemaClassPrefix;
+        @Nullable
         private String schemaClassSuffix;
+        @Nullable
         private String fixClassPrefix;
+        @Nullable
         private String fixClassSuffix;
         private boolean treatViolationsAsErrors = false;
+        @Nullable
         private Predicate<String> customTypeValidator;
+        @Nullable
         private Predicate<String> customFieldValidator;
 
         private Builder() {

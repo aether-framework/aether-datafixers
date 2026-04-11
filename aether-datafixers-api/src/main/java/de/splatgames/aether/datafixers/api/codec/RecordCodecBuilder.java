@@ -28,6 +28,7 @@ import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -823,7 +824,10 @@ public final class RecordCodecBuilder {
                     final DataResult<A> a = f1.codec.decode(ops, input);
                     final DataResult<B> b = f2.codec.decode(ops, input);
                     final DataResult<C> c = f3.codec.decode(ops, input);
-                    return a.apply2(b, Pair::of).apply2(c, (ab, cv) -> constructor.apply(ab.first(), ab.second(), cv));
+                    return a.apply2(b, Pair::of).apply2(c, (ab, cv) -> constructor.apply(
+                            Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
+                            Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
+                            cv));
                 }
             };
         }
@@ -896,7 +900,10 @@ public final class RecordCodecBuilder {
                     final DataResult<C> c = f3.codec.decode(ops, input);
                     final DataResult<D> d = f4.codec.decode(ops, input);
                     return a.apply2(b, Pair::of)
-                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(c, (ab, cv) -> new Tuple3<>(
+                                    Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
+                                    Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
+                                    cv))
                             .apply2(d, (abc, dv) -> constructor.apply(abc.a, abc.b, abc.c, dv));
                 }
             };
@@ -976,7 +983,10 @@ public final class RecordCodecBuilder {
                     final DataResult<D> d = f4.codec.decode(ops, input);
                     final DataResult<E> e = f5.codec.decode(ops, input);
                     return a.apply2(b, Pair::of)
-                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(c, (ab, cv) -> new Tuple3<>(
+                                    Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
+                                    Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
+                                    cv))
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
                             .apply2(e, (abcd, ev) -> constructor.apply(abcd.a, abcd.b, abcd.c, abcd.d, ev));
                 }
@@ -1063,7 +1073,10 @@ public final class RecordCodecBuilder {
                     final DataResult<E> e = f5.codec.decode(ops, input);
                     final DataResult<F> f = f6.codec.decode(ops, input);
                     return a.apply2(b, Pair::of)
-                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(c, (ab, cv) -> new Tuple3<>(
+                                    Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
+                                    Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
+                                    cv))
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
                             .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
                             .apply2(f, (abcde, fv) -> constructor.apply(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv));
@@ -1232,7 +1245,10 @@ public final class RecordCodecBuilder {
                     final DataResult<F> f = f6.codec.decode(ops, input);
                     final DataResult<G> g = f7.codec.decode(ops, input);
                     return a.apply2(b, Pair::of)
-                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(c, (ab, cv) -> new Tuple3<>(
+                                    Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
+                                    Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
+                                    cv))
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
                             .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
                             .apply2(f, (abcde, fv) -> new Tuple6<>(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv))
@@ -1336,7 +1352,10 @@ public final class RecordCodecBuilder {
                     final DataResult<G> g = f7.codec.decode(ops, input);
                     final DataResult<H> h = f8.codec.decode(ops, input);
                     return a.apply2(b, Pair::of)
-                            .apply2(c, (ab, cv) -> new Tuple3<>(ab.first(), ab.second(), cv))
+                            .apply2(c, (ab, cv) -> new Tuple3<>(
+                                    Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
+                                    Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
+                                    cv))
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
                             .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
                             .apply2(f, (abcde, fv) -> new Tuple6<>(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv))

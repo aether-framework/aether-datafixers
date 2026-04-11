@@ -37,6 +37,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,23 +53,33 @@ import java.util.Set;
  */
 public final class MigrationReportImpl implements MigrationReport {
 
+    @NotNull
     private final TypeReference type;
+    @NotNull
     private final DataVersion fromVersion;
+    @NotNull
     private final DataVersion toVersion;
+    @NotNull
     private final Instant startTime;
+    @NotNull
     private final Instant endTime;
+    @NotNull
     private final List<FixExecution> fixExecutions;
+    @NotNull
     private final Set<TypeReference> touchedTypes;
+    @NotNull
     private final List<String> warnings;
+    @Nullable
     private final String inputSnapshot;
+    @Nullable
     private final String outputSnapshot;
 
-    private MigrationReportImpl(final BuilderImpl builder) {
-        this.type = builder.type;
-        this.fromVersion = builder.fromVersion;
-        this.toVersion = builder.toVersion;
-        this.startTime = builder.startTime;
-        this.endTime = builder.endTime;
+    private MigrationReportImpl(@NotNull final BuilderImpl builder) {
+        this.type = Objects.requireNonNull(builder.type, "builder.type");
+        this.fromVersion = Objects.requireNonNull(builder.fromVersion, "builder.fromVersion");
+        this.toVersion = Objects.requireNonNull(builder.toVersion, "builder.toVersion");
+        this.startTime = Objects.requireNonNull(builder.startTime, "builder.startTime");
+        this.endTime = Objects.requireNonNull(builder.endTime, "builder.endTime");
         this.fixExecutions = List.copyOf(builder.fixExecutions);
         this.touchedTypes = Set.copyOf(builder.touchedTypes);
         this.warnings = List.copyOf(builder.warnings);
@@ -160,23 +171,39 @@ public final class MigrationReportImpl implements MigrationReport {
      */
     public static final class BuilderImpl implements MigrationReport.Builder {
 
+        @Nullable
         private TypeReference type;
+        @Nullable
         private DataVersion fromVersion;
+        @Nullable
         private DataVersion toVersion;
+        @Nullable
         private Instant startTime;
+        @Nullable
         private Instant endTime;
+        @NotNull
         private final List<FixExecution> fixExecutions = new ArrayList<>();
+        @NotNull
         private final Set<TypeReference> touchedTypes = new LinkedHashSet<>();
+        @NotNull
         private final List<String> warnings = new ArrayList<>();
+        @Nullable
         private String inputSnapshot;
+        @Nullable
         private String outputSnapshot;
 
         // Current fix tracking
+        @Nullable
         private String currentFixName;
+        @Nullable
         private DataVersion currentFixFromVersion;
+        @Nullable
         private DataVersion currentFixToVersion;
+        @Nullable
         private Instant currentFixStartTime;
+        @NotNull
         private final List<RuleApplication> currentRuleApplications = new ArrayList<>();
+        @Nullable
         private String currentFixBeforeSnapshot;
 
         // Lifecycle state
@@ -261,10 +288,10 @@ public final class MigrationReportImpl implements MigrationReport {
             Preconditions.checkNotNull(duration, "duration must not be null");
 
             final FixExecution execution = new FixExecution(
-                    this.currentFixName,
-                    this.currentFixFromVersion,
-                    this.currentFixToVersion,
-                    this.currentFixStartTime,
+                    Objects.requireNonNull(this.currentFixName, "currentFixName"),
+                    Objects.requireNonNull(this.currentFixFromVersion, "currentFixFromVersion"),
+                    Objects.requireNonNull(this.currentFixToVersion, "currentFixToVersion"),
+                    Objects.requireNonNull(this.currentFixStartTime, "currentFixStartTime"),
                     duration,
                     new ArrayList<>(this.currentRuleApplications),
                     this.currentFixBeforeSnapshot,

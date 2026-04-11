@@ -77,27 +77,32 @@ public final class MigrationStep {
     /**
      * The version from which this migration step starts.
      */
+    @NotNull
     private final DataVersion sourceVersion;
 
     /**
      * The version to which this migration step migrates data.
      */
+    @NotNull
     private final DataVersion targetVersion;
 
     /**
      * The DataFixes applied in this step. Empty if no fixes apply.
      */
+    @NotNull
     private final List<DataFix<?>> fixes;
 
     /**
      * The schema diff between source and target versions, or {@code null} if not computed.
      */
+    @Nullable
     private final SchemaDiff schemaDiff;
 
     /**
      * The set of type references affected by this migration step.
      * This is an immutable copy of the provided set.
      */
+    @NotNull
     private final Set<TypeReference> affectedTypes;
 
     /**
@@ -361,26 +366,31 @@ public final class MigrationStep {
         /**
          * The required source version.
          */
+        @NotNull
         private final DataVersion sourceVersion;
 
         /**
          * The required target version.
          */
+        @NotNull
         private final DataVersion targetVersion;
 
         /**
          * The list of DataFixes; defaults to empty.
          */
+        @NotNull
         private final List<DataFix<?>> fixes = new ArrayList<>();
 
         /**
          * The optional schema diff; defaults to {@code null}.
          */
+        @Nullable
         private SchemaDiff schemaDiff;
 
         /**
          * The affected types; defaults to empty set.
          */
+        @NotNull
         private Set<TypeReference> affectedTypes = Set.of();
 
         /**

@@ -171,4 +171,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            Benchmarks are intentionally excluded from the NullAway profile:
+            performance microbenchmarks prioritize measurement fidelity over
+            production-grade null safety guarantees.
+        -->
+        <profile>
+            <id>nullability</id>
+            <properties>
+                <maven.main.skip>true</maven.main.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

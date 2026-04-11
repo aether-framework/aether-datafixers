@@ -57,6 +57,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
@@ -125,6 +126,7 @@ public class MigrateCommand implements Callable<Integer> {
             description = "Input file(s) or directory to migrate.",
             arity = "1..*"
     )
+    @Nullable
     private List<File> inputFiles;
 
     /**
@@ -147,6 +149,7 @@ public class MigrateCommand implements Callable<Integer> {
             names = {"-o", "--output"},
             description = "Output file or directory (defaults to stdout for single file, or in-place with backup)."
     )
+    @Nullable
     private File output;
 
     /**
@@ -165,6 +168,7 @@ public class MigrateCommand implements Callable<Integer> {
             names = {"--from"},
             description = "Source data version (auto-detected if --version-field is specified)."
     )
+    @Nullable
     private Integer fromVersion;
 
     /**
@@ -204,6 +208,7 @@ public class MigrateCommand implements Callable<Integer> {
             description = "Type reference ID (e.g., 'player', 'world').",
             required = true
     )
+    @Nullable
     private String typeId;
 
     /**
@@ -224,6 +229,7 @@ public class MigrateCommand implements Callable<Integer> {
             description = "JSON field path containing the data version (e.g., 'dataVersion' or 'meta.version').",
             defaultValue = "dataVersion"
     )
+    @Nullable
     private String versionField;
 
     /**
@@ -249,6 +255,7 @@ public class MigrateCommand implements Callable<Integer> {
             description = "Input/output format: json-gson, json-jackson (default: json-gson).",
             defaultValue = "json-gson"
     )
+    @Nullable
     private String format;
 
     /**
@@ -293,6 +300,7 @@ public class MigrateCommand implements Callable<Integer> {
             description = "Fully qualified class name of DataFixerBootstrap implementation.",
             required = true
     )
+    @Nullable
     private String bootstrapClass;
 
     /**
@@ -338,6 +346,7 @@ public class MigrateCommand implements Callable<Integer> {
             description = "Report format: text, json (default: text).",
             defaultValue = "text"
     )
+    @Nullable
     private String reportFormat;
 
     /**
@@ -356,6 +365,7 @@ public class MigrateCommand implements Callable<Integer> {
             names = {"--report-file"},
             description = "Write report to file instead of stderr."
     )
+    @Nullable
     private File reportFile;
 
     /**
@@ -485,7 +495,8 @@ public class MigrateCommand implements Callable<Integer> {
             }
 
             // 1. Load bootstrap
-            final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
+            final DataFixerBootstrap bootstrap = BootstrapLoader.load(
+                    Objects.requireNonNull(this.bootstrapClass, "--bootstrap is required"));
 
             // 2. Create fixer
             final DataVersion targetVersion = new DataVersion(this.toVersion);
@@ -493,7 +504,8 @@ public class MigrateCommand implements Callable<Integer> {
                     .create(targetVersion, bootstrap);
 
             // 3. Get format handler
-            final FormatHandler<?> handler = FormatRegistry.get(this.format);
+            final FormatHandler<?> handler = FormatRegistry.get(
+                    Objects.requireNonNull(this.format, "--format has a default"));
             if (handler == null) {
                 System.err.println("Unknown format: " + this.format);
                 System.err.println("Available formats: " + FormatRegistry.availableFormats());
@@ -501,14 +513,16 @@ public class MigrateCommand implements Callable<Integer> {
             }
 
             // 4. Process files
-            final TypeReference typeRef = new TypeReference(this.typeId);
+            final TypeReference typeRef = new TypeReference(
+                    Objects.requireNonNull(this.typeId, "--type is required"));
             int successCount = 0;
             int errorCount = 0;
             final StringBuilder reportBuilder = new StringBuilder();
 
             final StringBuilder diagnosticBuilder = new StringBuilder();
 
-            for (final File inputFile : this.inputFiles) {
+            final List<File> files = Objects.requireNonNull(this.inputFiles, "inputFiles positional arg required");
+            for (final File inputFile : files) {
                 try {
                     final MigrationResult result = processFile(
                             inputFile, fixer, handler, typeRef, targetVersion);
@@ -631,7 +645,8 @@ public class MigrateCommand implements Callable<Integer> {
         if (this.fromVersion != null) {
             sourceVersion = new DataVersion(this.fromVersion);
         } else {
-            sourceVersion = VersionExtractor.extract(data, handler.ops(), this.versionField);
+            sourceVersion = VersionExtractor.extract(data, handler.ops(),
+                    Objects.requireNonNull(this.versionField, "--version-field has a default"));
         }
 
         // Check if migration is needed
@@ -680,7 +695,8 @@ public class MigrateCommand implements Callable<Integer> {
         // Generate report
         String report = "";
         if (this.generateReport) {
-            final ReportFormatter formatter = ReportFormatter.forFormat(this.reportFormat);
+            final ReportFormatter formatter = ReportFormatter.forFormat(
+                    Objects.requireNonNull(this.reportFormat, "--report-format has a default"));
             report = formatter.formatSimple(
                     inputFile.getName(),
                     typeRef.getId(),
@@ -694,7 +710,8 @@ public class MigrateCommand implements Callable<Integer> {
         final MigrationReport diagnosticReport = diagCtx != null ? diagCtx.getReport() : null;
         String diagnosticOutput = "";
         if (diagnosticReport != null) {
-            final ReportFormatter formatter = ReportFormatter.forFormat(this.reportFormat);
+            final ReportFormatter formatter = ReportFormatter.forFormat(
+                    Objects.requireNonNull(this.reportFormat, "--report-format has a default"));
             diagnosticOutput = formatter.formatDiagnostic(
                     inputFile.getName(),
                     typeRef.getId(),
@@ -744,16 +761,17 @@ public class MigrateCommand implements Callable<Integer> {
                         "Output path contains path traversal: " + this.output);
             }
 
+            final List<File> files = Objects.requireNonNull(this.inputFiles, "inputFiles set by picocli");
             if (this.output.isDirectory()) {
                 final Path outPath = this.output.toPath().resolve(inputFile.getName());
                 Files.writeString(outPath, content, StandardCharsets.UTF_8);
-            } else if (this.inputFiles.size() == 1) {
+            } else if (files.size() == 1) {
                 Files.writeString(this.output.toPath(), content, StandardCharsets.UTF_8);
             } else {
                 throw new IllegalArgumentException(
                         "Output must be a directory when multiple input files are specified");
             }
-        } else if (this.inputFiles.size() == 1) {
+        } else if (Objects.requireNonNull(this.inputFiles, "inputFiles set by picocli").size() == 1) {
             // Single file with no output: stdout
             System.out.println(content);
         } else {
@@ -777,19 +795,6 @@ public class MigrateCommand implements Callable<Integer> {
         }
     }
 
-    /**
-     * Holds the result of a single file migration operation.
-     *
-     * <p>This record captures the outcome of migrating one file, including
-     * the formatted report string (if reporting is enabled) and the time
-     * taken for the migration.</p>
-     *
-     * @param report   the formatted migration report string, empty if reporting is disabled
-     *                 or if the file was skipped (already at target version)
-     * @param duration the time elapsed during the migration process, including file I/O
-     * @see #processFile(File, AetherDataFixer, FormatHandler, TypeReference, DataVersion)
-     * @see ReportFormatter
-     */
     /**
      * Holds the result of a single file migration operation.
      *

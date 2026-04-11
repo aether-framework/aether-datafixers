@@ -92,9 +92,13 @@ import org.jetbrains.annotations.Nullable;
  * @since 0.1.0
  */
 public class Schema {
+    @NotNull
     private final DataVersion version;
+    @Nullable
     private final Schema parent;
+    @Nullable
     private volatile TypeRegistry types;
+    @Nullable
     private TypeRegistry buildingTypes;
 
     /**
@@ -245,7 +249,9 @@ public class Schema {
     protected final void registerType(@NotNull final Type<?> type) {
         Preconditions.checkNotNull(type, "type must not be null");
         final TypeRegistry registry = this.buildingTypes;
-        Preconditions.checkState(registry != null, "Cannot register types outside of registerTypes()");
+        if (registry == null) {
+            throw new IllegalStateException("Cannot register types outside of registerTypes()");
+        }
         registry.register(type);
     }
 
@@ -281,9 +287,10 @@ public class Schema {
         Preconditions.checkNotNull(reference, "reference must not be null");
         Preconditions.checkNotNull(template, "template must not be null");
         final TypeRegistry registry = this.buildingTypes;
-        Preconditions.checkState(registry != null, "Cannot register types outside of registerTypes()");
+        if (registry == null) {
+            throw new IllegalStateException("Cannot register types outside of registerTypes()");
+        }
 
-        // Apply the template with an empty family to get the concrete type
         final Type<?> templateType = template.apply(TypeFamily.empty());
 
         // Wrap the template type with the reference

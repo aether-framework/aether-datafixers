@@ -73,21 +73,25 @@ public final class FieldDiff {
      * The name of the field being compared.
      * This is always non-null regardless of diff kind.
      */
+    @NotNull
     private final String fieldName;
 
     /**
      * The kind of difference detected (ADDED, REMOVED, MODIFIED, or UNCHANGED).
      */
+    @NotNull
     private final DiffKind kind;
 
     /**
      * The field from the source (older) schema, or {@code null} if the field was added.
      */
+    @Nullable
     private final FieldInfo sourceField;
 
     /**
      * The field from the target (newer) schema, or {@code null} if the field was removed.
      */
+    @Nullable
     private final FieldInfo targetField;
 
     /**
@@ -331,10 +335,10 @@ public final class FieldDiff {
     @NotNull
     public String toString() {
         return switch (this.kind) {
-            case ADDED -> "+" + this.fieldName + ": " + this.targetField.fieldType().describe();
-            case REMOVED -> "-" + this.fieldName + ": " + this.sourceField.fieldType().describe();
-            case MODIFIED -> "~" + this.fieldName + ": " + this.sourceField.fieldType().describe()
-                    + " -> " + this.targetField.fieldType().describe();
+            case ADDED -> "+" + this.fieldName + ": " + Objects.requireNonNull(this.targetField, "ADDED has targetField").fieldType().describe();
+            case REMOVED -> "-" + this.fieldName + ": " + Objects.requireNonNull(this.sourceField, "REMOVED has sourceField").fieldType().describe();
+            case MODIFIED -> "~" + this.fieldName + ": " + Objects.requireNonNull(this.sourceField, "MODIFIED has sourceField").fieldType().describe()
+                    + " -> " + Objects.requireNonNull(this.targetField, "MODIFIED has targetField").fieldType().describe();
             case UNCHANGED -> "=" + this.fieldName;
         };
     }

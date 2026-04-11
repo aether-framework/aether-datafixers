@@ -213,7 +213,9 @@ public final class MockSchemas {
     public static final class SchemaBuilder {
 
         private final int version;
+        @Nullable
         private Schema parent;
+        @NotNull
         private final SimpleTypeRegistry typeRegistry;
 
         SchemaBuilder(final int version) {

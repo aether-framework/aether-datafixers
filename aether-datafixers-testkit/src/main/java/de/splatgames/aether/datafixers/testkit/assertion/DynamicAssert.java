@@ -291,7 +291,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasStringField(@NotNull final String key, @NotNull final String expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final String actualValue = fieldValue.asString().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be '%s' but was '%s'",
@@ -314,7 +314,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasIntField(@NotNull final String key, final int expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Integer actualValue = fieldValue.asInt().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be %d but was %s",
@@ -337,7 +337,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasLongField(@NotNull final String key, final long expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Long actualValue = fieldValue.asLong().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be %d but was %s",
@@ -361,7 +361,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasDoubleField(@NotNull final String key, final double expected, final double epsilon) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Double actualValue = fieldValue.asDouble().orElse(null);
         if (actualValue == null || Math.abs(expected - actualValue) > epsilon) {
             failWithMessage("Expected%s field '%s' to be %f (±%f) but was %s",
@@ -384,7 +384,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasBooleanField(@NotNull final String key, final boolean expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Boolean actualValue = fieldValue.asBoolean().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be %b but was %s",
@@ -494,7 +494,9 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         isNotNull();
         this.hasField(key);
         final String newPath = this.path.isEmpty() ? key : this.path + "." + key;
-        return new DynamicAssert<>(this.actual.get(key), newPath);
+        return new DynamicAssert<>(
+                Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)"),
+                newPath);
     }
 
     /**
@@ -519,7 +521,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
                 failWithMessage("Path '%s' not found: field '%s' does not exist at '%s'. Available fields: %s",
                         dotPath, part, currentPath, this.fieldsOf(current));
             }
-            current = current.get(part);
+            current = Objects.requireNonNull(current.get(part), "path segment guaranteed by has(part) check");
             if (!currentPath.isEmpty()) {
                 currentPath.append(".");
             }
@@ -737,7 +739,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     private List<String> availableFieldsList() {
         return this.actual.asMapStream()
                 .result()
-                .map(s -> s.map(p -> p.first().asString().orElse("?")).collect(Collectors.toList()))
+                .map(s -> s.map(p -> Objects.requireNonNull(p.first(), "map entry key").asString().orElse("?")).collect(Collectors.toList()))
                 .orElse(List.of());
     }
 
@@ -756,10 +758,10 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return "unknown: " + element.value();
     }
 
-    private String fieldsOf(final Dynamic<T> d) {
+    private String fieldsOf(@NotNull final Dynamic<T> d) {
         return d.asMapStream()
                 .result()
-                .map(s -> s.map(p -> p.first().asString().orElse("?")).collect(Collectors.joining(", ")))
+                .map(s -> s.map(p -> Objects.requireNonNull(p.first(), "map entry key").asString().orElse("?")).collect(Collectors.joining(", ")))
                 .orElse("(none)");
     }
 }

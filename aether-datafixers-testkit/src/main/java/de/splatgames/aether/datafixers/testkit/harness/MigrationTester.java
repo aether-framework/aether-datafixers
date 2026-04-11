@@ -30,6 +30,7 @@ import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixer;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,11 +85,17 @@ import java.util.function.Consumer;
  */
 public final class MigrationTester<T> {
 
+    @NotNull
     private final DataFixer fixer;
+    @Nullable
     private TypeReference typeReference;
+    @Nullable
     private Dynamic<T> input;
+    @Nullable
     private DataVersion fromVersion;
+    @Nullable
     private DataVersion toVersion;
+    @Nullable
     private Dynamic<T> expectedOutput;
 
     private MigrationTester(@NotNull final DataFixer fixer) {
@@ -244,10 +251,10 @@ public final class MigrationTester<T> {
     public Dynamic<T> migrate() {
         this.validateConfiguration();
         return this.fixer.update(
-                this.typeReference,
-                this.input,
-                this.fromVersion,
-                this.toVersion
+                Objects.requireNonNull(this.typeReference),
+                Objects.requireNonNull(this.input),
+                Objects.requireNonNull(this.fromVersion),
+                Objects.requireNonNull(this.toVersion)
         );
     }
 
@@ -266,8 +273,8 @@ public final class MigrationTester<T> {
             if (!Objects.equals(result.value(), this.expectedOutput.value())) {
                 throw new AssertionError(String.format(
                         "Migration from v%d to v%d did not produce expected output.%nExpected:%n  %s%nActual:%n  %s",
-                        this.fromVersion.getVersion(),
-                        this.toVersion.getVersion(),
+                        Objects.requireNonNull(this.fromVersion).getVersion(),
+                        Objects.requireNonNull(this.toVersion).getVersion(),
                         this.expectedOutput.value(),
                         result.value()
                 ));

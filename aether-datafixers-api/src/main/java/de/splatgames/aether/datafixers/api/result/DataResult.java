@@ -370,10 +370,12 @@ public sealed interface DataResult<A> {
      * Integer value2 = error.orElse(0);  // 0
      * }</pre>
      *
-     * @param defaultValue the default value to return if this is an error
-     * @return the result value if successful, otherwise the default value
+     * @param defaultValue the default value to return if this is an error, may be {@code null}
+     * @return the result value if successful, otherwise the default value; may be {@code null} if
+     *         {@code defaultValue} is {@code null} and this is an error
      */
-    A orElse(A defaultValue);
+    @Nullable
+    A orElse(@Nullable final A defaultValue);
 
     /**
      * Returns the result value if successful, otherwise computes a default using the supplier.
@@ -669,11 +671,12 @@ public sealed interface DataResult<A> {
          *
          * <p>For Success, returns the successful value, ignoring the default.</p>
          *
-         * @param defaultValue the default value (ignored for Success)
-         * @return the successful value
+         * @param defaultValue the default value (ignored for Success), may be {@code null}
+         * @return the successful value, never {@code null}
          */
+        @NotNull
         @Override
-        public A orElse(final A defaultValue) {
+        public A orElse(@Nullable final A defaultValue) {
             return this.value;
         }
 
@@ -1022,11 +1025,12 @@ public sealed interface DataResult<A> {
          *
          * <p>For Error, always returns the provided default value.</p>
          *
-         * @param defaultValue the default value to return
-         * @return the default value
+         * @param defaultValue the default value to return, may be {@code null}
+         * @return the default value, may be {@code null}
          */
+        @Nullable
         @Override
-        public A orElse(final A defaultValue) {
+        public A orElse(@Nullable final A defaultValue) {
             return defaultValue;
         }
 

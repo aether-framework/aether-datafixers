@@ -31,6 +31,7 @@ import de.splatgames.aether.datafixers.cli.util.VersionExtractor;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
@@ -106,6 +108,7 @@ public class ValidateCommand implements Callable<Integer> {
             description = "Input file(s) to validate.",
             arity = "1..*"
     )
+    @Nullable
     private List<File> inputFiles;
 
     /**
@@ -126,6 +129,7 @@ public class ValidateCommand implements Callable<Integer> {
             description = "Type reference ID (e.g., 'player', 'world').",
             required = true
     )
+    @Nullable
     private String typeId;
 
     /**
@@ -146,6 +150,7 @@ public class ValidateCommand implements Callable<Integer> {
             description = "JSON field containing data version.",
             defaultValue = "dataVersion"
     )
+    @Nullable
     private String versionField;
 
     /**
@@ -170,6 +175,7 @@ public class ValidateCommand implements Callable<Integer> {
             description = "Input format (default: json-gson).",
             defaultValue = "json-gson"
     )
+    @Nullable
     private String format;
 
     /**
@@ -194,6 +200,7 @@ public class ValidateCommand implements Callable<Integer> {
             description = "Fully qualified class name of DataFixerBootstrap implementation.",
             required = true
     )
+    @Nullable
     private String bootstrapClass;
 
     /**
@@ -246,14 +253,16 @@ public class ValidateCommand implements Callable<Integer> {
         }
 
         try {
-            final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
+            final DataFixerBootstrap bootstrap = BootstrapLoader.load(
+                    Objects.requireNonNull(this.bootstrapClass, "--bootstrap is required"));
             final DataVersion targetVersion = new DataVersion(this.toVersion);
             // Validate that the bootstrap configuration is correct by creating a DataFixer.
             // The instance itself is not needed for version checking, but creation verifies
             // that schemas and fixes register without errors.
             new DataFixerRuntimeFactory().create(targetVersion, bootstrap);
 
-            final FormatHandler<?> handler = FormatRegistry.get(this.format);
+            final FormatHandler<?> handler = FormatRegistry.get(
+                    Objects.requireNonNull(this.format, "--format has a default"));
             if (handler == null) {
                 System.err.println("Unknown format: " + this.format);
                 System.err.println("Available formats: " + FormatRegistry.availableFormats());
@@ -264,7 +273,8 @@ public class ValidateCommand implements Callable<Integer> {
             int upToDate = 0;
             int errors = 0;
 
-            for (final File file : this.inputFiles) {
+            final List<File> files = Objects.requireNonNull(this.inputFiles, "inputFiles positional arg required");
+            for (final File file : files) {
                 final ValidationResult result = validateFile(file, handler, targetVersion);
                 switch (result.status) {
                     case UP_TO_DATE -> {
@@ -338,7 +348,8 @@ public class ValidateCommand implements Callable<Integer> {
             final T data = handler.parse(content);
 
             final DataVersion fileVersion = VersionExtractor.extract(
-                    data, handler.ops(), this.versionField);
+                    data, handler.ops(),
+                    Objects.requireNonNull(this.versionField, "--version-field has a default"));
 
             if (fileVersion.getVersion() >= targetVersion.getVersion()) {
                 return new ValidationResult(ValidationStatus.UP_TO_DATE,
@@ -397,6 +408,6 @@ public class ValidateCommand implements Callable<Integer> {
      * @see #validateFile(File, FormatHandler, DataVersion)
      * @see ValidationStatus
      */
-    private record ValidationResult(ValidationStatus status, int version, String message) {
+    private record ValidationResult(@NotNull ValidationStatus status, int version, @Nullable String message) {
     }
 }

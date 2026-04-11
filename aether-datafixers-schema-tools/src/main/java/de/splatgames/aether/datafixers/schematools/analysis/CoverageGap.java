@@ -124,31 +124,37 @@ public final class CoverageGap {
     /**
      * The type reference for which this coverage gap was detected.
      */
+    @NotNull
     private final TypeReference type;
 
     /**
      * The source version where the type change originated.
      */
+    @NotNull
     private final DataVersion sourceVersion;
 
     /**
      * The target version where the type change applies.
      */
+    @NotNull
     private final DataVersion targetVersion;
 
     /**
      * The reason why this gap exists (what kind of change has no fix).
      */
+    @NotNull
     private final Reason reason;
 
     /**
      * The specific field name involved, or {@code null} for type-level gaps.
      */
+    @Nullable
     private final String fieldName;
 
     /**
      * The detailed type diff showing what changed, or {@code null} if not available.
      */
+    @Nullable
     private final TypeDiff typeDiff;
 
     /**

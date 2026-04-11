@@ -29,6 +29,7 @@ import de.splatgames.aether.datafixers.cli.format.FormatRegistry;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -90,6 +91,7 @@ public class InfoCommand implements Callable<Integer> {
             names = {"--bootstrap"},
             description = "Fully qualified class name of DataFixerBootstrap implementation."
     )
+    @Nullable
     private String bootstrapClass;
 
     /**
@@ -130,6 +132,7 @@ public class InfoCommand implements Callable<Integer> {
             names = {"--to"},
             description = "Target version (required when using --bootstrap)."
     )
+    @Nullable
     private Integer toVersion;
 
     /**

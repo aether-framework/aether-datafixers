@@ -40,12 +40,14 @@ import de.splatgames.aether.datafixers.schematools.diff.SchemaDiff;
 import de.splatgames.aether.datafixers.schematools.diff.SchemaDiffer;
 import de.splatgames.aether.datafixers.schematools.diff.TypeDiff;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -95,21 +97,25 @@ public final class MigrationAnalyzer {
     /**
      * The registry containing all schema definitions.
      */
+    @NotNull
     private final SchemaRegistry schemaRegistry;
 
     /**
      * The registry containing all DataFix registrations.
      */
+    @NotNull
     private final DataFixRegistry fixRegistry;
 
     /**
      * The source version for analysis. Set via {@link #from(DataVersion)}.
      */
+    @Nullable
     private DataVersion fromVersion;
 
     /**
      * The target version for analysis. Set via {@link #to(DataVersion)}.
      */
+    @Nullable
     private DataVersion toVersion;
 
     /**
@@ -243,13 +249,15 @@ public final class MigrationAnalyzer {
     @NotNull
     public MigrationPath analyze() {
         validateVersionRange();
+        final DataVersion from = Objects.requireNonNull(this.fromVersion);
+        final DataVersion to = Objects.requireNonNull(this.toVersion);
 
         final List<Schema> schemas = getSchemasInRange();
         if (schemas.size() < 2) {
             return MigrationPath.empty();
         }
 
-        final MigrationPath.Builder pathBuilder = MigrationPath.builder(this.fromVersion, this.toVersion);
+        final MigrationPath.Builder pathBuilder = MigrationPath.builder(from, to);
 
         for (int i = 0; i < schemas.size() - 1; i++) {
             final Schema sourceSchema = schemas.get(i);
@@ -277,13 +285,15 @@ public final class MigrationAnalyzer {
     @NotNull
     public FixCoverage analyzeCoverage() {
         validateVersionRange();
+        final DataVersion from = Objects.requireNonNull(this.fromVersion);
+        final DataVersion to = Objects.requireNonNull(this.toVersion);
 
         final List<Schema> schemas = getSchemasInRange();
         if (schemas.size() < 2) {
-            return FixCoverage.fullyCovered(this.fromVersion, this.toVersion);
+            return FixCoverage.fullyCovered(from, to);
         }
 
-        final FixCoverage.Builder coverageBuilder = FixCoverage.builder(this.fromVersion, this.toVersion);
+        final FixCoverage.Builder coverageBuilder = FixCoverage.builder(from, to);
 
         for (int i = 0; i < schemas.size() - 1; i++) {
             final Schema sourceSchema = schemas.get(i);
@@ -348,6 +358,8 @@ public final class MigrationAnalyzer {
     @NotNull
     public FieldOperationReport analyzeFieldOperations() {
         validateVersionRange();
+        final DataVersion from = Objects.requireNonNull(this.fromVersion);
+        final DataVersion to = Objects.requireNonNull(this.toVersion);
 
         final List<Schema> schemas = getSchemasInRange();
         if (schemas.size() < 2) {
@@ -355,7 +367,7 @@ public final class MigrationAnalyzer {
         }
 
         final FieldOperationReport.Builder reportBuilder =
-                FieldOperationReport.builder(this.fromVersion, this.toVersion);
+                FieldOperationReport.builder(from, to);
 
         for (int i = 0; i < schemas.size() - 1; i++) {
             final Schema sourceSchema = schemas.get(i);
@@ -470,11 +482,13 @@ public final class MigrationAnalyzer {
      */
     @NotNull
     private List<Schema> getSchemasInRange() {
+        final DataVersion from = Objects.requireNonNull(this.fromVersion, "validateVersionRange() ensures non-null");
+        final DataVersion to = Objects.requireNonNull(this.toVersion, "validateVersionRange() ensures non-null");
         final List<Schema> schemas = new ArrayList<>();
 
         for (final Schema schema : this.schemaRegistry.stream().toList()) {
             final int version = schema.version().getVersion();
-            if (version >= this.fromVersion.getVersion() && version <= this.toVersion.getVersion()) {
+            if (version >= from.getVersion() && version <= to.getVersion()) {
                 schemas.add(schema);
             }
         }

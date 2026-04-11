@@ -63,17 +63,19 @@ import java.util.function.Function;
  */
 public final class Pair<F, S> {
 
+    @Nullable
     private final F first;
+    @Nullable
     private final S second;
 
     /**
      * Private constructor to enforce usage of factory method.
      *
-     * @param first  the first value
-     * @param second the second value
+     * @param first  the first value, may be {@code null}
+     * @param second the second value, may be {@code null}
      */
-    private Pair(final F first,
-                 final S second) {
+    private Pair(@Nullable final F first,
+                 @Nullable final S second) {
         this.first = first;
         this.second = second;
     }

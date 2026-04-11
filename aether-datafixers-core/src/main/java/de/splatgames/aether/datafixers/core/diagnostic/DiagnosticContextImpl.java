@@ -51,9 +51,13 @@ import java.util.List;
  */
 public final class DiagnosticContextImpl implements DiagnosticContext {
 
+    @NotNull
     private final DiagnosticOptions options;
+    @NotNull
     private final MigrationReportImpl.BuilderImpl reportBuilder;
+    @NotNull
     private final List<LogEntry> logs;
+    @Nullable
     private MigrationReport cachedReport;
 
     /**
@@ -102,10 +106,12 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
     @Override
     @NotNull
     public MigrationReport getReport() {
-        if (this.cachedReport == null) {
-            this.cachedReport = this.reportBuilder.build();
+        MigrationReport report = this.cachedReport;
+        if (report == null) {
+            report = this.reportBuilder.build();
+            this.cachedReport = report;
         }
-        return this.cachedReport;
+        return report;
     }
 
     @Override
@@ -299,7 +305,11 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
          */
         @NotNull
         public String formattedMessage() {
-            return DiagnosticContextImpl.formatMessage(this.message, this.args);
+            final Object[] currentArgs = this.args;
+            if (currentArgs == null) {
+                return this.message;
+            }
+            return DiagnosticContextImpl.formatMessage(this.message, currentArgs);
         }
 
         @NotNull
