@@ -71,7 +71,8 @@ public final class SimpleSystemDataFixerContext implements DataFixerContext {
         System.err.println("[WARN] " + formatMessage(message, args));
     }
 
-    private static String formatMessage(final String message, final Object[] args) {
+    @NotNull
+    private static String formatMessage(@NotNull final String message, @NotNull final Object[] args) {
         if (args == null || args.length == 0) {
             return message;
         }

@@ -295,7 +295,7 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
         @Override
         @Nullable
         public Object[] args() {
-            return args != null ? args.clone() : null;
+            return this.args != null ? this.args.clone() : null;
         }
 
         /**

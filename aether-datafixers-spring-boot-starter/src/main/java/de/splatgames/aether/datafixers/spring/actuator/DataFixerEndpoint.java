@@ -225,6 +225,7 @@ public class DataFixerEndpoint {
      *
      * @return the summary response containing all domain information
      */
+    @NotNull
     @ReadOperation
     public DataFixersSummary summary() {
         final Map<String, DomainSummary> domains = new LinkedHashMap<>();
@@ -276,7 +277,7 @@ public class DataFixerEndpoint {
      */
     @ReadOperation
     @Nullable
-    public DomainDetails domainDetails(@Selector final String domain) {
+    public DomainDetails domainDetails(@NotNull @Selector final String domain) {
         final AetherDataFixer fixer = this.registry.get(domain);
         if (fixer == null) {
             // Returning null from @ReadOperation with @Selector produces HTTP 404

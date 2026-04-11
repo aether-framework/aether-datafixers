@@ -133,6 +133,7 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
         return this.logger;
     }
 
+    @NotNull
     private static String formatMessage(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
         if (args == null || args.length == 0) {

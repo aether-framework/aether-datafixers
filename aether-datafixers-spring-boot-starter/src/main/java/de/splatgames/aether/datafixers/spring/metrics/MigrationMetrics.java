@@ -373,6 +373,7 @@ public class MigrationMetrics {
      * @param domain the domain name to get or create a timer for
      * @return the Timer instance for the domain, never {@code null}
      */
+    @NotNull
     private Timer getOrCreateTimer(@NotNull final String domain) {
         return this.domainTimers.computeIfAbsent(domain, d ->
                 Timer.builder(METRIC_PREFIX + ".duration")
@@ -392,6 +393,7 @@ public class MigrationMetrics {
      * @param domain the domain name to get or create a counter for
      * @return the Counter instance for the domain, never {@code null}
      */
+    @NotNull
     private Counter getOrCreateSuccessCounter(@NotNull final String domain) {
         return this.domainSuccessCounters.computeIfAbsent(domain, d ->
                 Counter.builder(METRIC_PREFIX + ".success")
@@ -412,6 +414,7 @@ public class MigrationMetrics {
      * @param errorType the simple class name of the exception type
      * @return the Counter instance for the domain/error combination, never {@code null}
      */
+    @NotNull
     private Counter getOrCreateFailureCounter(
             @NotNull final String domain,
             @NotNull final String errorType
@@ -440,6 +443,7 @@ public class MigrationMetrics {
      * @param domain the domain name to get or create a summary for
      * @return the DistributionSummary instance for the domain, never {@code null}
      */
+    @NotNull
     private DistributionSummary getOrCreateVersionSpan(@NotNull final String domain) {
         return this.domainVersionSpans.computeIfAbsent(domain, d ->
                 DistributionSummary.builder(METRIC_PREFIX + ".version.span")
