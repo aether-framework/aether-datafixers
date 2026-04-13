@@ -1,0 +1,97 @@
+{
+  "name": "Java + Python + Claude Code - Hardened Sandbox",
+
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": true,
+      "installGradle": true
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12",
+      "installPipx": true
+    }
+  },
+
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+
+  "containerUser": "vscode",
+
+  "customizations": {
+    "jetbrains": {
+      "backend": "IntelliJ",
+      "plugins": [
+        "com.anthropic.code.plugin"
+      ]
+    }
+  },
+
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Claude Code OAuth Callback",
+      "onAutoForward": "ignore"
+    }
+  },
+
+  "runArgs": [
+    "--cap-drop=ALL",
+    "--cap-add=CHOWN",
+    "--cap-add=SETGID",
+    "--cap-add=SETUID",
+    "--cap-add=KILL",
+    "--cap-add=NET_ADMIN",
+    "--cap-add=FOWNER",
+    "--security-opt=no-new-privileges",
+    "--memory=6g",
+    "--cpus=4",
+    "--pids-limit=1024",
+    "--add-host=host.docker.internal:host-gateway"
+  ],
+
+  "postCreateCommand": "/bin/sh -c '\
+    echo \"=== Setting up ownership...\"; \
+    sudo chown -R vscode:vscode /workspace 2>/dev/null || true; \
+    \
+    echo \"=== Installing Claude Code native binary...\"; \
+    curl -fsSL https://claude.ai/install.sh | bash; \
+    \
+    echo \"=== Configuring strict egress firewall...\"; \
+    sudo iptables -P OUTPUT DROP; \
+    sudo iptables -A OUTPUT -o lo -j ACCEPT; \
+    sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT; \
+    sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT; \
+    \
+    for domain in \
+      api.anthropic.com \
+      claude.ai \
+      github.com \
+      raw.githubusercontent.com \
+      maven.apache.org \
+      repo1.maven.org \
+      services.gradle.org \
+      gradle.org; do \
+      for ip in $(getent ahosts $domain | awk \"{print \\$1}\" | sort -u); do \
+        sudo iptables -A OUTPUT -d $ip -j ACCEPT; \
+      done; \
+    done; \
+    \
+    echo \"=== Dev Container ready ===\"; \
+    echo \"Claude Code (native) is installed. Run: claude\"; \
+    git config --global --add safe.directory /workspace; \
+    echo \"Egress firewall active - only whitelisted domains allowed\"'",
+
+  "containerEnv": {
+    "CLAUDE_CODE_SANDBOX": "true",
+    "NO_PROXY": "localhost,127.0.0.1",
+    "no_proxy": "localhost,127.0.0.1"
+  },
+
+  "postStartCommand": "echo \"Hardened sandbox active: Java + Python + Native Claude Code\""
+}
