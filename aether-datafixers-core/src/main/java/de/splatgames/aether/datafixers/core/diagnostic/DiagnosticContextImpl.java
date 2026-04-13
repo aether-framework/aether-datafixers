@@ -51,12 +51,24 @@ import java.util.List;
  */
 public final class DiagnosticContextImpl implements DiagnosticContext {
 
+    /** The diagnostic options controlling what data is captured during migration. */
     @NotNull
     private final DiagnosticOptions options;
+
+    /** The builder used to incrementally construct the {@link MigrationReport}. */
     @NotNull
     private final MigrationReportImpl.BuilderImpl reportBuilder;
+
+    /** The chronologically ordered list of all log entries recorded during migration. */
     @NotNull
     private final List<LogEntry> logs;
+
+    /**
+     * A lazily computed and cached migration report.
+     *
+     * <p>Set to {@code null} initially and after {@link #clear()}, then populated
+     * on the first call to {@link #getReport()}.</p>
+     */
     @Nullable
     private MigrationReport cachedReport;
 
@@ -75,12 +87,31 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
         this.cachedReport = null;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Records the message as an {@link LogLevel#INFO INFO}-level {@link LogEntry}.</p>
+     *
+     * @param message the message format string with {@code {}} placeholders; must not be {@code null}
+     * @param args    optional arguments to substitute into the placeholders
+     * @throws NullPointerException if {@code message} is {@code null}
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
         this.logs.add(new LogEntry(LogLevel.INFO, message, args));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Records the message as a {@link LogLevel#WARN WARN}-level {@link LogEntry}
+     * and additionally forwards the formatted message to the {@link #reportBuilder()} as a warning.</p>
+     *
+     * @param message the message format string with {@code {}} placeholders; must not be {@code null}
+     * @param args    optional arguments to substitute into the placeholders
+     * @throws NullPointerException if {@code message} is {@code null}
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
@@ -88,11 +119,27 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
         this.reportBuilder.addWarning(formatMessage(message, args));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation always returns {@code true}, since the purpose of
+     * {@code DiagnosticContextImpl} is to actively capture diagnostic data.</p>
+     *
+     * @return always {@code true}
+     */
     @Override
     public boolean isDiagnosticEnabled() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns the internal {@link MigrationReportImpl.BuilderImpl} used to
+     * incrementally construct the migration report.</p>
+     *
+     * @return the report builder; never {@code null}
+     */
     @Override
     @NotNull
     @SuppressFBWarnings(
@@ -103,6 +150,15 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
         return this.reportBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>On the first call, the report is built from the internal builder and cached.
+     * Subsequent calls return the same cached instance. Calling {@link #clear()} invalidates
+     * the cache.</p>
+     *
+     * @return the migration report; never {@code null}
+     */
     @Override
     @NotNull
     public MigrationReport getReport() {
@@ -114,6 +170,11 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
         return report;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return the diagnostic options provided at construction time; never {@code null}
+     */
     @Override
     @NotNull
     public DiagnosticOptions options() {
@@ -253,16 +314,20 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
     }
 
     /**
-     * Log level enumeration.
+     * Log severity levels for diagnostic entries.
+     *
+     * @see LogEntry
      */
     public enum LogLevel {
         /**
-         * Informational log level.
+         * Informational log level for routine diagnostic messages
+         * that do not indicate a problem.
          */
         INFO,
 
         /**
-         * Warning log level.
+         * Warning log level for messages that indicate a potential issue
+         * or unexpected condition during migration.
          */
         WARN
     }
@@ -312,6 +377,12 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
             return DiagnosticContextImpl.formatMessage(this.message, currentArgs);
         }
 
+        /**
+         * Returns a human-readable representation of this log entry in the format
+         * {@code [LEVEL] formatted message}.
+         *
+         * @return the formatted log entry string; never {@code null}
+         */
         @NotNull
         @Override
         public String toString() {

@@ -42,8 +42,8 @@ import java.util.List;
  * Default implementation of {@link DataFixer}.
  *
  * <p>{@code DataFixerImpl} applies registered {@link DataFix} instances to migrate
- * data between versions. It retrieves applicable fixes from a {@link DataFixRegistry}
- * and applies them in sequence.</p>
+ * data between versions. It retrieves applicable fixes from a {@link DataFixRegistry} and applies them in
+ * sequence.</p>
  *
  * <h2>Fix Application</h2>
  * <p>When updating data, this implementation:</p>
@@ -67,9 +67,19 @@ import java.util.List;
  * @since 0.1.0
  */
 public final class DataFixerImpl implements DataFixer {
-
+    /**
+     * The current (latest) data version. This is used to validate that fixes are not applied beyond the latest
+     * version.
+     */
     private final DataVersion currentVersion;
+    /**
+     * The registry to retrieve fixes from. This is typically provided by the builder and should be immutable after
+     * construction.
+     */
     private final DataFixRegistry registry;
+    /**
+     * The default context for logging. This is used when the update method is called without an explicit context.
+     */
     private final DataFixerContext defaultContext;
 
     /**
@@ -80,11 +90,9 @@ public final class DataFixerImpl implements DataFixer {
      * @param defaultContext the default context for logging, must not be {@code null}
      * @throws NullPointerException if any argument is {@code null}
      */
-    public DataFixerImpl(
-            @NotNull final DataVersion currentVersion,
-            @NotNull final DataFixRegistry registry,
-            @NotNull final DataFixerContext defaultContext
-    ) {
+    public DataFixerImpl(@NotNull final DataVersion currentVersion,
+                         @NotNull final DataFixRegistry registry,
+                         @NotNull final DataFixerContext defaultContext) {
         Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
         Preconditions.checkNotNull(registry, "registry must not be null");
         Preconditions.checkNotNull(defaultContext, "defaultContext must not be null");
@@ -94,20 +102,37 @@ public final class DataFixerImpl implements DataFixer {
         this.defaultContext = defaultContext;
     }
 
+    /**
+     * Returns the current (latest) data version.
+     *
+     * @return the current data version, never null
+     */
     @Override
     @NotNull
     public DataVersion currentVersion() {
         return this.currentVersion;
     }
 
+    /**
+     * Updates the given input data from the specified version to the target version using the default context.
+     *
+     * <p>This method validates the provided parameters and delegates the update process
+     * to an overloaded method that accepts an additional context parameter.</p>
+     *
+     * @param type        the type reference of the data being updated, must not be null
+     * @param input       the input data to update, must not be null
+     * @param fromVersion the source version of the data, must not be null
+     * @param toVersion   the target version to update to, must not be null
+     * @param <T>         the type of the dynamic data
+     * @return the updated dynamic data at the target version, never null
+     * @throws NullPointerException if any parameter is null
+     */
     @Override
     @NotNull
-    public <T> Dynamic<T> update(
-            @NotNull final TypeReference type,
-            @NotNull final Dynamic<T> input,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion
-    ) {
+    public <T> Dynamic<T> update(@NotNull final TypeReference type,
+                                 @NotNull final Dynamic<T> input,
+                                 @NotNull final DataVersion fromVersion,
+                                 @NotNull final DataVersion toVersion) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
@@ -115,15 +140,32 @@ public final class DataFixerImpl implements DataFixer {
         return this.update(type, input, fromVersion, toVersion, this.defaultContext);
     }
 
+    /**
+     * Updates the given input data from the specified version to the target version using registered fixes.
+     *
+     * <p>This method applies all applicable fixes in sequence. It validates that the version range is valid
+     * and that fixes are not applied beyond the current version. If diagnostics are enabled in the context, it captures
+     * snapshots before and after each fix application.</p>
+     *
+     * @param type        the type reference of the data being updated, must not be {@code null}
+     * @param input       the input data to update, must not be {@code null}
+     * @param fromVersion the source version of the data, must not be {@code null} and less than or equal to
+     *                    {@code toVersion}
+     * @param toVersion   the target version to update to, must not be {@code null} and less than or equal to
+     *                    {@code currentVersion}
+     * @param ctx         the context for logging and diagnostics, must not be {@code null}
+     * @param <T>         the type of the dynamic data
+     * @return the updated dynamic data at the target version
+     * @throws IllegalArgumentException if version range is invalid
+     * @throws FixException             if any fix fails during application
+     */
     @Override
     @NotNull
-    public <T> Dynamic<T> update(
-            @NotNull final TypeReference type,
-            @NotNull final Dynamic<T> input,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final DataFixerContext ctx
-    ) {
+    public <T> Dynamic<T> update(@NotNull final TypeReference type,
+                                 @NotNull final Dynamic<T> input,
+                                 @NotNull final DataVersion fromVersion,
+                                 @NotNull final DataVersion toVersion,
+                                 @NotNull final DataFixerContext ctx) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
@@ -161,8 +203,7 @@ public final class DataFixerImpl implements DataFixer {
                 continue;
             }
 
-            @SuppressWarnings("unchecked")
-            final DataFix<Object> untypedFix = (DataFix<Object>) fix;
+            @SuppressWarnings("unchecked") final DataFix<Object> untypedFix = (DataFix<Object>) fix;
 
             // Capture diagnostic events if enabled
             final Instant fixStart = diagCtx != null ? Instant.now() : null;
@@ -208,8 +249,7 @@ public final class DataFixerImpl implements DataFixer {
             }
         }
 
-        @SuppressWarnings("unchecked")
-        final Dynamic<T> result = (Dynamic<T>) current;
+        @SuppressWarnings("unchecked") final Dynamic<T> result = (Dynamic<T>) current;
 
         if (diagCtx != null && diagCtx.options().captureSnapshots()) {
             diagCtx.reportBuilder().setOutputSnapshot(serializeSnapshot(result, diagCtx));
@@ -227,10 +267,8 @@ public final class DataFixerImpl implements DataFixer {
      * @return the serialized snapshot string
      */
     @Nullable
-    private <T> String serializeSnapshot(
-            @NotNull final Dynamic<T> dynamic,
-            @NotNull final DiagnosticContext ctx
-    ) {
+    private <T> String serializeSnapshot(@NotNull final Dynamic<T> dynamic,
+                                         @NotNull final DiagnosticContext ctx) {
         Preconditions.checkNotNull(dynamic, "dynamic must not be null");
         Preconditions.checkNotNull(ctx, "ctx must not be null");
         String snapshot = dynamic.value().toString();

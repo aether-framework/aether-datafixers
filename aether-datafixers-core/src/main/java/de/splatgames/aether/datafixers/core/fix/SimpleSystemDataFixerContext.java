@@ -57,20 +57,47 @@ public final class SimpleSystemDataFixerContext implements DataFixerContext {
      */
     public static final SimpleSystemDataFixerContext INSTANCE = new SimpleSystemDataFixerContext();
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private SimpleSystemDataFixerContext() {
         // private constructor to prevent instantiation
     }
 
+    /**
+     * Logs an error message to standard output.
+     *
+     * @param message the message to log
+     * @param args    optional arguments for message formatting
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         System.out.println("[INFO] " + formatMessage(message, args));
     }
 
+    /**
+     * Logs a warning message to standard output.
+     *
+     * @param message the message to log
+     * @param args    optional arguments for message formatting
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         System.err.println("[WARN] " + formatMessage(message, args));
     }
 
+    /**
+     * Formats a message by replacing '{}' placeholders with the provided arguments.
+     *
+     * <p>This method performs simple placeholder replacement. Each '{}' in the message
+     * is replaced with the corresponding argument from {@code args}. If there are more
+     * placeholders than arguments, remaining placeholders are left unchanged. If there
+     * are more arguments than placeholders, extra arguments are ignored.</p>
+     *
+     * @param message the message template containing '{}' placeholders
+     * @param args    the arguments to replace the placeholders
+     * @return the formatted message with placeholders replaced by arguments
+     */
     @NotNull
     private static String formatMessage(@NotNull final String message, @NotNull final Object[] args) {
         if (args == null || args.length == 0) {

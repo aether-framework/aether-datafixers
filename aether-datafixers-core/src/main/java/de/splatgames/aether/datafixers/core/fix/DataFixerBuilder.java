@@ -71,9 +71,17 @@ import java.util.List;
  * @since 0.1.0
  */
 public final class DataFixerBuilder implements FixRegistrar {
-
+    /**
+     * The current (latest) data version. This is used to determine the target version for fixes.
+     */
     private final DataVersion currentVersion;
+    /**
+     * The registry that holds all registered fixes. This is mutable during building and becomes immutable after build().
+     */
     private final DataFixRegistry registry;
+    /**
+     * The default context for logging and diagnostics. This is used when building the fixer.
+     */
     private DataFixerContext defaultContext;
 
     /**
