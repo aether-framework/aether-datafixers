@@ -298,12 +298,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @NotNull
     @Override
     default A get(@NotNull final S source) {
+        Preconditions.checkNotNull(source, "source must not be null");
         return to(source);
     }
 
     @NotNull
     @Override
     default T set(@NotNull final S source, @NotNull final B value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return from(value);
     }
 
@@ -311,12 +313,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @NotNull
     @Override
     default Optional<A> getOption(@NotNull final S source) {
+        Preconditions.checkNotNull(source, "source must not be null");
         return Optional.of(to(source));
     }
 
     @NotNull
     @Override
     default T reverseGet(@NotNull final B value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return from(value);
     }
 

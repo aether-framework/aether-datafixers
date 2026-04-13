@@ -176,19 +176,19 @@ public class FixException extends DataFixerException {
             sb.append("fix=").append(fixName);
         }
         if (fromVersion != null && toVersion != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(", ");
             }
             sb.append("version=").append(fromVersion.getVersion())
                     .append("->").append(toVersion.getVersion());
         }
         if (typeReference != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(", ");
             }
             sb.append("type=").append(typeReference.getId());
         }
-        return sb.length() > 0 ? sb.toString() : null;
+        return !sb.isEmpty() ? sb.toString() : null;
     }
 
     /**

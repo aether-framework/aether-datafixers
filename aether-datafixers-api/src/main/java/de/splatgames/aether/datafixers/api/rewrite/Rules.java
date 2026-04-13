@@ -297,8 +297,11 @@ public final class Rules {
      */
     private static final Map<String, Finder<?>> PATH_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * Private constructor to prevent instantiation. This class is a static factory and should not be instantiated.
+     */
     private Rules() {
-        // private constructor to prevent instantiation
+        throw new UnsupportedOperationException("Rules is a static factory class and cannot be instantiated");
     }
 
     // ==================== Basic Combinators ====================
@@ -2377,10 +2380,9 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T> TypeRewriteRule conditionalTransform(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final Predicate<Dynamic<T>> condition,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T> TypeRewriteRule conditionalTransform(@NotNull final DynamicOps<T> ops,
+                                                           @NotNull final Predicate<Dynamic<T>> condition,
+                                                           @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(condition, "condition must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -2422,10 +2424,9 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T> TypeRewriteRule ifFieldExists(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldName,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T> TypeRewriteRule ifFieldExists(@NotNull final DynamicOps<T> ops,
+                                                    @NotNull final String fieldName,
+                                                    @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -2469,10 +2470,9 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T> TypeRewriteRule ifFieldMissing(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldName,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T> TypeRewriteRule ifFieldMissing(@NotNull final DynamicOps<T> ops,
+                                                     @NotNull final String fieldName,
+                                                     @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -2519,11 +2519,10 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T, V> TypeRewriteRule ifFieldEquals(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldName,
-            @NotNull final V value,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T, V> TypeRewriteRule ifFieldEquals(@NotNull final DynamicOps<T> ops,
+                                                       @NotNull final String fieldName,
+                                                       @NotNull final V value,
+                                                       @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
@@ -2558,7 +2557,8 @@ public final class Rules {
      * @param <V>   the value type
      * @return true if the field value matches
      */
-    private static <T, V> boolean matchesValue(@NotNull final Dynamic<T> field, @NotNull final V value) {
+    private static <T, V> boolean matchesValue(@NotNull final Dynamic<T> field,
+                                               @NotNull final V value) {
         if (value instanceof Integer) {
             return field.asInt().result().map(v -> v.equals(value)).orElse(false);
         } else if (value instanceof Long) {

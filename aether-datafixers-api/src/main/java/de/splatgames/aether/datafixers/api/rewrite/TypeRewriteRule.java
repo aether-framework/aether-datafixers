@@ -199,10 +199,8 @@ public interface TypeRewriteRule {
      * @throws NullPointerException if {@code name} or {@code transformer} is {@code null}
      */
     @NotNull
-    static TypeRewriteRule simple(
-            @NotNull final String name,
-            @NotNull final Function<Typed<?>, Typed<?>> transformer
-    ) {
+    static TypeRewriteRule simple(@NotNull final String name,
+                                  @NotNull final Function<Typed<?>, Typed<?>> transformer) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(transformer, "transformer must not be null");
         return new TypeRewriteRule() {

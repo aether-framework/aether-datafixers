@@ -314,7 +314,7 @@ public sealed interface DataResult<A> {
      * @throws NullPointerException if {@code onError} is {@code null}
      */
     @NotNull
-    DataResult<A> mapError(@NotNull Function<String, String> onError);
+    DataResult<A> mapError(@NotNull final Function<String, String> onError);
 
     /**
      * Returns the successful value, or throws an exception if this is an error.
@@ -651,7 +651,7 @@ public sealed interface DataResult<A> {
          */
         @NotNull
         @Override
-        public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) throws X {
+        public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) {
             Preconditions.checkNotNull(exceptionFactory, "exceptionFactory must not be null");
             return this.value;
         }

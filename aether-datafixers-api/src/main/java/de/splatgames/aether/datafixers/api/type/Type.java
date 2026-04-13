@@ -29,6 +29,7 @@ import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import de.splatgames.aether.datafixers.api.dynamic.DynamicOps;
 import de.splatgames.aether.datafixers.api.result.DataResult;
+import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 import de.splatgames.aether.datafixers.api.util.Either;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -92,274 +93,97 @@ import java.util.stream.Stream;
 public interface Type<A> {
 
     /**
-     * Returns the type reference that uniquely identifies this type.
+     * Primitive type representing Java {@code boolean} values.
      *
-     * <p>The type reference serves as the type's identity in the data fixing system.
-     * Two types with equal references are considered the same type for matching purposes in
-     * {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}.</p>
+     * <p>Serializes as a JSON boolean ({@code true}/{@code false}) or the
+     * equivalent representation in other formats.</p>
      *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Type<String> stringType = Type.STRING;
-     * TypeReference ref = stringType.reference();
-     * System.out.println(ref.getId());  // "string"
-     *
-     * // Use for type matching
-     * if (someType.reference().equals(playerType.reference())) {
-     *     // This is a player type
-     * }
-     * }</pre>
-     *
-     * @return the type reference identifier, never {@code null}
-     */
-    @NotNull
-    TypeReference reference();
-
-    /**
-     * Returns the codec used for serializing and deserializing values of this type.
-     *
-     * <p>The codec handles conversion between Java objects of type {@code A} and
-     * their serialized representations. It is used by {@link #read(Dynamic)} and {@link #write(Object, DynamicOps)} for
-     * data transformation.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Type<String> stringType = Type.STRING;
-     * Codec<String> codec = stringType.codec();
-     *
-     * // Encode a value
-     * DataResult<JsonElement> encoded = codec.encodeStart(GsonOps.INSTANCE, "hello");
-     *
-     * // Decode a value
-     * DataResult<Pair<String, JsonElement>> decoded = codec.decode(GsonOps.INSTANCE, jsonElement);
-     * }</pre>
-     *
-     * @return the codec for this type, never {@code null}
-     */
-    @NotNull
-    Codec<A> codec();
-
-    /**
-     * Returns a human-readable description of this type for debugging and logging.
-     *
-     * <p>The description provides a textual representation of the type structure,
-     * useful for error messages, logs, and debugging. By default, it returns the type reference ID, but complex types
-     * override this to show their structure.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Type<String> stringType = Type.STRING;
-     * System.out.println(stringType.describe());  // "string"
-     *
-     * Type<List<Integer>> listType = Type.list(Type.INT);
-     * System.out.println(listType.describe());  // "List<int>"
-     *
-     * Type<Pair<String, Integer>> pairType = Type.product(Type.STRING, Type.INT);
-     * System.out.println(pairType.describe());  // "(string × int)"
-     * }</pre>
-     *
-     * @return a human-readable description of this type, never {@code null}
-     */
-    @NotNull
-    default String describe() {
-        return reference().getId();
-    }
-
-    /**
-     * Returns the child types that this type contains.
-     *
-     * <p>Child types are used by traversal combinators to recursively transform
-     * nested data structures. Primitive types have no children (return an empty list), while composite types return
-     * their component types.</p>
-     *
-     * <h4>Child Types by Type Category</h4>
-     * <ul>
-     *   <li><b>Primitive Types</b> ({@code BOOL}, {@code INT}, etc.): No children</li>
-     *   <li><b>List Types</b>: Single child (element type)</li>
-     *   <li><b>Optional Types</b>: Single child (element type)</li>
-     *   <li><b>Product Types</b>: Two children (first and second)</li>
-     *   <li><b>Sum Types</b>: Two children (left and right)</li>
-     *   <li><b>Field Types</b>: Single child (field type)</li>
-     *   <li><b>Named Types</b>: Single child (target type)</li>
-     *   <li><b>Tagged Choice Types</b>: All choice variant types</li>
-     * </ul>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Primitive - no children
-     * Type<String> stringType = Type.STRING;
-     * List<Type<?>> empty = stringType.children();  // []
-     *
-     * // List - one child
-     * Type<List<Integer>> listType = Type.list(Type.INT);
-     * List<Type<?>> listChildren = listType.children();  // [INT]
-     *
-     * // Product - two children
-     * Type<Pair<String, Integer>> pairType = Type.product(Type.STRING, Type.INT);
-     * List<Type<?>> pairChildren = pairType.children();  // [STRING, INT]
-     * }</pre>
-     *
-     * @return an unmodifiable list of child types, empty for primitives, never {@code null}
-     * @see de.splatgames.aether.datafixers.api.rewrite.Rules#all(TypeRewriteRule)
-     * @see de.splatgames.aether.datafixers.api.rewrite.Rules#everywhere(TypeRewriteRule)
-     */
-    @NotNull
-    default List<Type<?>> children() {
-        return List.of();
-    }
-
-    /**
-     * Reads (deserializes) a value of this type from a dynamic representation.
-     *
-     * <p>This method uses the type's codec to parse the dynamic value into a
-     * typed Java object. If parsing fails (e.g., missing fields, wrong format), an error result is returned.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Given JSON: {"name": "Alice", "age": 30}
-     * Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     *
-     * Type<Person> personType = ...;
-     * DataResult<Person> result = personType.read(dynamic);
-     *
-     * result.ifSuccess(person -> {
-     *     System.out.println(person.name());  // "Alice"
-     * });
-     *
-     * result.ifError(error -> {
-     *     System.err.println("Parse failed: " + error.message());
-     * });
-     * }</pre>
-     *
-     * @param dynamic the dynamic value to read from, must not be {@code null}
-     * @param <T>     the underlying data format type (e.g., JsonElement)
-     * @return a {@link DataResult} containing the parsed value or an error, never {@code null}
-     * @throws NullPointerException if {@code dynamic} is {@code null}
-     */
-    @NotNull
-    default <T> DataResult<A> read(@NotNull final Dynamic<T> dynamic) {
-        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-        return codec().parse(dynamic.ops(), dynamic.value());
-    }
-
-    /**
-     * Writes (serializes) a value of this type to a dynamic representation.
-     *
-     * <p>This method uses the type's codec to encode the Java object into the
-     * target format specified by the {@link DynamicOps}. The result is wrapped in a {@link Dynamic} for convenient
-     * manipulation.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * Person person = new Person("Alice", 30);
-     * Type<Person> personType = ...;
-     *
-     * // Write to JSON format
-     * DataResult<Dynamic<JsonElement>> result = personType.write(person, GsonOps.INSTANCE);
-     *
-     * result.ifSuccess(dynamic -> {
-     *     JsonElement json = dynamic.value();
-     *     System.out.println(json);  // {"name":"Alice","age":30}
-     * });
-     *
-     * // Write to NBT format
-     * DataResult<Dynamic<Tag>> nbtResult = personType.write(person, NbtOps.INSTANCE);
-     * }</pre>
-     *
-     * @param value the value to serialize, must not be {@code null}
-     * @param ops   the dynamic operations for the target format, must not be {@code null}
-     * @param <T>   the underlying data format type (e.g., JsonElement, Tag)
-     * @return a {@link DataResult} containing the encoded dynamic or an error, never {@code null}
-     * @throws NullPointerException if {@code value} or {@code ops} is {@code null}
-     */
-    @NotNull
-    default <T> DataResult<Dynamic<T>> write(@NotNull final A value,
-                                             @NotNull final DynamicOps<T> ops) {
-        Preconditions.checkNotNull(value, "value must not be null");
-        Preconditions.checkNotNull(ops, "ops must not be null");
-        return codec().encodeStart(ops, value).map(t -> new Dynamic<>(ops, t));
-    }
-
-    /**
-     * Reads a value from dynamic data and wraps it as a {@link Typed} value.
-     *
-     * <p>This method combines parsing with type tagging, producing a {@link Typed}
-     * that carries both the value and its type information. This is the primary entry point for reading data into the
-     * type-safe data fixing system.</p>
-     *
-     * <h4>Example</h4>
-     * <pre>{@code
-     * // Parse JSON into a typed player
-     * Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
-     * Type<Player> playerType = ...;
-     *
-     * DataResult<Typed<Player>> result = playerType.readTyped(dynamic);
-     *
-     * result.ifSuccess(typed -> {
-     *     Player player = typed.value();
-     *     Type<Player> type = typed.type();
-     *
-     *     // The typed value can be used with TypeRewriteRules
-     *     Typed<?> migrated = migrationRule.apply(typed);
-     * });
-     * }</pre>
-     *
-     * @param dynamic the dynamic value to read from, must not be {@code null}
-     * @param <T>     the underlying data format type (e.g., JsonElement)
-     * @return a {@link DataResult} containing the typed value or an error, never {@code null}
-     * @throws NullPointerException if {@code dynamic} is {@code null}
-     * @see Typed
-     */
-    @NotNull
-    default <T> DataResult<Typed<A>> readTyped(@NotNull final Dynamic<T> dynamic) {
-        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
-        return read(dynamic).map(value -> new Typed<>(this, value));
-    }
-
-    // ==================== Primitive Types ====================
-
-    /**
-     * Boolean type.
+     * @see Codecs#BOOL
      */
     Type<Boolean> BOOL = primitive("bool", Codecs.BOOL);
-
     /**
-     * Integer type.
+     * Primitive type representing Java {@code int} values (32-bit signed integer).
+     *
+     * <p>Serializes as a JSON number or the equivalent representation in other
+     * formats. Values outside the 32-bit range will cause a decode error.</p>
+     *
+     * @see Codecs#INT
      */
     Type<Integer> INT = primitive("int", Codecs.INT);
-
     /**
-     * Long type.
+     * Primitive type representing Java {@code long} values (64-bit signed integer).
+     *
+     * <p>Serializes as a JSON number or the equivalent representation in other
+     * formats. Note that JSON has no distinct integer/long distinction, so precision may be lost for very large values
+     * in formats that use IEEE 754 floating-point numbers.</p>
+     *
+     * @see Codecs#LONG
      */
     Type<Long> LONG = primitive("long", Codecs.LONG);
-
     /**
-     * Float type.
+     * Primitive type representing Java {@code float} values (32-bit IEEE 754 floating-point).
+     *
+     * <p>Serializes as a JSON number or the equivalent representation in other
+     * formats.</p>
+     *
+     * @see Codecs#FLOAT
      */
     Type<Float> FLOAT = primitive("float", Codecs.FLOAT);
-
     /**
-     * Double type.
+     * Primitive type representing Java {@code double} values (64-bit IEEE 754 floating-point).
+     *
+     * <p>Serializes as a JSON number or the equivalent representation in other
+     * formats.</p>
+     *
+     * @see Codecs#DOUBLE
      */
     Type<Double> DOUBLE = primitive("double", Codecs.DOUBLE);
-
     /**
-     * Byte type.
+     * Primitive type representing Java {@code byte} values (8-bit signed integer).
+     *
+     * <p>Serializes as a JSON number or the equivalent representation in other
+     * formats. Values outside the 8-bit range ({@code -128} to {@code 127}) will cause a decode error.</p>
+     *
+     * @see Codecs#BYTE
      */
     Type<Byte> BYTE = primitive("byte", Codecs.BYTE);
-
     /**
-     * Short type.
+     * Primitive type representing Java {@code short} values (16-bit signed integer).
+     *
+     * <p>Serializes as a JSON number or the equivalent representation in other
+     * formats. Values outside the 16-bit range ({@code -32768} to {@code 32767}) will cause a decode error.</p>
+     *
+     * @see Codecs#SHORT
      */
     Type<Short> SHORT = primitive("short", Codecs.SHORT);
 
+    // ==================== Primitive Types ====================
     /**
-     * String type.
+     * Primitive type representing Java {@link String} values.
+     *
+     * <p>Serializes as a JSON string or the equivalent representation in other
+     * formats.</p>
+     *
+     * @see Codecs#STRING
      */
     Type<String> STRING = primitive("string", Codecs.STRING);
-
     /**
-     * Passthrough type - preserves any value as-is.
+     * Special type that preserves any value as-is without interpreting its structure.
+     *
+     * <p>The passthrough type wraps incoming data in a {@link Dynamic} and passes it
+     * through unchanged. This is useful for data that should be preserved during migration without being parsed or
+     * validated, such as opaque blobs, unknown extensions, or forward-compatible fields.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Use PASSTHROUGH for fields whose structure is unknown or irrelevant
+     * Type<Pair<String, Dynamic<?>>> entityType = Type.product(
+     *     Type.field("name", Type.STRING),
+     *     Type.field("metadata", Type.PASSTHROUGH)
+     * );
+     *
+     * // The metadata field will be preserved as-is during migrations
+     * }</pre>
      */
     Type<Dynamic<?>> PASSTHROUGH = new Type<>() {
         @NotNull
@@ -400,8 +224,6 @@ public interface Type<A> {
             return "...";
         }
     };
-
-    // ==================== Factory Methods ====================
 
     /**
      * Creates a primitive type from a name and codec.
@@ -802,6 +624,8 @@ public interface Type<A> {
         };
     }
 
+    // ==================== Factory Methods ====================
+
     /**
      * Creates a named alias for another type, useful for recursive definitions.
      *
@@ -925,6 +749,231 @@ public interface Type<A> {
         return new TaggedChoiceType(tagField, choices);
     }
 
+    /**
+     * Returns the type reference that uniquely identifies this type.
+     *
+     * <p>The type reference serves as the type's identity in the data fixing system.
+     * Two types with equal references are considered the same type for matching purposes in
+     * {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Type<String> stringType = Type.STRING;
+     * TypeReference ref = stringType.reference();
+     * System.out.println(ref.getId());  // "string"
+     *
+     * // Use for type matching
+     * if (someType.reference().equals(playerType.reference())) {
+     *     // This is a player type
+     * }
+     * }</pre>
+     *
+     * @return the type reference identifier, never {@code null}
+     */
+    @NotNull
+    TypeReference reference();
+
+    /**
+     * Returns the codec used for serializing and deserializing values of this type.
+     *
+     * <p>The codec handles conversion between Java objects of type {@code A} and
+     * their serialized representations. It is used by {@link #read(Dynamic)} and {@link #write(Object, DynamicOps)} for
+     * data transformation.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Type<String> stringType = Type.STRING;
+     * Codec<String> codec = stringType.codec();
+     *
+     * // Encode a value
+     * DataResult<JsonElement> encoded = codec.encodeStart(GsonOps.INSTANCE, "hello");
+     *
+     * // Decode a value
+     * DataResult<Pair<String, JsonElement>> decoded = codec.decode(GsonOps.INSTANCE, jsonElement);
+     * }</pre>
+     *
+     * @return the codec for this type, never {@code null}
+     */
+    @NotNull
+    Codec<A> codec();
+
+    /**
+     * Returns a human-readable description of this type for debugging and logging.
+     *
+     * <p>The description provides a textual representation of the type structure,
+     * useful for error messages, logs, and debugging. By default, it returns the type reference ID, but complex types
+     * override this to show their structure.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Type<String> stringType = Type.STRING;
+     * System.out.println(stringType.describe());  // "string"
+     *
+     * Type<List<Integer>> listType = Type.list(Type.INT);
+     * System.out.println(listType.describe());  // "List<int>"
+     *
+     * Type<Pair<String, Integer>> pairType = Type.product(Type.STRING, Type.INT);
+     * System.out.println(pairType.describe());  // "(string × int)"
+     * }</pre>
+     *
+     * @return a human-readable description of this type, never {@code null}
+     */
+    @NotNull
+    default String describe() {
+        return reference().getId();
+    }
+
+    /**
+     * Returns the child types that this type contains.
+     *
+     * <p>Child types are used by traversal combinators to recursively transform
+     * nested data structures. Primitive types have no children (return an empty list), while composite types return
+     * their component types.</p>
+     *
+     * <h4>Child Types by Type Category</h4>
+     * <ul>
+     *   <li><b>Primitive Types</b> ({@code BOOL}, {@code INT}, etc.): No children</li>
+     *   <li><b>List Types</b>: Single child (element type)</li>
+     *   <li><b>Optional Types</b>: Single child (element type)</li>
+     *   <li><b>Product Types</b>: Two children (first and second)</li>
+     *   <li><b>Sum Types</b>: Two children (left and right)</li>
+     *   <li><b>Field Types</b>: Single child (field type)</li>
+     *   <li><b>Named Types</b>: Single child (target type)</li>
+     *   <li><b>Tagged Choice Types</b>: All choice variant types</li>
+     * </ul>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Primitive - no children
+     * Type<String> stringType = Type.STRING;
+     * List<Type<?>> empty = stringType.children();  // []
+     *
+     * // List - one child
+     * Type<List<Integer>> listType = Type.list(Type.INT);
+     * List<Type<?>> listChildren = listType.children();  // [INT]
+     *
+     * // Product - two children
+     * Type<Pair<String, Integer>> pairType = Type.product(Type.STRING, Type.INT);
+     * List<Type<?>> pairChildren = pairType.children();  // [STRING, INT]
+     * }</pre>
+     *
+     * @return an unmodifiable list of child types, empty for primitives, never {@code null}
+     * @see de.splatgames.aether.datafixers.api.rewrite.Rules#all(TypeRewriteRule)
+     * @see de.splatgames.aether.datafixers.api.rewrite.Rules#everywhere(TypeRewriteRule)
+     */
+    @NotNull
+    default List<Type<?>> children() {
+        return List.of();
+    }
+
+    /**
+     * Reads (deserializes) a value of this type from a dynamic representation.
+     *
+     * <p>This method uses the type's codec to parse the dynamic value into a
+     * typed Java object. If parsing fails (e.g., missing fields, wrong format), an error result is returned.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Given JSON: {"name": "Alice", "age": 30}
+     * Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     *
+     * Type<Person> personType = ...;
+     * DataResult<Person> result = personType.read(dynamic);
+     *
+     * result.ifSuccess(person -> {
+     *     System.out.println(person.name());  // "Alice"
+     * });
+     *
+     * result.ifError(error -> {
+     *     System.err.println("Parse failed: " + error.message());
+     * });
+     * }</pre>
+     *
+     * @param dynamic the dynamic value to read from, must not be {@code null}
+     * @param <T>     the underlying data format type (e.g., JsonElement)
+     * @return a {@link DataResult} containing the parsed value or an error, never {@code null}
+     * @throws NullPointerException if {@code dynamic} is {@code null}
+     */
+    @NotNull
+    default <T> DataResult<A> read(@NotNull final Dynamic<T> dynamic) {
+        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
+        return codec().parse(dynamic.ops(), dynamic.value());
+    }
+
+    /**
+     * Writes (serializes) a value of this type to a dynamic representation.
+     *
+     * <p>This method uses the type's codec to encode the Java object into the
+     * target format specified by the {@link DynamicOps}. The result is wrapped in a {@link Dynamic} for convenient
+     * manipulation.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * Person person = new Person("Alice", 30);
+     * Type<Person> personType = ...;
+     *
+     * // Write to JSON format
+     * DataResult<Dynamic<JsonElement>> result = personType.write(person, GsonOps.INSTANCE);
+     *
+     * result.ifSuccess(dynamic -> {
+     *     JsonElement json = dynamic.value();
+     *     System.out.println(json);  // {"name":"Alice","age":30}
+     * });
+     *
+     * // Write to NBT format
+     * DataResult<Dynamic<Tag>> nbtResult = personType.write(person, NbtOps.INSTANCE);
+     * }</pre>
+     *
+     * @param value the value to serialize, must not be {@code null}
+     * @param ops   the dynamic operations for the target format, must not be {@code null}
+     * @param <T>   the underlying data format type (e.g., JsonElement, Tag)
+     * @return a {@link DataResult} containing the encoded dynamic or an error, never {@code null}
+     * @throws NullPointerException if {@code value} or {@code ops} is {@code null}
+     */
+    @NotNull
+    default <T> DataResult<Dynamic<T>> write(@NotNull final A value,
+                                             @NotNull final DynamicOps<T> ops) {
+        Preconditions.checkNotNull(value, "value must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
+        return codec().encodeStart(ops, value).map(t -> new Dynamic<>(ops, t));
+    }
+
+    /**
+     * Reads a value from dynamic data and wraps it as a {@link Typed} value.
+     *
+     * <p>This method combines parsing with type tagging, producing a {@link Typed}
+     * that carries both the value and its type information. This is the primary entry point for reading data into the
+     * type-safe data fixing system.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * // Parse JSON into a typed player
+     * Dynamic<JsonElement> dynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+     * Type<Player> playerType = ...;
+     *
+     * DataResult<Typed<Player>> result = playerType.readTyped(dynamic);
+     *
+     * result.ifSuccess(typed -> {
+     *     Player player = typed.value();
+     *     Type<Player> type = typed.type();
+     *
+     *     // The typed value can be used with TypeRewriteRules
+     *     Typed<?> migrated = migrationRule.apply(typed);
+     * });
+     * }</pre>
+     *
+     * @param dynamic the dynamic value to read from, must not be {@code null}
+     * @param <T>     the underlying data format type (e.g., JsonElement)
+     * @return a {@link DataResult} containing the typed value or an error, never {@code null}
+     * @throws NullPointerException if {@code dynamic} is {@code null}
+     * @see Typed
+     */
+    @NotNull
+    default <T> DataResult<Typed<A>> readTyped(@NotNull final Dynamic<T> dynamic) {
+        Preconditions.checkNotNull(dynamic, "dynamic must not be null");
+        return read(dynamic).map(value -> new Typed<>(this, value));
+    }
+
     // ==================== Inner Classes ====================
 
     /**
@@ -965,9 +1014,24 @@ public interface Type<A> {
      * @see Type#optionalField(String, Type)
      */
     final class FieldType<A> implements Type<A> {
+        /**
+         * The field name used to extract data from map/object structures.
+         */
         private final String name;
+
+        /**
+         * The underlying type of the field's value.
+         */
         private final Type<A> fieldType;
+
+        /**
+         * Whether this field is optional ({@code true}) or required ({@code false}).
+         */
         private final boolean optional;
+
+        /**
+         * The computed type reference identifier for this field type.
+         */
         private final TypeReference ref;
 
         /**
@@ -1149,8 +1213,19 @@ public interface Type<A> {
      * @see Type#taggedChoice(String, Map)
      */
     final class TaggedChoiceType implements Type<Pair<String, Dynamic<?>>> {
+        /**
+         * The name of the discriminator field used to identify the active variant.
+         */
         private final String tagField;
+
+        /**
+         * An unmodifiable mapping from tag values to their corresponding variant types.
+         */
         private final Map<String, Type<?>> choices;
+
+        /**
+         * The computed type reference identifier for this tagged choice type.
+         */
         private final TypeReference ref;
 
         /**

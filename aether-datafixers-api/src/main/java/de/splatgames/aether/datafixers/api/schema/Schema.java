@@ -92,12 +92,27 @@ import org.jetbrains.annotations.Nullable;
  * @since 0.1.0
  */
 public class Schema {
+    /**
+     * The data version this schema represents.
+     */
     @NotNull
     private final DataVersion version;
+    /**
+     * The parent schema to inherit types from, or null if this is the first version.
+     */
     @Nullable
     private final Schema parent;
+    /**
+     * The type registry containing all type definitions for this schema. This is built lazily on first access to allow
+     * subclasses to register types in the constructor. Once built, this field is immutable and thread-safe if the
+     * underlying TypeRegistry is thread-safe.
+     */
     @Nullable
     private volatile TypeRegistry types;
+    /**
+     * This field is used during the building of the type registry to allow registerType() to access it. It is only
+     * non-null during the execution of buildTypes(), which is single-threaded, so no synchronization is needed.
+     */
     @Nullable
     private TypeRegistry buildingTypes;
 

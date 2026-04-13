@@ -62,9 +62,16 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public final class Pair<F, S> {
-
+    /**
+     * The first and second values of the pair. Both may be null, as the pair does not impose any non-null constraints.
+     * They are final to ensure immutability.
+     */
     @Nullable
     private final F first;
+    /**
+     * The second value of the pair. It may be null, as the pair does not impose any non-null constraints. It is final
+     * to ensure immutability.
+     */
     @Nullable
     private final S second;
 

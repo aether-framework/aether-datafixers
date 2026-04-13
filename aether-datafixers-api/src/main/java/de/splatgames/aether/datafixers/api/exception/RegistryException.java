@@ -165,7 +165,7 @@ public class RegistryException extends DataFixerException {
             sb.append("type=").append(missingType.getId());
         }
         if (missingVersion != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(", ");
             }
             sb.append("version=").append(missingVersion.getVersion());

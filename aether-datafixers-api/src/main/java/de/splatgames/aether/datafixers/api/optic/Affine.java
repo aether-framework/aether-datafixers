@@ -205,11 +205,9 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    static <S, A> Affine<S, S, A, A> of(
-            @NotNull final String id,
-            @NotNull final Function<S, Optional<A>> getOption,
-            @NotNull final BiFunction<S, A, S> set
-    ) {
+    static <S, A> Affine<S, S, A, A> of(@NotNull final String id,
+                                        @NotNull final Function<S, Optional<A>> getOption,
+                                        @NotNull final BiFunction<S, A, S> set) {
         Preconditions.checkNotNull(id, "id must not be null");
         Preconditions.checkNotNull(getOption, "getOption must not be null");
         Preconditions.checkNotNull(set, "set must not be null");
