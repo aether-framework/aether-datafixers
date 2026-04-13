@@ -839,8 +839,7 @@ public final class DSL {
      */
     @NotNull
     public static TypeTemplate taggedChoice(@NotNull final String tagField,
-                                            @NotNull final Map<String, TypeTemplate> choices
-    ) {
+                                            @NotNull final Map<String, TypeTemplate> choices) {
         Preconditions.checkNotNull(tagField, "tagField must not be null");
         Preconditions.checkNotNull(choices, "choices must not be null");
         return new TaggedChoiceTemplate(tagField, choices);
@@ -880,8 +879,7 @@ public final class DSL {
     @NotNull
     public static TypeTemplate taggedChoiceTyped(@NotNull final String tagField,
                                                  @NotNull final TypeTemplate keyType,
-                                                 @NotNull final Map<String, TypeTemplate> choices
-    ) {
+                                                 @NotNull final Map<String, TypeTemplate> choices) {
         Preconditions.checkNotNull(tagField, "tagField must not be null");
         Preconditions.checkNotNull(keyType, "keyType must not be null");
         Preconditions.checkNotNull(choices, "choices must not be null");

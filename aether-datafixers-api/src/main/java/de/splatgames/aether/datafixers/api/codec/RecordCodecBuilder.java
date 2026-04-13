@@ -195,7 +195,9 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c);
+        R apply(@NotNull final A a,
+                @NotNull final B b,
+                @NotNull final C c);
     }
 
     /**
@@ -219,7 +221,10 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull A a, @NotNull B b, @NotNull C c, @NotNull D d);
+        R apply(@NotNull A a,
+                @NotNull B b,
+                @NotNull C c,
+                @NotNull D d);
     }
 
     // ==================== Builder Classes ====================
@@ -247,7 +252,11 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e);
+        R apply(@NotNull final A a,
+                @NotNull final B b,
+                @NotNull final C c,
+                @NotNull final D d,
+                @NotNull final E e);
     }
 
     /**
@@ -275,7 +284,12 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e, @NotNull final F f);
+        R apply(@NotNull final A a,
+                @NotNull final B b,
+                @NotNull final C c,
+                @NotNull final D d,
+                @NotNull final E e,
+                @NotNull final F f);
     }
 
     /**
@@ -305,7 +319,13 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e, @NotNull final F f, @NotNull final G g);
+        R apply(@NotNull final A a,
+                @NotNull final B b,
+                @NotNull final C c,
+                @NotNull final D d,
+                @NotNull final E e,
+                @NotNull final F f,
+                @NotNull final G g);
     }
 
     /**
@@ -337,7 +357,14 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull final A a, @NotNull final B b, @NotNull final C c, @NotNull final D d, @NotNull final E e, @NotNull final F f, @NotNull final G g, @NotNull final H h);
+        R apply(@NotNull final A a,
+                @NotNull final B b,
+                @NotNull final C c,
+                @NotNull final D d,
+                @NotNull final E e,
+                @NotNull final F f,
+                @NotNull final G g,
+                @NotNull final H h);
     }
 
     /**
@@ -431,10 +458,8 @@ public final class RecordCodecBuilder {
          * @return a {@link Builder2} for applying a constructor, never {@code null}
          */
         @NotNull
-        public <A, B> Builder2<O, A, B> group(
-                @NotNull final Field<O, A> f1,
-                @NotNull final Field<O, B> f2
-        ) {
+        public <A, B> Builder2<O, A, B> group(@NotNull final Field<O, A> f1,
+                                              @NotNull final Field<O, B> f2) {
             Preconditions.checkNotNull(f1, "f1 must not be null");
             Preconditions.checkNotNull(f2, "f2 must not be null");
             return new Builder2<>(f1, f2);
@@ -454,8 +479,7 @@ public final class RecordCodecBuilder {
         @NotNull
         public <A, B, C> Builder3<O, A, B, C> group(@NotNull final Field<O, A> f1,
                                                     @NotNull final Field<O, B> f2,
-                                                    @NotNull final Field<O, C> f3
-        ) {
+                                                    @NotNull final Field<O, C> f3) {
             Preconditions.checkNotNull(f1, "f1 must not be null");
             Preconditions.checkNotNull(f2, "f2 must not be null");
             Preconditions.checkNotNull(f3, "f3 must not be null");
@@ -479,8 +503,7 @@ public final class RecordCodecBuilder {
         public <A, B, C, D> Builder4<O, A, B, C, D> group(@NotNull final Field<O, A> f1,
                                                           @NotNull final Field<O, B> f2,
                                                           @NotNull final Field<O, C> f3,
-                                                          @NotNull final Field<O, D> f4
-        ) {
+                                                          @NotNull final Field<O, D> f4) {
             Preconditions.checkNotNull(f1, "f1 must not be null");
             Preconditions.checkNotNull(f2, "f2 must not be null");
             Preconditions.checkNotNull(f3, "f3 must not be null");
@@ -508,8 +531,7 @@ public final class RecordCodecBuilder {
                                                                 @NotNull final Field<O, B> f2,
                                                                 @NotNull final Field<O, C> f3,
                                                                 @NotNull final Field<O, D> f4,
-                                                                @NotNull final Field<O, E> f5
-        ) {
+                                                                @NotNull final Field<O, E> f5) {
             Preconditions.checkNotNull(f1, "f1 must not be null");
             Preconditions.checkNotNull(f2, "f2 must not be null");
             Preconditions.checkNotNull(f3, "f3 must not be null");
@@ -541,8 +563,7 @@ public final class RecordCodecBuilder {
                                                                       @NotNull final Field<O, C> f3,
                                                                       @NotNull final Field<O, D> f4,
                                                                       @NotNull final Field<O, E> f5,
-                                                                      @NotNull final Field<O, F> f6
-        ) {
+                                                                      @NotNull final Field<O, F> f6) {
             Preconditions.checkNotNull(f1, "f1 must not be null");
             Preconditions.checkNotNull(f2, "f2 must not be null");
             Preconditions.checkNotNull(f3, "f3 must not be null");
@@ -572,12 +593,13 @@ public final class RecordCodecBuilder {
          * @return a {@link Builder7} for applying a constructor, never {@code null}
          */
         @NotNull
-        public <A, B, C, D, E, F, G> Builder7<O, A, B, C, D, E, F, G> group(
-                @NotNull final Field<O, A> f1, @NotNull final Field<O, B> f2,
-                @NotNull final Field<O, C> f3, @NotNull final Field<O, D> f4,
-                @NotNull final Field<O, E> f5, @NotNull final Field<O, F> f6,
-                @NotNull final Field<O, G> f7
-        ) {
+        public <A, B, C, D, E, F, G> Builder7<O, A, B, C, D, E, F, G> group(@NotNull final Field<O, A> f1,
+                                                                            @NotNull final Field<O, B> f2,
+                                                                            @NotNull final Field<O, C> f3,
+                                                                            @NotNull final Field<O, D> f4,
+                                                                            @NotNull final Field<O, E> f5,
+                                                                            @NotNull final Field<O, F> f6,
+                                                                            @NotNull final Field<O, G> f7) {
             return new Builder7<>(f1, f2, f3, f4, f5, f6, f7);
         }
 
@@ -603,12 +625,14 @@ public final class RecordCodecBuilder {
          * @return a {@link Builder8} for applying a constructor, never {@code null}
          */
         @NotNull
-        public <A, B, C, D, E, F, G, H> Builder8<O, A, B, C, D, E, F, G, H> group(
-                @NotNull final Field<O, A> f1, @NotNull final Field<O, B> f2,
-                @NotNull final Field<O, C> f3, @NotNull final Field<O, D> f4,
-                @NotNull final Field<O, E> f5, @NotNull final Field<O, F> f6,
-                @NotNull final Field<O, G> f7, @NotNull final Field<O, H> f8
-        ) {
+        public <A, B, C, D, E, F, G, H> Builder8<O, A, B, C, D, E, F, G, H> group(@NotNull final Field<O, A> f1,
+                                                                                  @NotNull final Field<O, B> f2,
+                                                                                  @NotNull final Field<O, C> f3,
+                                                                                  @NotNull final Field<O, D> f4,
+                                                                                  @NotNull final Field<O, E> f5,
+                                                                                  @NotNull final Field<O, F> f6,
+                                                                                  @NotNull final Field<O, G> f7,
+                                                                                  @NotNull final Field<O, H> f8) {
             return new Builder8<>(f1, f2, f3, f4, f5, f6, f7, f8);
         }
 
@@ -910,7 +934,11 @@ public final class RecordCodecBuilder {
                                     Objects.requireNonNull(ab.first(), "decoded first field must not be null"),
                                     Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
                                     cv))
-                            .apply2(d, (abc, dv) -> constructor.apply(abc.a, abc.b, abc.c, dv));
+                            .apply2(d, (abc, dv) -> constructor.apply(
+                                    Preconditions.checkNotNull(abc.a),
+                                    Preconditions.checkNotNull(abc.b),
+                                    abc.c,
+                                    dv));
                 }
             };
         }
@@ -994,7 +1022,12 @@ public final class RecordCodecBuilder {
                                     Objects.requireNonNull(ab.second(), "decoded second field must not be null"),
                                     cv))
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
-                            .apply2(e, (abcd, ev) -> constructor.apply(abcd.a, abcd.b, abcd.c, abcd.d, ev));
+                            .apply2(e, (abcd, ev) -> constructor.apply(
+                                    Preconditions.checkNotNull(abcd.a),
+                                    Preconditions.checkNotNull(abcd.b),
+                                    abcd.c,
+                                    abcd.d,
+                                    ev));
                 }
             };
         }
@@ -1085,7 +1118,9 @@ public final class RecordCodecBuilder {
                                     cv))
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
                             .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
-                            .apply2(f, (abcde, fv) -> constructor.apply(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv));
+                            .apply2(f, (abcde, fv) -> constructor.apply(
+                                    Preconditions.checkNotNull(abcde.a),
+                                    Preconditions.checkNotNull(abcde.b), abcde.c, abcde.d, abcde.e, fv));
                 }
             };
         }
@@ -1186,12 +1221,13 @@ public final class RecordCodecBuilder {
      * @param <F> the type of the sixth field
      * @param <G> the type of the seventh field
      */
-    public record Builder7<O, A, B, C, D, E, F, G>(
-            @NotNull Field<O, A> f1, @NotNull Field<O, B> f2,
-            @NotNull Field<O, C> f3, @NotNull Field<O, D> f4,
-            @NotNull Field<O, E> f5, @NotNull Field<O, F> f6,
-            @NotNull Field<O, G> f7
-    ) {
+    public record Builder7<O, A, B, C, D, E, F, G>(@NotNull Field<O, A> f1,
+                                                   @NotNull Field<O, B> f2,
+                                                   @NotNull Field<O, C> f3,
+                                                   @NotNull Field<O, D> f4,
+                                                   @NotNull Field<O, E> f5,
+                                                   @NotNull Field<O, F> f6,
+                                                   @NotNull Field<O, G> f7) {
         /**
          * Creates a new Builder7 with validation.
          *
@@ -1258,7 +1294,14 @@ public final class RecordCodecBuilder {
                             .apply2(d, (abc, dv) -> new Tuple4<>(abc.a, abc.b, abc.c, dv))
                             .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
                             .apply2(f, (abcde, fv) -> new Tuple6<>(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv))
-                            .apply2(g, (abcdef, gv) -> constructor.apply(abcdef.a, abcdef.b, abcdef.c, abcdef.d, abcdef.e, abcdef.f, gv));
+                            .apply2(g, (abcdef, gv) -> constructor.apply(
+                                    Preconditions.checkNotNull(abcdef.a),
+                                    Preconditions.checkNotNull(abcdef.b),
+                                    abcdef.c,
+                                    abcdef.d,
+                                    abcdef.e,
+                                    abcdef.f,
+                                    gv));
                 }
             };
         }
@@ -1290,11 +1333,14 @@ public final class RecordCodecBuilder {
      * @param <G> the type of the seventh field
      * @param <H> the type of the eighth field
      */
-    public record Builder8<O, A, B, C, D, E, F, G, H>(
-            @NotNull Field<O, A> f1, @NotNull Field<O, B> f2,
-            @NotNull Field<O, C> f3, @NotNull Field<O, D> f4,
-            @NotNull Field<O, E> f5, @NotNull Field<O, F> f6,
-            @NotNull Field<O, G> f7, @NotNull Field<O, H> f8
+    public record Builder8<O, A, B, C, D, E, F, G, H>(@NotNull Field<O, A> f1,
+                                                      @NotNull Field<O, B> f2,
+                                                      @NotNull Field<O, C> f3,
+                                                      @NotNull Field<O, D> f4,
+                                                      @NotNull Field<O, E> f5,
+                                                      @NotNull Field<O, F> f6,
+                                                      @NotNull Field<O, G> f7,
+                                                      @NotNull Field<O, H> f8
     ) {
         /**
          * Creates a new Builder8 with validation.
@@ -1366,7 +1412,15 @@ public final class RecordCodecBuilder {
                             .apply2(e, (abcd, ev) -> new Tuple5<>(abcd.a, abcd.b, abcd.c, abcd.d, ev))
                             .apply2(f, (abcde, fv) -> new Tuple6<>(abcde.a, abcde.b, abcde.c, abcde.d, abcde.e, fv))
                             .apply2(g, (abcdef, gv) -> new Tuple7<>(abcdef.a, abcdef.b, abcdef.c, abcdef.d, abcdef.e, abcdef.f, gv))
-                            .apply2(h, (abcdefg, hv) -> constructor.apply(abcdefg.a, abcdefg.b, abcdefg.c, abcdefg.d, abcdefg.e, abcdefg.f, abcdefg.g, hv));
+                            .apply2(h, (abcdefg, hv) -> constructor.apply(
+                                    Preconditions.checkNotNull(abcdefg.a),
+                                    Preconditions.checkNotNull(abcdefg.b),
+                                    abcdefg.c,
+                                    abcdefg.d,
+                                    abcdefg.e,
+                                    abcdefg.f,
+                                    abcdefg.g,
+                                    hv));
                 }
             };
         }

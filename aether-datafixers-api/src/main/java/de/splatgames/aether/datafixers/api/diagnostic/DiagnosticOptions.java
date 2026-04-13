@@ -62,13 +62,11 @@ import org.jetbrains.annotations.NotNull;
  * @see MigrationReport
  * @since 0.2.0
  */
-public record DiagnosticOptions(
-        boolean captureSnapshots,
-        boolean captureRuleDetails,
-        int maxSnapshotLength,
-        boolean prettyPrintSnapshots,
-        boolean captureFieldDetails
-) {
+public record DiagnosticOptions(boolean captureSnapshots,
+                                boolean captureRuleDetails,
+                                int maxSnapshotLength,
+                                boolean prettyPrintSnapshots,
+                                boolean captureFieldDetails) {
 
     /**
      * Default maximum snapshot length.
@@ -129,14 +127,35 @@ public record DiagnosticOptions(
      * <p>All settings default to the values from {@link DiagnosticOptions#defaults()}.</p>
      */
     public static final class Builder {
-
+        /**
+         * Capture before/after data snapshots.
+         */
         private boolean captureSnapshots = true;
+        /**
+         * Capture individual rule application details.
+         */
         private boolean captureRuleDetails = true;
+        /**
+         * Maximum length for snapshot strings (0 for unlimited).
+         */
         private int maxSnapshotLength = DEFAULT_MAX_SNAPSHOT_LENGTH;
+        /**
+         * Format snapshots for readability.
+         */
         private boolean prettyPrintSnapshots = true;
+        /**
+         * Capture field-level operation metadata from {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule}
+         * implementations; requires {@code captureRuleDetails} to be {@code true} to have any effect.
+         *
+         * @since 1.0.0
+         */
         private boolean captureFieldDetails = true;
 
+        /**
+         * Private constructor to enforce usage of {@link DiagnosticOptions#builder()}.
+         */
         private Builder() {
+            throw new UnsupportedOperationException("Use DiagnosticOptions.builder() to create a Builder instance");
         }
 
         /**
