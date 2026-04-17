@@ -290,10 +290,8 @@ public final class TypeIntrospector {
      * @return a mutable list of extracted fields, never {@code null}
      */
     @NotNull
-    private static List<FieldInfo> extractFieldsInternal(
-            @NotNull final Type<?> type,
-            @NotNull final String pathPrefix
-    ) {
+    private static List<FieldInfo> extractFieldsInternal(@NotNull final Type<?> type,
+                                                         @NotNull final String pathPrefix) {
         final List<FieldInfo> result = new ArrayList<>();
 
         // Direct FieldType
@@ -339,11 +337,9 @@ public final class TypeIntrospector {
      * @return the computed child path, never {@code null}
      */
     @NotNull
-    private static String computeChildPath(
-            @NotNull final Type<?> parent,
-            @NotNull final Type<?> child,
-            @NotNull final String parentPath
-    ) {
+    private static String computeChildPath(@NotNull final Type<?> parent,
+                                           @NotNull final Type<?> child,
+                                           @NotNull final String parentPath) {
         if (parent instanceof Type.FieldType<?> fieldType) {
             return parentPath.isEmpty()
                     ? fieldType.name()

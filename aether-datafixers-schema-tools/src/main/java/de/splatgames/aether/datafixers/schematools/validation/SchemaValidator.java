@@ -140,11 +140,9 @@ public final class SchemaValidator {
      * @param registry     the schema registry, or {@code null}
      * @param fixerBuilder the fixer builder for coverage validation, or {@code null}
      */
-    private SchemaValidator(
-            @Nullable final Schema singleSchema,
-            @Nullable final SchemaRegistry registry,
-            @Nullable final DataFixerBuilder fixerBuilder
-    ) {
+    private SchemaValidator(@Nullable final Schema singleSchema,
+                            @Nullable final SchemaRegistry registry,
+                            @Nullable final DataFixerBuilder fixerBuilder) {
         this.singleSchema = singleSchema;
         this.registry = registry;
         this.fixerBuilder = fixerBuilder;
@@ -319,10 +317,8 @@ public final class SchemaValidator {
      * @return the merged validation result including new issues
      */
     @NotNull
-    private ValidationResult validateSingleSchema(
-            @NotNull final Schema schema,
-            @NotNull ValidationResult result
-    ) {
+    private ValidationResult validateSingleSchema(@NotNull final Schema schema,
+                                                  @NotNull ValidationResult result) {
         Preconditions.checkNotNull(schema, "schema must not be null");
         Preconditions.checkNotNull(result, "result must not be null");
         if (this.validateStructure) {
@@ -352,10 +348,8 @@ public final class SchemaValidator {
      * @return the merged validation result including new issues
      */
     @NotNull
-    private ValidationResult validateRegistry(
-            @NotNull final SchemaRegistry registry,
-            @NotNull ValidationResult result
-    ) {
+    private ValidationResult validateRegistry(@NotNull final SchemaRegistry registry,
+                                              @NotNull ValidationResult result) {
         Preconditions.checkNotNull(registry, "registry must not be null");
         Preconditions.checkNotNull(result, "result must not be null");
         // Structure validation

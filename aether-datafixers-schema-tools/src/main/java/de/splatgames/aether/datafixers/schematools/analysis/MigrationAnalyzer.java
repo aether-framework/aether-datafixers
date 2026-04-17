@@ -119,8 +119,7 @@ public final class MigrationAnalyzer {
     private DataVersion toVersion;
 
     /**
-     * Flag controlling whether field-level analysis is included.
-     * Defaults to {@code false} for performance.
+     * Flag controlling whether field-level analysis is included. Defaults to {@code false} for performance.
      */
     private boolean includeFieldLevel = false;
 
@@ -134,10 +133,8 @@ public final class MigrationAnalyzer {
      * @param fixRegistry    the fix registry, must not be {@code null}
      * @throws NullPointerException if any argument is {@code null}
      */
-    private MigrationAnalyzer(
-            @NotNull final SchemaRegistry schemaRegistry,
-            @NotNull final DataFixRegistry fixRegistry
-    ) {
+    private MigrationAnalyzer(@NotNull final SchemaRegistry schemaRegistry,
+                              @NotNull final DataFixRegistry fixRegistry) {
         this.schemaRegistry = Preconditions.checkNotNull(schemaRegistry, "schemaRegistry must not be null");
         this.fixRegistry = Preconditions.checkNotNull(fixRegistry, "fixRegistry must not be null");
     }
@@ -173,10 +170,8 @@ public final class MigrationAnalyzer {
      * @return a new analyzer, never {@code null}
      */
     @NotNull
-    public static MigrationAnalyzer forRegistries(
-            @NotNull final SchemaRegistry schemaRegistry,
-            @NotNull final DataFixRegistry fixRegistry
-    ) {
+    public static MigrationAnalyzer forRegistries(@NotNull final SchemaRegistry schemaRegistry,
+                                                  @NotNull final DataFixRegistry fixRegistry) {
         Preconditions.checkNotNull(schemaRegistry, "schemaRegistry must not be null");
         Preconditions.checkNotNull(fixRegistry, "fixRegistry must not be null");
         return new MigrationAnalyzer(schemaRegistry, fixRegistry);
@@ -274,10 +269,10 @@ public final class MigrationAnalyzer {
      *
      * <p><b>Known limitation:</b> Coverage analysis operates at the <i>type</i> level, not the
      * <i>field</i> level. While {@link CoverageGap.Reason} defines field-level reasons
-     * ({@code FIELD_ADDED}, {@code FIELD_REMOVED}, {@code FIELD_TYPE_CHANGED}), these are
-     * not currently populated because the analysis cannot determine which specific fields
-     * a DataFix handles. If any fix exists for a type at a given version, all field changes
-     * for that type are considered covered. See {@link #checkTypeDiffCoverage} for details.</p>
+     * ({@code FIELD_ADDED}, {@code FIELD_REMOVED}, {@code FIELD_TYPE_CHANGED}), these are not currently populated
+     * because the analysis cannot determine which specific fields a DataFix handles. If any fix exists for a type at a
+     * given version, all field changes for that type are considered covered. See {@link #checkTypeDiffCoverage} for
+     * details.</p>
      *
      * @return the coverage analysis result, never {@code null}
      * @throws IllegalStateException if from/to versions are not set
@@ -305,14 +300,12 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Statically analyzes the field-level operations performed by all fixes in
-     * the configured version range.
+     * Statically analyzes the field-level operations performed by all fixes in the configured version range.
      *
      * <p>This method walks every migration step between {@link #from} and
-     * {@link #to}, collects the unique {@link DataFix} instances applicable to
-     * each step, and introspects each one to extract the
-     * {@link FieldOperation field operations} its rule would perform — without
-     * running any data through the fixer.</p>
+     * {@link #to}, collects the unique {@link DataFix} instances applicable to each step, and introspects each one to
+     * extract the {@link FieldOperation field operations} its rule would perform — without running any data through the
+     * fixer.</p>
      *
      * <h4>Introspection Mechanism</h4>
      * <p>For each fix, the analyzer:</p>
@@ -347,8 +340,7 @@ public final class MigrationAnalyzer {
      * }
      * }</pre>
      *
-     * @return a report of all field operations across the configured version range,
-     *         never {@code null}
+     * @return a report of all field operations across the configured version range, never {@code null}
      * @throws IllegalStateException if {@code from} or {@code to} is not set
      * @see FieldOperationReport
      * @see FixFieldOperations
@@ -379,29 +371,25 @@ public final class MigrationAnalyzer {
     }
 
     /**
-     * Collects all unique fixes applicable at a single migration step and adds
-     * their field operations to the report builder.
+     * Collects all unique fixes applicable at a single migration step and adds their field operations to the report
+     * builder.
      *
      * <p>Unlike {@link #analyzeStep}, this method walks <i>every</i> registered
-     * type in the {@link DataFixRegistry} and asks whether a fix is registered
-     * at the source version of the step. This is the correct semantic for
-     * field-operation analysis: a fix can exist for a type even when its schema
-     * hasn't changed between versions.</p>
+     * type in the {@link DataFixRegistry} and asks whether a fix is registered at the source version of the step. This
+     * is the correct semantic for field-operation analysis: a fix can exist for a type even when its schema hasn't
+     * changed between versions.</p>
      *
      * <p>Fixes are deduplicated by reference identity within a step, since the
-     * same {@code DataFix} instance may be registered for multiple types but
-     * always carries the same rule.</p>
+     * same {@code DataFix} instance may be registered for multiple types but always carries the same rule.</p>
      *
      * @param sourceSchema  the source schema for this step, must not be {@code null}
      * @param targetSchema  the target schema for this step, must not be {@code null}
      * @param reportBuilder the builder accumulating fix entries, must not be {@code null}
      * @since 1.0.0
      */
-    private void collectStepFieldOperations(
-            @NotNull final Schema sourceSchema,
-            @NotNull final Schema targetSchema,
-            @NotNull final FieldOperationReport.Builder reportBuilder
-    ) {
+    private void collectStepFieldOperations(@NotNull final Schema sourceSchema,
+                                            @NotNull final Schema targetSchema,
+                                            @NotNull final FieldOperationReport.Builder reportBuilder) {
         Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
         Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
         Preconditions.checkNotNull(reportBuilder, "reportBuilder must not be null");
@@ -423,8 +411,8 @@ public final class MigrationAnalyzer {
      * Introspects a single fix and produces its {@link FixFieldOperations} entry.
      *
      * <p>If the fix extends {@link SchemaDataFix}, its rule is obtained via
-     * {@link SchemaDataFix#introspectRule(Schema, Schema)} and tested for the
-     * {@link FieldAwareRule} marker. Otherwise the fix is recorded as opaque.</p>
+     * {@link SchemaDataFix#introspectRule(Schema, Schema)} and tested for the {@link FieldAwareRule} marker. Otherwise
+     * the fix is recorded as opaque.</p>
      *
      * @param fix          the fix to introspect, must not be {@code null}
      * @param sourceSchema the schema corresponding to the fix's source version, must not be {@code null}
@@ -433,11 +421,9 @@ public final class MigrationAnalyzer {
      * @since 1.0.0
      */
     @NotNull
-    private FixFieldOperations introspectFix(
-            @NotNull final DataFix<?> fix,
-            @NotNull final Schema sourceSchema,
-            @NotNull final Schema targetSchema
-    ) {
+    private FixFieldOperations introspectFix(@NotNull final DataFix<?> fix,
+                                             @NotNull final Schema sourceSchema,
+                                             @NotNull final Schema targetSchema) {
         if (!(fix instanceof SchemaDataFix schemaFix)) {
             return FixFieldOperations.opaque(fix.name(), fix.fromVersion(), fix.toVersion());
         }
@@ -455,11 +441,9 @@ public final class MigrationAnalyzer {
      * Validates that the version range is properly configured.
      *
      * <p>This method ensures both {@code fromVersion} and {@code toVersion}
-     * have been set, and that {@code fromVersion} does not exceed
-     * {@code toVersion}.</p>
+     * have been set, and that {@code fromVersion} does not exceed {@code toVersion}.</p>
      *
-     * @throws IllegalStateException if from/to versions are not set
-     *                               or if fromVersion > toVersion
+     * @throws IllegalStateException if from/to versions are not set or if fromVersion > toVersion
      */
     private void validateVersionRange() {
         Preconditions.checkState(this.fromVersion != null, "fromVersion must be set. Use from().");
@@ -474,9 +458,8 @@ public final class MigrationAnalyzer {
      * Retrieves all schemas within the configured version range.
      *
      * <p>Iterates through all schemas in the registry and filters those
-     * with versions between {@code fromVersion} and {@code toVersion}
-     * (inclusive). The resulting list is sorted by version number
-     * in ascending order.</p>
+     * with versions between {@code fromVersion} and {@code toVersion} (inclusive). The resulting list is sorted by
+     * version number in ascending order.</p>
      *
      * @return a mutable list of schemas sorted by version, never {@code null}
      */
@@ -513,10 +496,8 @@ public final class MigrationAnalyzer {
      * @return the analyzed migration step, never {@code null}
      */
     @NotNull
-    private MigrationStep analyzeStep(
-            @NotNull final Schema sourceSchema,
-            @NotNull final Schema targetSchema
-    ) {
+    private MigrationStep analyzeStep(@NotNull final Schema sourceSchema,
+                                      @NotNull final Schema targetSchema) {
         Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
         Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
 
@@ -547,9 +528,9 @@ public final class MigrationAnalyzer {
         }
 
         final MigrationStep.Builder stepBuilder = MigrationStep.builder(
-                sourceSchema.version(),
-                targetSchema.version()
-        ).schemaDiff(diff)
+                        sourceSchema.version(),
+                        targetSchema.version()
+                ).schemaDiff(diff)
                 .affectedTypes(affectedTypes);
 
         // Add all applicable fixes for this migration step
@@ -562,18 +543,16 @@ public final class MigrationAnalyzer {
      * Analyzes fix coverage for a single migration step.
      *
      * <p>Examines the schema diff between versions and checks if each
-     * change (added/removed/modified types) has a corresponding DataFix.
-     * Missing fixes are recorded as coverage gaps in the builder.</p>
+     * change (added/removed/modified types) has a corresponding DataFix. Missing fixes are recorded as coverage gaps in
+     * the builder.</p>
      *
      * @param sourceSchema    the source schema, must not be {@code null}
      * @param targetSchema    the target schema, must not be {@code null}
      * @param coverageBuilder the builder to accumulate gaps, must not be {@code null}
      */
-    private void analyzeStepCoverage(
-            @NotNull final Schema sourceSchema,
-            @NotNull final Schema targetSchema,
-            @NotNull final FixCoverage.Builder coverageBuilder
-    ) {
+    private void analyzeStepCoverage(@NotNull final Schema sourceSchema,
+                                     @NotNull final Schema targetSchema,
+                                     @NotNull final FixCoverage.Builder coverageBuilder) {
         Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
         Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");
         Preconditions.checkNotNull(coverageBuilder, "coverageBuilder must not be null");
@@ -619,16 +598,13 @@ public final class MigrationAnalyzer {
      * Checks fix coverage for field-level changes within a type.
      *
      * <p>If the type has field-level changes (added, removed, or modified fields)
-     * but no DataFix is registered to handle the type at this version,
-     * a coverage gap is recorded.</p>
+     * but no DataFix is registered to handle the type at this version, a coverage gap is recorded.</p>
      *
      * <p><b>Known Limitation:</b> This implementation only checks whether <i>any</i> fix
-     * exists for the type at this version. It does <b>not</b> verify that the fix handles
-     * all specific field changes (e.g., a fix may handle field 'armor' but not 'health').
-     * This can produce false negatives where a gap exists at the field level but is not
-     * reported because a type-level fix is present. Verifying field-level coverage would
-     * require metadata in {@link DataFix} about which fields it modifies, which is not
-     * currently part of the API.</p>
+     * exists for the type at this version. It does <b>not</b> verify that the fix handles all specific field changes
+     * (e.g., a fix may handle field 'armor' but not 'health'). This can produce false negatives where a gap exists at
+     * the field level but is not reported because a type-level fix is present. Verifying field-level coverage would
+     * require metadata in {@link DataFix} about which fields it modifies, which is not currently part of the API.</p>
      *
      * @param type            the type being analyzed, must not be {@code null}
      * @param sourceSchema    the source schema, must not be {@code null}
@@ -636,13 +612,11 @@ public final class MigrationAnalyzer {
      * @param typeDiff        the detailed type diff, must not be {@code null}
      * @param coverageBuilder the builder to accumulate gaps, must not be {@code null}
      */
-    private void checkTypeDiffCoverage(
-            @NotNull final TypeReference type,
-            @NotNull final Schema sourceSchema,
-            @NotNull final Schema targetSchema,
-            @NotNull final TypeDiff typeDiff,
-            @NotNull final FixCoverage.Builder coverageBuilder
-    ) {
+    private void checkTypeDiffCoverage(@NotNull final TypeReference type,
+                                       @NotNull final Schema sourceSchema,
+                                       @NotNull final Schema targetSchema,
+                                       @NotNull final TypeDiff typeDiff,
+                                       @NotNull final FixCoverage.Builder coverageBuilder) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(sourceSchema, "sourceSchema must not be null");
         Preconditions.checkNotNull(targetSchema, "targetSchema must not be null");

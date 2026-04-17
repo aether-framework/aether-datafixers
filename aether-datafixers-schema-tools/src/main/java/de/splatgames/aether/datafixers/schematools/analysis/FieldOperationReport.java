@@ -133,11 +133,9 @@ public final class FieldOperationReport {
      * @param toVersion     the overall target version, must not be {@code null}
      * @param fixOperations the per-fix entries in migration order, must not be {@code null}
      */
-    private FieldOperationReport(
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final List<FixFieldOperations> fixOperations
-    ) {
+    private FieldOperationReport(@NotNull final DataVersion fromVersion,
+                                 @NotNull final DataVersion toVersion,
+                                 @NotNull final List<FixFieldOperations> fixOperations) {
         this.fromVersion = Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         this.toVersion = Preconditions.checkNotNull(toVersion, "toVersion must not be null");
         this.fixOperations = List.copyOf(
@@ -178,11 +176,9 @@ public final class FieldOperationReport {
      * @return a new report instance, never {@code null}
      */
     @NotNull
-    public static FieldOperationReport of(
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final List<FixFieldOperations> fixOperations
-    ) {
+    public static FieldOperationReport of(@NotNull final DataVersion fromVersion,
+                                          @NotNull final DataVersion toVersion,
+                                          @NotNull final List<FixFieldOperations> fixOperations) {
         return new FieldOperationReport(fromVersion, toVersion, fixOperations);
     }
 
@@ -194,10 +190,8 @@ public final class FieldOperationReport {
      * @return a new builder, never {@code null}
      */
     @NotNull
-    public static Builder builder(
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion
-    ) {
+    public static Builder builder(@NotNull final DataVersion fromVersion,
+                                  @NotNull final DataVersion toVersion) {
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         Preconditions.checkNotNull(toVersion, "toVersion must not be null");
         return new Builder(fromVersion, toVersion);

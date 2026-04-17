@@ -96,10 +96,8 @@ public final class ConventionChecker {
      * @return the validation result, never {@code null}
      */
     @NotNull
-    public static ValidationResult checkSchema(
-            @NotNull final Schema schema,
-            @NotNull final ConventionRules rules
-    ) {
+    public static ValidationResult checkSchema(@NotNull final Schema schema,
+                                               @NotNull final ConventionRules rules) {
         Preconditions.checkNotNull(schema, "schema must not be null");
         Preconditions.checkNotNull(rules, "rules must not be null");
 
@@ -162,10 +160,8 @@ public final class ConventionChecker {
      * @return the validation result, never {@code null}
      */
     @NotNull
-    public static ValidationResult checkFix(
-            @NotNull final DataFix<?> fix,
-            @NotNull final ConventionRules rules
-    ) {
+    public static ValidationResult checkFix(@NotNull final DataFix<?> fix,
+                                            @NotNull final ConventionRules rules) {
         Preconditions.checkNotNull(fix, "fix must not be null");
         Preconditions.checkNotNull(rules, "rules must not be null");
 
@@ -193,13 +189,11 @@ public final class ConventionChecker {
     /**
      * Checks field names within a type.
      */
-    private static void checkFieldNames(
-            @NotNull final Type<?> type,
-            @NotNull final String typeName,
-            @NotNull final String schemaLocation,
-            @NotNull final ConventionRules rules,
-            @NotNull final ValidationResult.Builder result
-    ) {
+    private static void checkFieldNames(@NotNull final Type<?> type,
+                                        @NotNull final String typeName,
+                                        @NotNull final String schemaLocation,
+                                        @NotNull final ConventionRules rules,
+                                        @NotNull final ValidationResult.Builder result) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(typeName, "typeName must not be null");
         Preconditions.checkNotNull(schemaLocation, "schemaLocation must not be null");
@@ -237,12 +231,10 @@ public final class ConventionChecker {
      * @return the violation message
      */
     @NotNull
-    private static String buildClassNameViolationMessage(
-            @NotNull final String className,
-            @NotNull final String type,
-            @Nullable final String prefix,
-            @Nullable final String suffix
-    ) {
+    private static String buildClassNameViolationMessage(@NotNull final String className,
+                                                         @NotNull final String type,
+                                                         @Nullable final String prefix,
+                                                         @Nullable final String suffix) {
         Preconditions.checkNotNull(className, "className must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
 
@@ -267,12 +259,10 @@ public final class ConventionChecker {
      * Creates a validation issue with the appropriate severity based on rules.
      */
     @NotNull
-    private static ValidationIssue createIssue(
-            @NotNull final String code,
-            @NotNull final String message,
-            @NotNull final String location,
-            @NotNull final ConventionRules rules
-    ) {
+    private static ValidationIssue createIssue(@NotNull final String code,
+                                               @NotNull final String message,
+                                               @NotNull final String location,
+                                               @NotNull final ConventionRules rules) {
         Preconditions.checkNotNull(code, "code must not be null");
         Preconditions.checkNotNull(message, "message must not be null");
         Preconditions.checkNotNull(location, "location must not be null");

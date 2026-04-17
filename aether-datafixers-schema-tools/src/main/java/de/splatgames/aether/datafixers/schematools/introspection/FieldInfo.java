@@ -88,12 +88,10 @@ public final class FieldInfo {
      * @param path      the full path to this field (e.g., "player.position.x"),
      *                  must not be {@code null}
      */
-    private FieldInfo(
-            @NotNull final String name,
-            final boolean optional,
-            @NotNull final Type<?> fieldType,
-            @NotNull final String path
-    ) {
+    private FieldInfo(@NotNull final String name,
+                      final boolean optional,
+                      @NotNull final Type<?> fieldType,
+                      @NotNull final String path) {
         this.name = Preconditions.checkNotNull(name, "name must not be null");
         this.optional = optional;
         this.fieldType = Preconditions.checkNotNull(fieldType, "fieldType must not be null");
@@ -127,10 +125,8 @@ public final class FieldInfo {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public static FieldInfo of(
-            @NotNull final Type.FieldType<?> fieldType,
-            @NotNull final String pathPrefix
-    ) {
+    public static FieldInfo of(@NotNull final Type.FieldType<?> fieldType,
+                               @NotNull final String pathPrefix) {
         Preconditions.checkNotNull(fieldType, "fieldType must not be null");
         Preconditions.checkNotNull(pathPrefix, "pathPrefix must not be null");
 
@@ -157,12 +153,10 @@ public final class FieldInfo {
      * @throws NullPointerException if any non-primitive argument is {@code null}
      */
     @NotNull
-    public static FieldInfo create(
-            @NotNull final String name,
-            final boolean optional,
-            @NotNull final Type<?> fieldType,
-            @NotNull final String path
-    ) {
+    public static FieldInfo create(@NotNull final String name,
+                                   final boolean optional,
+                                   @NotNull final Type<?> fieldType,
+                                   @NotNull final String path) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(fieldType, "fieldType must not be null");
         Preconditions.checkNotNull(path, "path must not be null");

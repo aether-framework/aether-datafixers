@@ -821,10 +821,9 @@ public final class GsonOps implements DynamicOps<JsonElement> {
      */
     @NotNull
     @Override
-    public DataResult<JsonElement> mergeToMap(
-            @NotNull final JsonElement map,
-            @NotNull final JsonElement key,
-            @NotNull final JsonElement value) {
+    public DataResult<JsonElement> mergeToMap(@NotNull final JsonElement map,
+                                              @NotNull final JsonElement key,
+                                              @NotNull final JsonElement value) {
         Preconditions.checkNotNull(map, "map must not be null");
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");

@@ -106,12 +106,10 @@ public final class FieldDiff {
      * @param sourceField the source field, may be {@code null} for ADDED diffs
      * @param targetField the target field, may be {@code null} for REMOVED diffs
      */
-    private FieldDiff(
-            @NotNull final String fieldName,
-            @NotNull final DiffKind kind,
-            @Nullable final FieldInfo sourceField,
-            @Nullable final FieldInfo targetField
-    ) {
+    private FieldDiff(@NotNull final String fieldName,
+                      @NotNull final DiffKind kind,
+                      @Nullable final FieldInfo sourceField,
+                      @Nullable final FieldInfo targetField) {
         this.fieldName = Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         this.kind = Preconditions.checkNotNull(kind, "kind must not be null");
         this.sourceField = sourceField;
@@ -154,10 +152,8 @@ public final class FieldDiff {
      * @throws IllegalArgumentException if field names don't match
      */
     @NotNull
-    public static FieldDiff modified(
-            @NotNull final FieldInfo sourceField,
-            @NotNull final FieldInfo targetField
-    ) {
+    public static FieldDiff modified(@NotNull final FieldInfo sourceField,
+                                     @NotNull final FieldInfo targetField) {
         Preconditions.checkNotNull(sourceField, "sourceField must not be null");
         Preconditions.checkNotNull(targetField, "targetField must not be null");
         Preconditions.checkArgument(
@@ -178,10 +174,8 @@ public final class FieldDiff {
      * @throws IllegalArgumentException if field names don't match
      */
     @NotNull
-    public static FieldDiff unchanged(
-            @NotNull final FieldInfo sourceField,
-            @NotNull final FieldInfo targetField
-    ) {
+    public static FieldDiff unchanged(@NotNull final FieldInfo sourceField,
+                                      @NotNull final FieldInfo targetField) {
         Preconditions.checkNotNull(sourceField, "sourceField must not be null");
         Preconditions.checkNotNull(targetField, "targetField must not be null");
         Preconditions.checkArgument(
@@ -205,10 +199,8 @@ public final class FieldDiff {
      * @throws IllegalArgumentException if field names don't match
      */
     @NotNull
-    public static FieldDiff compare(
-            @NotNull final FieldInfo sourceField,
-            @NotNull final FieldInfo targetField
-    ) {
+    public static FieldDiff compare(@NotNull final FieldInfo sourceField,
+                                    @NotNull final FieldInfo targetField) {
         Preconditions.checkNotNull(sourceField, "sourceField must not be null");
         Preconditions.checkNotNull(targetField, "targetField must not be null");
         Preconditions.checkArgument(

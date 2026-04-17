@@ -102,12 +102,10 @@ public final class TypeDiff {
      * @param targetType the target type, must not be {@code null}
      * @param fieldDiffs the field diffs, must not be {@code null}
      */
-    private TypeDiff(
-            @NotNull final TypeReference reference,
-            @NotNull final Type<?> sourceType,
-            @NotNull final Type<?> targetType,
-            @NotNull final List<FieldDiff> fieldDiffs
-    ) {
+    private TypeDiff(@NotNull final TypeReference reference,
+                     @NotNull final Type<?> sourceType,
+                     @NotNull final Type<?> targetType,
+                     @NotNull final List<FieldDiff> fieldDiffs) {
         this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
         this.sourceType = Preconditions.checkNotNull(sourceType, "sourceType must not be null");
         this.targetType = Preconditions.checkNotNull(targetType, "targetType must not be null");
@@ -125,12 +123,10 @@ public final class TypeDiff {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public static TypeDiff of(
-            @NotNull final TypeReference reference,
-            @NotNull final Type<?> sourceType,
-            @NotNull final Type<?> targetType,
-            @NotNull final List<FieldDiff> fieldDiffs
-    ) {
+    public static TypeDiff of(@NotNull final TypeReference reference,
+                              @NotNull final Type<?> sourceType,
+                              @NotNull final Type<?> targetType,
+                              @NotNull final List<FieldDiff> fieldDiffs) {
         Preconditions.checkNotNull(reference, "reference must not be null");
         Preconditions.checkNotNull(sourceType, "sourceType must not be null");
         Preconditions.checkNotNull(targetType, "targetType must not be null");

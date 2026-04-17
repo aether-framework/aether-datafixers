@@ -117,13 +117,11 @@ public final class MigrationStep {
      * @param schemaDiff    the schema diff, may be {@code null}
      * @param affectedTypes the affected types, must not be {@code null}
      */
-    private MigrationStep(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final List<DataFix<?>> fixes,
-            @Nullable final SchemaDiff schemaDiff,
-            @NotNull final Set<TypeReference> affectedTypes
-    ) {
+    private MigrationStep(@NotNull final DataVersion sourceVersion,
+                          @NotNull final DataVersion targetVersion,
+                          @NotNull final List<DataFix<?>> fixes,
+                          @Nullable final SchemaDiff schemaDiff,
+                          @NotNull final Set<TypeReference> affectedTypes) {
         this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         this.fixes = List.copyOf(Preconditions.checkNotNull(fixes, "fixes must not be null"));
@@ -141,12 +139,10 @@ public final class MigrationStep {
      * @return a new migration step, never {@code null}
      */
     @NotNull
-    public static MigrationStep withFix(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final DataFix<?> fix,
-            @NotNull final Set<TypeReference> affectedTypes
-    ) {
+    public static MigrationStep withFix(@NotNull final DataVersion sourceVersion,
+                                        @NotNull final DataVersion targetVersion,
+                                        @NotNull final DataFix<?> fix,
+                                        @NotNull final Set<TypeReference> affectedTypes) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(fix, "fix must not be null");
@@ -164,12 +160,10 @@ public final class MigrationStep {
      * @return a new migration step, never {@code null}
      */
     @NotNull
-    public static MigrationStep withoutFix(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @Nullable final SchemaDiff schemaDiff,
-            @NotNull final Set<TypeReference> affectedTypes
-    ) {
+    public static MigrationStep withoutFix(@NotNull final DataVersion sourceVersion,
+                                           @NotNull final DataVersion targetVersion,
+                                           @Nullable final SchemaDiff schemaDiff,
+                                           @NotNull final Set<TypeReference> affectedTypes) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(affectedTypes, "affectedTypes must not be null");
@@ -184,10 +178,8 @@ public final class MigrationStep {
      * @return a new builder, never {@code null}
      */
     @NotNull
-    public static Builder builder(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion
-    ) {
+    public static Builder builder(@NotNull final DataVersion sourceVersion,
+                                  @NotNull final DataVersion targetVersion) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
@@ -400,10 +392,8 @@ public final class MigrationStep {
          * @param targetVersion the target version, must not be {@code null}
          * @throws NullPointerException if any argument is {@code null}
          */
-        private Builder(
-                @NotNull final DataVersion sourceVersion,
-                @NotNull final DataVersion targetVersion
-        ) {
+        private Builder(@NotNull final DataVersion sourceVersion,
+                        @NotNull final DataVersion targetVersion) {
             this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
             this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         }

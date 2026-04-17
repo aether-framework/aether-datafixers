@@ -170,14 +170,12 @@ public final class CoverageGap {
      * @param fieldName     the field name for field-level gaps, or {@code null}
      * @param typeDiff      the type diff for context, or {@code null}
      */
-    private CoverageGap(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final Reason reason,
-            @Nullable final String fieldName,
-            @Nullable final TypeDiff typeDiff
-    ) {
+    private CoverageGap(@NotNull final TypeReference type,
+                        @NotNull final DataVersion sourceVersion,
+                        @NotNull final DataVersion targetVersion,
+                        @NotNull final Reason reason,
+                        @Nullable final String fieldName,
+                        @Nullable final TypeDiff typeDiff) {
         this.type = Preconditions.checkNotNull(type, "type must not be null");
         this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
@@ -196,12 +194,10 @@ public final class CoverageGap {
      * @return a new coverage gap, never {@code null}
      */
     @NotNull
-    public static CoverageGap typeLevel(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final Reason reason
-    ) {
+    public static CoverageGap typeLevel(@NotNull final TypeReference type,
+                                        @NotNull final DataVersion sourceVersion,
+                                        @NotNull final DataVersion targetVersion,
+                                        @NotNull final Reason reason) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
@@ -220,13 +216,11 @@ public final class CoverageGap {
      * @return a new coverage gap, never {@code null}
      */
     @NotNull
-    public static CoverageGap typeLevel(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final Reason reason,
-            @Nullable final TypeDiff typeDiff
-    ) {
+    public static CoverageGap typeLevel(@NotNull final TypeReference type,
+                                        @NotNull final DataVersion sourceVersion,
+                                        @NotNull final DataVersion targetVersion,
+                                        @NotNull final Reason reason,
+                                        @Nullable final TypeDiff typeDiff) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
@@ -245,13 +239,11 @@ public final class CoverageGap {
      * @return a new coverage gap, never {@code null}
      */
     @NotNull
-    public static CoverageGap fieldLevel(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final Reason reason,
-            @NotNull final String fieldName
-    ) {
+    public static CoverageGap fieldLevel(@NotNull final TypeReference type,
+                                         @NotNull final DataVersion sourceVersion,
+                                         @NotNull final DataVersion targetVersion,
+                                         @NotNull final Reason reason,
+                                         @NotNull final String fieldName) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
