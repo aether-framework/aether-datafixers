@@ -41,8 +41,8 @@ import java.util.Arrays;
  * Factory methods for creating mock {@link Schema} and {@link SchemaRegistry} instances.
  *
  * <p>{@code MockSchemas} provides utilities for creating lightweight schema objects
- * for testing purposes. These mocks are useful when you need schemas for testing
- * DataFix implementations but don't want to set up full production schemas.</p>
+ * for testing purposes. These mocks are useful when you need schemas for testing DataFix implementations but don't want
+ * to set up full production schemas.</p>
  *
  * <h2>Minimal Schema</h2>
  * <pre>{@code
@@ -182,18 +182,39 @@ public final class MockSchemas {
 
     // ==================== Minimal Schema Implementation ====================
 
+    /**
+     * A minimal schema implementation with no types.
+     *
+     * <p>This schema serves as a simple placeholder for testing schema chains
+     * without needing to define any actual types. It can be used when the presence of a schema version is required but
+     * the specific types are not relevant.</p>
+     */
     private static final class MinimalSchema extends Schema {
 
+        /**
+         * Creates a minimal schema with the specified version and parent.
+         *
+         * @param version the schema version
+         * @param parent  the parent schema (may be null)
+         */
         MinimalSchema(final int version, @Nullable final Schema parent) {
             super(version, parent);
         }
 
+        /**
+         * Creates an empty type registry for this schema.
+         *
+         * @return a new SimpleTypeRegistry
+         */
         @NotNull
         @Override
         protected TypeRegistry createTypeRegistry() {
             return new SimpleTypeRegistry();
         }
 
+        /**
+         * No types to register for this minimal schema.
+         */
         @Override
         protected void registerTypes() {
             // No types by default
@@ -206,18 +227,34 @@ public final class MockSchemas {
      * A builder for creating custom mock schemas.
      *
      * <p><b>Note:</b> Parent schema types are <b>not</b> automatically inherited.
-     * You must explicitly add all types needed for each schema version via
-     * {@link #withType}. Setting a parent with {@link #withParent} only establishes
-     * the parent reference for schema chain traversal, not type inheritance.</p>
+     * You must explicitly add all types needed for each schema version via {@link #withType}. Setting a parent with
+     * {@link #withParent} only establishes the parent reference for schema chain traversal, not type inheritance.</p>
      */
     public static final class SchemaBuilder {
 
+        /**
+         * The schema version for the schema being built. This is required and immutable once the builder is created.
+         */
         private final int version;
-        @Nullable
-        private Schema parent;
+        /**
+         * The type registry where types added via {@link #withType} are stored. This registry is used to build the
+         * final schema.
+         */
         @NotNull
         private final SimpleTypeRegistry typeRegistry;
+        /**
+         * The parent schema for the schema being built. This is optional and can be set via {@link #withParent}. Note
+         * that parent schemas do not automatically provide their types to the child schema; you must explicitly add any
+         * needed types.
+         */
+        @Nullable
+        private Schema parent;
 
+        /**
+         * Creates a new SchemaBuilder with the specified version.
+         *
+         * @param version the schema version
+         */
         SchemaBuilder(final int version) {
             this.version = version;
             this.typeRegistry = new SimpleTypeRegistry();
@@ -244,7 +281,7 @@ public final class MockSchemas {
          */
         @NotNull
         public SchemaBuilder withType(@NotNull final TypeReference reference,
-                                       @NotNull final Type<?> type) {
+                                      @NotNull final Type<?> type) {
             Preconditions.checkNotNull(reference, "reference must not be null");
             Preconditions.checkNotNull(type, "type must not be null");
             // Wrap the type with the given reference
@@ -263,21 +300,47 @@ public final class MockSchemas {
         }
     }
 
+    /**
+     * A schema implementation that uses a pre-built type registry from the builder.
+     *
+     * <p>This schema is constructed by the {@link SchemaBuilder} and uses the types registered in the builder's
+     * {@link SimpleTypeRegistry}. The builder allows you to add types with specific references, and this schema will
+     * use those types directly without needing to override the {@link #registerTypes} method.</p>
+     */
     private static final class BuiltSchema extends Schema {
 
+        /**
+         * The type registry built by the SchemaBuilder. This registry contains all types added via withType and is used
+         * directly by this schema without modification.
+         */
         private final SimpleTypeRegistry builtRegistry;
 
+        /**
+         * Creates a new BuiltSchema with the specified version, parent, and type registry.
+         *
+         * @param version      the schema version
+         * @param parent       the parent schema (may be null)
+         * @param typeRegistry the type registry built by the SchemaBuilder
+         */
         BuiltSchema(final int version, @Nullable final Schema parent, @NotNull final SimpleTypeRegistry typeRegistry) {
             super(version, parent);
             this.builtRegistry = Preconditions.checkNotNull(typeRegistry, "typeRegistry must not be null");
         }
 
+        /**
+         * Returns the type registry built by the SchemaBuilder.
+         *
+         * @return the built type registry
+         */
         @NotNull
         @Override
         protected TypeRegistry createTypeRegistry() {
             return this.builtRegistry;
         }
 
+        /**
+         * No additional types to register since the builder's registry is used directly.
+         */
         @Override
         protected void registerTypes() {
             // Types already in the built registry
@@ -292,20 +355,45 @@ public final class MockSchemas {
     @SuppressWarnings("rawtypes")
     private static final class WrappedType<A> implements Type<A> {
 
+        /**
+         * The reference associated with this type. This allows the type to be registered in the schema with the correct
+         * reference, even if the underlying type does not inherently know its own reference.
+         */
         private final TypeReference reference;
+        /**
+         * The underlying type that this wrapper delegates to. This is the actual type implementation that provides the
+         * codec and other type behavior, while the wrapper simply associates it with a reference for registration
+         * purposes.
+         */
         private final Type delegate;
 
+        /**
+         * Creates a new WrappedType with the specified reference and delegate type.
+         *
+         * @param reference the type reference to associate with this type
+         * @param delegate  the underlying type to delegate to
+         */
         WrappedType(@NotNull final TypeReference reference, @NotNull final Type<?> delegate) {
             this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
             this.delegate = Preconditions.checkNotNull(delegate, "delegate must not be null");
         }
 
+        /**
+         * Returns the reference associated with this type.
+         *
+         * @return the type reference
+         */
         @NotNull
         @Override
         public TypeReference reference() {
             return this.reference;
         }
 
+        /**
+         * Delegates to the underlying type's codec.
+         *
+         * @return the codec from the delegate type
+         */
         @SuppressWarnings("unchecked")
         @NotNull
         @Override

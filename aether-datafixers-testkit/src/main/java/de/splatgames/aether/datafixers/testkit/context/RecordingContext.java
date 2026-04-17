@@ -36,8 +36,7 @@ import java.util.stream.Collectors;
  * A {@link DataFixerContext} that records all log calls for later inspection.
  *
  * <p>This context implementation captures all {@code info()} and {@code warn()}
- * calls, allowing tests to verify that DataFix implementations log appropriate
- * messages during migration.</p>
+ * calls, allowing tests to verify that DataFix implementations log appropriate messages during migration.</p>
  *
  * <h2>Usage</h2>
  * <pre>{@code
@@ -67,6 +66,9 @@ import java.util.stream.Collectors;
  */
 public final class RecordingContext implements DataFixerContext {
 
+    /**
+     * List of recorded log entries.
+     */
     private final List<LogEntry> logs;
 
     /**
@@ -76,11 +78,23 @@ public final class RecordingContext implements DataFixerContext {
         this.logs = new ArrayList<>();
     }
 
+    /**
+     * Records an INFO-level log entry.
+     *
+     * @param message the message format string
+     * @param args    the arguments for the message, may be {@code null}
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         this.logs.add(new LogEntry(LogLevel.INFO, message, args));
     }
 
+    /**
+     * Records a WARN-level log entry.
+     *
+     * @param message the message format string
+     * @param args    the arguments for the message, may be {@code null}
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         this.logs.add(new LogEntry(LogLevel.WARN, message, args));
@@ -252,7 +266,7 @@ public final class RecordingContext implements DataFixerContext {
          */
         @Override
         @Nullable
-        public Object[] args() {
+        public Object @Nullable [] args() {
             return args != null ? args.clone() : null;
         }
 

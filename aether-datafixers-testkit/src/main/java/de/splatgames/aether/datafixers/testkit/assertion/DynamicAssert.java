@@ -26,12 +26,12 @@ import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.assertj.core.api.AbstractAssert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * AssertJ assertions for {@link Dynamic} objects.
@@ -599,7 +599,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         this.isList();
         final long size = this.actual.asListStream()
                 .result()
-                .map(s -> s.count())
+                .map(Stream::count)
                 .orElse(0L);
 
         if (size == 0) {
@@ -713,10 +713,20 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
 
     // ==================== Internal Helpers ====================
 
+    /**
+     * Helper to format the current path for error messages.
+     *
+     * @return formatted path info
+     */
     private String pathInfo() {
         return this.path.isEmpty() ? "" : " at '" + this.path + "'";
     }
 
+    /**
+     * Helper to describe the actual value for error messages.
+     *
+     * @return a string description of the actual value
+     */
     private String describeActual() {
         if (this.actual.isMap()) {
             return "map";
@@ -736,6 +746,11 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return "unknown: " + this.actual.value();
     }
 
+    /**
+     * Helper to get a list of available field names if this Dynamic is a map.
+     *
+     * @return list of field names or empty list if not a map
+     */
     private List<String> availableFieldsList() {
         return this.actual.asMapStream()
                 .result()
@@ -743,21 +758,52 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
                 .orElse(List.of());
     }
 
-    @Nullable
+    /**
+     * Helper to get a comma-separated string of available field names for error messages.
+     *
+     * @return comma-separated field names or "(none)" if not a map or no fields
+     */
+    @NotNull
     private String availableFields() {
         final List<String> fields = this.availableFieldsList();
         return fields.isEmpty() ? "(none)" : String.join(", ", fields);
     }
 
-    private String describeElement(final Dynamic<T> element) {
-        if (element.isString()) return "string: " + element.asString().orElse("?");
-        if (element.isNumber()) return "number: " + element.asNumber().orElse(null);
-        if (element.isBoolean()) return "boolean: " + element.asBoolean().orElse(null);
-        if (element.isMap()) return "map";
-        if (element.isList()) return "list";
+    /**
+     * Helper to describe an element in a list for error messages.
+     *
+     * @param element the element to describe
+     * @return a string description of the element
+     */
+    private String describeElement(@NotNull final Dynamic<T> element) {
+        if (element.isString()) {
+            return "string: " + element.asString().orElse("?");
+        }
+
+        if (element.isNumber()) {
+            return "number: " + element.asNumber().orElse(null);
+        }
+
+        if (element.isBoolean()) {
+            return "boolean: " + element.asBoolean().orElse(null);
+        }
+
+        if (element.isMap()) {
+            return "map";
+        }
+
+        if (element.isList()) {
+            return "list";
+        }
         return "unknown: " + element.value();
     }
 
+    /**
+     * Helper to get a comma-separated string of field names from a Dynamic map for error messages.
+     *
+     * @param d the Dynamic to extract field names from
+     * @return comma-separated field names or "(none)" if not a map or no fields
+     */
     private String fieldsOf(@NotNull final Dynamic<T> d) {
         return d.asMapStream()
                 .result()

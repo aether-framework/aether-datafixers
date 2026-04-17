@@ -85,19 +85,44 @@ import java.util.function.Consumer;
  */
 public final class MigrationTester<T> {
 
+    /**
+     * The MigrationTester class provides a fluent API for testing data migrations using a DataFixer. It allows you to
+     * configure the type reference, input data, source and target versions, and expected output. You can then run the
+     * migration and verify the results.
+     */
     @NotNull
     private final DataFixer fixer;
+    /**
+     * Configuration fields - set through the fluent API before migration
+     */
     @Nullable
     private TypeReference typeReference;
+    /**
+     * The input data to be migrated
+     */
     @Nullable
     private Dynamic<T> input;
+    /**
+     * The source version for the migration
+     */
     @Nullable
     private DataVersion fromVersion;
+    /**
+     * The target version for the migration
+     */
     @Nullable
     private DataVersion toVersion;
+    /**
+     * The expected output after migration, used for verification (optional)
+     */
     @Nullable
     private Dynamic<T> expectedOutput;
 
+    /**
+     * Private constructor to enforce usage of static factory methods.
+     *
+     * @param fixer the DataFixer to test
+     */
     private MigrationTester(@NotNull final DataFixer fixer) {
         this.fixer = Preconditions.checkNotNull(fixer, "fixer must not be null");
     }
@@ -286,6 +311,11 @@ public final class MigrationTester<T> {
 
     // ==================== Validation ====================
 
+    /**
+     * Validates that all required configuration has been set before migration.
+     *
+     * @throws IllegalStateException if any required configuration is missing
+     */
     private void validateConfiguration() {
         if (this.typeReference == null) {
             throw new IllegalStateException("Type reference not set. Call forType() before migrate() or verify().");
@@ -308,10 +338,23 @@ public final class MigrationTester<T> {
      */
     public static final class FixerSetup {
 
+        /**
+         * A list of pending fixes to be added to the DataFixerBuilder. Each entry consists of a TypeReference and its
+         * corresponding DataFix. This allows for flexible configuration of multiple fixes before building the final
+         * DataFixer.
+         */
         private final List<Map.Entry<TypeReference, DataFix<?>>> pendingFixes = new ArrayList<>();
-        private int maxVersion = 1;
+        /**
+         * The maximum version number among the registered fixes. This is used to determine the target version of the
+         * DataFixer. It starts at 1 and is updated whenever a new fix is added.
+         */
+        private int maxVersion;
 
+        /**
+         * Private constructor to prevent direct instantiation. Use the withFixes() method of MigrationTester instead.
+         */
         FixerSetup() {
+            throw new UnsupportedOperationException("This class is not meant to be instantiated directly. Use the withFixes() method of MigrationTester.");
         }
 
         /**
@@ -344,6 +387,11 @@ public final class MigrationTester<T> {
             return this.addFix(new TypeReference(typeId), fix);
         }
 
+        /**
+         * Builds the DataFixer with the registered fixes.
+         *
+         * @return the built DataFixer
+         */
         DataFixer build() {
             final DataFixerBuilder actualBuilder = new DataFixerBuilder(new DataVersion(this.maxVersion));
             for (final Map.Entry<TypeReference, DataFix<?>> entry : this.pendingFixes) {

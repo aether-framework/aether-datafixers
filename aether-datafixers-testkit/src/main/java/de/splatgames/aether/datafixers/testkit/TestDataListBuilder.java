@@ -75,7 +75,13 @@ import java.util.function.Consumer;
  */
 public final class TestDataListBuilder<T> {
 
+    /**
+     * The DynamicOps instance used for creating values.
+     */
     private final DynamicOps<T> ops;
+    /**
+     * The list of elements added to this builder.
+     */
     private final List<Dynamic<T>> elements;
 
     /**
