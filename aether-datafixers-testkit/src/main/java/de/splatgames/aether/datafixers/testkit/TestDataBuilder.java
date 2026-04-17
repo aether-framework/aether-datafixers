@@ -119,8 +119,6 @@ public final class TestDataBuilder<T> {
         this.isObjectMode = false;
     }
 
-    // ==================== Entry Point ====================
-
     /**
      * Starts building an object (map) structure.
      *
@@ -152,8 +150,6 @@ public final class TestDataBuilder<T> {
     public TestDataListBuilder<T> list() {
         return new TestDataListBuilder<>(this.ops);
     }
-
-    // ==================== Primitive Fields ====================
 
     /**
      * Adds a string field.
@@ -313,8 +309,6 @@ public final class TestDataBuilder<T> {
         return this;
     }
 
-    // ==================== Nested Object Fields ====================
-
     /**
      * Adds a nested object field using a builder consumer.
      *
@@ -343,8 +337,6 @@ public final class TestDataBuilder<T> {
         this.fields.put(key, nestedBuilder.build());
         return this;
     }
-
-    // ==================== List Fields ====================
 
     /**
      * Adds a list field using a builder consumer.
@@ -497,8 +489,6 @@ public final class TestDataBuilder<T> {
         return this;
     }
 
-    // ==================== Quick Primitives (Direct Return) ====================
-
     /**
      * Creates a string {@link Dynamic} directly.
      *
@@ -576,8 +566,6 @@ public final class TestDataBuilder<T> {
         return new Dynamic<>(this.ops, this.ops.emptyList());
     }
 
-    // ==================== Build ====================
-
     /**
      * Builds the {@link Dynamic} object from the configured fields.
      *
@@ -598,8 +586,6 @@ public final class TestDataBuilder<T> {
         }
         return result;
     }
-
-    // ==================== Internal ====================
 
     /**
      * Returns the DynamicOps used by this builder.

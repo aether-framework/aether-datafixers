@@ -325,8 +325,6 @@ public final class BatchTransform<T> {
         );
     }
 
-    // ==================== Internal Operation Classes ====================
-
     /**
      * Base interface for field operations in a batch transform.
      *

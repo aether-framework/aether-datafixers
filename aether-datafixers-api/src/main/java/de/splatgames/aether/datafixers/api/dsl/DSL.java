@@ -103,10 +103,8 @@ public final class DSL {
      * Private constructor to prevent instantiation.
      */
     private DSL() {
-        // private constructor to prevent instantiation
+        throw new UnsupportedOperationException("DSL is a utility class and cannot be instantiated");
     }
-
-    // ==================== Primitive Types ====================
 
     /**
      * Creates a boolean type template for true/false values.
@@ -340,8 +338,6 @@ public final class DSL {
     public static TypeTemplate shortType() {
         return new ConstTemplate("short", Type.SHORT);
     }
-
-    // ==================== Compound Types ====================
 
     /**
      * Creates a list type template for ordered collections of elements.
@@ -598,8 +594,6 @@ public final class DSL {
         return new OptionalTemplate(element);
     }
 
-    // ==================== Field Types ====================
-
     /**
      * Creates a required field type template that extracts a named field from objects.
      *
@@ -785,8 +779,6 @@ public final class DSL {
         return new RemainderTemplate();
     }
 
-    // ==================== Tagged Choice Types ====================
-
     /**
      * Creates a tagged choice type template (discriminated union) for polymorphic data.
      *
@@ -886,8 +878,6 @@ public final class DSL {
         return new TaggedChoiceTemplate(tagField, choices);
     }
 
-    // ==================== Type Parameter References ====================
-
     /**
      * Creates a type parameter reference for parameterized types.
      *
@@ -979,8 +969,6 @@ public final class DSL {
         Preconditions.checkNotNull(definition, "definition must not be null");
         return new RecursiveTemplate(name, definition);
     }
-
-    // ==================== Finders ====================
 
     /**
      * Creates a finder that locates a specific field in a map/object structure.
@@ -1100,8 +1088,6 @@ public final class DSL {
         Preconditions.checkNotNull(excludedFields, "excludedFields must not be null");
         return Finder.remainder(excludedFields);
     }
-
-    // ==================== Template Implementations ====================
 
     /**
      * A constant type template that always produces the same fixed type.

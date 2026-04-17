@@ -157,7 +157,6 @@ public interface Type<A> {
      */
     Type<Short> SHORT = primitive("short", Codecs.SHORT);
 
-    // ==================== Primitive Types ====================
     /**
      * Primitive type representing Java {@link String} values.
      *
@@ -624,8 +623,6 @@ public interface Type<A> {
         };
     }
 
-    // ==================== Factory Methods ====================
-
     /**
      * Creates a named alias for another type, useful for recursive definitions.
      *
@@ -973,8 +970,6 @@ public interface Type<A> {
         Preconditions.checkNotNull(dynamic, "dynamic must not be null");
         return read(dynamic).map(value -> new Typed<>(this, value));
     }
-
-    // ==================== Inner Classes ====================
 
     /**
      * A type that extracts a named field from a map/object structure.

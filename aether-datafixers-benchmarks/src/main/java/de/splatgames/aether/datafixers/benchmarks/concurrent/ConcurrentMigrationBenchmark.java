@@ -159,8 +159,6 @@ import java.util.concurrent.TimeUnit;
 @Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx2G"})
 public class ConcurrentMigrationBenchmark {
 
-    // ==================== Concurrent Migration Benchmarks ====================
-
     /**
      * Benchmarks concurrent single-fix migrations with maximum thread parallelism.
      *
@@ -292,8 +290,6 @@ public class ConcurrentMigrationBenchmark {
         blackhole.consume(result);
     }
 
-    // ==================== Concurrent Registry Access Benchmarks ====================
-
     /**
      * Benchmarks concurrent random schema lookups from the registry.
      *
@@ -358,8 +354,6 @@ public class ConcurrentMigrationBenchmark {
         final Schema schema = s.sharedRegistry.latest();
         blackhole.consume(schema);
     }
-
-    // ==================== State Classes ====================
 
     /**
      * Shared benchmark state accessible by all threads.

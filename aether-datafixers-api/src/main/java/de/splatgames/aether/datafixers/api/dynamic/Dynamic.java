@@ -102,8 +102,6 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
         Preconditions.checkNotNull(value, "value must not be null");
     }
 
-    // ==================== Type Checks ====================
-
     /**
      * Checks if this value represents a map or object structure.
      *
@@ -219,8 +217,6 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
     public boolean isBoolean() {
         return this.ops.isBoolean(this.value);
     }
-
-    // ==================== Primitive Reading ====================
 
     /**
      * Attempts to read this value as a string.
@@ -448,8 +444,6 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
         return this.ops.getBooleanValue(this.value);
     }
 
-    // ==================== List Operations ====================
-
     /**
      * Attempts to read this value as a stream of {@link Dynamic} elements.
      *
@@ -526,8 +520,6 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
         Preconditions.checkNotNull(values, "values must not be null");
         return new Dynamic<>(this.ops, this.ops.createList(values.map(Dynamic::value)));
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * Checks if a key exists in this map/object structure.
@@ -816,8 +808,6 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
                 )));
     }
 
-    // ==================== Creation Helpers ====================
-
     /**
      * Creates an empty Dynamic using the default empty representation for this ops.
      *
@@ -1090,8 +1080,6 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
     public Dynamic<T> createBoolean(final boolean value) {
         return new Dynamic<>(this.ops, this.ops.createBoolean(value));
     }
-
-    // ==================== Conversion ====================
 
     /**
      * Converts this Dynamic to a different data format representation.

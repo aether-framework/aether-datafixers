@@ -398,8 +398,6 @@ public interface TypeRewriteRule {
                 .flatMap(result -> next.rewrite(result.type(), result));
     }
 
-    // ==================== Static Factory Methods ====================
-
     /**
      * Creates a rule that tries this rule first, falling back to another on failure.
      *

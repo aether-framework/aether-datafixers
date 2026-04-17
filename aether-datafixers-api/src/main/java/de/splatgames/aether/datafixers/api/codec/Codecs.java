@@ -147,7 +147,6 @@ public final class Codecs {
         }
     };
 
-    // ==================== Primitive Codecs ====================
     /**
      * Codec for {@link Integer} values (32-bit signed integers).
      *
@@ -447,8 +446,6 @@ public final class Codecs {
     private Codecs() {
         // private constructor to prevent instantiation
     }
-
-    // ==================== Collection Codecs ====================
 
     /**
      * Creates a codec for {@link List} values from an element codec.
@@ -796,8 +793,6 @@ public final class Codecs {
             }
         };
     }
-
-    // ==================== Bounded Codecs ====================
 
     /**
      * Creates an integer codec with bounds checking.

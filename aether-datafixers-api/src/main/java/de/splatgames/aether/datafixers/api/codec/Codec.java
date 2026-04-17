@@ -105,8 +105,6 @@ import java.util.function.Function;
  */
 public interface Codec<A> extends Encoder<A>, Decoder<A> {
 
-    // ==================== Core Operations ====================
-
     /**
      * Creates a codec from separate encoder and decoder implementations.
      *
@@ -184,8 +182,6 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
             }
         };
     }
-
-    // ==================== Convenience Methods ====================
 
     /**
      * Creates a codec for an {@link Either} type using two separate codecs.
@@ -274,8 +270,6 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
     @Override
     <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,
                                       @NotNull final T input);
-
-    // ==================== Combinators ====================
 
     /**
      * Encodes a value to a dynamic representation starting from an empty prefix.
@@ -656,8 +650,6 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
             }
         };
     }
-
-    // ==================== Factory Methods ====================
 
     /**
      * Creates a {@link MapCodec} for an optional field with the given name.

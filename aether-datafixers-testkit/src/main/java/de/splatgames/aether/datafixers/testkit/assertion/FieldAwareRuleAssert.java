@@ -85,8 +85,6 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
         super(actual, FieldAwareRuleAssert.class);
     }
 
-    // ==================== Counts ====================
-
     /**
      * Asserts that the rule carries exactly the given number of field operations.
      *
@@ -140,8 +138,6 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
         }
         return this;
     }
-
-    // ==================== Convenience Containment ====================
 
     /**
      * Asserts that the rule contains a {@code RENAME} operation from the given
@@ -240,8 +236,6 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
         }
         return this;
     }
-
-    // ==================== Navigation ====================
 
     /**
      * Returns a {@link FieldOperationAssert} for the field operation at the given index.

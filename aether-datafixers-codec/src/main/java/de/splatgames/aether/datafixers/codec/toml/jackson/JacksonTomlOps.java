@@ -332,8 +332,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         return this.mapper;
     }
 
-    // ==================== Empty/Null Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -360,8 +358,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     public JsonNode empty() {
         return NullNode.getInstance();
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -484,8 +480,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -707,8 +701,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         return DoubleNode.valueOf(value.doubleValue());
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -808,8 +800,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         }
         return DataResult.success(input.asBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -944,8 +934,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         result.add(value);
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1304,8 +1292,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         }
         return input.has(key);
     }
-
-    // ==================== Conversion Operations ====================
 
     /**
      * {@inheritDoc}

@@ -222,8 +222,6 @@ public class TomlXmlBenchmark {
         this.toVersion = new DataVersion(2);
     }
 
-    // ==================== Data Generation Benchmarks ====================
-
     /**
      * Benchmarks Dynamic object generation using JacksonTomlOps.
      *
@@ -252,8 +250,6 @@ public class TomlXmlBenchmark {
         blackhole.consume(data);
     }
 
-    // ==================== Field Access Benchmarks ====================
-
     /**
      * Benchmarks field read access on TOML-backed Dynamic.
      *
@@ -281,8 +277,6 @@ public class TomlXmlBenchmark {
         final Dynamic<JsonNode> field = this.xmlData.get(FIELD_NAME);
         blackhole.consume(field);
     }
-
-    // ==================== Field Modification Benchmarks ====================
 
     /**
      * Benchmarks field set operation on TOML-backed Dynamic.
@@ -315,8 +309,6 @@ public class TomlXmlBenchmark {
         );
         blackhole.consume(result);
     }
-
-    // ==================== Migration Benchmarks ====================
 
     /**
      * Benchmarks DataFixer migration on TOML-backed data.

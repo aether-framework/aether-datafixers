@@ -227,8 +227,6 @@ public final class RecordCodecBuilder {
                 @NotNull D d);
     }
 
-    // ==================== Builder Classes ====================
-
     /**
      * A function that takes five arguments and produces a result.
      *
@@ -792,8 +790,6 @@ public final class RecordCodecBuilder {
         }
     }
 
-    // ==================== Function Interfaces ====================
-
     /**
      * Builder for a three-field record codec.
      *
@@ -1126,8 +1122,6 @@ public final class RecordCodecBuilder {
         }
     }
 
-    // ==================== Tuple Classes for Accumulation ====================
-
     /**
      * Internal tuple for accumulating 3 decoded values before applying the constructor.
      *
@@ -1196,8 +1190,6 @@ public final class RecordCodecBuilder {
      */
     private record Tuple7<A, B, C, D, E, F, G>(A a, B b, C c, D d, E e, F f, G g) {
     }
-
-    // ==================== Builder7 ====================
 
     /**
      * Intermediate builder holding seven grouped fields for record codec construction.
@@ -1306,8 +1298,6 @@ public final class RecordCodecBuilder {
             };
         }
     }
-
-    // ==================== Builder8 ====================
 
     /**
      * Intermediate builder holding eight grouped fields for record codec construction.

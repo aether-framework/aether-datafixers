@@ -243,8 +243,6 @@ public class CrossFormatBenchmark {
         this.jacksonYamlRoot = BenchmarkDataGenerator.generate(this.jacksonYamlOps, this.payloadSize).value();
     }
 
-    // ==================== Gson <-> Jackson JSON Conversions ====================
-
     /**
      * Benchmarks conversion from Gson JsonElement to Jackson JsonNode.
      *
@@ -271,8 +269,6 @@ public class CrossFormatBenchmark {
         final JsonElement result = this.gsonOps.convertTo(this.jacksonJsonOps, this.jacksonJsonRoot);
         blackhole.consume(result);
     }
-
-    // ==================== Gson <-> SnakeYAML Conversions ====================
 
     /**
      * Benchmarks conversion from Gson JsonElement to SnakeYAML native types.
@@ -301,8 +297,6 @@ public class CrossFormatBenchmark {
         blackhole.consume(result);
     }
 
-    // ==================== Jackson JSON <-> Jackson YAML Conversions ====================
-
     /**
      * Benchmarks conversion from Jackson JSON to Jackson YAML.
      *
@@ -329,8 +323,6 @@ public class CrossFormatBenchmark {
         final JsonNode result = this.jacksonJsonOps.convertTo(this.jacksonYamlOps, this.jacksonYamlRoot);
         blackhole.consume(result);
     }
-
-    // ==================== SnakeYAML <-> Jackson YAML Conversions ====================
 
     /**
      * Benchmarks conversion from SnakeYAML native types to Jackson YAML JsonNode.

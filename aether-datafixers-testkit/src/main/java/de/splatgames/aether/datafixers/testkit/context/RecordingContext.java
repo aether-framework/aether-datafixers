@@ -100,8 +100,6 @@ public final class RecordingContext implements DataFixerContext {
         this.logs.add(new LogEntry(LogLevel.WARN, message, args));
     }
 
-    // ==================== Query Methods ====================
-
     /**
      * Returns all recorded log entries.
      *
@@ -190,8 +188,6 @@ public final class RecordingContext implements DataFixerContext {
         return this.logs.isEmpty();
     }
 
-    // ==================== Assertion Helpers ====================
-
     /**
      * Asserts that no warnings were logged.
      *
@@ -227,8 +223,6 @@ public final class RecordingContext implements DataFixerContext {
     public void clear() {
         this.logs.clear();
     }
-
-    // ==================== Log Entry Record ====================
 
     /**
      * Log levels for recorded entries.

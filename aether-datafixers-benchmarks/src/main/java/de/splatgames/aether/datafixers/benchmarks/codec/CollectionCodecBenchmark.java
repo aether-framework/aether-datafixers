@@ -245,8 +245,6 @@ public class CollectionCodecBenchmark {
                 .result().orElseThrow();
     }
 
-    // ==================== String List Benchmarks ====================
-
     /**
      * Benchmarks string list encoding to JSON array.
      *
@@ -291,8 +289,6 @@ public class CollectionCodecBenchmark {
         blackhole.consume(result);
     }
 
-    // ==================== Integer List Benchmarks ====================
-
     /**
      * Benchmarks integer list encoding to JSON array.
      *
@@ -322,8 +318,6 @@ public class CollectionCodecBenchmark {
         final DataResult<Pair<List<Integer>, JsonElement>> result = this.intListCodec.decode(this.ops, this.encodedIntList);
         blackhole.consume(result);
     }
-
-    // ==================== Round-Trip Benchmarks (Direct Style) ====================
 
     /**
      * Benchmarks complete string list round-trip with direct result extraction.
@@ -362,8 +356,6 @@ public class CollectionCodecBenchmark {
                 .result().orElseThrow();
         blackhole.consume(decoded);
     }
-
-    // ==================== Round-Trip Benchmarks (Functional Style) ====================
 
     /**
      * Benchmarks complete string list round-trip using functional API.

@@ -160,8 +160,6 @@ public final class MigrationTester<T> {
         return new MigrationTester<>(fixer);
     }
 
-    // ==================== Configuration ====================
-
     /**
      * Sets the type reference for the migration.
      *
@@ -264,8 +262,6 @@ public final class MigrationTester<T> {
         return this;
     }
 
-    // ==================== Execution ====================
-
     /**
      * Runs the migration and returns the result.
      *
@@ -309,8 +305,6 @@ public final class MigrationTester<T> {
         return this;
     }
 
-    // ==================== Validation ====================
-
     /**
      * Validates that all required configuration has been set before migration.
      *
@@ -330,8 +324,6 @@ public final class MigrationTester<T> {
             throw new IllegalStateException("Target version not set. Call to() before migrate() or verify().");
         }
     }
-
-    // ==================== Fixer Setup Helper ====================
 
     /**
      * A helper class for setting up a DataFixer for testing.

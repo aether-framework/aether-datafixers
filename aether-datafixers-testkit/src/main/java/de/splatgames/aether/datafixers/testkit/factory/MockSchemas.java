@@ -76,11 +76,12 @@ import java.util.Arrays;
  */
 public final class MockSchemas {
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private MockSchemas() {
-        // Factory class
+        throw new UnsupportedOperationException("MockSchemas is a utility class and cannot be instantiated");
     }
-
-    // ==================== Minimal Schema ====================
 
     /**
      * Creates a minimal schema with no types.
@@ -116,8 +117,6 @@ public final class MockSchemas {
     public static Schema minimal(final int version, @Nullable final Schema parent) {
         return new MinimalSchema(version, parent);
     }
-
-    // ==================== Schema Chain ====================
 
     /**
      * Creates a {@link SchemaRegistry} containing all provided schemas.
@@ -155,8 +154,6 @@ public final class MockSchemas {
         return chain(schemas);
     }
 
-    // ==================== Schema Builder ====================
-
     /**
      * Creates a builder for constructing a custom schema.
      *
@@ -179,8 +176,6 @@ public final class MockSchemas {
         Preconditions.checkNotNull(version, "version must not be null");
         return new SchemaBuilder(version.getVersion());
     }
-
-    // ==================== Minimal Schema Implementation ====================
 
     /**
      * A minimal schema implementation with no types.
@@ -220,8 +215,6 @@ public final class MockSchemas {
             // No types by default
         }
     }
-
-    // ==================== Schema Builder ====================
 
     /**
      * A builder for creating custom mock schemas.
@@ -346,8 +339,6 @@ public final class MockSchemas {
             // Types already in the built registry
         }
     }
-
-    // ==================== Wrapped Type ====================
 
     /**
      * A type wrapper that associates a type with a specific reference.

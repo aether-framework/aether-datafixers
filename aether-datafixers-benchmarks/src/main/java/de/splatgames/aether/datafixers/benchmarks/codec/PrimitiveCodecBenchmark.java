@@ -244,8 +244,6 @@ public class PrimitiveCodecBenchmark {
         this.encodedString = Codecs.STRING.encodeStart(this.ops, TEST_STRING).result().orElseThrow();
     }
 
-    // ==================== Boolean Benchmarks ====================
-
     /**
      * Benchmarks boolean value encoding to JSON.
      *
@@ -273,8 +271,6 @@ public class PrimitiveCodecBenchmark {
         final DataResult<Pair<Boolean, JsonElement>> result = Codecs.BOOL.decode(this.ops, this.encodedBool);
         blackhole.consume(result);
     }
-
-    // ==================== Integer Benchmarks ====================
 
     /**
      * Benchmarks integer value encoding to JSON.
@@ -304,8 +300,6 @@ public class PrimitiveCodecBenchmark {
         blackhole.consume(result);
     }
 
-    // ==================== Long Benchmarks ====================
-
     /**
      * Benchmarks long value encoding to JSON.
      *
@@ -333,8 +327,6 @@ public class PrimitiveCodecBenchmark {
         final DataResult<Pair<Long, JsonElement>> result = Codecs.LONG.decode(this.ops, this.encodedLong);
         blackhole.consume(result);
     }
-
-    // ==================== Float Benchmarks ====================
 
     /**
      * Benchmarks float value encoding to JSON.
@@ -366,8 +358,6 @@ public class PrimitiveCodecBenchmark {
         blackhole.consume(result);
     }
 
-    // ==================== Double Benchmarks ====================
-
     /**
      * Benchmarks double value encoding to JSON.
      *
@@ -397,8 +387,6 @@ public class PrimitiveCodecBenchmark {
         blackhole.consume(result);
     }
 
-    // ==================== String Benchmarks ====================
-
     /**
      * Benchmarks string value encoding to JSON.
      *
@@ -427,8 +415,6 @@ public class PrimitiveCodecBenchmark {
         final DataResult<Pair<String, JsonElement>> result = Codecs.STRING.decode(this.ops, this.encodedString);
         blackhole.consume(result);
     }
-
-    // ==================== Round-Trip Benchmarks ====================
 
     /**
      * Benchmarks complete integer round-trip (encode then decode).

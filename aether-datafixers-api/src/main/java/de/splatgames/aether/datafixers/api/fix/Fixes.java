@@ -92,8 +92,6 @@ public final class Fixes {
         // private constructor to prevent instantiation
     }
 
-    // ==================== Typed Fixes ====================
-
     /**
      * Creates a rule that transforms typed values of a specific type.
      *
@@ -218,8 +216,6 @@ public final class Fixes {
         };
     }
 
-    // ==================== Field Operations ====================
-
     /**
      * Creates a rule that renames a field in the data.
      *
@@ -340,8 +336,6 @@ public final class Fixes {
         return Rules.transformField(ops, fieldName, transform).ifType(containerType);
     }
 
-    // ==================== Tagged Choice Operations ====================
-
     /**
      * Creates a rule that applies different fixes based on a tag value.
      *
@@ -458,8 +452,6 @@ public final class Fixes {
         };
     }
 
-    // ==================== Recursive Operations ====================
-
     /**
      * Creates a rule that walks a type recursively, applying a transformation.
      *
@@ -478,8 +470,6 @@ public final class Fixes {
         Preconditions.checkNotNull(walker, "walker must not be null");
         return Rules.everywhere(TypeRewriteRule.forType(name, (Type) type, value -> walker.apply(new Typed<>((Type) type, value)).value()));
     }
-
-    // ==================== Utility ====================
 
     /**
      * Creates a composite fix from multiple rules.

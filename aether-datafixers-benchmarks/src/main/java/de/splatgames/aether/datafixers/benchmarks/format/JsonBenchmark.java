@@ -235,8 +235,6 @@ public class JsonBenchmark {
         this.toVersion = new DataVersion(2);
     }
 
-    // ==================== Data Generation Benchmarks ====================
-
     /**
      * Benchmarks Dynamic object generation using GsonOps.
      *
@@ -265,8 +263,6 @@ public class JsonBenchmark {
         blackhole.consume(data);
     }
 
-    // ==================== Field Access Benchmarks ====================
-
     /**
      * Benchmarks field read access on Gson-backed Dynamic.
      *
@@ -294,8 +290,6 @@ public class JsonBenchmark {
         final Dynamic<JsonNode> field = this.jacksonData.get(FIELD_NAME);
         blackhole.consume(field);
     }
-
-    // ==================== Field Modification Benchmarks ====================
 
     /**
      * Benchmarks field set operation on Gson-backed Dynamic.
@@ -329,8 +323,6 @@ public class JsonBenchmark {
         );
         blackhole.consume(result);
     }
-
-    // ==================== Migration Benchmarks ====================
 
     /**
      * Benchmarks DataFixer migration on Gson-backed data.

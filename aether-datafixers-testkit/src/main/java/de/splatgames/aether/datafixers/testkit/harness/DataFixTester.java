@@ -146,8 +146,6 @@ public final class DataFixTester<T> {
         return new DataFixTester<>(fix);
     }
 
-    // ==================== Configuration ====================
-
     /**
      * Sets the input data for the fix.
      *
@@ -240,8 +238,6 @@ public final class DataFixTester<T> {
         return this;
     }
 
-    // ==================== Execution ====================
-
     /**
      * Applies the fix and returns the result.
      *
@@ -292,10 +288,10 @@ public final class DataFixTester<T> {
         return new DataFixVerification<>(result, recordingContext, true);
     }
 
-    // ==================== Internal ====================
-
     /**
      * Resolves the effective context, ensuring a single instance is used across both apply() and verify().
+     *
+     * @return the DataFixerContext to use for the fix application
      */
     @NotNull
     private DataFixerContext resolveContext() {
@@ -305,8 +301,11 @@ public final class DataFixTester<T> {
         return this.context;
     }
 
-    // ==================== Validation ====================
-
+    /**
+     * Validates that the required configuration (input and type reference) is set before applying or verifying.
+     *
+     * @throws IllegalStateException if input or type reference is not set
+     */
     private void validateConfiguration() {
         if (this.input == null) {
             throw new IllegalStateException("Input not set. Call withInput() before apply() or verify().");
@@ -315,8 +314,6 @@ public final class DataFixTester<T> {
             throw new IllegalStateException("Type reference not set. Call forType() before apply() or verify().");
         }
     }
-
-    // ==================== Verification Result ====================
 
     /**
      * The result of a DataFix verification.

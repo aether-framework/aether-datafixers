@@ -304,8 +304,6 @@ public final class Rules {
         throw new UnsupportedOperationException("Rules is a static factory class and cannot be instantiated");
     }
 
-    // ==================== Basic Combinators ====================
-
     /**
      * Creates a sequence of rules that are applied in order (strict AND composition).
      *
@@ -564,8 +562,6 @@ public final class Rules {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return rule.orKeep();
     }
-
-    // ==================== Traversal Combinators ====================
 
     /**
      * Creates a rule that applies a rule to all immediate children.
@@ -1085,8 +1081,6 @@ public final class Rules {
         };
     }
 
-    // ==================== Type-Specific Combinators ====================
-
     /**
      * Creates a rule that only applies to a specific type.
      *
@@ -1120,8 +1114,6 @@ public final class Rules {
         Preconditions.checkNotNull(transformer, "transformer must not be null");
         return TypeRewriteRule.forType(name, type, transformer);
     }
-
-    // ==================== Dynamic Transformation Combinators ====================
 
     /**
      * Creates a rule that transforms the dynamic representation at a specific path.
@@ -1397,8 +1389,6 @@ public final class Rules {
         return withFieldOps(base, List.of(FieldOperation.transform(fieldName)), ruleName);
     }
 
-    // ==================== Batch Operations ====================
-
     /**
      * Creates a rule that applies multiple field operations in a single pass.
      *
@@ -1461,8 +1451,6 @@ public final class Rules {
         }
         return base;
     }
-
-    // ==================== Extended Dynamic Transformation Combinators ====================
 
     /**
      * Creates a rule that applies a custom transformation function to the dynamic representation.
@@ -1727,8 +1715,6 @@ public final class Rules {
         return withFieldOps(base, fieldOps, ruleName);
     }
 
-    // ==================== Grouping and Moving Combinators ====================
-
     /**
      * Creates a rule that groups multiple fields into a nested object.
      *
@@ -1959,8 +1945,6 @@ public final class Rules {
         return withFieldOps(base, List.of(FieldOperation.copy(sourcePath, targetPath)), ruleName);
     }
 
-    // ==================== Path-Based Combinators ====================
-
     /**
      * Creates a rule that transforms a field at a nested path.
      *
@@ -2148,8 +2132,6 @@ public final class Rules {
         });
         return withFieldOps(base, List.of(FieldOperation.addPath(path)), ruleName);
     }
-
-    // ==================== Conditional Combinators ====================
 
     /**
      * Creates a rule that only executes if a field exists.
@@ -2352,8 +2334,6 @@ public final class Rules {
         };
         return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "equals")), ruleName);
     }
-
-    // ==================== Single-Pass Conditional Combinators ====================
 
     /**
      * Creates a rule that conditionally applies a transformation based on a predicate.
@@ -2575,8 +2555,6 @@ public final class Rules {
         return false;
     }
 
-    // ==================== Field-Aware Wrapper ====================
-
     /**
      * Wraps a {@link TypeRewriteRule} with field-level metadata.
      *
@@ -2634,8 +2612,6 @@ public final class Rules {
     private static Finder<?> parsePath(@NotNull final String path) {
         return PATH_CACHE.computeIfAbsent(path, Rules::parsePathInternal);
     }
-
-    // ==================== Private Helpers ====================
 
     /**
      * Internal method that parses a path without caching. Uses character-based parsing for better performance than
@@ -2805,8 +2781,6 @@ public final class Rules {
     public static TypeRewriteRule noop() {
         return TypeRewriteRule.identity();
     }
-
-    // ==================== Noop and Debug ====================
 
     /**
      * Creates a rule that logs when applied using the default System.out logger.

@@ -130,8 +130,6 @@ public final class SchemaTester {
         return new SchemaTester(schema);
     }
 
-    // ==================== Version Validation ====================
-
     /**
      * Asserts that the schema has the specified version.
      *
@@ -157,8 +155,6 @@ public final class SchemaTester {
         this.expectedVersion = version.getVersion();
         return this;
     }
-
-    // ==================== Type Validation ====================
 
     /**
      * Asserts that the schema contains a type for the given reference.
@@ -287,8 +283,6 @@ public final class SchemaTester {
         return this;
     }
 
-    // ==================== Parent/Inheritance Validation ====================
-
     /**
      * Asserts that the schema has a parent.
      *
@@ -364,8 +358,6 @@ public final class SchemaTester {
         return this;
     }
 
-    // ==================== Execution ====================
-
     /**
      * Runs all configured validations.
      *
@@ -440,8 +432,6 @@ public final class SchemaTester {
     public Schema schema() {
         return this.schema;
     }
-
-    // ==================== Type Validator ====================
 
     /**
      * Functional interface for custom type validation.

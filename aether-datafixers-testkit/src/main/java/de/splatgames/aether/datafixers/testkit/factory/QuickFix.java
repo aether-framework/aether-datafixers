@@ -98,8 +98,6 @@ public final class QuickFix {
         throw new UnsupportedOperationException("QuickFix is a utility class and cannot be instantiated");
     }
 
-    // ==================== Simple Lambda Fix ====================
-
     /**
      * Creates a simple fix from a lambda function.
      *
@@ -168,8 +166,6 @@ public final class QuickFix {
         return simple(name, fromVersion.getVersion(), toVersion.getVersion(), transform);
     }
 
-    // ==================== Rename Field ====================
-
     /**
      * Creates a fix that renames a field.
      *
@@ -202,8 +198,6 @@ public final class QuickFix {
             return input.remove(oldField).set(newField, fieldValue);
         });
     }
-
-    // ==================== Add Field ====================
 
     /**
      * Creates a fix that adds a string field with a default value.
@@ -299,8 +293,6 @@ public final class QuickFix {
         });
     }
 
-    // ==================== Remove Field ====================
-
     /**
      * Creates a fix that removes a field.
      *
@@ -324,8 +316,6 @@ public final class QuickFix {
 
         return simple(name, fromVersion, toVersion, input -> input.remove(field));
     }
-
-    // ==================== Transform Field ====================
 
     /**
      * Creates a fix that transforms a field value.
@@ -360,8 +350,6 @@ public final class QuickFix {
         });
     }
 
-    // ==================== Identity Fix ====================
-
     /**
      * Creates an identity fix that does nothing (useful for testing).
      *
@@ -378,8 +366,6 @@ public final class QuickFix {
         Preconditions.checkNotNull(name, "name must not be null");
         return simple(name, fromVersion, toVersion, Function.identity());
     }
-
-    // ==================== Conditional Fix ====================
 
     /**
      * Creates a fix that only applies when a condition is met.
@@ -409,8 +395,6 @@ public final class QuickFix {
             return input;
         });
     }
-
-    // ==================== Composed Fix ====================
 
     /**
      * Creates a fix that applies multiple transformations in sequence.

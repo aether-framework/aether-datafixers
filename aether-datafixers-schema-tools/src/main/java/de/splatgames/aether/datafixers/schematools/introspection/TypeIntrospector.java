@@ -236,8 +236,6 @@ public final class TypeIntrospector {
         return TypeKind.UNKNOWN;
     }
 
-    // ==================== Internal Methods ====================
-
     /**
      * Internal introspection method with hierarchical path tracking.
      *

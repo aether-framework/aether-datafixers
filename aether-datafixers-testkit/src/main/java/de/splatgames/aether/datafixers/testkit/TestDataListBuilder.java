@@ -94,8 +94,6 @@ public final class TestDataListBuilder<T> {
         this.elements = new ArrayList<>();
     }
 
-    // ==================== Add Primitives ====================
-
     /**
      * Adds a string element to the list.
      *
@@ -211,8 +209,6 @@ public final class TestDataListBuilder<T> {
         return this;
     }
 
-    // ==================== Add Nested Objects ====================
-
     /**
      * Adds a nested object element to the list using a builder consumer.
      *
@@ -259,8 +255,6 @@ public final class TestDataListBuilder<T> {
         this.elements.add(nestedBuilder.build());
         return this;
     }
-
-    // ==================== Bulk Add ====================
 
     /**
      * Adds multiple string elements to the list.
@@ -357,8 +351,6 @@ public final class TestDataListBuilder<T> {
         }
         return this;
     }
-
-    // ==================== Build ====================
 
     /**
      * Builds the {@link Dynamic} list from the added elements.

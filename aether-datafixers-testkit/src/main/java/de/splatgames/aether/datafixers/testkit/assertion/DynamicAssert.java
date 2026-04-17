@@ -118,8 +118,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         this.path = path;
     }
 
-    // ==================== Type Assertions ====================
-
     /**
      * Asserts that the Dynamic is a map/object.
      *
@@ -194,8 +192,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         }
         return this;
     }
-
-    // ==================== Field Existence ====================
 
     /**
      * Asserts that the Dynamic has a field with the given key.
@@ -274,8 +270,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         }
         return this;
     }
-
-    // ==================== Field Value Assertions ====================
 
     /**
      * Asserts that a field has a specific string value.
@@ -393,8 +387,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Direct Value Assertions ====================
-
     /**
      * Asserts that this Dynamic has the given string value.
      *
@@ -481,8 +473,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Navigation ====================
-
     /**
      * Navigates to a field and returns an assertion for it.
      *
@@ -553,8 +543,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         final String newPath = this.path.isEmpty() ? "[" + index + "]" : this.path + "[" + index + "]";
         return new DynamicAssert<>(elements.get(index), newPath);
     }
-
-    // ==================== List Assertions ====================
 
     /**
      * Asserts that the Dynamic list has the expected size.
@@ -678,8 +666,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Equality ====================
-
     /**
      * Asserts that this Dynamic equals the expected Dynamic.
      *
@@ -696,8 +682,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Custom Validation ====================
-
     /**
      * Applies custom validation using a consumer.
      *
@@ -710,8 +694,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         requirements.accept(this.actual);
         return this;
     }
-
-    // ==================== Internal Helpers ====================
 
     /**
      * Helper to format the current path for error messages.

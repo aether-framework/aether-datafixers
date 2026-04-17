@@ -218,8 +218,6 @@ public class YamlBenchmark {
         this.toVersion = new DataVersion(2);
     }
 
-    // ==================== Data Generation Benchmarks ====================
-
     /**
      * Benchmarks Dynamic object generation using SnakeYamlOps.
      *
@@ -248,8 +246,6 @@ public class YamlBenchmark {
         blackhole.consume(data);
     }
 
-    // ==================== Field Access Benchmarks ====================
-
     /**
      * Benchmarks field read access on SnakeYAML-backed Dynamic.
      *
@@ -277,8 +273,6 @@ public class YamlBenchmark {
         final Dynamic<JsonNode> field = this.jacksonYamlData.get(FIELD_NAME);
         blackhole.consume(field);
     }
-
-    // ==================== Field Modification Benchmarks ====================
 
     /**
      * Benchmarks field set operation on SnakeYAML-backed Dynamic.
@@ -311,8 +305,6 @@ public class YamlBenchmark {
         );
         blackhole.consume(result);
     }
-
-    // ==================== Migration Benchmarks ====================
 
     /**
      * Benchmarks DataFixer migration on SnakeYAML-backed data.

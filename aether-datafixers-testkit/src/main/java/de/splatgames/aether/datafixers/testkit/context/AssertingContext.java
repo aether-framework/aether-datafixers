@@ -161,8 +161,6 @@ public final class AssertingContext implements DataFixerContext {
         // Info messages are always allowed
     }
 
-    // ==================== Query Methods ====================
-
     /**
      * Logs a warning message. The behavior depends on the configured mode:
      * <ul>
@@ -205,8 +203,6 @@ public final class AssertingContext implements DataFixerContext {
         return this.collectedWarnings.size();
     }
 
-    // ==================== Assertion Methods ====================
-
     /**
      * Checks if any warnings were collected.
      *
@@ -229,8 +225,6 @@ public final class AssertingContext implements DataFixerContext {
                     this.collectedWarnings.size() + ":" + messages);
         }
     }
-
-    // ==================== Internal ====================
 
     /**
      * Clears all collected warnings.
