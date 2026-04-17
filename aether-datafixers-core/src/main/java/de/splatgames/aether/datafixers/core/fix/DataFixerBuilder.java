@@ -181,10 +181,8 @@ public final class DataFixerBuilder implements FixRegistrar {
      * @throws NullPointerException if type or fixes is {@code null}
      */
     @NotNull
-    public DataFixerBuilder addFixes(
-            @NotNull final TypeReference type,
-            @NotNull final List<? extends DataFix<?>> fixes
-    ) {
+    public DataFixerBuilder addFixes(@NotNull final TypeReference type,
+                                     @NotNull final List<? extends DataFix<?>> fixes) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fixes, "fixes must not be null");
 

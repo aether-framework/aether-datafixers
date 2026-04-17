@@ -411,10 +411,8 @@ public class MigrationMetrics {
      * @return the Counter instance for the domain/error combination, never {@code null}
      */
     @NotNull
-    private Counter getOrCreateFailureCounter(
-            @NotNull final String domain,
-            @NotNull final String errorType
-    ) {
+    private Counter getOrCreateFailureCounter(@NotNull final String domain,
+                                              @NotNull final String errorType) {
         final String key = domain + ":" + errorType;
         return this.domainFailureCounters.computeIfAbsent(key, k ->
                 Counter.builder(METRIC_PREFIX + ".failure")

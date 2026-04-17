@@ -135,11 +135,9 @@ public final class QuickFix {
             }
 
             @Override
-            public @NotNull Dynamic<T> apply(
-                    @NotNull final TypeReference type,
-                    @NotNull final Dynamic<T> input,
-                    @NotNull final DataFixerContext context
-            ) {
+            public @NotNull Dynamic<T> apply(@NotNull final TypeReference type,
+                                             @NotNull final Dynamic<T> input,
+                                             @NotNull final DataFixerContext context) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
                 Preconditions.checkNotNull(context, "context must not be null");

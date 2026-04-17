@@ -768,8 +768,7 @@ public final class Codecs {
             @Override
             public <T> DataResult<T> encode(@NotNull final Pair<F, S> input,
                                             @NotNull final DynamicOps<T> ops,
-                                            @NotNull final T prefix
-            ) {
+                                            @NotNull final T prefix) {
                 Preconditions.checkNotNull(input, "input must not be null");
                 Preconditions.checkNotNull(ops, "ops must not be null");
                 Preconditions.checkNotNull(prefix, "prefix must not be null");

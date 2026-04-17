@@ -244,11 +244,9 @@ public final class RecordingContext implements DataFixerContext {
      * @param message the message format string
      * @param args    the arguments (defensively copied)
      */
-    public record LogEntry(
-            @NotNull LogLevel level,
-            @NotNull String message,
-            @Nullable Object[] args
-    ) {
+    public record LogEntry(@NotNull LogLevel level,
+                           @NotNull String message,
+                           @Nullable Object[] args) {
 
         /**
          * Compact constructor that defensively copies the args array.

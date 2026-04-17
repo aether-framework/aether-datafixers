@@ -175,8 +175,7 @@ public final class FixCoverage {
      */
     @NotNull
     public static Builder builder(@NotNull final DataVersion sourceVersion,
-                                  @NotNull final DataVersion targetVersion
-    ) {
+                                  @NotNull final DataVersion targetVersion) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);

@@ -1340,8 +1340,7 @@ public final class RecordCodecBuilder {
                                                       @NotNull Field<O, E> f5,
                                                       @NotNull Field<O, F> f6,
                                                       @NotNull Field<O, G> f7,
-                                                      @NotNull Field<O, H> f8
-    ) {
+                                                      @NotNull Field<O, H> f8) {
         /**
          * Creates a new Builder8 with validation.
          *

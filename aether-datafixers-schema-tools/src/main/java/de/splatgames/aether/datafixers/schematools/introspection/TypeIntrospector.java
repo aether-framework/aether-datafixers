@@ -251,10 +251,8 @@ public final class TypeIntrospector {
      * @return the structural representation of the type, never {@code null}
      */
     @NotNull
-    private static TypeStructure introspectInternal(
-            @NotNull final Type<?> type,
-            @NotNull final String pathPrefix
-    ) {
+    private static TypeStructure introspectInternal(@NotNull final Type<?> type,
+                                                    @NotNull final String pathPrefix) {
         final TypeKind kind = determineKind(type);
         final List<FieldInfo> fields = extractFieldsInternal(type, pathPrefix);
 

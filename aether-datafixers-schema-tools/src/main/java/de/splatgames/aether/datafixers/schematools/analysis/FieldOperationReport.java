@@ -34,14 +34,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The aggregated result of statically analyzing field-level operations across a
- * migration path.
+ * The aggregated result of statically analyzing field-level operations across a migration path.
  *
  * <p>A {@code FieldOperationReport} is produced by
- * {@link MigrationAnalyzer#analyzeFieldOperations()} and contains, for each fix in
- * the configured version range, the {@link FieldOperation} entries that the fix's
- * rule would perform — extracted statically without running any data through the
- * fixer.</p>
+ * {@link MigrationAnalyzer#analyzeFieldOperations()} and contains, for each fix in the configured version range, the
+ * {@link FieldOperation} entries that the fix's rule would perform — extracted statically without running any data
+ * through the fixer.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -64,10 +62,10 @@ import java.util.Set;
  *
  * <h2>Limitations</h2>
  * <p>Only fixes extending
- * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix SchemaDataFix} can
- * be statically introspected. Other {@link de.splatgames.aether.datafixers.api.fix.DataFix DataFix}
- * implementations are counted in {@link #opaqueFixCount()} and represented as opaque
- * entries in {@link #fixOperations()} with no operations attached.</p>
+ * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix SchemaDataFix} can be statically introspected. Other
+ * {@link de.splatgames.aether.datafixers.api.fix.DataFix DataFix} implementations are counted in
+ * {@link #opaqueFixCount()} and represented as opaque entries in {@link #fixOperations()} with no operations
+ * attached.</p>
  *
  * <h2>Thread Safety</h2>
  * <p>This class is immutable and thread-safe. All collection accessors return
@@ -99,26 +97,22 @@ public final class FieldOperationReport {
     private final DataVersion toVersion;
 
     /**
-     * The per-fix field operation entries in migration order.
-     * Immutable.
+     * The per-fix field operation entries in migration order. Immutable.
      */
     private final List<FixFieldOperations> fixOperations;
 
     /**
-     * Cached count of fixes that were successfully introspected. Pre-computed for
-     * efficient access.
+     * Cached count of fixes that were successfully introspected. Pre-computed for efficient access.
      */
     private final int introspectedFixCount;
 
     /**
-     * Cached count of fixes that could not be introspected (opaque). Pre-computed
-     * for efficient access.
+     * Cached count of fixes that could not be introspected (opaque). Pre-computed for efficient access.
      */
     private final int opaqueFixCount;
 
     /**
-     * Cached total number of field operations across all introspected fixes.
-     * Pre-computed for efficient access.
+     * Cached total number of field operations across all introspected fixes. Pre-computed for efficient access.
      */
     private final int totalFieldOperationCount;
 
@@ -126,8 +120,7 @@ public final class FieldOperationReport {
      * Creates a new immutable {@code FieldOperationReport}.
      *
      * <p>This constructor computes aggregate values (introspected count, opaque
-     * count, total operation count) from the provided fix entries for efficient
-     * query access.</p>
+     * count, total operation count) from the provided fix entries for efficient query access.</p>
      *
      * @param fromVersion   the overall source version, must not be {@code null}
      * @param toVersion     the overall target version, must not be {@code null}
@@ -228,8 +221,8 @@ public final class FieldOperationReport {
     }
 
     /**
-     * Returns the number of fixes that were successfully introspected (i.e.,
-     * extended {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix}).
+     * Returns the number of fixes that were successfully introspected (i.e., extended
+     * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix}).
      *
      * @return the introspected fix count, always non-negative
      */
@@ -241,8 +234,7 @@ public final class FieldOperationReport {
      * Returns the number of fixes that could not be introspected.
      *
      * <p>An opaque fix is any {@link de.splatgames.aether.datafixers.api.fix.DataFix}
-     * implementation that does not extend
-     * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix} and therefore
+     * implementation that does not extend {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix} and therefore
      * cannot expose its rule for static analysis.</p>
      *
      * @return the opaque fix count, always non-negative
@@ -279,8 +271,7 @@ public final class FieldOperationReport {
     }
 
     /**
-     * Returns a flat list of all field operations across all introspected fixes,
-     * preserving the migration order.
+     * Returns a flat list of all field operations across all introspected fixes, preserving the migration order.
      *
      * @return an unmodifiable list of all field operations, never {@code null}
      */
@@ -309,14 +300,13 @@ public final class FieldOperationReport {
     }
 
     /**
-     * Returns the set of dot-notation field paths affected by any operation in the
-     * report. Useful for answering "which fields does this migration touch?".
+     * Returns the set of dot-notation field paths affected by any operation in the report. Useful for answering "which
+     * fields does this migration touch?".
      *
      * <p>For example, an operation on path {@code ["position", "x"]} contributes
      * the entry {@code "position.x"} to the result.</p>
      *
-     * @return an unmodifiable set of dot-notation field paths, preserving insertion
-     *         order, never {@code null}
+     * @return an unmodifiable set of dot-notation field paths, preserving insertion order, never {@code null}
      */
     @NotNull
     public Set<String> affectedFieldPaths() {
@@ -347,13 +337,23 @@ public final class FieldOperationReport {
      * Builder for constructing {@link FieldOperationReport} instances incrementally.
      *
      * <p>The builder is intended for use by {@link MigrationAnalyzer} as it walks
-     * the configured version range and processes fixes one by one. It is not
-     * thread-safe — each analysis run should use its own builder.</p>
+     * the configured version range and processes fixes one by one. It is not thread-safe — each analysis run should use
+     * its own builder.</p>
      */
     public static final class Builder {
 
+        /**
+         * The overall source and target versions for the report being built. These are fixed at builder construction
+         * time and cannot be changed later.
+         */
         private final DataVersion fromVersion;
+        /**
+         * The overall target version for the report being built.
+         */
         private final DataVersion toVersion;
+        /**
+         * The per-fix field operation entries collected so far, in migration order.
+         */
         private final List<FixFieldOperations> fixOperations = new ArrayList<>();
 
         /**
@@ -362,10 +362,8 @@ public final class FieldOperationReport {
          * @param fromVersion the source version
          * @param toVersion   the target version
          */
-        private Builder(
-                @NotNull final DataVersion fromVersion,
-                @NotNull final DataVersion toVersion
-        ) {
+        private Builder(@NotNull final DataVersion fromVersion,
+                        @NotNull final DataVersion toVersion) {
             this.fromVersion = fromVersion;
             this.toVersion = toVersion;
         }

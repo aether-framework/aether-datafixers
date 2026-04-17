@@ -139,11 +139,9 @@ public final class DataFixRegistry {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public List<DataFix<?>> getFixes(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion fromInclusive,
-            @NotNull final DataVersion toInclusive
-    ) {
+    public List<DataFix<?>> getFixes(@NotNull final TypeReference type,
+                                     @NotNull final DataVersion fromInclusive,
+                                     @NotNull final DataVersion toInclusive) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fromInclusive, "fromInclusive must not be null");
         Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");

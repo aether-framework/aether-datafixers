@@ -1313,10 +1313,8 @@ public interface Type<A> {
 
                 @NotNull
                 @Override
-                public <T> DataResult<Pair<Pair<String, Dynamic<?>>, T>> decode(
-                        @NotNull final DynamicOps<T> ops,
-                        @NotNull final T input
-                ) {
+                public <T> DataResult<Pair<Pair<String, Dynamic<?>>, T>> decode(@NotNull final DynamicOps<T> ops,
+                                                                                @NotNull final T input) {
                     Preconditions.checkNotNull(ops, "ops must not be null");
                     Preconditions.checkNotNull(input, "input must not be null");
                     // Get the tag value

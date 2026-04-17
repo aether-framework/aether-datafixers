@@ -225,10 +225,8 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
      * @return a TypeRewriteRule that applies the transformation
      */
     @NotNull
-    private static TypeRewriteRule dynamicTransform(
-            @NotNull final String name,
-            @NotNull final Function<Dynamic<?>, Dynamic<?>> transform
-    ) {
+    private static TypeRewriteRule dynamicTransform(@NotNull final String name,
+                                                    @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
         return new TypeRewriteRule() {
             @Override
             @NotNull

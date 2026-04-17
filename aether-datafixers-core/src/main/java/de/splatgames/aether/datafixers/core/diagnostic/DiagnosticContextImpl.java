@@ -288,10 +288,8 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      * @return the formatted message
      */
     @NotNull
-    private static String formatMessage(
-            @NotNull final String message,
-            @Nullable final Object... args
-    ) {
+    private static String formatMessage(@NotNull final String message,
+                                        @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
         if (args == null || args.length == 0) {
             return message;
@@ -339,11 +337,9 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
      * @param message the message format string
      * @param args    the arguments (defensively copied)
      */
-    public record LogEntry(
-            @NotNull LogLevel level,
-            @NotNull String message,
-            @Nullable Object[] args
-    ) {
+    public record LogEntry(@NotNull LogLevel level,
+                           @NotNull String message,
+                           @Nullable Object[] args) {
 
         /**
          * Compact constructor that defensively copies the args array.

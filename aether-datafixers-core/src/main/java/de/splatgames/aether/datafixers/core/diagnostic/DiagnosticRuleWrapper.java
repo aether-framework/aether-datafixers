@@ -282,10 +282,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
      * @return the wrapped rule
      */
     @NotNull
-    public static TypeRewriteRule wrap(
-            @NotNull final TypeRewriteRule rule,
-            @NotNull final DiagnosticContext context
-    ) {
+    public static TypeRewriteRule wrap(@NotNull final TypeRewriteRule rule,
+                                       @NotNull final DiagnosticContext context) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         Preconditions.checkNotNull(context, "context must not be null");
         if (rule instanceof DiagnosticRuleWrapper) {
