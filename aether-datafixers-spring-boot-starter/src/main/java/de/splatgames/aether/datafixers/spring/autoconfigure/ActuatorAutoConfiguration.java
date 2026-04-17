@@ -258,8 +258,7 @@ public class ActuatorAutoConfiguration {
         @NotNull
         public DataFixerEndpoint dataFixerEndpoint(@NotNull final DataFixerRegistry registry,
                                                    @Autowired(required = false)
-                                                   @Nullable final DefaultMigrationService migrationService
-        ) {
+                                                   @Nullable final DefaultMigrationService migrationService) {
             final DiagnosticReportStore store = migrationService != null
                     ? migrationService.getDiagnosticReportStore()
                     : null;

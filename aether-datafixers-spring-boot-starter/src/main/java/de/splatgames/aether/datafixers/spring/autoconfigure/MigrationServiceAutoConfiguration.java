@@ -155,10 +155,8 @@ public class MigrationServiceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @NotNull
-    public MigrationService migrationService(
-            @NotNull final DataFixerRegistry registry,
-            @Autowired(required = false) @Nullable final MigrationMetrics metrics
-    ) {
+    public MigrationService migrationService(@NotNull final DataFixerRegistry registry,
+                                             @Autowired(required = false) @Nullable final MigrationMetrics metrics) {
         return new DefaultMigrationService(registry, metrics);
     }
 }

@@ -440,8 +440,7 @@ public class DataFixerEndpoint {
                                 int currentVersion,
                                 String status,
                                 @Nullable String error,
-                                @Nullable FieldDiagnosticsSummary lastDiagnostics
-    ) {
+                                @Nullable FieldDiagnosticsSummary lastDiagnostics) {
     }
 
     /**
@@ -464,8 +463,7 @@ public class DataFixerEndpoint {
                                           long durationMs,
                                           int fixCount,
                                           int fieldOperationCount,
-                                          List<FieldOperationSummary> fieldOperations
-    ) {
+                                          List<FieldOperationSummary> fieldOperations) {
 
         /**
          * Compact constructor that creates a defensive copy of the field operations list.
@@ -488,7 +486,6 @@ public class DataFixerEndpoint {
     public record FieldOperationSummary(String type,
                                         String field,
                                         @Nullable String target,
-                                        @Nullable String description
-    ) {
+                                        @Nullable String description) {
     }
 }

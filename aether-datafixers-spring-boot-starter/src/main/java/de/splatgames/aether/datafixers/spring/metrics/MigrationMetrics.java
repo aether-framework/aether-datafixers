@@ -256,12 +256,10 @@ public class MigrationMetrics {
      * @param duration    the wall-clock duration of the migration, must not be {@code null}
      * @throws NullPointerException if domain or duration is {@code null}
      */
-    public void recordSuccess(
-            @NotNull final String domain,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Duration duration
-    ) {
+    public void recordSuccess(@NotNull final String domain,
+                              final int fromVersion,
+                              final int toVersion,
+                              @NotNull final Duration duration) {
         Preconditions.checkNotNull(domain, "domain must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
 
@@ -311,13 +309,11 @@ public class MigrationMetrics {
      * @param error       the exception that caused the migration to fail, must not be {@code null}
      * @throws NullPointerException if domain, duration, or error is {@code null}
      */
-    public void recordFailure(
-            @NotNull final String domain,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Duration duration,
-            @NotNull final Throwable error
-    ) {
+    public void recordFailure(@NotNull final String domain,
+                              final int fromVersion,
+                              final int toVersion,
+                              @NotNull final Duration duration,
+                              @NotNull final Throwable error) {
         Preconditions.checkNotNull(domain, "domain must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
         Preconditions.checkNotNull(error, "error must not be null");
