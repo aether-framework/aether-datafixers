@@ -24,6 +24,8 @@ package de.splatgames.aether.datafixers.cli.format;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when parsing input data fails.
  *
@@ -31,6 +33,12 @@ import org.jetbrains.annotations.Nullable;
  * @since 0.3.0
  */
 public class FormatParseException extends RuntimeException {
+
+    /**
+     * Serial version UID for serialization compatibility.
+     */
+    @Serial
+    private static final long serialVersionUID = -7928320612175804665L;
 
     /**
      * Constructs a new format parse exception with the specified message.

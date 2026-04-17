@@ -612,13 +612,11 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #call()
      * @see #writeOutput(File, String)
      */
-    private <T> MigrationResult processFile(
-            @NotNull final File inputFile,
-            @NotNull final AetherDataFixer fixer,
-            @NotNull final FormatHandler<T> handler,
-            @NotNull final TypeReference typeRef,
-            @NotNull final DataVersion targetVersion
-    ) throws IOException {
+    private <T> MigrationResult processFile(@NotNull final File inputFile,
+                                            @NotNull final AetherDataFixer fixer,
+                                            @NotNull final FormatHandler<T> handler,
+                                            @NotNull final TypeReference typeRef,
+                                            @NotNull final DataVersion targetVersion) throws IOException {
         Preconditions.checkNotNull(inputFile, "inputFile must not be null");
         Preconditions.checkNotNull(fixer, "fixer must not be null");
         Preconditions.checkNotNull(handler, "handler must not be null");

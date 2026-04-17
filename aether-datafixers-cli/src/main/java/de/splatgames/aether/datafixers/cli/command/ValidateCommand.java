@@ -331,11 +331,9 @@ public class ValidateCommand implements Callable<Integer> {
      * @see #call()
      * @see VersionExtractor#extract(Object, de.splatgames.aether.datafixers.api.dynamic.DynamicOps, String)
      */
-    private <T> ValidationResult validateFile(
-            final File file,
-            final FormatHandler<T> handler,
-            final DataVersion targetVersion
-    ) {
+    private <T> ValidationResult validateFile(@NotNull final File file,
+                                              @NotNull final FormatHandler<T> handler,
+                                              @NotNull final DataVersion targetVersion) {
         try {
             final long fileSize = Files.size(file.toPath());
             if (fileSize > 100 * 1024 * 1024) {
