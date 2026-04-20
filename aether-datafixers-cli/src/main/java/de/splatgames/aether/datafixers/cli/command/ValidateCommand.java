@@ -331,6 +331,7 @@ public class ValidateCommand implements Callable<Integer> {
      * @see #call()
      * @see VersionExtractor#extract(Object, de.splatgames.aether.datafixers.api.dynamic.DynamicOps, String)
      */
+    @NotNull
     private <T> ValidationResult validateFile(@NotNull final File file,
                                               @NotNull final FormatHandler<T> handler,
                                               @NotNull final DataVersion targetVersion) {

@@ -612,6 +612,7 @@ public class MigrateCommand implements Callable<Integer> {
      * @see #call()
      * @see #writeOutput(File, String)
      */
+    @NotNull
     private <T> MigrationResult processFile(@NotNull final File inputFile,
                                             @NotNull final AetherDataFixer fixer,
                                             @NotNull final FormatHandler<T> handler,
