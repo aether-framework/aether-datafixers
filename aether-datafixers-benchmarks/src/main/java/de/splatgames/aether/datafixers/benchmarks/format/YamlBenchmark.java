@@ -31,6 +31,8 @@ import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkDataGenerator;
 import de.splatgames.aether.datafixers.benchmarks.util.PayloadSize;
 import de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps;
 import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -44,8 +46,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark comparing YAML DynamicOps implementations: SnakeYAML vs Jackson YAML.
@@ -227,7 +227,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void snakeYamlGenerate(final Blackhole blackhole) {
+    public void snakeYamlGenerate(@NotNull final Blackhole blackhole) {
         final Dynamic<Object> data = BenchmarkDataGenerator.generate(this.snakeOps, this.payloadSize);
         blackhole.consume(data);
     }
@@ -241,7 +241,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonYamlGenerate(final Blackhole blackhole) {
+    public void jacksonYamlGenerate(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> data = BenchmarkDataGenerator.generate(this.jacksonOps, this.payloadSize);
         blackhole.consume(data);
     }
@@ -255,7 +255,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void snakeYamlFieldRead(final Blackhole blackhole) {
+    public void snakeYamlFieldRead(@NotNull final Blackhole blackhole) {
         final Dynamic<Object> field = this.snakeYamlData.get(FIELD_NAME);
         blackhole.consume(field);
     }
@@ -269,7 +269,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonYamlFieldRead(final Blackhole blackhole) {
+    public void jacksonYamlFieldRead(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> field = this.jacksonYamlData.get(FIELD_NAME);
         blackhole.consume(field);
     }
@@ -282,7 +282,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void snakeYamlFieldSet(final Blackhole blackhole) {
+    public void snakeYamlFieldSet(@NotNull final Blackhole blackhole) {
         final Dynamic<Object> result = this.snakeYamlData.set(
                 "newField",
                 this.snakeYamlData.createString("newValue")
@@ -298,7 +298,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonYamlFieldSet(final Blackhole blackhole) {
+    public void jacksonYamlFieldSet(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.jacksonYamlData.set(
                 "newField",
                 this.jacksonYamlData.createString("newValue")
@@ -315,7 +315,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void snakeYamlMigration(final Blackhole blackhole) {
+    public void snakeYamlMigration(@NotNull final Blackhole blackhole) {
         final Dynamic<Object> result = this.fixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.snakeYamlData,
@@ -334,7 +334,7 @@ public class YamlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonYamlMigration(final Blackhole blackhole) {
+    public void jacksonYamlMigration(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.fixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.jacksonYamlData,

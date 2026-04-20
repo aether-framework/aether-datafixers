@@ -30,6 +30,8 @@ import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkBootstrap;
 import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkDataGenerator;
 import de.splatgames.aether.datafixers.benchmarks.util.PayloadSize;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -43,8 +45,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for single DataFix application performance.
@@ -114,8 +114,8 @@ public class SingleFixBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void singleRenameFix(final SizedState s,
-                                final Blackhole blackhole) {
+    public void singleRenameFix(@NotNull final SizedState s,
+                                @NotNull final Blackhole blackhole) {
         blackhole.consume(s.fixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 s.input,
@@ -134,8 +134,8 @@ public class SingleFixBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void identityFix(final SizedState s,
-                            final Blackhole blackhole) {
+    public void identityFix(@NotNull final SizedState s,
+                            @NotNull final Blackhole blackhole) {
         blackhole.consume(s.identityFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 s.input,
@@ -158,8 +158,8 @@ public class SingleFixBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void playerDataFix(final PlayerState s,
-                              final Blackhole blackhole) {
+    public void playerDataFix(@NotNull final PlayerState s,
+                              @NotNull final Blackhole blackhole) {
         blackhole.consume(s.playerFixer.update(
                 BenchmarkBootstrap.PLAYER_TYPE,
                 s.playerInput,
@@ -187,7 +187,7 @@ public class SingleFixBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void playerDataFixEndToEnd(final Blackhole blackhole) {
+    public void playerDataFixEndToEnd(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> playerInput = BenchmarkDataGenerator.generatePlayerData(GsonOps.INSTANCE);
         final DataFixer playerFixer = BenchmarkBootstrap.createPlayerFixer();
         blackhole.consume(playerFixer.update(

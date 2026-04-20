@@ -34,6 +34,9 @@ import de.splatgames.aether.datafixers.benchmarks.util.PayloadSize;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
 import de.splatgames.aether.datafixers.testkit.factory.MockSchemas;
+import java.util.SplittableRandom;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -48,9 +51,6 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.SplittableRandom;
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for concurrent DataFixer operations and thread-safety validation.
@@ -179,9 +179,9 @@ public class ConcurrentMigrationBenchmark {
      */
     @Benchmark
     @Threads(Threads.MAX)
-    public void concurrentSingleFix(final BenchmarkState s,
-                                    final ThreadState t,
-                                    final Blackhole blackhole) {
+    public void concurrentSingleFix(@NotNull final BenchmarkState s,
+                                    @NotNull final ThreadState t,
+                                    @NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = s.sharedFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 t.threadInput,
@@ -212,9 +212,9 @@ public class ConcurrentMigrationBenchmark {
      */
     @Benchmark
     @Threads(Threads.MAX)
-    public void concurrentChainMigration(final BenchmarkState s,
-                                         final ThreadState t,
-                                         final Blackhole blackhole) {
+    public void concurrentChainMigration(@NotNull final BenchmarkState s,
+                                         @NotNull final ThreadState t,
+                                         @NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = s.sharedChainFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 t.threadInput,
@@ -245,9 +245,9 @@ public class ConcurrentMigrationBenchmark {
      */
     @Benchmark
     @Threads(4)
-    public void fourThreadMigration(final BenchmarkState s,
-                                    final ThreadState t,
-                                    final Blackhole blackhole) {
+    public void fourThreadMigration(@NotNull final BenchmarkState s,
+                                    @NotNull final ThreadState t,
+                                    @NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = s.sharedFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 t.threadInput,
@@ -278,9 +278,9 @@ public class ConcurrentMigrationBenchmark {
      */
     @Benchmark
     @Threads(8)
-    public void eightThreadMigration(final BenchmarkState s,
-                                     final ThreadState t,
-                                     final Blackhole blackhole) {
+    public void eightThreadMigration(@NotNull final BenchmarkState s,
+                                     @NotNull final ThreadState t,
+                                     @NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = s.sharedFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 t.threadInput,
@@ -315,9 +315,9 @@ public class ConcurrentMigrationBenchmark {
      */
     @Benchmark
     @Threads(Threads.MAX)
-    public void concurrentRegistryLookup(final BenchmarkState s,
-                                         final ThreadState t,
-                                         final Blackhole blackhole) {
+    public void concurrentRegistryLookup(@NotNull final BenchmarkState s,
+                                         @NotNull final ThreadState t,
+                                         @NotNull final Blackhole blackhole) {
         final int index = t.nextRegistryIndex();
         final Schema schema = s.sharedRegistry.get(s.registryVersions[index]);
         blackhole.consume(schema);
@@ -349,8 +349,8 @@ public class ConcurrentMigrationBenchmark {
      */
     @Benchmark
     @Threads(Threads.MAX)
-    public void concurrentLatestLookup(final BenchmarkState s,
-                                       final Blackhole blackhole) {
+    public void concurrentLatestLookup(@NotNull final BenchmarkState s,
+                                       @NotNull final Blackhole blackhole) {
         final Schema schema = s.sharedRegistry.latest();
         blackhole.consume(schema);
     }
@@ -570,7 +570,7 @@ public class ConcurrentMigrationBenchmark {
          * @param s the shared benchmark state providing payload size and version array
          */
         @Setup(Level.Iteration)
-        public void setupIteration(final BenchmarkState s) {
+        public void setupIteration(@NotNull final BenchmarkState s) {
             this.threadInput = BenchmarkDataGenerator.generate(GsonOps.INSTANCE, s.payloadSize);
 
             for (int i = 0; i < INDEX_BUFFER_SIZE; i++) {
