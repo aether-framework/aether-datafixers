@@ -1128,6 +1128,9 @@ public final class DSL {
          *
          * <p>For constant templates, this always returns the fixed type,
          * ignoring the provided family.</p>
+         *
+         * @param family the type family (ignored for constant templates), must not be {@code null}
+         * @return the fixed type, never {@code null}
          */
         @NotNull
         @Override
@@ -1178,6 +1181,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Retrieves the type at this template's index from the provided family.</p>
+         *
+         * @param family the type family to look up the indexed type in, must not be {@code null}
+         * @return the type at this template's index in the family, never {@code null}
          */
         @NotNull
         @Override
@@ -1235,6 +1241,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates both sub-templates and creates a product type.</p>
+         *
+         * @param family the type family used to resolve both sub-templates, must not be {@code null}
+         * @return the product type of the two resolved sub-types, never {@code null}
          */
         @NotNull
         @Override
@@ -1292,6 +1301,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates both alternatives and creates a sum type.</p>
+         *
+         * @param family the type family used to resolve both alternatives, must not be {@code null}
+         * @return the sum type of the two resolved alternatives, never {@code null}
          */
         @NotNull
         @Override
@@ -1340,6 +1352,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates the element template and wraps it in a list type.</p>
+         *
+         * @param family the type family used to resolve the element template, must not be {@code null}
+         * @return the list type wrapping the resolved element type, never {@code null}
          */
         @NotNull
         @Override
@@ -1389,6 +1404,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates the element template and wraps it in an optional type.</p>
+         *
+         * @param family the type family used to resolve the element template, must not be {@code null}
+         * @return the optional type wrapping the resolved element type, never {@code null}
          */
         @NotNull
         @Override
@@ -1454,6 +1472,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Creates a field type with the resolved value type.</p>
+         *
+         * @param family the type family used to resolve the field's value type, must not be {@code null}
+         * @return the field type with the resolved value type, never {@code null}
          */
         @NotNull
         @Override
@@ -1511,6 +1532,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Creates a named type wrapping the resolved inner type.</p>
+         *
+         * @param family the type family used to resolve the inner template, must not be {@code null}
+         * @return the named type wrapping the resolved inner type, never {@code null}
          */
         @NotNull
         @Override
@@ -1545,6 +1569,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Always returns {@link Type#PASSTHROUGH} regardless of the family.</p>
+         *
+         * @param family the type family (ignored for remainder templates), must not be {@code null}
+         * @return {@link Type#PASSTHROUGH}, never {@code null}
          */
         @NotNull
         @Override
@@ -1602,6 +1629,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Resolves all choice templates and creates a tagged choice type.</p>
+         *
+         * @param family the type family used to resolve all choice templates, must not be {@code null}
+         * @return the tagged choice type with all resolved variant types, never {@code null}
          */
         @NotNull
         @Override
@@ -1669,6 +1699,9 @@ public final class DSL {
          *
          * <p>Creates a self-referential type using {@link TypeFamily#recursive}.
          * The definition function receives a template that references the type being defined.</p>
+         *
+         * @param family the type family used as the outer context for the recursive type, must not be {@code null}
+         * @return the self-referential type produced by the definition function, never {@code null}
          */
         @NotNull
         @Override

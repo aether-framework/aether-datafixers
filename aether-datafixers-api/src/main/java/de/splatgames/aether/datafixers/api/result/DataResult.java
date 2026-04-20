@@ -536,6 +536,7 @@ public sealed interface DataResult<A> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
+         * @param value the successful value, must not be {@code null}
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Success {
@@ -869,6 +870,8 @@ public sealed interface DataResult<A> {
          * <p>Validates that the error message is not {@code null}. The partial
          * result may be {@code null} to indicate no best-effort value is available.</p>
          *
+         * @param message the error message, must not be {@code null}
+         * @param partial the optional partial/best-effort result, may be {@code null}
          * @throws NullPointerException if {@code message} is {@code null}
          */
         public Error {

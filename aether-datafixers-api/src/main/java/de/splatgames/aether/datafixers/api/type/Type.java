@@ -1060,6 +1060,8 @@ public interface Type<A> {
 
         /**
          * {@inheritDoc}
+         *
+         * @return the type reference for this field, never {@code null}
          */
         @NotNull
         @Override
@@ -1069,6 +1071,8 @@ public interface Type<A> {
 
         /**
          * {@inheritDoc}
+         *
+         * @return the codec for this field's value type, never {@code null}
          */
         @NotNull
         @Override
@@ -1081,6 +1085,8 @@ public interface Type<A> {
          *
          * <p>The description format is {@code "name: type"} for required fields
          * or {@code "?name: type"} for optional fields.</p>
+         *
+         * @return a human-readable description of this field type, never {@code null}
          */
         @NotNull
         @Override
@@ -1152,6 +1158,8 @@ public interface Type<A> {
          * {@inheritDoc}
          *
          * <p>Returns a single-element list containing the field's inner type.</p>
+         *
+         * @return an immutable list containing the inner type, never {@code null}
          */
         @NotNull
         @Override
@@ -1253,6 +1261,8 @@ public interface Type<A> {
 
         /**
          * {@inheritDoc}
+         *
+         * @return the type reference for this tagged choice type, never {@code null}
          */
         @NotNull
         @Override
@@ -1265,6 +1275,8 @@ public interface Type<A> {
          *
          * <p>The codec reads the tag field to determine the variant, then parses
          * the remaining data accordingly. When encoding, it includes the tag field alongside the variant's data.</p>
+         *
+         * @return the codec for this tagged choice type, never {@code null}
          */
         @NotNull
         @Override
@@ -1350,6 +1362,8 @@ public interface Type<A> {
          * <pre>{@code
          * "TaggedChoice<type>{player -> (name: string × level: int), monster -> species: string}"
          * }</pre>
+         *
+         * @return a human-readable description of this tagged choice type, never {@code null}
          */
         @NotNull
         @Override
@@ -1449,6 +1463,8 @@ public interface Type<A> {
          * {@inheritDoc}
          *
          * <p>Returns all variant types from the choices map.</p>
+         *
+         * @return an immutable list of all variant types, never {@code null}
          */
         @NotNull
         @Override

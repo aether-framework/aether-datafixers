@@ -221,10 +221,10 @@ public final class RecordCodecBuilder {
          * @return the function result, never {@code null}
          */
         @NotNull
-        R apply(@NotNull A a,
-                @NotNull B b,
-                @NotNull C c,
-                @NotNull D d);
+        R apply(@NotNull final A a,
+                @NotNull final B b,
+                @NotNull final C c,
+                @NotNull final D d);
     }
 
     /**
@@ -398,6 +398,8 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Field with validation.
          *
+         * @param codec  the map codec for serializing/deserializing the field value, must not be {@code null}
+         * @param getter the function to extract the field value from the record, must not be {@code null}
          * @throws NullPointerException if {@code codec} or {@code getter} is {@code null}
          */
         public Field {
@@ -689,6 +691,7 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder1 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
          * @throws NullPointerException if {@code f1} is {@code null}
          */
         public Builder1 {
@@ -745,6 +748,8 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder2 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder2 {
@@ -807,6 +812,9 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder3 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
+         * @param f3 the third field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder3 {
@@ -879,6 +887,10 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder4 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
+         * @param f3 the third field, must not be {@code null}
+         * @param f4 the fourth field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder4 {
@@ -963,6 +975,11 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder5 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
+         * @param f3 the third field, must not be {@code null}
+         * @param f4 the fourth field, must not be {@code null}
+         * @param f5 the fifth field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder5 {
@@ -1055,6 +1072,12 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder6 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
+         * @param f3 the third field, must not be {@code null}
+         * @param f4 the fourth field, must not be {@code null}
+         * @param f5 the fifth field, must not be {@code null}
+         * @param f6 the sixth field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder6 {
@@ -1223,6 +1246,13 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder7 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
+         * @param f3 the third field, must not be {@code null}
+         * @param f4 the fourth field, must not be {@code null}
+         * @param f5 the fifth field, must not be {@code null}
+         * @param f6 the sixth field, must not be {@code null}
+         * @param f7 the seventh field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder7 {
@@ -1334,6 +1364,14 @@ public final class RecordCodecBuilder {
         /**
          * Creates a new Builder8 with validation.
          *
+         * @param f1 the first field, must not be {@code null}
+         * @param f2 the second field, must not be {@code null}
+         * @param f3 the third field, must not be {@code null}
+         * @param f4 the fourth field, must not be {@code null}
+         * @param f5 the fifth field, must not be {@code null}
+         * @param f6 the sixth field, must not be {@code null}
+         * @param f7 the seventh field, must not be {@code null}
+         * @param f8 the eighth field, must not be {@code null}
          * @throws NullPointerException if any field is {@code null}
          */
         public Builder8 {

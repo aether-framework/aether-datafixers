@@ -344,7 +344,7 @@ public final class BatchTransform<T> {
          * @return the transformed dynamic value, never {@code null}
          */
         @NotNull
-        Dynamic<T> apply(@NotNull Dynamic<T> dynamic);
+        Dynamic<T> apply(@NotNull final Dynamic<T> dynamic);
     }
 
     /**

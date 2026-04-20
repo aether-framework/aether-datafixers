@@ -95,6 +95,8 @@ public record Dynamic<T>(@NotNull DynamicOps<T> ops, @NotNull T value) {
     /**
      * Creates a new Dynamic with validation.
      *
+     * @param ops   the DynamicOps strategy, must not be {@code null}
+     * @param value the underlying value, must not be {@code null}
      * @throws NullPointerException if {@code ops} or {@code value} is {@code null}
      */
     public Dynamic {
