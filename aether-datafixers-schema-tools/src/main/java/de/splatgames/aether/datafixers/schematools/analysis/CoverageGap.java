@@ -106,7 +106,7 @@ public final class CoverageGap {
 
         private final String description;
 
-        Reason(final String description) {
+        Reason(@NotNull final String description) {
             this.description = description;
         }
 
