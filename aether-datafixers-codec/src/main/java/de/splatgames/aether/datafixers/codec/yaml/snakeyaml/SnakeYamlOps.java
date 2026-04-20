@@ -1460,6 +1460,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
          *
          * @return the string {@code "null"}
          */
+        @NotNull
         @Override
         public String toString() {
             return "null";

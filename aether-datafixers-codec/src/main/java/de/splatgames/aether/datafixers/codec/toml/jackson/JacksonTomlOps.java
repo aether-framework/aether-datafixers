@@ -324,6 +324,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *
      * @return the TOML mapper used by this instance; never {@code null}
      */
+    @NotNull
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP",
             justification = "TomlMapper exposure is intentional API design for serialization and parsing operations."
@@ -1219,7 +1220,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(newValue, "newValue must not be null");
         if (!input.isObject()) {
-            final ObjectNode result = nodeFactory.objectNode();
+            final ObjectNode result = this.nodeFactory.objectNode();
             result.set(key, newValue);
             return result;
         }
