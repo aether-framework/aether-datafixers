@@ -487,7 +487,6 @@ public final class ConventionRules {
          * Private constructor to prevent direct instantiation. Use {@link ConventionRules#builder()} instead.
          */
         private Builder() {
-            throw new UnsupportedOperationException("Use ConventionRules.builder() to create a builder instance");
         }
 
         /**
