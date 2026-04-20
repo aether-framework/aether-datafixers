@@ -372,20 +372,20 @@ public class GameService {
 
 ### Actuator Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `/actuator/health` | Health indicator showing DataFixer operational status |
-| `/actuator/info` | Schema version information |
-| `/actuator/datafixers` | Detailed domain and version info |
+| Endpoint               | Description                                           |
+|------------------------|-------------------------------------------------------|
+| `/actuator/health`     | Health indicator showing DataFixer operational status |
+| `/actuator/info`       | Schema version information                            |
+| `/actuator/datafixers` | Detailed domain and version info                      |
 
 ### Micrometer Metrics
 
-| Metric | Type | Description |
-|--------|------|-------------|
-| `aether.datafixers.migrations.success` | Counter | Successful migrations |
-| `aether.datafixers.migrations.failure` | Counter | Failed migrations |
-| `aether.datafixers.migrations.duration` | Timer | Migration execution time |
-| `aether.datafixers.migrations.version.span` | Distribution | Version span statistics |
+| Metric                                      | Type         | Description              |
+|---------------------------------------------|--------------|--------------------------|
+| `aether.datafixers.migrations.success`      | Counter      | Successful migrations    |
+| `aether.datafixers.migrations.failure`      | Counter      | Failed migrations        |
+| `aether.datafixers.migrations.duration`     | Timer        | Migration execution time |
+| `aether.datafixers.migrations.version.span` | Distribution | Version span statistics  |
 
 The starter also supports **multi-domain setups** with `@Qualifier` annotations, async execution via `executeAsync()`, and custom `DynamicOps` via `withOps()`.
 
@@ -481,15 +481,15 @@ ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
 
 Optics provide composable, type-safe accessors for nested data structures. They are central to the data fixer system, enabling transformations without manual traversal code.
 
-| Optic | Focus | Description |
-|-------|-------|-------------|
-| **Iso** | 1 ↔ 1 | Reversible 1-to-1 transformation between two types |
-| **Lens** | 1 → 1 | Focus on exactly one part of a product type (always succeeds) |
-| **Prism** | 1 → 0..1 | Focus on one case of a sum type (may not match) |
-| **Affine** | 1 → 0..1 | Combines lens and prism capabilities |
-| **Traversal** | 1 → 0..n | Focus on zero or more parts |
-| **Getter** | 1 → 1 | Read-only focus (no modification) |
-| **Finder** | Type → Optic | Locates nested types within a schema |
+| Optic         | Focus        | Description                                                   |
+|---------------|--------------|---------------------------------------------------------------|
+| **Iso**       | 1 ↔ 1        | Reversible 1-to-1 transformation between two types            |
+| **Lens**      | 1 → 1        | Focus on exactly one part of a product type (always succeeds) |
+| **Prism**     | 1 → 0..1     | Focus on one case of a sum type (may not match)               |
+| **Affine**    | 1 → 0..1     | Combines lens and prism capabilities                          |
+| **Traversal** | 1 → 0..n     | Focus on zero or more parts                                   |
+| **Getter**    | 1 → 1        | Read-only focus (no modification)                             |
+| **Finder**    | Type → Optic | Locates nested types within a schema                          |
 
 ```java
 // Compose lenses for nested access: Person -> Address -> City
@@ -503,20 +503,20 @@ Person moved = cityLens.set(alice, "Seattle");  // Alice now in Seattle
 
 ## 📚 Documentation
 
-| Category | Description |
-|----------|-------------|
-| [Getting Started](docs/getting-started/index.md) | Installation, quick start, first migration |
-| [Concepts](docs/concepts/index.md) | Architecture, schemas, codecs, optics, type system, thread safety |
-| [Tutorials](docs/tutorials/index.md) | Step-by-step guides for common scenarios |
-| [How-To Guides](docs/how-to/index.md) | Focused guides for specific operations (rename, add, remove, transform, batch, ...) |
-| [Advanced Topics](docs/advanced/custom-optics.md) | Custom optics, concurrent migrations, recursive types, traversal strategies |
-| [Codec Formats](docs/codec/index.md) | JSON, YAML, TOML, XML - format comparison and usage |
-| [CLI](docs/cli/index.md) | Commands, format handlers, usage examples |
-| [Schema Tools](docs/schema-tools/index.md) | Diffing, migration analysis, validation, introspection |
-| [Spring Boot](docs/spring-boot/index.md) | Auto-configuration, MigrationService, Actuator, Metrics |
-| [Testkit](docs/testkit/index.md) | Test builders, assertions, harnesses |
-| [Troubleshooting](docs/troubleshooting/faq.md) | FAQ, common errors, debugging tips |
-| [Appendix](docs/appendix/glossary.md) | Glossary, DFU comparison, type theory primer |
+| Category                                          | Description                                                                         |
+|---------------------------------------------------|-------------------------------------------------------------------------------------|
+| [Getting Started](docs/getting-started/index.md)  | Installation, quick start, first migration                                          |
+| [Concepts](docs/concepts/index.md)                | Architecture, schemas, codecs, optics, type system, thread safety                   |
+| [Tutorials](docs/tutorials/index.md)              | Step-by-step guides for common scenarios                                            |
+| [How-To Guides](docs/how-to/index.md)             | Focused guides for specific operations (rename, add, remove, transform, batch, ...) |
+| [Advanced Topics](docs/advanced/custom-optics.md) | Custom optics, concurrent migrations, recursive types, traversal strategies         |
+| [Codec Formats](docs/codec/index.md)              | JSON, YAML, TOML, XML - format comparison and usage                                 |
+| [CLI](docs/cli/index.md)                          | Commands, format handlers, usage examples                                           |
+| [Schema Tools](docs/schema-tools/index.md)        | Diffing, migration analysis, validation, introspection                              |
+| [Spring Boot](docs/spring-boot/index.md)          | Auto-configuration, MigrationService, Actuator, Metrics                             |
+| [Testkit](docs/testkit/index.md)                  | Test builders, assertions, harnesses                                                |
+| [Troubleshooting](docs/troubleshooting/faq.md)    | FAQ, common errors, debugging tips                                                  |
+| [Appendix](docs/appendix/glossary.md)             | Glossary, DFU comparison, type theory primer                                        |
 
 ## 🔨 Building from Source
 
