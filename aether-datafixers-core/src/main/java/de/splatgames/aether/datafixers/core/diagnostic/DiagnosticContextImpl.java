@@ -343,6 +343,10 @@ public final class DiagnosticContextImpl implements DiagnosticContext {
 
         /**
          * Compact constructor that defensively copies the args array.
+         *
+         * @param level   the log level, must not be {@code null}
+         * @param message the message format string, must not be {@code null}
+         * @param args    the format arguments, may be {@code null}
          */
         public LogEntry {
             args = args != null ? args.clone() : null;
