@@ -69,7 +69,7 @@
         <nullaway.version>0.12.7</nullaway.version>
 
         <!-- Aether Style Guard (opt-in via -Pstyleguard) -->
-        <aether-style-guard.version>0.1.0-SNAPSHOT</aether-style-guard.version>
+        <aether-style-guard.version>0.1.1</aether-style-guard.version>
         <!--
             Extra Error Prone flags appended to the -Xplugin:ErrorProne arg in the
             styleguard profile. Empty by default. Override on the command line to
@@ -661,7 +661,7 @@
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>
                                 <arg>--should-stop=ifError=FLOW</arg>
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:RequireThisPrefix:ERROR -Xep:RequireParameterNullness:ERROR -Xep:RequireFinalParameter:ERROR -Xep:RequireMethodReturnNullness:ERROR -Xep:RequireJavadocPresent:WARN -Xep:RequireJavadocComplete:ERROR -XepOpt:AetherStyleGuard:NotNull=org.jetbrains.annotations.NotNull -XepOpt:AetherStyleGuard:Nullable=org.jetbrains.annotations.Nullable ${styleguard.extra.args}</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:RequireThisPrefix:ERROR -Xep:RequireParameterNullness:ERROR -Xep:RequireFinalParameter:ERROR -Xep:RequireMethodReturnNullness:ERROR -Xep:RequireJavadocPresent:WARN -Xep:RequireJavadocComplete:ERROR -XepOpt:AetherStyleGuard:NotNull=org.jetbrains.annotations.NotNull -XepOpt:AetherStyleGuard:Nullable=org.jetbrains.annotations.Nullable -XepExcludedPaths:.*/target/generated-sources/.* ${styleguard.extra.args}</arg>
                                 <!-- Required JVM exports for ErrorProne on JDK 17+ -->
                                 <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
                                 <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
