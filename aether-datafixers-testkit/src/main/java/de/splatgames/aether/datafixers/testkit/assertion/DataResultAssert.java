@@ -97,7 +97,7 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
      *
      * @param actual the DataResult to assert on
      */
-    public DataResultAssert(final DataResult<A> actual) {
+    public DataResultAssert(@NotNull final DataResult<A> actual) {
         super(actual, DataResultAssert.class);
     }
 

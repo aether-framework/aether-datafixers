@@ -384,6 +384,7 @@ public final class MigrationTester<T> {
          *
          * @return the built DataFixer
          */
+        @NotNull
         DataFixer build() {
             final DataFixerBuilder actualBuilder = new DataFixerBuilder(new DataVersion(this.maxVersion));
             for (final Map.Entry<TypeReference, DataFix<?>> entry : this.pendingFixes) {

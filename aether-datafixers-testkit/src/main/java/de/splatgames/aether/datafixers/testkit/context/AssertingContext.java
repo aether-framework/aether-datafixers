@@ -85,7 +85,7 @@ public final class AssertingContext implements DataFixerContext {
      */
     private final List<String> collectedWarnings;
 
-    private AssertingContext(final Mode mode) {
+    private AssertingContext(@NotNull final Mode mode) {
         this.mode = mode;
         this.collectedWarnings = new ArrayList<>();
     }
@@ -134,7 +134,8 @@ public final class AssertingContext implements DataFixerContext {
      * @param args    the arguments to replace the placeholders, may be null or empty
      * @return the formatted message with placeholders replaced by argument values
      */
-    private static String formatMessage(final String message, final Object[] args) {
+    @NotNull
+    private static String formatMessage(@NotNull final String message, @NotNull final Object[] args) {
         if (args == null || args.length == 0) {
             return message;
         }

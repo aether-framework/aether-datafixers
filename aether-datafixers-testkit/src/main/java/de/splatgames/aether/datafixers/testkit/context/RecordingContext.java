@@ -244,6 +244,10 @@ public final class RecordingContext implements DataFixerContext {
 
         /**
          * Compact constructor that defensively copies the args array.
+         *
+         * @param level   the log level, must not be {@code null}
+         * @param message the message format string, must not be {@code null}
+         * @param args    the format arguments, may be {@code null}
          */
         public LogEntry {
             Preconditions.checkNotNull(level, "level must not be null");
@@ -259,7 +263,7 @@ public final class RecordingContext implements DataFixerContext {
         @Override
         @Nullable
         public Object @Nullable [] args() {
-            return args != null ? args.clone() : null;
+            return this.args != null ? this.args.clone() : null;
         }
 
         /**

@@ -109,11 +109,11 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      *
      * @param actual the Dynamic to assert on
      */
-    public DynamicAssert(final Dynamic<T> actual) {
+    public DynamicAssert(@NotNull final Dynamic<T> actual) {
         this(actual, "");
     }
 
-    private DynamicAssert(final Dynamic<T> actual, final String path) {
+    private DynamicAssert(@NotNull final Dynamic<T> actual, @NotNull final String path) {
         super(actual, DynamicAssert.class);
         this.path = path;
     }
@@ -700,6 +700,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      *
      * @return formatted path info
      */
+    @NotNull
     private String pathInfo() {
         return this.path.isEmpty() ? "" : " at '" + this.path + "'";
     }
@@ -709,6 +710,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      *
      * @return a string description of the actual value
      */
+    @NotNull
     private String describeActual() {
         if (this.actual.isMap()) {
             return "map";
@@ -733,6 +735,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      *
      * @return list of field names or empty list if not a map
      */
+    @NotNull
     private List<String> availableFieldsList() {
         return this.actual.asMapStream()
                 .result()
@@ -757,6 +760,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param element the element to describe
      * @return a string description of the element
      */
+    @NotNull
     private String describeElement(@NotNull final Dynamic<T> element) {
         if (element.isString()) {
             return "string: " + element.asString().orElse("?");
@@ -786,6 +790,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      * @param d the Dynamic to extract field names from
      * @return comma-separated field names or "(none)" if not a map or no fields
      */
+    @NotNull
     private String fieldsOf(@NotNull final Dynamic<T> d) {
         return d.asMapStream()
                 .result()

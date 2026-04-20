@@ -445,6 +445,6 @@ public final class SchemaTester {
          * @param type the type to validate
          * @throws AssertionError if validation fails
          */
-        void validate(@Nullable Type<?> type);
+        void validate(@Nullable final Type<?> type);
     }
 }

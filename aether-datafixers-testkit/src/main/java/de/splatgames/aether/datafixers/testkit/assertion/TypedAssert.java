@@ -79,7 +79,7 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
      *
      * @param actual the Typed to assert on
      */
-    public TypedAssert(final Typed<A> actual) {
+    public TypedAssert(@NotNull final Typed<A> actual) {
         super(actual, TypedAssert.class);
     }
 
