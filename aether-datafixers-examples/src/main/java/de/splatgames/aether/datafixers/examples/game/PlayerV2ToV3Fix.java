@@ -202,6 +202,7 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
      * @param dynamic the dynamic data to read from
      * @return a string describing the position
      */
+    @NotNull
     @SuppressWarnings("unused")
     private static String describePosition(@NotNull final Dynamic<?> dynamic) {
         final double x = POSITION_X_FINDER.getOptional(dynamic)
