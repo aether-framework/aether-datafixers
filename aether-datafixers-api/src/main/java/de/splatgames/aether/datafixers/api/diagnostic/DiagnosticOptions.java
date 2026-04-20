@@ -152,10 +152,9 @@ public record DiagnosticOptions(boolean captureSnapshots,
         private boolean captureFieldDetails = true;
 
         /**
-         * Private constructor to enforce usage of {@link DiagnosticOptions#builder()}.
+         * Constructs a new <code>Builder</code> instance.
          */
         private Builder() {
-            throw new UnsupportedOperationException("Use DiagnosticOptions.builder() to create a Builder instance");
         }
 
         /**
