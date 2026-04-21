@@ -1711,6 +1711,12 @@ public final class DSL {
             final TypeFamily recursiveFamily = TypeFamily.recursive(self -> {
                 // Create a template that references the recursive type
                 final TypeTemplate selfRef = new TypeTemplate() {
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @param f {@inheritDoc}
+                     * @return {@inheritDoc}
+                     */
                     @NotNull
                     @Override
                     public Type<?> apply(@NotNull final TypeFamily f) {
@@ -1718,6 +1724,11 @@ public final class DSL {
                         return self.apply(0);
                     }
 
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @return {@inheritDoc}
+                     */
                     @NotNull
                     @Override
                     public String describe() {

@@ -125,6 +125,13 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param inputSchema {@inheritDoc}
+     * @param outputSchema {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     protected TypeRewriteRule makeRule(@NotNull final Schema inputSchema,
@@ -229,6 +236,13 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
     private static TypeRewriteRule dynamicTransform(@NotNull final String name,
                                                     @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -241,6 +255,11 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
                 }).map(value -> new Typed<>((Type) input.type(), value)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {

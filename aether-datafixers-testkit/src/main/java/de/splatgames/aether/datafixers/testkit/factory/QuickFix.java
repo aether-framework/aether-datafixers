@@ -117,21 +117,44 @@ public final class QuickFix {
         Preconditions.checkNotNull(transform, "transform must not be null");
 
         return new DataFix<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull String name() {
                 return name;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull DataVersion fromVersion() {
                 return new DataVersion(fromVersion);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull DataVersion toVersion() {
                 return new DataVersion(toVersion);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @param context {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull Dynamic<T> apply(@NotNull final TypeReference type,
                                              @NotNull final Dynamic<T> input,

@@ -367,6 +367,9 @@ public class DataFixerEndpoint {
 
         /**
          * Compact constructor that creates a defensive copy of the domains map.
+         *
+         * @param domains map of domain names to their summary information; may be {@code null}, in which case an empty
+         *                map is used
          */
         public DataFixersSummary {
             domains = domains != null ? Map.copyOf(domains) : Map.of();
@@ -467,6 +470,14 @@ public class DataFixerEndpoint {
 
         /**
          * Compact constructor that creates a defensive copy of the field operations list.
+         *
+         * @param fromVersion         the source version of the diagnostic migration
+         * @param toVersion           the target version of the diagnostic migration
+         * @param durationMs          the migration duration in milliseconds
+         * @param fixCount            the number of fixes applied
+         * @param fieldOperationCount the total number of field operations
+         * @param fieldOperations     the individual field operation summaries; may be {@code null}, in which case an
+         *                            empty list is used
          */
         public FieldDiagnosticsSummary {
             fieldOperations = fieldOperations != null ? List.copyOf(fieldOperations) : List.of();

@@ -82,6 +82,11 @@ public record FixFieldOperations(@NotNull String fixName,
     /**
      * Compact constructor enforcing non-null arguments and creating a defensive copy of the operations list.
      *
+     * @param fixName        the fix name, must not be {@code null}
+     * @param fromVersion    the source version, must not be {@code null}
+     * @param toVersion      the target version, must not be {@code null}
+     * @param operations     the field operations, must not be {@code null}
+     * @param introspectable whether this fix is introspectable
      * @throws NullPointerException if any required parameter is {@code null}
      */
     public FixFieldOperations {

@@ -81,12 +81,18 @@ public class Schema100 extends Schema {
         super(100, null);  // No parent - this is the first version
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     protected TypeRegistry createTypeRegistry() {
         return new SimpleTypeRegistry();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void registerTypes() {
         // Register PLAYER type with passthrough codec
@@ -136,6 +142,14 @@ public class Schema100 extends Schema {
     @NotNull
     protected static Codec<Dynamic<?>> dynamicPassthroughCodec() {
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final Dynamic<?> input,
@@ -147,6 +161,13 @@ public class Schema100 extends Schema {
                 return DataResult.success(converted.value());
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<Dynamic<?>, T>> decode(@NotNull final DynamicOps<T> ops,

@@ -328,6 +328,11 @@ public final class MigrationPath {
         return this.affectedTypes.contains(type);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     public String toString() {

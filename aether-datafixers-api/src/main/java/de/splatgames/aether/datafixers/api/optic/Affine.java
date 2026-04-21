@@ -148,12 +148,23 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
     static <S, T, A, B> Affine<S, T, A, B> fromLens(@NotNull final Lens<S, T, A, B> lens) {
         Preconditions.checkNotNull(lens, "lens must not be null");
         return new Affine<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return lens.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<A> getOption(@NotNull final S source) {
@@ -161,6 +172,13 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
                 return Optional.of(lens.get(source));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param value {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T set(@NotNull final S source,
@@ -212,12 +230,23 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
         Preconditions.checkNotNull(getOption, "getOption must not be null");
         Preconditions.checkNotNull(set, "set must not be null");
         return new Affine<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<A> getOption(@NotNull final S source) {
@@ -225,6 +254,13 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
                 return getOption.apply(source);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param value {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S set(@NotNull final S source,
@@ -341,12 +377,23 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Affine<S, T, A, B> self = this;
         return new Affine<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<C> getOption(@NotNull final S source) {
@@ -354,6 +401,13 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
                 return self.getOption(source).flatMap(other::getOption);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param value {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings("unchecked")
             public @NotNull T set(@NotNull final S source, @NotNull final D value) {
@@ -364,6 +418,12 @@ public interface Affine<S, T, A, B> extends Optic<S, T, A, B> {
                         .orElse((T) source);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param next {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {

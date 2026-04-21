@@ -146,12 +146,23 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
     static <S, T, A, B> Traversal<S, T, A, B> fromLens(@NotNull final Lens<S, T, A, B> lens) {
         Preconditions.checkNotNull(lens, "lens must not be null");
         return new Traversal<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return lens.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Stream<A> getAll(@NotNull final S source) {
@@ -159,6 +170,13 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
                 return Stream.of(lens.get(source));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T modify(@NotNull final S source, @NotNull final Function<A, B> modifier) {
@@ -211,12 +229,23 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
         Preconditions.checkNotNull(getAll, "getAll must not be null");
         Preconditions.checkNotNull(modify, "modify must not be null");
         return new Traversal<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Stream<A> getAll(@NotNull final S source) {
@@ -224,6 +253,13 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
                 return getAll.apply(source);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S modify(@NotNull final S source,
@@ -357,12 +393,23 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Traversal<S, T, A, B> self = this;
         return new Traversal<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Stream<C> getAll(@NotNull final S source) {
@@ -370,6 +417,13 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
                 return self.getAll(source).flatMap(other::getAll);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T modify(@NotNull final S source,
@@ -379,6 +433,12 @@ public interface Traversal<S, T, A, B> extends Optic<S, T, A, B> {
                 return self.modify(source, a -> other.modify(a, modifier));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param next {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
                 Preconditions.checkNotNull(next, "next must not be null");

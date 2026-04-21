@@ -684,6 +684,12 @@ public final class Typed<A> {
         return DataResult.error("Cannot apply children for type: " + this.type.describe());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param obj {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
@@ -695,11 +701,21 @@ public final class Typed<A> {
         return this.type.reference().equals(other.type.reference()) && this.value.equals(other.value);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return 31 * this.type.reference().hashCode() + this.value.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     public String toString() {

@@ -287,6 +287,11 @@ public final class RecordingContext implements DataFixerContext {
             return result.toString();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @Override
         @NotNull
         public String toString() {

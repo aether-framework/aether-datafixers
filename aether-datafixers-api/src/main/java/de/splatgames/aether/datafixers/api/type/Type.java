@@ -185,16 +185,34 @@ public interface Type<A> {
      * }</pre>
      */
     Type<Dynamic<?>> PASSTHROUGH = new Type<>() {
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @NotNull
         @Override
         public TypeReference reference() {
             return new TypeReference("passthrough");
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @NotNull
         @Override
         public Codec<Dynamic<?>> codec() {
             return new Codec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param prefix {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final Dynamic<?> input,
@@ -206,6 +224,13 @@ public interface Type<A> {
                     return DataResult.success(input.convert(ops).value());
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<Pair<Dynamic<?>, T>> decode(@NotNull final DynamicOps<T> ops,
@@ -217,6 +242,11 @@ public interface Type<A> {
             };
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @NotNull
         @Override
         public String describe() {
@@ -259,18 +289,33 @@ public interface Type<A> {
         return new Type<>() {
             private final TypeReference ref = new TypeReference(name);
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<A> codec() {
                 return codec;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
@@ -308,24 +353,44 @@ public interface Type<A> {
         return new Type<>() {
             private final TypeReference ref = new TypeReference("list[" + elementType.reference().getId() + "]");
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<List<A>> codec() {
                 return Codecs.list(elementType.codec());
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
                 return "List<" + elementType.describe() + ">";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public List<Type<?>> children() {
@@ -364,24 +429,44 @@ public interface Type<A> {
         return new Type<>() {
             private final TypeReference ref = new TypeReference("optional[" + elementType.reference().getId() + "]");
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<Optional<A>> codec() {
                 return Codecs.optional(elementType.codec());
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
                 return "Optional<" + elementType.describe() + ">";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public List<Type<?>> children() {
@@ -429,24 +514,44 @@ public interface Type<A> {
                     "(" + first.reference().getId() + " × " + second.reference().getId() + ")"
             );
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<Pair<A, B>> codec() {
                 return Codecs.pair(first.codec(), second.codec());
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
                 return "(" + first.describe() + " × " + second.describe() + ")";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public List<Type<?>> children() {
@@ -498,24 +603,44 @@ public interface Type<A> {
                     "(" + left.reference().getId() + " + " + right.reference().getId() + ")"
             );
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<Either<A, B>> codec() {
                 return Codecs.either(left.codec(), right.codec());
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
                 return "(" + left.describe() + " + " + right.describe() + ")";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public List<Type<?>> children() {
@@ -597,24 +722,44 @@ public interface Type<A> {
         return new Type<>() {
             private final TypeReference ref = new TypeReference("?" + name + ":" + fieldType.reference().getId());
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<Optional<A>> codec() {
                 return fieldType.codec().optionalFieldOf(name).codec();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
                 return "?" + name + ": " + fieldType.describe();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public List<Type<?>> children() {
@@ -655,24 +800,44 @@ public interface Type<A> {
         return new Type<>() {
             private final TypeReference ref = new TypeReference(name);
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public TypeReference reference() {
                 return this.ref;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Codec<A> codec() {
                 return targetType.codec();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {
                 return name + "=" + targetType.describe();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public List<Type<?>> children() {
@@ -1282,6 +1447,14 @@ public interface Type<A> {
         @Override
         public Codec<Pair<String, Dynamic<?>>> codec() {
             return new Codec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param prefix {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final Pair<String, Dynamic<?>> input,
@@ -1318,6 +1491,13 @@ public interface Type<A> {
                     return DataResult.success(result);
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<Pair<Pair<String, Dynamic<?>>, T>> decode(@NotNull final DynamicOps<T> ops,

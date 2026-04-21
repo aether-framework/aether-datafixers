@@ -110,6 +110,14 @@ public interface MapCodec<A> {
         Preconditions.checkNotNull(encoder, "encoder must not be null");
         Preconditions.checkNotNull(decoder, "decoder must not be null");
         return new MapCodec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param map {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input,
@@ -121,6 +129,13 @@ public interface MapCodec<A> {
                 return encoder.encode(input, ops, map);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
@@ -180,6 +195,14 @@ public interface MapCodec<A> {
         Preconditions.checkNotNull(from, "from must not be null");
         final MapCodec<A> self = this;
         return new MapCodec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param map {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final B input,
@@ -191,6 +214,13 @@ public interface MapCodec<A> {
                 return self.encode(from.apply(input), ops, map);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<B> decode(@NotNull final DynamicOps<T> ops,
@@ -222,6 +252,14 @@ public interface MapCodec<A> {
         Preconditions.checkNotNull(from, "from must not be null");
         final MapCodec<A> self = this;
         return new MapCodec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param map {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final B input,
@@ -233,6 +271,13 @@ public interface MapCodec<A> {
                 return from.apply(input).flatMap(a -> self.encode(a, ops, map));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<B> decode(@NotNull final DynamicOps<T> ops,
@@ -311,6 +356,14 @@ public interface MapCodec<A> {
     default Codec<A> codec() {
         final MapCodec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input,
@@ -322,6 +375,13 @@ public interface MapCodec<A> {
                 return self.encode(input, ops, ops.emptyMap());
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,

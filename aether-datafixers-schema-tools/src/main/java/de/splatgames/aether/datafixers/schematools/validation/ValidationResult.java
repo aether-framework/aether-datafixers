@@ -346,6 +346,11 @@ public final class ValidationResult {
                 this.infoCount + other.infoCount);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     public String toString() {

@@ -341,6 +341,11 @@ public final class FixCoverage {
         return (coveredChanges * 100.0) / totalChanges;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     public String toString() {

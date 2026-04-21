@@ -657,6 +657,14 @@ public final class RecordCodecBuilder {
         public <A> MapCodec<A> point(@NotNull final A value) {
             Preconditions.checkNotNull(value, "value must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final A input,
@@ -668,6 +676,13 @@ public final class RecordCodecBuilder {
                     return DataResult.success(map);
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
@@ -711,6 +726,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -722,6 +745,13 @@ public final class RecordCodecBuilder {
                     return f1.codec.encode(f1.getter.apply(input), ops, map);
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -770,6 +800,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -782,6 +820,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f2.codec.encode(f2.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -836,6 +881,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -849,6 +902,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f3.codec.encode(f3.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -913,6 +973,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -927,6 +995,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f4.codec.encode(f4.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -1003,6 +1078,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -1018,6 +1101,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f5.codec.encode(f5.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -1102,6 +1192,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -1118,6 +1216,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f6.codec.encode(f6.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -1278,6 +1383,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -1295,6 +1408,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f7.codec.encode(f7.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
@@ -1398,6 +1518,14 @@ public final class RecordCodecBuilder {
             Preconditions.checkNotNull(instance, "instance must not be null");
             Preconditions.checkNotNull(constructor, "constructor must not be null");
             return new MapCodec<>() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param input {@inheritDoc}
+                 * @param ops {@inheritDoc}
+                 * @param map {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<T> encode(@NotNull final O input,
@@ -1416,6 +1544,13 @@ public final class RecordCodecBuilder {
                             .flatMap(m -> f8.codec.encode(f8.getter.apply(input), ops, m));
                 }
 
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param ops {@inheritDoc}
+                 * @param input {@inheritDoc}
+                 * @return {@inheritDoc}
+                 */
                 @NotNull
                 @Override
                 public <T> DataResult<O> decode(@NotNull final DynamicOps<T> ops,
