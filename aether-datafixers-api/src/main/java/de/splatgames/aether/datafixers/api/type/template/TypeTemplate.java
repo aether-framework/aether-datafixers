@@ -190,6 +190,12 @@ public interface TypeTemplate {
         Preconditions.checkNotNull(name, "name must not be null");
         final TypeTemplate self = this;
         return new TypeTemplate() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param family {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Type<?> apply(@NotNull final TypeFamily family) {
@@ -197,6 +203,11 @@ public interface TypeTemplate {
                 return self.apply(family);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String describe() {

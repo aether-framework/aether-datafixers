@@ -256,12 +256,10 @@ public class MigrationMetrics {
      * @param duration    the wall-clock duration of the migration, must not be {@code null}
      * @throws NullPointerException if domain or duration is {@code null}
      */
-    public void recordSuccess(
-            @NotNull final String domain,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Duration duration
-    ) {
+    public void recordSuccess(@NotNull final String domain,
+                              final int fromVersion,
+                              final int toVersion,
+                              @NotNull final Duration duration) {
         Preconditions.checkNotNull(domain, "domain must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
 
@@ -311,13 +309,11 @@ public class MigrationMetrics {
      * @param error       the exception that caused the migration to fail, must not be {@code null}
      * @throws NullPointerException if domain, duration, or error is {@code null}
      */
-    public void recordFailure(
-            @NotNull final String domain,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Duration duration,
-            @NotNull final Throwable error
-    ) {
+    public void recordFailure(@NotNull final String domain,
+                              final int fromVersion,
+                              final int toVersion,
+                              @NotNull final Duration duration,
+                              @NotNull final Throwable error) {
         Preconditions.checkNotNull(domain, "domain must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
         Preconditions.checkNotNull(error, "error must not be null");
@@ -373,6 +369,7 @@ public class MigrationMetrics {
      * @param domain the domain name to get or create a timer for
      * @return the Timer instance for the domain, never {@code null}
      */
+    @NotNull
     private Timer getOrCreateTimer(@NotNull final String domain) {
         return this.domainTimers.computeIfAbsent(domain, d ->
                 Timer.builder(METRIC_PREFIX + ".duration")
@@ -392,6 +389,7 @@ public class MigrationMetrics {
      * @param domain the domain name to get or create a counter for
      * @return the Counter instance for the domain, never {@code null}
      */
+    @NotNull
     private Counter getOrCreateSuccessCounter(@NotNull final String domain) {
         return this.domainSuccessCounters.computeIfAbsent(domain, d ->
                 Counter.builder(METRIC_PREFIX + ".success")
@@ -412,10 +410,9 @@ public class MigrationMetrics {
      * @param errorType the simple class name of the exception type
      * @return the Counter instance for the domain/error combination, never {@code null}
      */
-    private Counter getOrCreateFailureCounter(
-            @NotNull final String domain,
-            @NotNull final String errorType
-    ) {
+    @NotNull
+    private Counter getOrCreateFailureCounter(@NotNull final String domain,
+                                              @NotNull final String errorType) {
         final String key = domain + ":" + errorType;
         return this.domainFailureCounters.computeIfAbsent(key, k ->
                 Counter.builder(METRIC_PREFIX + ".failure")
@@ -440,6 +437,7 @@ public class MigrationMetrics {
      * @param domain the domain name to get or create a summary for
      * @return the DistributionSummary instance for the domain, never {@code null}
      */
+    @NotNull
     private DistributionSummary getOrCreateVersionSpan(@NotNull final String domain) {
         return this.domainVersionSpans.computeIfAbsent(domain, d ->
                 DistributionSummary.builder(METRIC_PREFIX + ".version.span")

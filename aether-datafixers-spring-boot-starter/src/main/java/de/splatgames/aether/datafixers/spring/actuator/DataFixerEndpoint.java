@@ -225,6 +225,7 @@ public class DataFixerEndpoint {
      *
      * @return the summary response containing all domain information
      */
+    @NotNull
     @ReadOperation
     public DataFixersSummary summary() {
         final Map<String, DomainSummary> domains = new LinkedHashMap<>();
@@ -276,7 +277,7 @@ public class DataFixerEndpoint {
      */
     @ReadOperation
     @Nullable
-    public DomainDetails domainDetails(@Selector final String domain) {
+    public DomainDetails domainDetails(@NotNull @Selector final String domain) {
         final AetherDataFixer fixer = this.registry.get(domain);
         if (fixer == null) {
             // Returning null from @ReadOperation with @Selector produces HTTP 404
@@ -366,6 +367,9 @@ public class DataFixerEndpoint {
 
         /**
          * Compact constructor that creates a defensive copy of the domains map.
+         *
+         * @param domains map of domain names to their summary information; may be {@code null}, in which case an empty
+         *                map is used
          */
         public DataFixersSummary {
             domains = domains != null ? Map.copyOf(domains) : Map.of();
@@ -439,8 +443,7 @@ public class DataFixerEndpoint {
                                 int currentVersion,
                                 String status,
                                 @Nullable String error,
-                                @Nullable FieldDiagnosticsSummary lastDiagnostics
-    ) {
+                                @Nullable FieldDiagnosticsSummary lastDiagnostics) {
     }
 
     /**
@@ -463,11 +466,18 @@ public class DataFixerEndpoint {
                                           long durationMs,
                                           int fixCount,
                                           int fieldOperationCount,
-                                          List<FieldOperationSummary> fieldOperations
-    ) {
+                                          List<FieldOperationSummary> fieldOperations) {
 
         /**
          * Compact constructor that creates a defensive copy of the field operations list.
+         *
+         * @param fromVersion         the source version of the diagnostic migration
+         * @param toVersion           the target version of the diagnostic migration
+         * @param durationMs          the migration duration in milliseconds
+         * @param fixCount            the number of fixes applied
+         * @param fieldOperationCount the total number of field operations
+         * @param fieldOperations     the individual field operation summaries; may be {@code null}, in which case an
+         *                            empty list is used
          */
         public FieldDiagnosticsSummary {
             fieldOperations = fieldOperations != null ? List.copyOf(fieldOperations) : List.of();
@@ -487,7 +497,6 @@ public class DataFixerEndpoint {
     public record FieldOperationSummary(String type,
                                         String field,
                                         @Nullable String target,
-                                        @Nullable String description
-    ) {
+                                        @Nullable String description) {
     }
 }

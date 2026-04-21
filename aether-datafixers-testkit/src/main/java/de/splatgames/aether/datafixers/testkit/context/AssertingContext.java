@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
  * A {@link DataFixerContext} that fails immediately or collects warnings for assertion.
  *
  * <p>This context implementation can be configured to either fail immediately
- * when a warning is logged, or to collect warnings for later assertion. This
- * is useful for tests that require strict "no warnings" behavior.</p>
+ * when a warning is logged, or to collect warnings for later assertion. This is useful for tests that require strict
+ * "no warnings" behavior.</p>
  *
  * <h2>Fail-Fast Mode</h2>
  * <pre>{@code
@@ -67,10 +67,25 @@ import java.util.stream.Collectors;
  */
 public final class AssertingContext implements DataFixerContext {
 
+    /**
+     * Defines the behavior of the AssertingContext when a warning is logged.
+     * <p>
+     *  <ul>
+     *     <li><strong>FAIL_ON_WARN</strong>: Throws an AssertionError immediately on any warn() call.</li>
+     *     <li><strong>COLLECT</strong>: Collects warning messages for later
+     *     assertion via warnings(), warningCount(), hasWarnings(), and assertNoWarnings().</li>
+     *     <li><strong>SILENT</strong>: Ignores all warn()
+     *     calls without throwing or collecting (useful when warnings are expected).</li>
+     *  </ul>
+     * </p>
+     */
     private final Mode mode;
+    /**
+     * In COLLECT mode, this list stores all formatted warning messages logged via warn().
+     */
     private final List<String> collectedWarnings;
 
-    private AssertingContext(final Mode mode) {
+    private AssertingContext(@NotNull final Mode mode) {
         this.mode = mode;
         this.collectedWarnings = new ArrayList<>();
     }
@@ -105,11 +120,59 @@ public final class AssertingContext implements DataFixerContext {
         return new AssertingContext(Mode.SILENT);
     }
 
+    /**
+     * Formats a message by replacing each occurrence of "{}" with the corresponding argument from args.
+     *
+     * <p>
+     * This is a simple implementation that mimics the behavior of common logging frameworks. It does not support
+     * escaping or advanced formatting features. If there are more placeholders than arguments, the remaining
+     * placeholders will be left as-is. If there are more arguments than placeholders, the extra arguments will be
+     * ignored.
+     * </p>
+     *
+     * @param message the message template containing "{}" placeholders
+     * @param args    the arguments to replace the placeholders, may be null or empty
+     * @return the formatted message with placeholders replaced by argument values
+     */
+    @NotNull
+    private static String formatMessage(@NotNull final String message, @NotNull final Object[] args) {
+        if (args == null || args.length == 0) {
+            return message;
+        }
+        final StringBuilder result = new StringBuilder(message);
+        for (final Object arg : args) {
+            final int idx = result.indexOf("{}");
+            if (idx < 0) {
+                break;
+            }
+            result.replace(idx, idx + 2, String.valueOf(arg));
+        }
+        return result.toString();
+    }
+
+    /**
+     * Logs an info message. This implementation does not perform any actual logging, but it can be extended to
+     * integrate with a logging framework if desired. Info messages are always allowed regardless of the mode.
+     *
+     * @param message the message template containing "{}" placeholders, must not be null
+     * @param args    the arguments to replace the placeholders, may be null or empty
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         // Info messages are always allowed
     }
 
+    /**
+     * Logs a warning message. The behavior depends on the configured mode:
+     * <ul>
+     *     <li><strong>FAIL_ON_WARN</strong>: Throws an AssertionError immediately with the formatted message.</li>
+     *     <li><strong>COLLECT</strong>: Adds the formatted message to the collectedWarnings list for later assertion.</li>
+     *     <li><strong>SILENT</strong>: Does nothing, effectively ignoring the warning.</li>
+     * </ul>
+     *
+     * @param message the message template containing "{}" placeholders, must not be null
+     * @param args    the arguments to replace the placeholders, may be null or empty
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
@@ -121,8 +184,6 @@ public final class AssertingContext implements DataFixerContext {
             case SILENT -> { /* ignore */ }
         }
     }
-
-    // ==================== Query Methods ====================
 
     /**
      * Returns all collected warnings (only in COLLECT mode).
@@ -152,8 +213,6 @@ public final class AssertingContext implements DataFixerContext {
         return !this.collectedWarnings.isEmpty();
     }
 
-    // ==================== Assertion Methods ====================
-
     /**
      * Asserts that no warnings were collected.
      *
@@ -175,26 +234,24 @@ public final class AssertingContext implements DataFixerContext {
         this.collectedWarnings.clear();
     }
 
-    // ==================== Internal ====================
-
-    private static String formatMessage(final String message, final Object[] args) {
-        if (args == null || args.length == 0) {
-            return message;
-        }
-        final StringBuilder result = new StringBuilder(message);
-        for (final Object arg : args) {
-            final int idx = result.indexOf("{}");
-            if (idx < 0) {
-                break;
-            }
-            result.replace(idx, idx + 2, String.valueOf(arg));
-        }
-        return result.toString();
-    }
-
+    /**
+     * Defines the behavior modes for the AssertingContext when handling warnings.
+     */
     private enum Mode {
+        /**
+         * In this mode, any call to warn() will immediately throw an AssertionError with the formatted message. This is
+         * useful for tests that require strict "no warnings" behavior.
+         */
         FAIL_ON_WARN,
+        /**
+         * In this mode, warn() calls will add the formatted message to the collectedWarnings list for later assertion.
+         * This allows tests to verify that certain warnings were logged without failing immediately.
+         */
         COLLECT,
+        /**
+         * In this mode, warn() calls will be ignored without throwing or collecting. This is useful for tests where
+         * warnings are expected and should not cause failures.
+         */
         SILENT
     }
 }

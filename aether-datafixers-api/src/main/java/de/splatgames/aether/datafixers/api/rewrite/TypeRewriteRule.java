@@ -199,13 +199,18 @@ public interface TypeRewriteRule {
      * @throws NullPointerException if {@code name} or {@code transformer} is {@code null}
      */
     @NotNull
-    static TypeRewriteRule simple(
-            @NotNull final String name,
-            @NotNull final Function<Typed<?>, Typed<?>> transformer
-    ) {
+    static TypeRewriteRule simple(@NotNull final String name,
+                                  @NotNull final Function<Typed<?>, Typed<?>> transformer) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(transformer, "transformer must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -215,6 +220,11 @@ public interface TypeRewriteRule {
                 return Optional.of(transformer.apply(input));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -260,6 +270,13 @@ public interface TypeRewriteRule {
         Preconditions.checkNotNull(targetType, "targetType must not be null");
         Preconditions.checkNotNull(transformer, "transformer must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type, @NotNull final Typed<?> input) {
@@ -272,6 +289,11 @@ public interface TypeRewriteRule {
                 return Optional.of(new Typed<>(targetType, transformer.apply(typed.value())));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -400,8 +422,6 @@ public interface TypeRewriteRule {
                 .flatMap(result -> next.rewrite(result.type(), result));
     }
 
-    // ==================== Static Factory Methods ====================
-
     /**
      * Creates a rule that tries this rule first, falling back to another on failure.
      *
@@ -522,6 +542,13 @@ public interface TypeRewriteRule {
         Preconditions.checkNotNull(name, "name must not be null");
         final TypeRewriteRule self = this;
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -531,6 +558,11 @@ public interface TypeRewriteRule {
                 return self.rewrite(type, input);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {

@@ -98,6 +98,7 @@ public class XmlJacksonFormatHandler implements FormatHandler<JsonNode> {
      * @param prettyPrint whether to enable indented output
      * @return a configured XmlMapper instance
      */
+    @NotNull
     private static XmlMapper createSecureMapper(final boolean prettyPrint) {
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);

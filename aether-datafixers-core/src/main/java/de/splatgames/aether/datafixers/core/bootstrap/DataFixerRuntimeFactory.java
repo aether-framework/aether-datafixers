@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
  * Factory for creating fully configured {@link AetherDataFixer} instances.
  *
  * <p>{@code DataFixerRuntimeFactory} simplifies the creation of data fixers by
- * orchestrating the bootstrap process. It creates the necessary registries,
- * invokes the bootstrap to populate them, and assembles the final fixer.</p>
+ * orchestrating the bootstrap process. It creates the necessary registries, invokes the bootstrap to populate them, and
+ * assembles the final fixer.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -68,7 +68,9 @@ import org.slf4j.LoggerFactory;
  * @since 0.1.0
  */
 public final class DataFixerRuntimeFactory {
-
+    /**
+     * Logger for this class.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(DataFixerRuntimeFactory.class);
 
     /**
@@ -80,10 +82,8 @@ public final class DataFixerRuntimeFactory {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public AetherDataFixer create(
-            @NotNull final DataVersion currentVersion,
-            @NotNull final DataFixerBootstrap bootstrap
-    ) {
+    public AetherDataFixer create(@NotNull final DataVersion currentVersion,
+                                  @NotNull final DataFixerBootstrap bootstrap) {
         Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
         Preconditions.checkNotNull(bootstrap, "bootstrap must not be null");
 

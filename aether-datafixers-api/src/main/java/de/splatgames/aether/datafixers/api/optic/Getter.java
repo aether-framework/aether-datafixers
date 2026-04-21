@@ -137,12 +137,23 @@ public interface Getter<S, A> {
     static <S, T, A, B> Getter<S, A> fromLens(@NotNull final Lens<S, T, A, B> lens) {
         Preconditions.checkNotNull(lens, "lens must not be null");
         return new Getter<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return lens.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A get(@NotNull final S source) {
@@ -188,12 +199,23 @@ public interface Getter<S, A> {
         Preconditions.checkNotNull(id, "id must not be null");
         Preconditions.checkNotNull(getter, "getter must not be null");
         return new Getter<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A get(@NotNull final S source) {
@@ -268,12 +290,23 @@ public interface Getter<S, A> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Getter<S, A> self = this;
         return new Getter<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public B get(@NotNull final S source) {

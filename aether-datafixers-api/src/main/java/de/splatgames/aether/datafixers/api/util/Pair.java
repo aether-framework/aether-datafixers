@@ -62,18 +62,27 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public final class Pair<F, S> {
-
+    /**
+     * The first and second values of the pair. Both may be null, as the pair does not impose any non-null constraints.
+     * They are final to ensure immutability.
+     */
+    @Nullable
     private final F first;
+    /**
+     * The second value of the pair. It may be null, as the pair does not impose any non-null constraints. It is final
+     * to ensure immutability.
+     */
+    @Nullable
     private final S second;
 
     /**
      * Private constructor to enforce usage of factory method.
      *
-     * @param first  the first value
-     * @param second the second value
+     * @param first  the first value, may be {@code null}
+     * @param second the second value, may be {@code null}
      */
-    private Pair(final F first,
-                 final S second) {
+    private Pair(@Nullable final F first,
+                 @Nullable final S second) {
         this.first = first;
         this.second = second;
     }
@@ -171,11 +180,12 @@ public final class Pair<F, S> {
      * // result = "value=42"
      * }</pre>
      *
-     * @param function the bi-function to apply to the pair's values
+     * @param function the bi-function to apply to the pair's values, must not be {@code null}
      * @param <R>      the return type of the function
-     * @return the result of applying the function to both values
+     * @return the result of applying the function to both values, never {@code null}
      * @throws NullPointerException if {@code function} is {@code null}
      */
+    @NotNull
     public <R> R apply(@NotNull final BiFunction<? super F, ? super S, ? extends R> function) {
         Preconditions.checkNotNull(function, "function must not be null");
         return function.apply(this.first, this.second);

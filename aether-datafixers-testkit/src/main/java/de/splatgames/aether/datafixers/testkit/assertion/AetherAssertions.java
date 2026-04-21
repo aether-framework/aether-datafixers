@@ -115,7 +115,7 @@ public final class AetherAssertions {
      * @return a new {@link DynamicAssert}
      */
     @NotNull
-    public static <T> DynamicAssert<T> assertThat(final Dynamic<T> actual) {
+    public static <T> DynamicAssert<T> assertThat(@NotNull final Dynamic<T> actual) {
         return new DynamicAssert<>(actual);
     }
 
@@ -127,7 +127,7 @@ public final class AetherAssertions {
      * @return a new {@link DataResultAssert}
      */
     @NotNull
-    public static <A> DataResultAssert<A> assertThat(final DataResult<A> actual) {
+    public static <A> DataResultAssert<A> assertThat(@NotNull final DataResult<A> actual) {
         return new DataResultAssert<>(actual);
     }
 
@@ -139,7 +139,7 @@ public final class AetherAssertions {
      * @return a new {@link TypedAssert}
      */
     @NotNull
-    public static <A> TypedAssert<A> assertThat(final Typed<A> actual) {
+    public static <A> TypedAssert<A> assertThat(@NotNull final Typed<A> actual) {
         return new TypedAssert<>(actual);
     }
 

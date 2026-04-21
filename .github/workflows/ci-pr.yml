@@ -80,6 +80,48 @@ jobs:
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
 
+  nullability:
+    name: NullAway Nullability Check
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run NullAway profile
+        run: mvn -B clean compile -Pnullability -Ddependency-check.skip=true
+
+  styleguard:
+    name: Aether Style Guard
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Aether Style Guard
+        run: mvn -B clean compile -Pstyleguard -Ddependency-check.skip=true
+
   quality:
     name: Code Quality Analysis
     runs-on: ubuntu-latest

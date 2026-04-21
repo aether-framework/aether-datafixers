@@ -169,12 +169,23 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
         Preconditions.checkNotNull(getter, "getter must not be null");
         Preconditions.checkNotNull(setter, "setter must not be null");
         return new Lens<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A get(@NotNull final S source) {
@@ -182,6 +193,13 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
                 return getter.apply(source);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param value {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S set(@NotNull final S source, @NotNull final A value) {
@@ -286,12 +304,23 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Lens<S, T, A, B> self = this;
         return new Lens<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public C get(@NotNull final S source) {
@@ -299,6 +328,13 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
                 return other.get(self.get(source));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param value {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T set(@NotNull final S source,
@@ -308,6 +344,12 @@ public interface Lens<S, T, A, B> extends Optic<S, T, A, B> {
                 return self.set(source, other.set(self.get(source), value));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param next {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {
                 Preconditions.checkNotNull(next, "next must not be null");

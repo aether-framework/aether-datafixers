@@ -100,10 +100,21 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.1.0
  */
 public abstract class SchemaDataFix implements DataFix<Object> {
-
+    /**
+     * The fix name for logging and debugging.
+     */
     private final String name;
+    /**
+     * The source version this fix migrates from.
+     */
     private final DataVersion from;
+    /**
+     * The target version this fix migrates to.
+     */
     private final DataVersion to;
+    /**
+     * The schema registry for accessing type definitions.
+     */
     private final SchemaRegistry schemas;
 
     /**
@@ -115,12 +126,10 @@ public abstract class SchemaDataFix implements DataFix<Object> {
      * @param schemas the schema registry for accessing type definitions, must not be {@code null}
      * @throws NullPointerException if any argument is {@code null}
      */
-    protected SchemaDataFix(
-            @NotNull final String name,
-            @NotNull final DataVersion from,
-            @NotNull final DataVersion to,
-            @NotNull final SchemaRegistry schemas
-    ) {
+    protected SchemaDataFix(@NotNull final String name,
+                            @NotNull final DataVersion from,
+                            @NotNull final DataVersion to,
+                            @NotNull final SchemaRegistry schemas) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(from, "from must not be null");
         Preconditions.checkNotNull(to, "to must not be null");
@@ -132,16 +141,37 @@ public abstract class SchemaDataFix implements DataFix<Object> {
         this.schemas = schemas;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns the name provided in the constructor.</p>
+     *
+     * @return the fix name, never {@code null}
+     */
     @Override
     public final @NotNull String name() {
         return this.name;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns the source version provided in the constructor.</p>
+     *
+     * @return the source version, never {@code null}
+     */
     @Override
     public final @NotNull DataVersion fromVersion() {
         return this.from;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns the target version provided in the constructor.</p>
+     *
+     * @return the target version, never {@code null}
+     */
     @Override
     public final @NotNull DataVersion toVersion() {
         return this.to;
@@ -151,27 +181,22 @@ public abstract class SchemaDataFix implements DataFix<Object> {
      * Creates the type rewrite rule for this fix.
      *
      * <p>Subclasses implement this method to define the data transformation
-     * using the type-safe rule API. Both input and output schemas are provided
-     * for accessing type definitions.</p>
+     * using the type-safe rule API. Both input and output schemas are provided for accessing type definitions.</p>
      *
      * @param inputSchema  the schema for the source version, never {@code null}
      * @param outputSchema the schema for the target version, never {@code null}
      * @return the rewrite rule to apply, never {@code null}
      */
-    protected abstract @NotNull TypeRewriteRule makeRule(
-            @NotNull Schema inputSchema,
-            @NotNull Schema outputSchema
-    );
+    protected abstract @NotNull TypeRewriteRule makeRule(@NotNull final Schema inputSchema,
+                                                         @NotNull final Schema outputSchema);
 
     /**
      * Introspects the rule produced by this fix without executing a migration.
      *
      * <p>This method exposes the {@link TypeRewriteRule} that this fix would apply
-     * for the given input and output schemas. It is intended for static analysis
-     * tools (e.g.,
-     * {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule field-level
-     * diagnostic analyzers}) that need to inspect what a fix does without actually
-     * running it on data.</p>
+     * for the given input and output schemas. It is intended for static analysis tools (e.g.,
+     * {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule field-level diagnostic analyzers}) that need to
+     * inspect what a fix does without actually running it on data.</p>
      *
      * <p>Unlike {@link #apply(TypeReference, Dynamic, DataFixerContext)}, this method:</p>
      * <ul>
@@ -206,21 +231,40 @@ public abstract class SchemaDataFix implements DataFix<Object> {
      * @see de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule
      * @since 1.0.0
      */
-    public final @NotNull TypeRewriteRule introspectRule(
-            @NotNull final Schema inputSchema,
-            @NotNull final Schema outputSchema
-    ) {
+    @NotNull
+    public final TypeRewriteRule introspectRule(@NotNull final Schema inputSchema,
+                                                @NotNull final Schema outputSchema) {
         Preconditions.checkNotNull(inputSchema, "inputSchema must not be null");
         Preconditions.checkNotNull(outputSchema, "outputSchema must not be null");
         return this.makeRule(inputSchema, outputSchema);
     }
 
+    /**
+     * Applies this fix to the given input data.
+     *
+     * <p>This method implements the {@link DataFix#apply} contract by:</p>
+     * <ol>
+     *   <li>Retrieving the input and output schemas from the registry</li>
+     *   <li>Creating the rewrite rule using {@link #makeRule(Schema, Schema)}</li>
+     *   <li>Wrapping the rule with diagnostics if enabled in the context</li>
+     *   <li>Applying the rule to the input data</li>
+     *   <li>Ensuring the output is a {@link Dynamic} and returning it</li>
+     * </ol>
+     *
+     * <p>Subclasses do not need to override this method; they only need to implement
+     * {@link #makeRule(Schema, Schema)} to define their transformation logic.</p>
+     *
+     * @param type    the type reference of the data being fixed, must not be {@code null}
+     * @param input   the input data to fix, must not be {@code null}
+     * @param context the context for this fix application, must not be {@code null}
+     * @return the fixed data as a Dynamic, never {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws FixException         if the rule produces an output that is not a Dynamic
+     */
     @Override
-    public final @NotNull Dynamic<Object> apply(
-            @NotNull final TypeReference type,
-            @NotNull final Dynamic<Object> input,
-            @NotNull final DataFixerContext context
-    ) {
+    public final @NotNull Dynamic<Object> apply(@NotNull final TypeReference type,
+                                                @NotNull final Dynamic<Object> input,
+                                                @NotNull final DataFixerContext context) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(context, "context must not be null");
@@ -237,8 +281,7 @@ public abstract class SchemaDataFix implements DataFix<Object> {
             rule = DiagnosticRuleWrapper.wrap(rule, dc);
         }
 
-        @SuppressWarnings("unchecked")
-        final Typed<?> typedIn = new Typed<>((Type<Object>) logical, input);
+        @SuppressWarnings("unchecked") final Typed<?> typedIn = new Typed<>((Type<Object>) logical, input);
         final Typed<?> typedOut = rule.apply(typedIn);
 
         if (!(typedOut.value() instanceof Dynamic)) {
@@ -248,8 +291,7 @@ public abstract class SchemaDataFix implements DataFix<Object> {
             );
         }
 
-        @SuppressWarnings("unchecked")
-        final Dynamic<Object> result = (Dynamic<Object>) typedOut.value();
+        @SuppressWarnings("unchecked") final Dynamic<Object> result = (Dynamic<Object>) typedOut.value();
 
         return result;
     }

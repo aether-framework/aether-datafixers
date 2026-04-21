@@ -96,8 +96,6 @@ import java.util.stream.Stream;
  */
 public interface DynamicOps<T> {
 
-    // ==================== Empty/Null ====================
-
     /**
      * Creates an empty/null value representation.
      *
@@ -130,8 +128,6 @@ public interface DynamicOps<T> {
      * @return an empty list
      */
     @NotNull T emptyList();
-
-    // ==================== Type Checks ====================
 
     /**
      * Checks if the given value is a map/object node.
@@ -172,8 +168,6 @@ public interface DynamicOps<T> {
      * @return {@code true} if the given value is a boolean
      */
     boolean isBoolean(@NotNull final T value);
-
-    // ==================== Primitive Creation ====================
 
     /**
      * Creates a string value.
@@ -247,8 +241,6 @@ public interface DynamicOps<T> {
      */
     @NotNull T createNumeric(@NotNull final Number value);
 
-    // ==================== Primitive Reading ====================
-
     /**
      * Reads a string value.
      *
@@ -272,8 +264,6 @@ public interface DynamicOps<T> {
      * @return the boolean value, or an error if not a boolean
      */
     @NotNull DataResult<Boolean> getBooleanValue(@NotNull final T input);
-
-    // ==================== List Operations ====================
 
     /**
      * Creates a list value from a stream of elements.
@@ -300,8 +290,6 @@ public interface DynamicOps<T> {
      */
     @NotNull DataResult<T> mergeToList(@NotNull final T list,
                                        @NotNull final T value);
-
-    // ==================== Map Operations ====================
 
     /**
      * Reads the value associated with {@code key} from the given map/object node.
@@ -394,8 +382,6 @@ public interface DynamicOps<T> {
      */
     @NotNull DataResult<T> mergeToMap(@NotNull final T map,
                                       @NotNull final T other);
-
-    // ==================== Conversion ====================
 
     /**
      * Converts a value from another DynamicOps representation.

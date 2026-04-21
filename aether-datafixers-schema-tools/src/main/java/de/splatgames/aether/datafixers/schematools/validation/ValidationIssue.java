@@ -88,28 +88,32 @@ public final class ValidationIssue {
     /**
      * The severity level of this issue (ERROR, WARNING, or INFO).
      */
+    @NotNull
     private final IssueSeverity severity;
 
     /**
      * A unique code identifying the type of issue (e.g., "STRUCTURE_CYCLE").
      */
+    @NotNull
     private final String code;
 
     /**
      * A human-readable description of the issue.
      */
+    @NotNull
     private final String message;
 
     /**
-     * The location where the issue was found (e.g., "Schema@100/player").
-     * May be {@code null} if no specific location applies.
+     * The location where the issue was found (e.g., "Schema@100/player"). May be {@code null} if no specific location
+     * applies.
      */
+    @Nullable
     private final String location;
 
     /**
-     * Additional contextual information as key-value pairs.
-     * Always non-null but may be empty.
+     * Additional contextual information as key-value pairs. Always non-null but may be empty.
      */
+    @NotNull
     private final Map<String, Object> context;
 
     /**
@@ -124,13 +128,11 @@ public final class ValidationIssue {
      * @param location the location where found, may be {@code null}
      * @param context  additional context, must not be {@code null}
      */
-    private ValidationIssue(
-            @NotNull final IssueSeverity severity,
-            @NotNull final String code,
-            @NotNull final String message,
-            @Nullable final String location,
-            @NotNull final Map<String, Object> context
-    ) {
+    private ValidationIssue(@NotNull final IssueSeverity severity,
+                            @NotNull final String code,
+                            @NotNull final String message,
+                            @Nullable final String location,
+                            @NotNull final Map<String, Object> context) {
         this.severity = Preconditions.checkNotNull(severity, "severity must not be null");
         this.code = Preconditions.checkNotNull(code, "code must not be null");
         this.message = Preconditions.checkNotNull(message, "message must not be null");

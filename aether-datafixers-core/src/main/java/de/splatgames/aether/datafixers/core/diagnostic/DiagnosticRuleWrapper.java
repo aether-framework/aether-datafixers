@@ -79,10 +79,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
      * @param context  the diagnostic context for recording, must not be {@code null}
      * @throws NullPointerException if any argument is {@code null}
      */
-    public DiagnosticRuleWrapper(
-            @NotNull final TypeRewriteRule delegate,
-            @NotNull final DiagnosticContext context
-    ) {
+    public DiagnosticRuleWrapper(@NotNull final TypeRewriteRule delegate,
+                                 @NotNull final DiagnosticContext context) {
         Preconditions.checkNotNull(delegate, "delegate must not be null");
         Preconditions.checkNotNull(context, "context must not be null");
 
@@ -106,10 +104,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
      */
     @Override
     @NotNull
-    public Optional<Typed<?>> rewrite(
-            @NotNull final Type<?> type,
-            @NotNull final Typed<?> input
-    ) {
+    public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
+                                      @NotNull final Typed<?> input) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(input, "input must not be null");
         // Only capture details if configured to do so
@@ -286,10 +282,8 @@ public final class DiagnosticRuleWrapper implements TypeRewriteRule {
      * @return the wrapped rule
      */
     @NotNull
-    public static TypeRewriteRule wrap(
-            @NotNull final TypeRewriteRule rule,
-            @NotNull final DiagnosticContext context
-    ) {
+    public static TypeRewriteRule wrap(@NotNull final TypeRewriteRule rule,
+                                       @NotNull final DiagnosticContext context) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         Preconditions.checkNotNull(context, "context must not be null");
         if (rule instanceof DiagnosticRuleWrapper) {

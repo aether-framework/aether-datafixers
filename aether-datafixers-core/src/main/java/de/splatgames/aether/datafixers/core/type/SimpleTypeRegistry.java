@@ -60,9 +60,32 @@ import java.util.Set;
  */
 public final class SimpleTypeRegistry implements TypeRegistry {
 
+    /**
+     * The backing map storing type registrations keyed by their type reference.
+     *
+     * <p>This field is initially a mutable {@link HashMap} and is replaced with an
+     * unmodifiable copy when the registry is {@link #freeze() frozen}.</p>
+     */
     private Map<TypeReference, Type<?>> types = new HashMap<>();
+
+    /**
+     * Whether this registry has been frozen and is now immutable.
+     *
+     * <p>Marked {@code volatile} to ensure visibility across threads after
+     * {@link #freeze()} is called.</p>
+     */
     private volatile boolean frozen = false;
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>In this implementation, registering a type whose {@link Type#reference()}
+     * matches an already registered type will silently replace the existing registration.</p>
+     *
+     * @param type the type to register; must not be {@code null}
+     * @throws NullPointerException  if {@code type} is {@code null}
+     * @throws IllegalStateException if this registry has been {@link #freeze() frozen}
+     */
     @Override
     public void register(@NotNull final Type<?> type) {
         Preconditions.checkNotNull(type, "type must not be null");
@@ -71,6 +94,13 @@ public final class SimpleTypeRegistry implements TypeRegistry {
         this.types.put(type.reference(), type);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param ref the type reference to look up; must not be {@code null}
+     * @return the type for the given reference, or {@code null} if not registered
+     * @throws NullPointerException if {@code ref} is {@code null}
+     */
     @Override
     @Nullable
     public Type<?> get(@NotNull final TypeReference ref) {
@@ -79,6 +109,13 @@ public final class SimpleTypeRegistry implements TypeRegistry {
         return this.types.get(ref);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param ref the type reference to check; must not be {@code null}
+     * @return {@code true} if a type is registered for the given reference; {@code false} otherwise
+     * @throws NullPointerException if {@code ref} is {@code null}
+     */
     @Override
     public boolean has(@NotNull final TypeReference ref) {
         Preconditions.checkNotNull(ref, "ref must not be null");
@@ -86,12 +123,28 @@ public final class SimpleTypeRegistry implements TypeRegistry {
         return this.types.containsKey(ref);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>If the registry is frozen, the backing map's key set is returned directly
+     * (already unmodifiable). Otherwise, a defensive copy is returned.</p>
+     *
+     * @return an unmodifiable set of all registered type references; never {@code null}
+     */
     @NotNull
     @Override
     public Set<TypeReference> references() {
         return this.frozen ? this.types.keySet() : Set.copyOf(this.types.keySet());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation is {@code synchronized} and idempotent. On the first call,
+     * the mutable {@link HashMap} backing store is replaced with an unmodifiable copy via
+     * {@link Map#copyOf(Map)}, and the {@link #frozen} flag is set to {@code true}. Subsequent
+     * calls have no effect.</p>
+     */
     @Override
     public synchronized void freeze() {
         if (!this.frozen) {
@@ -100,6 +153,11 @@ public final class SimpleTypeRegistry implements TypeRegistry {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code true} if this registry has been frozen; {@code false} otherwise
+     */
     @Override
     public boolean isFrozen() {
         return this.frozen;

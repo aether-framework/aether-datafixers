@@ -30,6 +30,8 @@ import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkBootstrap;
 import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkDataGenerator;
 import de.splatgames.aether.datafixers.benchmarks.util.PayloadSize;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -43,8 +45,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for chained DataFix application performance.
@@ -244,7 +244,7 @@ public class MultiFixChainBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void renameChain(final Blackhole blackhole) {
+    public void renameChain(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = this.chainFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.input,
@@ -271,7 +271,7 @@ public class MultiFixChainBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void mixedChain(final Blackhole blackhole) {
+    public void mixedChain(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = this.mixedFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.input,
@@ -297,7 +297,7 @@ public class MultiFixChainBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void partialChain(final Blackhole blackhole) {
+    public void partialChain(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = this.chainFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.input,

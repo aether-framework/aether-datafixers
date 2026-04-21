@@ -61,8 +61,13 @@ import java.util.TreeMap;
  * @since 0.1.0
  */
 public final class DataFixRegistry {
-
+    /**
+     * The main storage map: TypeReference -> (DataVersion -> List<DataFix>)
+     */
     private Map<TypeReference, NavigableMap<DataVersion, List<DataFix<?>>>> fixesByType = new HashMap<>();
+    /**
+     * Indicates whether this registry is frozen (immutable). Once frozen, no further modifications are allowed.
+     */
     private volatile boolean frozen = false;
 
     /**
@@ -134,11 +139,9 @@ public final class DataFixRegistry {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public List<DataFix<?>> getFixes(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion fromInclusive,
-            @NotNull final DataVersion toInclusive
-    ) {
+    public List<DataFix<?>> getFixes(@NotNull final TypeReference type,
+                                     @NotNull final DataVersion fromInclusive,
+                                     @NotNull final DataVersion toInclusive) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fromInclusive, "fromInclusive must not be null");
         Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");
@@ -192,11 +195,9 @@ public final class DataFixRegistry {
      * @return {@code true} if fixes exist in the range, {@code false} otherwise
      * @throws NullPointerException if any argument is {@code null}
      */
-    public boolean hasFixesInRange(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion fromExclusive,
-            @NotNull final DataVersion toInclusive
-    ) {
+    public boolean hasFixesInRange(@NotNull final TypeReference type,
+                                   @NotNull final DataVersion fromExclusive,
+                                   @NotNull final DataVersion toInclusive) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fromExclusive, "fromExclusive must not be null");
         Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");

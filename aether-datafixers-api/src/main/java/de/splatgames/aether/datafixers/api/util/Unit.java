@@ -140,6 +140,7 @@ public final class Unit implements Serializable {
      *
      * @return {@link #INSTANCE}
      */
+    @NotNull
     @Serial
     private Object readResolve() {
         return INSTANCE;

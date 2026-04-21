@@ -346,6 +346,7 @@ public final class BenchmarkBootstrap {
      * @param fixType     the fix type selector (0=rename, 1=add, 2=remove, 3=transform)
      * @return a DataFix of the specified type
      */
+    @NotNull
     private static DataFix<JsonElement> createMixedFix(final int fromVersion,
                                                        final int toVersion,
                                                        final int fixType) {

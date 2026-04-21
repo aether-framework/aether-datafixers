@@ -105,8 +105,6 @@ import java.util.function.Function;
  */
 public interface Codec<A> extends Encoder<A>, Decoder<A> {
 
-    // ==================== Core Operations ====================
-
     /**
      * Creates a codec from separate encoder and decoder implementations.
      *
@@ -128,6 +126,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(encoder, "encoder must not be null");
         Preconditions.checkNotNull(decoder, "decoder must not be null");
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input, @NotNull final DynamicOps<T> ops, @NotNull final T prefix) {
@@ -137,6 +143,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return encoder.encode(input, ops, prefix);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops, @NotNull final T input) {
@@ -166,6 +179,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
     static <A> Codec<A> unit(@NotNull final A value) {
         Preconditions.checkNotNull(value, "value must not be null");
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input, @NotNull final DynamicOps<T> ops, @NotNull final T prefix) {
@@ -175,6 +196,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return DataResult.success(prefix);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops, @NotNull final T input) {
@@ -184,8 +212,6 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
             }
         };
     }
-
-    // ==================== Convenience Methods ====================
 
     /**
      * Creates a codec for an {@link Either} type using two separate codecs.
@@ -274,8 +300,6 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
     @Override
     <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,
                                       @NotNull final T input);
-
-    // ==================== Combinators ====================
 
     /**
      * Encodes a value to a dynamic representation starting from an empty prefix.
@@ -406,6 +430,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(from, "from must not be null");
         final Codec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final B input,
@@ -417,6 +449,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return self.encode(from.apply(input), ops, prefix);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<B, T>> decode(@NotNull final DynamicOps<T> ops,
@@ -465,6 +504,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(from, "from must not be null");
         final Codec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final B input,
@@ -476,6 +523,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return from.apply(input).flatMap(a -> self.encode(a, ops, prefix));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<B, T>> decode(@NotNull final DynamicOps<T> ops,
@@ -508,6 +562,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(from, "from must not be null");
         final Codec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final B input,
@@ -519,6 +581,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return self.encode(from.apply(input), ops, prefix);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<B, T>> decode(@NotNull final DynamicOps<T> ops,
@@ -551,6 +620,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(from, "from must not be null");
         final Codec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final B input,
@@ -562,6 +639,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return from.apply(input).flatMap(a -> self.encode(a, ops, prefix));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<B, T>> decode(@NotNull final DynamicOps<T> ops,
@@ -630,6 +714,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(name, "name must not be null");
         final Codec<A> self = this;
         return new MapCodec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param map {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input,
@@ -642,6 +734,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                         ops.mergeToMap(map, ops.createString(name), v));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<A> decode(@NotNull final DynamicOps<T> ops,
@@ -656,8 +755,6 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
             }
         };
     }
-
-    // ==================== Factory Methods ====================
 
     /**
      * Creates a {@link MapCodec} for an optional field with the given name.
@@ -678,6 +775,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(name, "name must not be null");
         final Codec<A> self = this;
         return new MapCodec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param map {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final Optional<A> input,
@@ -691,6 +796,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                         .orElseGet(() -> DataResult.success(map));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Optional<A>> decode(@NotNull final DynamicOps<T> ops,
@@ -753,6 +865,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(name, "name must not be null");
         final Codec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input,
@@ -764,6 +884,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return self.encode(input, ops, prefix).mapError(e -> name + ": " + e);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,
@@ -794,6 +921,14 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Codec<A> self = this;
         return new Codec<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param input {@inheritDoc}
+             * @param ops {@inheritDoc}
+             * @param prefix {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<T> encode(@NotNull final A input,
@@ -809,6 +944,13 @@ public interface Codec<A> extends Encoder<A>, Decoder<A> {
                 return other.encode(input, ops, prefix);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param ops {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <T> DataResult<Pair<A, T>> decode(@NotNull final DynamicOps<T> ops,

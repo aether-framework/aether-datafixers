@@ -97,11 +97,9 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
      *
      * @param actual the DataResult to assert on
      */
-    public DataResultAssert(final DataResult<A> actual) {
+    public DataResultAssert(@NotNull final DataResult<A> actual) {
         super(actual, DataResultAssert.class);
     }
-
-    // ==================== Status Assertions ====================
 
     /**
      * Asserts that the DataResult is a success.
@@ -162,8 +160,6 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
         return this;
     }
 
-    // ==================== Value Assertions ====================
-
     /**
      * Asserts that the DataResult has the expected value.
      *
@@ -216,8 +212,6 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
         }
         return this;
     }
-
-    // ==================== Error Message Assertions ====================
 
     /**
      * Asserts that the error message equals the expected message.
@@ -314,8 +308,6 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
         return this;
     }
 
-    // ==================== Extraction ====================
-
     /**
      * Extracts the value for further assertions.
      *
@@ -354,8 +346,6 @@ public final class DataResultAssert<A> extends AbstractAssert<DataResultAssert<A
         this.hasPartialResult();
         return Assertions.assertThat(this.actual.partialResult().orElse(null));
     }
-
-    // ==================== Utility ====================
 
     /**
      * Applies custom validation using a consumer.

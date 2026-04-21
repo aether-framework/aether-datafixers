@@ -178,8 +178,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         // Singleton - use INSTANCE
     }
 
-    // ==================== Empty/Null Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -198,8 +196,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
     public JsonElement empty() {
         return JsonNull.INSTANCE;
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -286,8 +282,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isJsonPrimitive() && value.getAsJsonPrimitive().isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -463,8 +457,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return new JsonPrimitive(value);
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -576,8 +568,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         }
         return DataResult.success(primitive.getAsBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -691,8 +681,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         result.add(value);
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -822,10 +810,9 @@ public final class GsonOps implements DynamicOps<JsonElement> {
      */
     @NotNull
     @Override
-    public DataResult<JsonElement> mergeToMap(
-            @NotNull final JsonElement map,
-            @NotNull final JsonElement key,
-            @NotNull final JsonElement value) {
+    public DataResult<JsonElement> mergeToMap(@NotNull final JsonElement map,
+                                              @NotNull final JsonElement key,
+                                              @NotNull final JsonElement value) {
         Preconditions.checkNotNull(map, "map must not be null");
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
@@ -1032,8 +1019,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         }
         return input.getAsJsonObject().has(key);
     }
-
-    // ==================== Conversion Operations ====================
 
     /**
      * {@inheritDoc}

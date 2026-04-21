@@ -147,10 +147,8 @@ public class DefaultMigrationService implements MigrationService {
      * @param metrics  the metrics recorder for tracking migration statistics, may be {@code null}
      * @throws NullPointerException if registry is {@code null}
      */
-    public DefaultMigrationService(
-            @NotNull final DataFixerRegistry registry,
-            @Nullable final MigrationMetrics metrics
-    ) {
+    public DefaultMigrationService(@NotNull final DataFixerRegistry registry,
+                                   @Nullable final MigrationMetrics metrics) {
         this(registry, metrics, ForkJoinPool.commonPool());
     }
 
@@ -171,11 +169,9 @@ public class DefaultMigrationService implements MigrationService {
      * @param asyncExecutor the executor for async operations, must not be {@code null}
      * @throws NullPointerException if registry or asyncExecutor is {@code null}
      */
-    public DefaultMigrationService(
-            @NotNull final DataFixerRegistry registry,
-            @Nullable final MigrationMetrics metrics,
-            @NotNull final Executor asyncExecutor
-    ) {
+    public DefaultMigrationService(@NotNull final DataFixerRegistry registry,
+                                   @Nullable final MigrationMetrics metrics,
+                                   @NotNull final Executor asyncExecutor) {
         this.registry = Preconditions.checkNotNull(registry, "registry must not be null");
         this.metrics = metrics;
         this.asyncExecutor = Preconditions.checkNotNull(asyncExecutor, "asyncExecutor must not be null");

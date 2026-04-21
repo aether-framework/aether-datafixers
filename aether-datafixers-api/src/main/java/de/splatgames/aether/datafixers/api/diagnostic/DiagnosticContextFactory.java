@@ -45,5 +45,5 @@ public interface DiagnosticContextFactory {
      * @return a new diagnostic context, never {@code null}
      */
     @NotNull
-    DiagnosticContext create(@NotNull DiagnosticOptions options);
+    DiagnosticContext create(@NotNull final DiagnosticOptions options);
 }

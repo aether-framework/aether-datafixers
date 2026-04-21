@@ -86,8 +86,6 @@ public final class FieldOperationAssert extends AbstractAssert<FieldOperationAss
         super(actual, FieldOperationAssert.class);
     }
 
-    // ==================== Operation Type ====================
-
     /**
      * Asserts that the field operation has the given operation type.
      *
@@ -103,8 +101,6 @@ public final class FieldOperationAssert extends AbstractAssert<FieldOperationAss
         }
         return this;
     }
-
-    // ==================== Field Path ====================
 
     /**
      * Asserts that the field operation's path equals the given segments.
@@ -177,8 +173,6 @@ public final class FieldOperationAssert extends AbstractAssert<FieldOperationAss
         return this;
     }
 
-    // ==================== Target Field Name ====================
-
     /**
      * Asserts that the field operation has the given target field name.
      *
@@ -214,8 +208,6 @@ public final class FieldOperationAssert extends AbstractAssert<FieldOperationAss
         }
         return this;
     }
-
-    // ==================== Description ====================
 
     /**
      * Asserts that the field operation has the given description.

@@ -311,8 +311,8 @@ public final class BenchmarkDataGenerator {
      * @param depth   remaining nesting levels (stops when depth reaches 0)
      * @param <T>     the underlying value type of the builder
      */
-    private static <T> void addNestedObject(final TestDataBuilder<T> builder,
-                                            final String key,
+    private static <T> void addNestedObject(@NotNull final TestDataBuilder<T> builder,
+                                            @NotNull final String key,
                                             final int depth) {
         if (depth <= 0) {
             return;

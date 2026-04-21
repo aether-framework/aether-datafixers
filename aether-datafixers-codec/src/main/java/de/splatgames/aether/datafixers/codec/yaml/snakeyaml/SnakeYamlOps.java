@@ -278,8 +278,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         // Singleton - use INSTANCE
     }
 
-    // ==================== Empty/Null Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -304,8 +302,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     public Object empty() {
         return YamlNull.INSTANCE;
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -392,8 +388,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof Boolean;
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -557,8 +551,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return value;
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -653,8 +645,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         }
         return DataResult.success((Boolean) input);
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -770,8 +760,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         result.add(deepCopy(value));
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1124,8 +1112,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return ((Map<String, Object>) input).containsKey(key);
     }
 
-    // ==================== Conversion Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -1221,8 +1207,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         // Fallback: return the NULL sentinel for unknown/empty types
         return empty();
     }
-
-    // ==================== Helper Methods ====================
 
     /**
      * Creates a deep copy of the given value.
@@ -1320,8 +1304,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     public String toString() {
         return "SnakeYamlOps";
     }
-
-    // ==================== Static Utility Methods ====================
 
     /**
      * Checks whether the given value is the YAML null sentinel.
@@ -1450,8 +1432,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return value;
     }
 
-    // ==================== Inner Classes ====================
-
     /**
      * Sentinel class representing the YAML null value.
      *
@@ -1480,6 +1460,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
          *
          * @return the string {@code "null"}
          */
+        @NotNull
         @Override
         public String toString() {
             return "null";
