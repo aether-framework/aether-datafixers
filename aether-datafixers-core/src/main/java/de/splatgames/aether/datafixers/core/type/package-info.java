@@ -45,15 +45,15 @@
  *
  * <h2>Type Lookup</h2>
  * <pre>{@code
- * // Get type registry from schema
- * Schema schema = schemaRegistry.get(version);
- * TypeRegistry types = schema.typeRegistry();
+ * // Get the type registry from a schema
+ * Schema schema = schemaRegistry.require(version);
+ * TypeRegistry types = schema.types();
  *
- * // Lookup type by reference
- * Type<?> playerType = types.get(TypeReferences.PLAYER);
+ * // Look up a type by reference
+ * Type<?> playerType = types.require(TypeReferences.PLAYER);
  *
- * // Use type for encoding/decoding
- * DataResult<?> decoded = playerType.codec().decode(dynamic);
+ * // Decode raw data using the type's codec
+ * DataResult<?> decoded = playerType.codec().parse(dynamic);
  * }</pre>
  *
  * <h2>Relationship to Schemas</h2>

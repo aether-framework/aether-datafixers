@@ -29,6 +29,7 @@
  *
  * <h2>Benchmark Classes</h2>
  * <table border="1">
+ *   <caption>Concurrent benchmark classes and their focus areas</caption>
  *   <tr>
  *     <th>Class</th>
  *     <th>Focus Area</th>
@@ -85,6 +86,7 @@
  * <h2>Interpreting Concurrent Results</h2>
  * <p>Concurrent benchmark results require careful interpretation:</p>
  * <table border="1">
+ *   <caption>Concurrent result patterns and recommended actions</caption>
  *   <tr><th>Pattern</th><th>Meaning</th><th>Action</th></tr>
  *   <tr>
  *     <td>Linear throughput scaling</td>

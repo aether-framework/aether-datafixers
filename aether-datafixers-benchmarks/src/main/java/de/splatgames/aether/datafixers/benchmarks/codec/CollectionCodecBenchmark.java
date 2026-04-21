@@ -75,12 +75,14 @@ import java.util.concurrent.TimeUnit;
  *
  * <h2>Parameters</h2>
  * <table border="1">
+ *   <caption>Benchmark parameters and their tested values</caption>
  *   <tr><th>Parameter</th><th>Values</th><th>Description</th></tr>
  *   <tr><td>listSize</td><td>10, 100, 1000</td><td>Number of elements in the test list</td></tr>
  * </table>
  *
  * <h2>Benchmark Configuration</h2>
  * <table border="1">
+ *   <caption>JMH configuration settings for this benchmark</caption>
  *   <tr><th>Setting</th><th>Value</th></tr>
  *   <tr><td>Warmup</td><td>5 iterations, 1 second each</td></tr>
  *   <tr><td>Measurement</td><td>10 iterations, 1 second each</td></tr>
@@ -91,6 +93,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <h2>Test Data Generation</h2>
  * <table border="1">
+ *   <caption>Test data element patterns by collection type</caption>
  *   <tr><th>Collection</th><th>Element Pattern</th><th>Example (size=3)</th></tr>
  *   <tr><td>String List</td><td>{@code "item-" + index}</td><td>["item-0", "item-1", "item-2"]</td></tr>
  *   <tr><td>Integer List</td><td>{@code index}</td><td>[0, 1, 2]</td></tr>

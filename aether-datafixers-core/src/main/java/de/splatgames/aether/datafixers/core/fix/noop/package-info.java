@@ -36,14 +36,16 @@
  * </ul>
  *
  * <h2>Usage</h2>
+ * <p>The no-op context is the implicit default: the 4-argument
+ * {@link de.splatgames.aether.datafixers.api.fix.DataFixer#update(de.splatgames.aether.datafixers.api.TypeReference, de.splatgames.aether.datafixers.api.dynamic.Dynamic, de.splatgames.aether.datafixers.api.DataVersion, de.splatgames.aether.datafixers.api.DataVersion) DataFixer.update}
+ * overload uses it internally. Pass
+ * {@link de.splatgames.aether.datafixers.core.fix.noop.NoOpDataFixerContext#INSTANCE}
+ * explicitly to the 5-argument overload when you want to opt out of any
+ * logging without creating a {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}:</p>
  * <pre>{@code
- * // Create a silent data fixer
- * AetherDataFixer fixer = new DataFixerRuntimeFactory()
- *     .withContext(NoOpDataFixerContext.INSTANCE)
- *     .create(currentVersion, bootstrap);
- *
- * // Fix execution produces no output
- * fixer.update(data, fromVersion, toVersion);
+ * fixer.update(
+ *     type, input, fromVersion, toVersion,
+ *     NoOpDataFixerContext.INSTANCE);
  * }</pre>
  *
  * <h2>When to Use</h2>

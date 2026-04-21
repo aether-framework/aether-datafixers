@@ -39,51 +39,73 @@ import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * High-level facade for the Aether DataFixers system.
+ * High-level facade for the Aether Datafixers system.
  *
- * <p>{@code AetherDataFixer} provides a unified interface for encoding, decoding,
- * and migrating data across versions. It combines a {@link SchemaRegistry} for type definitions with a
- * {@link DataFixer} for version migrations.</p>
+ * <p>{@code AetherDataFixer} provides a unified, object-oriented interface
+ * for encoding, decoding, and migrating data across versions. It wraps a
+ * {@link SchemaRegistry} for type definitions and a {@link DataFixer} for
+ * version migrations, and offers conveniences for working with
+ * {@link TaggedDynamic} (type-annotated data) instead of raw
+ * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}.</p>
  *
  * <h2>Core Operations</h2>
  * <ul>
- *   <li>{@link #encode} - Serialize a Java object to a tagged dynamic format</li>
- *   <li>{@link #decode} - Deserialize a tagged dynamic to a Java object</li>
- *   <li>{@link #update} - Migrate data between versions</li>
+ *   <li>{@link #encode(DataVersion, TypeReference, Object, DynamicOps) encode} —
+ *       Serialize a Java object to a tagged dynamic format via the schema
+ *       codec.</li>
+ *   <li>{@link #decode(DataVersion, TaggedDynamic) decode} — Deserialize a
+ *       tagged dynamic to a Java object via the schema codec.</li>
+ *   <li>{@link #update(TaggedDynamic, DataVersion, DataVersion) update} — Run
+ *       the fix chain to migrate data from one version to another, preserving
+ *       the {@link TypeReference} tag.</li>
+ *   <li>{@link #update(TaggedDynamic, DataVersion, DataVersion, DataFixerContext) update}
+ *       — Same as above but with an explicit
+ *       {@link DataFixerContext}; pass a
+ *       {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}
+ *       to collect a
+ *       {@link de.splatgames.aether.datafixers.api.diagnostic.MigrationReport}.</li>
  * </ul>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
- * // Create the fixer using the factory
+ * // Build the fixer from a bootstrap
  * AetherDataFixer fixer = new DataFixerRuntimeFactory()
  *     .create(new DataVersion(5), myBootstrap);
  *
- * // Encode an object
+ * // Encode a Java object into a tagged JSON representation
  * TaggedDynamic encoded = fixer.encode(
  *     fixer.currentVersion(),
  *     TypeReferences.PLAYER,
  *     player,
- *     GsonOps.INSTANCE
- * );
+ *     GsonOps.INSTANCE);
  *
- * // Update old data to current version
+ * // Migrate legacy data up to the current version
  * TaggedDynamic updated = fixer.update(
  *     oldData,
- *     DataVersion.of(1),
- *     fixer.currentVersion()
- * );
+ *     new DataVersion(1),
+ *     fixer.currentVersion());
  *
- * // Decode to Java object
- * Player loadedPlayer = fixer.decode(fixer.currentVersion(), updated);
+ * // Decode back into a Java object using the current schema
+ * Player loaded = fixer.decode(fixer.currentVersion(), updated);
  * }</pre>
  *
+ * <h2>When to Use What</h2>
+ * <p>If you already have a plain {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic},
+ * call the underlying {@link DataFixer#update(TypeReference,
+ * de.splatgames.aether.datafixers.api.dynamic.Dynamic, DataVersion, DataVersion)
+ * DataFixer.update} directly. Use the {@code TaggedDynamic}-based methods here
+ * when you want the type tag to flow through the pipeline together with the
+ * data.</p>
+ *
  * <h2>Thread Safety</h2>
- * <p>This class is thread-safe if the underlying registries and fixer are thread-safe.</p>
+ * <p>This class is thread-safe provided the underlying registries and
+ * {@link DataFixer} are thread-safe (the stock implementations are).</p>
  *
  * @author Erik Pförtner
  * @see DataFixer
  * @see SchemaRegistry
  * @see DataFixerRuntimeFactory
+ * @see de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext
  * @since 0.1.0
  */
 public final class AetherDataFixer {

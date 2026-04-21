@@ -29,6 +29,7 @@
  *
  * <h2>Benchmark Classes</h2>
  * <table border="1">
+ *   <caption>Format benchmark classes and their compared formats</caption>
  *   <tr>
  *     <th>Class</th>
  *     <th>Formats Compared</th>
@@ -58,6 +59,7 @@
  *
  * <h2>Supported DynamicOps Implementations</h2>
  * <table border="1">
+ *   <caption>Supported DynamicOps implementations by format</caption>
  *   <tr><th>Format</th><th>Implementation</th><th>Library</th><th>Node Type</th></tr>
  *   <tr><td rowspan="2">JSON</td><td>GsonOps</td><td>Google Gson</td><td>JsonElement</td></tr>
  *   <tr><td>JacksonJsonOps</td><td>Jackson Databind</td><td>JsonNode</td></tr>
@@ -103,6 +105,7 @@
  * <h2>Choosing a DynamicOps Implementation</h2>
  * <p>Use these benchmark results to guide implementation selection:</p>
  * <table border="1">
+ *   <caption>Recommended DynamicOps implementation by scenario</caption>
  *   <tr><th>Scenario</th><th>Recommended</th><th>Rationale</th></tr>
  *   <tr>
  *     <td>General JSON processing</td>

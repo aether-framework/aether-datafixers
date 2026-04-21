@@ -69,11 +69,13 @@ import org.jetbrains.annotations.NotNull;
  * </ol>
  *
  * <h2>Usage</h2>
+ * <p>A bootstrap is consumed by
+ * {@code de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory}
+ * to assemble an executable {@link DataFixer}:</p>
  * <pre>{@code
  * DataFixerBootstrap bootstrap = new MyDataFixerBootstrap();
- * DataFixer fixer = DataFixerBuilder.create()
- *     .bootstrap(bootstrap)
- *     .build();
+ * DataFixer fixer = new DataFixerRuntimeFactory()
+ *     .create(new DataVersion(200), bootstrap);
  * }</pre>
  *
  * @author Erik Pförtner

@@ -62,8 +62,9 @@ import java.util.stream.StreamSupport;
  * // Encode a value to JSON using a codec
  * DataResult<JsonElement> encoded = playerCodec.encodeStart(GsonOps.INSTANCE, player);
  *
- * // Decode JSON to a typed value
- * DataResult<Player> decoded = playerCodec.decode(GsonOps.INSTANCE, jsonElement);
+ * // Decode JSON to a typed value. Use parse() when you only want the value;
+ * // decode() additionally returns the unconsumed remainder of the input.
+ * DataResult<Player> decoded = playerCodec.parse(GsonOps.INSTANCE, jsonElement);
  * }</pre>
  *
  * <h3>Creating Dynamic Wrappers</h3>

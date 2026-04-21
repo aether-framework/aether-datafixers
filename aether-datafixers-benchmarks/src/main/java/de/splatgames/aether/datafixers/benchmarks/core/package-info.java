@@ -30,6 +30,7 @@
  *
  * <h2>Benchmark Classes</h2>
  * <table border="1">
+ *   <caption>Core benchmark classes and their focus areas</caption>
  *   <tr>
  *     <th>Class</th>
  *     <th>Focus Area</th>

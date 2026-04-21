@@ -21,72 +21,77 @@
  */
 
 /**
- * Domain-Specific Language (DSL) for defining type templates and schemas.
+ * Domain-Specific Language (DSL) for defining type templates.
  *
- * <p>This package provides a fluent API for constructing type templates that
- * describe the structure of data at a particular schema version. The DSL enables declarative type definitions that can
- * be composed and referenced across schemas.</p>
+ * <p>This package provides a fluent API for constructing
+ * {@link de.splatgames.aether.datafixers.api.type.template.TypeTemplate TypeTemplate}s
+ * that describe the structure of data at a particular schema version. Type
+ * templates are second-order: they are instantiated against a
+ * {@link de.splatgames.aether.datafixers.api.type.template.TypeFamily} to
+ * produce concrete {@link de.splatgames.aether.datafixers.api.type.Type}
+ * instances.</p>
  *
  * <h2>Key Class</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.dsl.DSL} - The main entry point
- *       providing factory methods for all type template primitives and combinators.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.dsl.DSL} — Factory class
+ *       holding all primitive, compound, field, advanced, and optic-related
+ *       combinators. {@code DSL} is the canonical entry point; do not
+ *       instantiate {@code TypeTemplate}s by hand.</li>
  * </ul>
  *
- * <h2>Type Template Primitives</h2>
- * <p>The DSL provides primitives for common data structures:</p>
+ * <h2>Primitive Templates</h2>
+ * <p>Primitives correspond to the value types supported by
+ * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}:</p>
  * <ul>
- *   <li>{@code DSL.string()} - String values</li>
- *   <li>{@code DSL.intType()} - Integer values</li>
- *   <li>{@code DSL.bool()} - Boolean values</li>
- *   <li>{@code DSL.optional(template)} - Optional/nullable values</li>
- *   <li>{@code DSL.list(template)} - List/array values</li>
- *   <li>{@code DSL.compoundList(keyTemplate, valueTemplate)} - Map structures</li>
+ *   <li>{@code DSL.string()}, {@code DSL.bool()}</li>
+ *   <li>{@code DSL.byteType()}, {@code DSL.shortType()}, {@code DSL.intType()},
+ *       {@code DSL.longType()}</li>
+ *   <li>{@code DSL.floatType()}, {@code DSL.doubleType()}</li>
  * </ul>
  *
- * <h2>Compound Types</h2>
- * <p>Complex structures are built using field combinators:</p>
+ * <h2>Compound and Field Templates</h2>
+ * <p>Compound templates are assembled with the {@code and}/{@code or} product
+ * and sum combinators, and fields are declared with {@code field} /
+ * {@code optionalField}. Use {@link de.splatgames.aether.datafixers.api.dsl.DSL#remainder()}
+ * to capture fields not covered by an explicit declaration:</p>
  * <pre>{@code
- * // Define a player type with nested position
- * TypeTemplate playerTemplate = DSL.allWithRemainder(
- *     DSL.field("name", DSL.string()),
+ * TypeTemplate playerTemplate = DSL.and(
+ *     DSL.field("name",  DSL.string()),
  *     DSL.field("level", DSL.intType()),
- *     DSL.field("position", DSL.allWithRemainder(
+ *     DSL.field("position", DSL.and(
  *         DSL.field("x", DSL.doubleType()),
  *         DSL.field("y", DSL.doubleType()),
  *         DSL.field("z", DSL.doubleType())
- *     ))
+ *     )),
+ *     DSL.optionalField("inventory", DSL.list(DSL.string())),
+ *     DSL.remainder()
  * );
+ *
+ * // Instantiate against a type family to get a concrete Type<?>
+ * Type<?> playerType = playerTemplate.apply(TypeFamily.empty());
  * }</pre>
  *
- * <h2>Type References</h2>
- * <p>The DSL supports referencing other registered types, enabling recursive
- * and cross-referenced type definitions:</p>
- * <pre>{@code
- * // Reference another type by its TypeReference
- * TypeTemplate entityTemplate = DSL.allWithRemainder(
- *     DSL.field("id", DSL.string()),
- *     DSL.field("inventory", DSL.list(DSL.ref(TypeReferences.ITEM)))
- * );
- * }</pre>
+ * <h2>Discriminated Unions and Recursion</h2>
+ * <p>Use {@link de.splatgames.aether.datafixers.api.dsl.DSL#taggedChoice(String, java.util.Map) taggedChoice}
+ * for tagged sum types (e.g. polymorphic entities), and
+ * {@link de.splatgames.aether.datafixers.api.dsl.DSL#named(String, de.splatgames.aether.datafixers.api.type.template.TypeTemplate) named}
+ * + {@link de.splatgames.aether.datafixers.api.dsl.DSL#recursive(String, java.util.function.Function) recursive}
+ * for self-referential data (e.g. trees, linked lists).</p>
  *
- * <h2>Schema Integration</h2>
- * <p>Type templates are registered in schemas to define the data structure
- * at a particular version:</p>
- * <pre>{@code
- * public class Schema100 extends Schema {
- *     @Override
- *     protected void registerTypes() {
- *         registerType(TypeReferences.PLAYER, DSL.allWithRemainder(
- *             DSL.field("name", DSL.string()),
- *             DSL.field("xp", DSL.intType())
- *         ));
- *     }
- * }
- * }</pre>
+ * <h2>Optic Helpers</h2>
+ * <p>The DSL also exposes {@link de.splatgames.aether.datafixers.api.dsl.DSL#fieldFinder(String) fieldFinder},
+ * {@link de.splatgames.aether.datafixers.api.dsl.DSL#indexFinder(int) indexFinder}, and
+ * {@link de.splatgames.aether.datafixers.api.dsl.DSL#remainderFinder(String...) remainderFinder}
+ * for building {@link de.splatgames.aether.datafixers.api.optic.Finder}
+ * instances used by the rewrite rules.</p>
+ *
+ * <h2>Thread Safety</h2>
+ * <p>All factory methods return immutable, thread-safe values. Templates can
+ * be constructed once at startup and shared freely.</p>
  *
  * @see de.splatgames.aether.datafixers.api.dsl.DSL
  * @see de.splatgames.aether.datafixers.api.type.template.TypeTemplate
+ * @see de.splatgames.aether.datafixers.api.type.template.TypeFamily
  * @see de.splatgames.aether.datafixers.api.schema.Schema
  * @since 0.1.0
  */

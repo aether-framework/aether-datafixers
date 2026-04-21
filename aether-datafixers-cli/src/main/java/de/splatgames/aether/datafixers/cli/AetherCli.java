@@ -60,7 +60,7 @@ import java.util.concurrent.Callable;
 @Command(
         name = "aether-cli",
         mixinStandardHelpOptions = true,
-        version = "Aether Datafixers CLI 0.3.0",
+        version = "Aether Datafixers CLI 1.0.0",
         description = "Command-line data migration tool using Aether Datafixers.",
         subcommands = {
                 MigrateCommand.class,

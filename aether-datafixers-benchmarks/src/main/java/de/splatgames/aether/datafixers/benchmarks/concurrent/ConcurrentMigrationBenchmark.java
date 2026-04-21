@@ -80,6 +80,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <h2>Thread Configuration</h2>
  * <table border="1">
+ *   <caption>Thread counts used by each concurrent benchmark</caption>
  *   <tr><th>Benchmark</th><th>Threads</th><th>Purpose</th></tr>
  *   <tr><td>concurrentSingleFix</td><td>MAX (all available)</td><td>Maximum contention stress test</td></tr>
  *   <tr><td>concurrentChainMigration</td><td>MAX</td><td>Chain migration under full load</td></tr>
@@ -91,12 +92,14 @@ import java.util.concurrent.TimeUnit;
  *
  * <h2>Parameters</h2>
  * <table border="1">
+ *   <caption>Benchmark parameters and their tested values</caption>
  *   <tr><th>Parameter</th><th>Values</th><th>Description</th></tr>
  *   <tr><td>payloadSize</td><td>SMALL, MEDIUM</td><td>Input data complexity per thread</td></tr>
  * </table>
  *
  * <h2>Benchmark Configuration</h2>
  * <table border="1">
+ *   <caption>JMH configuration settings for this benchmark</caption>
  *   <tr><th>Setting</th><th>Value</th></tr>
  *   <tr><td>Warmup</td><td>3 iterations, 2 seconds each</td></tr>
  *   <tr><td>Measurement</td><td>5 iterations, 2 seconds each</td></tr>

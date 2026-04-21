@@ -82,6 +82,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <h2>Conversion Matrix</h2>
  * <table border="1">
+ *   <caption>Supported format-to-format conversions</caption>
  *   <tr>
  *     <th>From \ To</th>
  *     <th>Gson</th>
@@ -121,12 +122,14 @@ import java.util.concurrent.TimeUnit;
  *
  * <h2>Parameters</h2>
  * <table border="1">
+ *   <caption>Benchmark parameters and their tested values</caption>
  *   <tr><th>Parameter</th><th>Values</th><th>Description</th></tr>
  *   <tr><td>payloadSize</td><td>SMALL, MEDIUM</td><td>Test data complexity</td></tr>
  * </table>
  *
  * <h2>Benchmark Configuration</h2>
  * <table border="1">
+ *   <caption>JMH configuration settings for this benchmark</caption>
  *   <tr><th>Setting</th><th>Value</th></tr>
  *   <tr><td>Warmup</td><td>5 iterations, 1 second each</td></tr>
  *   <tr><td>Measurement</td><td>10 iterations, 1 second each</td></tr>

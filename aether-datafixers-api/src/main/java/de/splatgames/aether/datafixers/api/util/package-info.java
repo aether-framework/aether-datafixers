@@ -24,65 +24,75 @@
  * Utility types for functional programming patterns.
  *
  * <p>This package provides fundamental algebraic data types used throughout
- * the Aether Datafixers framework. These types enable functional programming patterns and are used extensively in the
- * codec and optics APIs.</p>
+ * the Aether Datafixers framework. These types enable functional programming
+ * patterns and are used extensively by the codec and optics APIs.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.util.Pair} - A simple tuple
- *       holding two values of potentially different types. Used for representing
- *       key-value pairs, function results with multiple values, and codec outputs.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.util.Either} - A sum type
- *       representing a value that is either a "left" or "right" variant. Used for
- *       representing success/failure, alternatives, and union types.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.util.Unit} - A singleton type
- *       with only one value, representing "no information". Used as a return type
- *       for side-effecting operations and as a placeholder in generic contexts.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.util.Pair} — A simple
+ *       immutable tuple holding two values of potentially different types.
+ *       Used for representing key/value pairs, function results with multiple
+ *       values, and codec decode outputs.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.util.Either} — A sum type
+ *       representing a value that is either a {@code Left} or a {@code Right}
+ *       variant. Used for success/failure without exceptions and for tagged
+ *       alternatives.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.util.Unit} — A singleton
+ *       type with only one value, representing "no information". Used as a
+ *       return type for side-effecting operations and as a placeholder in
+ *       generic contexts.</li>
  * </ul>
  *
  * <h2>Pair Usage</h2>
  * <pre>{@code
- * // Create a pair
  * Pair<String, Integer> pair = Pair.of("Alice", 30);
  *
- * // Access components
- * String name = pair.first();   // "Alice"
- * Integer age = pair.second();  // 30
+ * // Accessors (no "get" prefix)
+ * String  name = pair.first();    // "Alice"
+ * Integer age  = pair.second();   // 30
  *
- * // Transform components
- * Pair<String, Integer> older = pair.mapSecond(a -> a + 1);
+ * // Transform individual components — returns a new Pair
+ * Pair<String, Integer> older  = pair.mapSecond(a -> a + 1);
+ * Pair<Integer, Integer> sizes = pair.mapFirst(String::length);
  * }</pre>
  *
  * <h2>Either Usage</h2>
+ * <p>{@link de.splatgames.aether.datafixers.api.util.Either#map(java.util.function.Function) Either.map}
+ * transforms the right side only. To collapse an {@code Either} to a single
+ * value, use {@code fold} with a handler for each side:</p>
  * <pre>{@code
- * // Create Either values
- * Either<String, Integer> left = Either.left("error message");
+ * Either<String, Integer> left  = Either.left("error message");
  * Either<String, Integer> right = Either.right(42);
  *
- * // Pattern match
- * String result = either.map(
+ * // Collapse both sides to a single value
+ * String result = right.fold(
  *     error -> "Failed: " + error,
- *     value -> "Success: " + value
- * );
+ *     value -> "Success: " + value);
  *
- * // Transform right value
- * Either<String, Integer> doubled = either.mapRight(x -> x * 2);
+ * // Transform just the right side
+ * Either<String, Integer> doubled = right.map(x -> x * 2);
+ *
+ * // Transform just the left side (e.g. to rewrite an error label)
+ * Either<String, Integer> wrapped = left.mapLeft(err -> "wrapped: " + err);
  * }</pre>
  *
  * <h2>Unit Usage</h2>
  * <pre>{@code
- * // Unit has only one value
+ * // Unit has exactly one inhabitant
  * Unit unit = Unit.INSTANCE;
  *
- * // Used in generic contexts where no value is needed
- * Codec<Unit> unitCodec = Codecs.unit(Unit.INSTANCE);
+ * // Used as a generic placeholder for "no payload"
+ * Codec<Unit> marker = Codecs.unit(Unit.INSTANCE);
  * }</pre>
  *
  * <h2>Relationship to Standard Types</h2>
  * <ul>
- *   <li>{@code Pair<A, B>} is similar to {@code Map.Entry<A, B>} but immutable</li>
- *   <li>{@code Either<L, R>} is similar to {@code Optional} but with error info</li>
- *   <li>{@code Unit} is similar to {@code Void} but is instantiable</li>
+ *   <li>{@code Pair<A, B>} is similar to {@link java.util.Map.Entry Map.Entry}
+ *       but is immutable and non-null at construction.</li>
+ *   <li>{@code Either<L, R>} is a tagged two-variant sum — stronger than
+ *       {@link java.util.Optional Optional} because the absent case carries
+ *       information.</li>
+ *   <li>{@code Unit} is similar to {@code Void} but is instantiable.</li>
  * </ul>
  *
  * @see de.splatgames.aether.datafixers.api.util.Pair

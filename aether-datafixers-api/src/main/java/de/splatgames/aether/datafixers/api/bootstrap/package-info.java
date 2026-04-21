@@ -21,54 +21,69 @@
  */
 
 /**
- * Bootstrap interfaces for initializing the data fixer system.
+ * Bootstrap interfaces for initialising the data fixer system.
  *
  * <p>This package provides the contract for setting up a complete data fixer
- * instance with all required schemas and fixes. The bootstrap pattern separates the definition of schemas and fixes
- * from the runtime construction of the data fixer.</p>
+ * instance with all required schemas and fixes. The bootstrap pattern separates
+ * the <i>definition</i> of schemas and fixes from the <i>runtime construction</i>
+ * of the data fixer, so an application declares its migration graph once and
+ * lets the core module assemble the executable pipeline.</p>
  *
  * <h2>Key Interface</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap} -
+ *   <li>{@link de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap} —
  *       The main interface that applications implement to register their schemas
- *       and data fixes. Implementations define the complete migration graph for
- *       an application's data model.</li>
+ *       and data fixes. Each implementation describes the complete migration
+ *       graph for an application's data model.</li>
  * </ul>
  *
  * <h2>Usage Pattern</h2>
  * <p>Applications typically create a single bootstrap implementation that
- * registers all schemas and fixes:</p>
+ * registers all schemas and all fixes. Fixes are always registered against a
+ * {@link de.splatgames.aether.datafixers.api.TypeReference} so the runtime knows
+ * which data stream each fix applies to:</p>
  * <pre>{@code
  * public class MyGameBootstrap implements DataFixerBootstrap {
  *
  *     public static final DataVersion CURRENT_VERSION = new DataVersion(200);
  *
+ *     public static final TypeReference PLAYER = new TypeReference("player");
+ *     public static final TypeReference WORLD  = new TypeReference("world");
+ *
  *     @Override
  *     public void registerSchemas(SchemaRegistry schemas) {
- *         schemas.register(new DataVersion(100), new Schema100());
- *         schemas.register(new DataVersion(110), new Schema110());
- *         schemas.register(new DataVersion(200), new Schema200());
+ *         // Each Schema couples a DataVersion with its TypeRegistry.
+ *         schemas.register(new Schema(new DataVersion(100), buildV100Types()));
+ *         schemas.register(new Schema(new DataVersion(110), buildV110Types()));
+ *         schemas.register(new Schema(new DataVersion(200), buildV200Types()));
  *     }
  *
  *     @Override
  *     public void registerFixes(FixRegistrar fixes) {
- *         fixes.register(new PlayerV1ToV2Fix());
- *         fixes.register(new PlayerV2ToV3Fix());
+ *         // Every fix targets a specific TypeReference.
+ *         fixes.register(PLAYER, new PlayerV1ToV2Fix());
+ *         fixes.register(PLAYER, new PlayerV2ToV3Fix());
+ *         fixes.registerAll(WORLD, List.of(
+ *             new WorldTerrainUpgradeFix(),
+ *             new WorldBiomeMigrationFix()));
  *     }
  * }
  * }</pre>
  *
- * <h2>Integration with Runtime</h2>
- * <p>The bootstrap is consumed by a factory in the core module to create
- * the actual {@link de.splatgames.aether.datafixers.api.fix.DataFixer}:</p>
+ * <h2>Integration with the Runtime</h2>
+ * <p>The bootstrap is consumed by
+ * {@code de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory}
+ * to assemble the
+ * {@link de.splatgames.aether.datafixers.api.fix.DataFixer}:</p>
  * <pre>{@code
- * AetherDataFixer fixer = new DataFixerRuntimeFactory()
+ * DataFixer fixer = new DataFixerRuntimeFactory()
  *     .create(MyGameBootstrap.CURRENT_VERSION, new MyGameBootstrap());
  * }</pre>
  *
  * @see de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap
  * @see de.splatgames.aether.datafixers.api.schema.SchemaRegistry
  * @see de.splatgames.aether.datafixers.api.fix.FixRegistrar
+ * @see de.splatgames.aether.datafixers.api.fix.DataFixer
  * @since 0.1.0
  */
 package de.splatgames.aether.datafixers.api.bootstrap;

@@ -24,74 +24,96 @@
  * Schema definitions associating versions with type registries.
  *
  * <p>This package provides the infrastructure for defining data schemas at
- * specific versions. A schema describes the structure of all data types at a particular version, enabling the data
- * fixer to understand what transformations are needed between versions.</p>
+ * specific versions. A schema describes the structure of all data types at a
+ * particular version, enabling the data fixer to understand what
+ * transformations are needed between versions.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.schema.Schema} - Abstract base
- *       class for schema definitions. Each version of your data format should
- *       have a corresponding Schema subclass.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.schema.SchemaRegistry} - Registry
- *       for associating {@link de.splatgames.aether.datafixers.api.DataVersion}
- *       instances with their Schema definitions.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.schema.Schema} — Concrete
+ *       class that pairs a {@link de.splatgames.aether.datafixers.api.DataVersion}
+ *       with a {@link de.splatgames.aether.datafixers.api.type.TypeRegistry}.
+ *       Can be instantiated directly or subclassed to inherit types from a
+ *       parent schema.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.schema.SchemaRegistry} —
+ *       Registry that maps {@code DataVersion}s to their {@code Schema}
+ *       definitions.</li>
  * </ul>
  *
  * <h2>Schema Hierarchy</h2>
- * <p>Schemas typically form a chain where each version inherits from or references
- * the previous version. This enables incremental schema definitions:</p>
+ * <p>Schemas typically form a chain where each version inherits from the
+ * previous one, enabling incremental definitions: a child schema only needs
+ * to register the types that changed.</p>
  * <pre>
- * Schema100 (v1.0.0) → Schema110 (v1.1.0) → Schema200 (v2.0.0)
- *    │                     │                    │
- *    └─ Initial types      └─ Add fields        └─ Restructure
+ * Schema100 (v1.0.0) &#x2192; Schema110 (v1.1.0) &#x2192; Schema200 (v2.0.0)
+ *    &#x2502;                     &#x2502;                    &#x2502;
+ *    &#x2514; Initial types       &#x2514; Add fields         &#x2514; Restructure
  * </pre>
  *
  * <h2>Implementing a Schema</h2>
+ * <p>Subclass {@code Schema} using the {@code (int versionId, Schema parent)}
+ * constructor and override {@link de.splatgames.aether.datafixers.api.schema.Schema#registerTypes() registerTypes}.
+ * Inside that method, call {@code registerType(TypeReference, TypeTemplate)}
+ * with a DSL template. Use {@link de.splatgames.aether.datafixers.api.dsl.DSL#and(de.splatgames.aether.datafixers.api.type.template.TypeTemplate...) DSL.and}
+ * plus {@link de.splatgames.aether.datafixers.api.dsl.DSL#remainder() DSL.remainder()}
+ * to allow fields not declared explicitly to pass through:</p>
  * <pre>{@code
  * public class Schema100 extends Schema {
- *
  *     public Schema100() {
- *         super(new DataVersion(100), null); // No parent for first version
+ *         super(100, null); // First version — no parent
+ *     }
+ *
+ *     @Override
+ *     protected TypeRegistry createTypeRegistry() {
+ *         return new SimpleTypeRegistry();
  *     }
  *
  *     @Override
  *     protected void registerTypes() {
- *         // Define PLAYER type using the DSL
- *         registerType(TypeReferences.PLAYER, DSL.allWithRemainder(
+ *         registerType(TypeReferences.PLAYER, DSL.and(
  *             DSL.field("playerName", DSL.string()),
- *             DSL.field("xp", DSL.intType()),
- *             DSL.field("x", DSL.doubleType()),
- *             DSL.field("y", DSL.doubleType()),
- *             DSL.field("z", DSL.doubleType()),
- *             DSL.field("gameMode", DSL.intType())
+ *             DSL.field("xp",         DSL.intType()),
+ *             DSL.field("x",          DSL.doubleType()),
+ *             DSL.field("y",          DSL.doubleType()),
+ *             DSL.field("z",          DSL.doubleType()),
+ *             DSL.field("gameMode",   DSL.intType()),
+ *             DSL.remainder()
  *         ));
  *     }
  * }
  *
  * public class Schema110 extends Schema {
- *
  *     public Schema110(Schema parent) {
- *         super(new DataVersion(110), parent);
+ *         super(110, parent); // Inherits from Schema100
+ *     }
+ *
+ *     @Override
+ *     protected TypeRegistry createTypeRegistry() {
+ *         return new SimpleTypeRegistry();
  *     }
  *
  *     @Override
  *     protected void registerTypes() {
- *         // PLAYER type with restructured position
- *         registerType(TypeReferences.PLAYER, DSL.allWithRemainder(
- *             DSL.field("name", DSL.string()),        // Renamed
- *             DSL.field("experience", DSL.intType()), // Renamed
- *             DSL.field("position", DSL.allWithRemainder(
+ *         // Only types that changed need to be re-registered
+ *         registerType(TypeReferences.PLAYER, DSL.and(
+ *             DSL.field("name",       DSL.string()),   // renamed from "playerName"
+ *             DSL.field("experience", DSL.intType()),  // renamed from "xp"
+ *             DSL.field("position", DSL.and(
  *                 DSL.field("x", DSL.doubleType()),
  *                 DSL.field("y", DSL.doubleType()),
  *                 DSL.field("z", DSL.doubleType())
  *             )),
- *             DSL.field("gameMode", DSL.string())     // Changed type
+ *             DSL.field("gameMode",   DSL.string()),   // type changed int -> string
+ *             DSL.remainder()
  *         ));
  *     }
  * }
  * }</pre>
  *
  * <h2>Registering Schemas</h2>
+ * <p>Both overloads of {@link de.splatgames.aether.datafixers.api.schema.SchemaRegistry#register(de.splatgames.aether.datafixers.api.schema.Schema) register}
+ * accept a schema; the single-argument version uses {@link de.splatgames.aether.datafixers.api.schema.Schema#version() Schema.version()}
+ * as the key:</p>
  * <pre>{@code
  * public class MyBootstrap implements DataFixerBootstrap {
  *     @Override
@@ -100,12 +122,17 @@
  *         Schema s110 = new Schema110(s100);
  *         Schema s200 = new Schema200(s110);
  *
- *         schemas.register(s100.version(), s100);
- *         schemas.register(s110.version(), s110);
- *         schemas.register(s200.version(), s200);
+ *         schemas.register(s100);
+ *         schemas.register(s110);
+ *         schemas.register(s200);
  *     }
  * }
  * }</pre>
+ *
+ * <h2>Direct (Non-Subclassed) Schemas</h2>
+ * <p>If you already have a fully-built {@link de.splatgames.aether.datafixers.api.type.TypeRegistry},
+ * use {@code new Schema(version, typeRegistry)} directly — no subclassing
+ * required.</p>
  *
  * @see de.splatgames.aether.datafixers.api.schema.Schema
  * @see de.splatgames.aether.datafixers.api.schema.SchemaRegistry

@@ -30,6 +30,7 @@
  *
  * <h2>Benchmark Classes</h2>
  * <table border="1">
+ *   <caption>Codec benchmark classes and their focus areas</caption>
  *   <tr>
  *     <th>Class</th>
  *     <th>Focus Area</th>
@@ -105,6 +106,7 @@
  *
  * <h2>Interpreting Codec Results</h2>
  * <table border="1">
+ *   <caption>Common result observations and their interpretations</caption>
  *   <tr><th>Observation</th><th>Meaning</th><th>Action</th></tr>
  *   <tr>
  *     <td>Encode slower than decode</td>

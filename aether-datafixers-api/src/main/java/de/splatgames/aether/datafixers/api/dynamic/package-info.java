@@ -24,61 +24,75 @@
  * Format-agnostic data representation for the data fixing system.
  *
  * <p>This package provides the core abstraction that enables the data fixer to
- * operate on any serialization format (JSON, NBT, YAML, etc.) without being coupled to a specific implementation. Data
- * is represented as a generic tree structure that can be traversed and manipulated uniformly.</p>
+ * operate on any serialization format (JSON, NBT, YAML, etc.) without being
+ * coupled to a specific implementation. Data is represented as a generic tree
+ * structure that can be traversed and manipulated uniformly.</p>
  *
  * <h2>Key Classes</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.Dynamic} - A wrapper
- *       that pairs a value with its {@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps},
- *       enabling manipulation without knowing the underlying format. This is the
- *       primary type passed through data fixes.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps} - The operations
- *       interface that defines how to read, write, and transform values in a specific
- *       format. Implementations exist for JSON, NBT, and other formats.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic} - A Dynamic
- *       that includes a {@link de.splatgames.aether.datafixers.api.TypeReference}
- *       to indicate what type of data it represents.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.Dynamic} — Wrapper
+ *       pairing a value with its
+ *       {@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps}. This
+ *       is the primary type passed through data fixes. All mutators return
+ *       new instances — {@code Dynamic} is immutable.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps} —
+ *       Operations interface that defines how to read, write, and transform
+ *       values in a specific format. Implementations ship in the
+ *       {@code aether-datafixers-codec} module for Gson and Jackson.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic} —
+ *       A {@code Dynamic} annotated with a
+ *       {@link de.splatgames.aether.datafixers.api.TypeReference} indicating
+ *       what logical type the data represents.</li>
  * </ul>
  *
  * <h2>The Dynamic Pattern</h2>
- * <p>The Dynamic wrapper enables format-agnostic data manipulation:</p>
+ * <p>{@code Dynamic} values are immutable. Every accessor returns a
+ * {@link de.splatgames.aether.datafixers.api.result.DataResult} (never a bare
+ * {@code Optional}), and every mutator returns a new {@code Dynamic} sharing
+ * the same {@code DynamicOps}. {@code set} requires the new value to be
+ * another {@code Dynamic} with matching ops:</p>
  * <pre>{@code
- * // Create a Dynamic from JSON
- * Dynamic<JsonElement> jsonDynamic = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+ * // Create a Dynamic from a JsonElement
+ * Dynamic<JsonElement> json = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
  *
  * // Read fields without knowing the format
- * Optional<String> name = jsonDynamic.get("name").asString();
- * Optional<Integer> level = jsonDynamic.get("level").asInt();
+ * String  name  = json.get("name").asString().result().orElse("unknown");
+ * int     level = json.get("level").asInt().result().orElse(0);
  *
- * // Modify fields
- * Dynamic<JsonElement> updated = jsonDynamic.set("level", level.orElse(0) + 1);
+ * // Mutate fields (returns a new Dynamic)
+ * Dynamic<JsonElement> bumped = json.set("level", json.createInt(level + 1));
  *
- * // The same code works with NBT
- * Dynamic<NbtCompound> nbtDynamic = new Dynamic<>(NbtOps.INSTANCE, nbtCompound);
- * Optional<String> name = nbtDynamic.get("name").asString(); // Same API!
+ * // The same API works against any backing format
+ * Dynamic<JsonNode> jackson = new Dynamic<>(JacksonOps.INSTANCE, jsonNode);
+ * String name2 = jackson.get("name").asString().result().orElse("unknown");
  * }</pre>
  *
  * <h2>DynamicOps Implementations</h2>
- * <p>The {@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps} interface
- * must be implemented for each serialization format. Common implementations include:</p>
+ * <p>The {@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps}
+ * interface must be implemented once per serialization format. The
+ * {@code aether-datafixers-codec} module provides:</p>
  * <ul>
- *   <li>GsonOps - For Gson/JSON</li>
- *   <li>NbtOps - For Minecraft NBT</li>
- *   <li>JsonOps - For generic JSON</li>
+ *   <li>{@code de.splatgames.aether.datafixers.codec.gson.GsonOps} — Gson
+ *       {@code JsonElement}.</li>
+ *   <li>{@code de.splatgames.aether.datafixers.codec.jackson.JacksonOps} —
+ *       Jackson {@code JsonNode}.</li>
  * </ul>
+ * <p>Additional format adapters can be written by implementing
+ * {@code DynamicOps} directly.</p>
  *
  * <h2>Data Flow</h2>
  * <pre>
- * Input Data (e.g., JSON file)
- *     ↓
- * DynamicOps.parse() → Dynamic&lt;T&gt;
- *     ↓
- * DataFixer.update() applies fixes
- *     ↓
- * Dynamic&lt;T&gt; → DynamicOps.serialize()
- *     ↓
- * Output Data
+ * Input bytes / string (e.g., JSON file)
+ *     &#x2193;
+ *   format parser (Gson, Jackson, ...)
+ *     &#x2193;
+ *   new Dynamic&lt;T&gt;(ops, value)
+ *     &#x2193;
+ *   DataFixer.update() applies fixes
+ *     &#x2193;
+ *   dynamic.getValue() + format serializer
+ *     &#x2193;
+ * Output bytes / string
  * </pre>
  *
  * @see de.splatgames.aether.datafixers.api.dynamic.Dynamic
