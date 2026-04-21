@@ -21,6 +21,8 @@
     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
   ],
 
+  "workspaceFolder": "/workspace",
+
   "containerUser": "vscode",
 
   "customizations": {
@@ -55,7 +57,7 @@
     "--add-host=host.docker.internal:host-gateway"
   ],
 
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh",
 
   "containerEnv": {
     "CLAUDE_CODE_SANDBOX": "true",
