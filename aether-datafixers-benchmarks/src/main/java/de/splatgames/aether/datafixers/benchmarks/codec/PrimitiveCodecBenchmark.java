@@ -83,6 +83,7 @@ import org.openjdk.jmh.infra.Blackhole;
  *
  * <h2>Benchmark Configuration</h2>
  * <table border="1">
+ *   <caption>JMH configuration settings for this benchmark</caption>
  *   <tr><th>Setting</th><th>Value</th></tr>
  *   <tr><td>Warmup</td><td>5 iterations, 1 second each</td></tr>
  *   <tr><td>Measurement</td><td>10 iterations, 1 second each</td></tr>
@@ -93,6 +94,7 @@ import org.openjdk.jmh.infra.Blackhole;
  *
  * <h2>Test Values</h2>
  * <table border="1">
+ *   <caption>Test values used for each primitive type</caption>
  *   <tr><th>Type</th><th>Value</th><th>Notes</th></tr>
  *   <tr><td>boolean</td><td>{@code true}</td><td>Single bit representation</td></tr>
  *   <tr><td>int</td><td>{@code 42}</td><td>Small positive integer</td></tr>

@@ -23,62 +23,75 @@
 /**
  * Type template definitions for schema construction.
  *
- * <p>This package provides the template abstraction for defining type structures
- * declaratively. Templates are blueprints that describe the shape of data without being tied to a specific schema
- * version. They are instantiated into concrete {@link de.splatgames.aether.datafixers.api.type.Type} instances when a
- * schema is built.</p>
+ * <p>This package provides the template abstraction for defining type
+ * structures declaratively. Templates are second-order: they describe the
+ * shape of data without binding it to a concrete
+ * {@link de.splatgames.aether.datafixers.api.type.Type} until they are
+ * instantiated against a
+ * {@link de.splatgames.aether.datafixers.api.type.template.TypeFamily}.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.type.template.TypeTemplate} -
- *       A blueprint for a type structure. Templates are created using the
- *       {@link de.splatgames.aether.datafixers.api.dsl.DSL} and can be composed
- *       to describe complex nested structures.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.type.template.TypeFamily} -
- *       Represents a family of related types that share a common structure pattern,
- *       parameterized over different inner types.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.type.template.TypeTemplate} —
+ *       A blueprint for a type structure. Templates are produced by the
+ *       {@link de.splatgames.aether.datafixers.api.dsl.DSL} factory and can be
+ *       composed to describe arbitrarily nested structures.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.type.template.TypeFamily} —
+ *       Provides the type parameters (by integer index) used by a template at
+ *       instantiation time. Use
+ *       {@link de.splatgames.aether.datafixers.api.type.template.TypeFamily#empty() TypeFamily.empty()}
+ *       for non-parameterised templates,
+ *       {@link de.splatgames.aether.datafixers.api.type.template.TypeFamily#of(de.splatgames.aether.datafixers.api.type.Type...) TypeFamily.of}
+ *       for fixed parameter lists, and
+ *       {@link de.splatgames.aether.datafixers.api.type.template.TypeFamily#recursive(java.util.function.Function) TypeFamily.recursive}
+ *       for self-referential types.</li>
  * </ul>
  *
  * <h2>Template vs Type</h2>
  * <pre>
- * ┌─────────────────┐     instantiate()     ┌─────────────────┐
- * │  TypeTemplate   │ ─────────────────────►│      Type       │
- * │   (blueprint)   │                       │   (concrete)    │
- * └─────────────────┘                       └─────────────────┘
- *         │                                          │
- *         │ DSL.field("name", DSL.string())         │ has Codec
- *         │ DSL.list(DSL.intType())                 │ has Finder
- *         │ DSL.optional(...)                       │
+ *   +----------------+   apply(family)   +----------------+
+ *   |  TypeTemplate  | &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2192;|      Type      |
+ *   |   (blueprint)  |                   |   (concrete)   |
+ *   +----------------+                   +----------------+
+ *           &#x2502;                                  &#x2502;
+ *           &#x2514;&#x2500; DSL.and(DSL.field("name",         &#x2514;&#x2500; has a Codec
+ *               DSL.string()), ...)
  * </pre>
  *
  * <h2>Using Templates with DSL</h2>
+ * <p>Templates are always produced through
+ * {@link de.splatgames.aether.datafixers.api.dsl.DSL}, never by
+ * instantiating {@code TypeTemplate} directly:</p>
  * <pre>{@code
- * // Define a template for player data
- * TypeTemplate playerTemplate = DSL.allWithRemainder(
- *     DSL.field("name", DSL.string()),
+ * TypeTemplate playerTemplate = DSL.and(
+ *     DSL.field("name",  DSL.string()),
  *     DSL.field("level", DSL.intType()),
- *     DSL.field("inventory", DSL.list(DSL.ref(TypeReferences.ITEM))),
- *     DSL.field("position", DSL.allWithRemainder(
+ *     DSL.field("position", DSL.and(
  *         DSL.field("x", DSL.doubleType()),
  *         DSL.field("y", DSL.doubleType()),
  *         DSL.field("z", DSL.doubleType())
- *     ))
+ *     )),
+ *     DSL.remainder()
  * );
  *
- * // Register in schema
+ * // Register the template against a TypeReference inside a Schema
  * registerType(TypeReferences.PLAYER, playerTemplate);
+ *
+ * // Or instantiate it manually for one-off use:
+ * Type<?> playerType = playerTemplate.apply(TypeFamily.empty());
  * }</pre>
  *
  * <h2>Type Families</h2>
- * <p>Type families enable parameterized type definitions where the same structure
- * can be applied to different inner types:</p>
+ * <p>Type families expose type parameters to a template by integer index.
+ * Recursive families (for trees, linked lists, etc.) supply their own
+ * self-reference via {@link de.splatgames.aether.datafixers.api.type.template.TypeFamily#recursive(java.util.function.Function)}.</p>
  * <pre>{@code
- * // A family of "container" types
- * TypeFamily containerFamily = new TypeFamily() {
- *     public Type<?> apply(Type<?> inner) {
- *         return createContainerType(inner);
- *     }
- * };
+ * // Linked-list-like recursive template using the self reference
+ * TypeFamily listFamily = TypeFamily.recursive(self -> Type.product(
+ *     Type.field("value", Type.INT),
+ *     Type.field("next",  Type.optional(self.apply(0)))
+ * ));
+ * Type<?> linkedListType = listFamily.apply(0);
  * }</pre>
  *
  * @see de.splatgames.aether.datafixers.api.type.template.TypeTemplate

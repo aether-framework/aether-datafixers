@@ -29,6 +29,7 @@
  *
  * <h2>Package Contents</h2>
  * <table border="1">
+ *   <caption>Utility classes provided by this package</caption>
  *   <tr>
  *     <th>Class</th>
  *     <th>Purpose</th>
@@ -101,6 +102,7 @@
  * <p>{@link de.splatgames.aether.datafixers.benchmarks.util.BenchmarkBootstrap} provides
  * several DataFixer configurations for different benchmark scenarios:</p>
  * <table border="1">
+ *   <caption>Available DataFixer configurations</caption>
  *   <tr><th>Configuration</th><th>Fix Count</th><th>Purpose</th></tr>
  *   <tr><td>Single Fix</td><td>1</td><td>Baseline single-operation performance</td></tr>
  *   <tr><td>Identity</td><td>1 (no-op)</td><td>Framework overhead measurement</td></tr>
@@ -113,6 +115,7 @@
  * <p>{@link de.splatgames.aether.datafixers.benchmarks.util.PayloadSize} defines three
  * complexity levels for generated test data:</p>
  * <table border="1">
+ *   <caption>Payload size levels and their characteristics</caption>
  *   <tr><th>Size</th><th>Fields</th><th>Nesting</th><th>List Items</th><th>Use Case</th></tr>
  *   <tr><td>SMALL</td><td>5</td><td>2</td><td>10</td><td>Quick iterations, CI</td></tr>
  *   <tr><td>MEDIUM</td><td>20</td><td>4</td><td>100</td><td>Standard testing</td></tr>

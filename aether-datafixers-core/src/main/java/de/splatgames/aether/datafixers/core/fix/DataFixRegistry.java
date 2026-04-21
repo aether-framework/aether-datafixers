@@ -215,8 +215,8 @@ public final class DataFixRegistry {
      *
      * <p>This method enables enumeration of all types known to the registry,
      * which is useful for analyzers that need to walk every fix regardless of
-     * schema changes (e.g., field-level diagnostic analyzers in
-     * {@link de.splatgames.aether.datafixers.schematools schema-tools}).</p>
+     * schema changes (e.g. the field-level diagnostic analyzers in the
+     * {@code aether-datafixers-schema-tools} module).</p>
      *
      * @return an unmodifiable snapshot of the registered type references, never {@code null}
      * @since 1.0.0

@@ -28,36 +28,62 @@ import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A single data fix that transforms data from one version to another.
+ * A single data fix that transforms data from one version to the next.
  *
- * <p>A {@code DataFix} represents a migration step that upgrades (or downgrades) data
- * between two specific {@link DataVersion versions}. Fixes are typically registered with a {@link FixRegistrar} and
- * executed by a {@link DataFixer} when updating data across version boundaries.</p>
+ * <p>A {@code DataFix} represents one forward migration step that upgrades data
+ * between two {@link DataVersion versions}. Fixes are registered with a
+ * {@link FixRegistrar} against a {@link TypeReference} and executed by a
+ * {@link DataFixer} when updating data across version boundaries. Aether
+ * Datafixers is forward-patching only; fixes always migrate old data to new,
+ * never the other way around.</p>
  *
- * <h2>Implementing a DataFix</h2>
- * <p>Each fix should:</p>
+ * <h2>Preferred: Extend {@code SchemaDataFix}</h2>
+ * <p>In almost all cases you should extend
+ * {@code de.splatgames.aether.datafixers.core.fix.SchemaDataFix} and express
+ * the migration as a {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}
+ * built with the {@link de.splatgames.aether.datafixers.api.rewrite.Rules}
+ * DSL. The rule-based approach plugs into the field-aware diagnostic system
+ * automatically and keeps migrations declarative:</p>
+ * <pre>{@code
+ * public class PlayerV1ToV2Fix extends SchemaDataFix {
+ *     public PlayerV1ToV2Fix(SchemaRegistry schemas) {
+ *         super("player_v1_to_v2", new DataVersion(1), new DataVersion(2), schemas);
+ *     }
+ *
+ *     @Override
+ *     protected TypeRewriteRule makeRule(Schema input, Schema output) {
+ *         DynamicOps<JsonElement> ops = GsonOps.INSTANCE;
+ *         return Rules.renameField(ops, "playerName", "name");
+ *     }
+ * }
+ *
+ * registrar.register(TypeReferences.PLAYER, new PlayerV1ToV2Fix(schemas));
+ * }</pre>
+ *
+ * <h2>Implementing {@code DataFix} Directly</h2>
+ * <p>Direct implementations of {@code DataFix} are an escape hatch for cases
+ * that cannot be expressed as a rewrite rule. Every fix must:</p>
  * <ul>
- *   <li>Have a descriptive {@link #name()} for logging and debugging</li>
- *   <li>Declare the version range it handles via {@link #fromVersion()} and {@link #toVersion()}</li>
- *   <li>Transform data in the {@link #apply(TypeReference, Dynamic, DataFixerContext)} method</li>
+ *   <li>Return a descriptive {@link #name()} used for logging and diagnostics.</li>
+ *   <li>Declare the version range via {@link #fromVersion()} and
+ *       {@link #toVersion()}.</li>
+ *   <li>Transform data in {@link #apply(TypeReference, Dynamic, DataFixerContext)}
+ *       and return the result. The input is guaranteed non-{@code null}.</li>
  * </ul>
  *
- * <h2>Usage Example</h2>
  * <pre>{@code
  * DataFix<JsonElement> renameFix = new DataFix<>() {
- *     @Override
- *     public String name() { return "rename_player_name"; }
+ *     @Override public String name()         { return "rename_player_name"; }
+ *     @Override public DataVersion fromVersion() { return new DataVersion(1); }
+ *     @Override public DataVersion toVersion()   { return new DataVersion(2); }
  *
  *     @Override
- *     public DataVersion fromVersion() { return DataVersion.of(1); }
- *
- *     @Override
- *     public DataVersion toVersion() { return DataVersion.of(2); }
- *
- *     @Override
- *     public Dynamic<JsonElement> apply(TypeReference type, Dynamic<JsonElement> input, DataFixerContext ctx) {
+ *     public Dynamic<JsonElement> apply(TypeReference type,
+ *                                       Dynamic<JsonElement> input,
+ *                                       DataFixerContext ctx) {
  *         ctx.info("Renaming 'playerName' to 'name'");
- *         Dynamic<?> name = input.get("playerName");
+ *         Dynamic<JsonElement> name = input.get("playerName")
+ *                 .result().orElse(input.createString(""));
  *         return input.remove("playerName").set("name", name);
  *     }
  * };
@@ -66,14 +92,16 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  *
  * <h2>Thread Safety</h2>
- * <p>Implementations should be thread-safe as fixes may be applied concurrently
- * across multiple data instances.</p>
+ * <p>Implementations must be stateless or otherwise thread-safe: a fix may be
+ * applied concurrently to many data instances during a single migration.</p>
  *
- * @param <T> the type of the dynamic representation (e.g., {@code JsonElement}, {@code JsonNode})
+ * @param <T> the backing type of the {@link Dynamic} the fix operates on
+ *            (e.g. {@code JsonElement} for Gson, {@code JsonNode} for Jackson)
  * @author Erik Pförtner
  * @see DataFixer
  * @see FixRegistrar
  * @see DataVersion
+ * @see de.splatgames.aether.datafixers.api.rewrite.Rules
  * @since 0.1.0
  */
 public interface DataFix<T> {

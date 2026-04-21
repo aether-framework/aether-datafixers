@@ -37,6 +37,7 @@ package de.splatgames.aether.datafixers.benchmarks.util;
  *
  * <h2>Configuration Summary</h2>
  * <table border="1">
+ *   <caption>Payload size configurations and their use cases</caption>
  *   <tr>
  *     <th>Size</th>
  *     <th>Fields</th>
@@ -82,6 +83,7 @@ package de.splatgames.aether.datafixers.benchmarks.util;
  * <h2>Memory and Performance Impact</h2>
  * <p>Approximate data characteristics for each size:</p>
  * <table border="1">
+ *   <caption>Approximate memory and performance impact per payload size</caption>
  *   <tr><th>Size</th><th>~JSON Size</th><th>~Object Count</th><th>Typical Latency</th></tr>
  *   <tr><td>SMALL</td><td>~2 KB</td><td>~50</td><td>Sub-millisecond</td></tr>
  *   <tr><td>MEDIUM</td><td>~20 KB</td><td>~500</td><td>Low milliseconds</td></tr>

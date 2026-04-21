@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h2>Data Generation Methods</h2>
  * <table border="1">
+ *   <caption>Data generation methods and their use cases</caption>
  *   <tr><th>Method</th><th>Structure</th><th>Use Case</th></tr>
  *   <tr>
  *     <td>{@link #generate(DynamicOps, PayloadSize)}</td>
@@ -139,8 +140,9 @@ public final class BenchmarkDataGenerator {
      *       {@link PayloadSize#getListSize()} objects</li>
      * </ul>
      *
-     * <h3>Field Naming Patterns</h3>
+     * <h4>Field Naming Patterns</h4>
      * <table border="1">
+     *   <caption>Field naming patterns used by the generator</caption>
      *   <tr><th>Field Type</th><th>Pattern</th><th>Example</th></tr>
      *   <tr><td>String</td><td>{@code stringFieldN}</td><td>{@code stringField0: "value0"}</td></tr>
      *   <tr><td>Integer</td><td>{@code intFieldN}</td><td>{@code intField0: 0}</td></tr>
@@ -187,7 +189,7 @@ public final class BenchmarkDataGenerator {
      * <p>Creates a structure simulating game player data, useful for domain-specific
      * migration testing with {@link BenchmarkBootstrap#createPlayerFixer()}.</p>
      *
-     * <h3>Generated Structure</h3>
+     * <h4>Generated Structure</h4>
      * <pre>{@code
      * {
      *   "id": "player-benchmark-12345",
@@ -203,8 +205,9 @@ public final class BenchmarkDataGenerator {
      * }
      * }</pre>
      *
-     * <h3>Data Characteristics</h3>
+     * <h4>Data Characteristics</h4>
      * <table border="1">
+     *   <caption>Player data component counts</caption>
      *   <tr><th>Component</th><th>Count</th><th>Description</th></tr>
      *   <tr><td>Top-level fields</td><td>6</td><td>id, name, level, experience, health, active</td></tr>
      *   <tr><td>Nested objects</td><td>2</td><td>position (4 fields), stats (4 fields)</td></tr>
@@ -264,7 +267,7 @@ public final class BenchmarkDataGenerator {
      * <p>Creates a minimal object structure without nesting or lists, useful for
      * benchmarking basic field access and manipulation operations with minimal traversal overhead.</p>
      *
-     * <h3>Generated Structure</h3>
+     * <h4>Generated Structure</h4>
      * <pre>{@code
      * {
      *   "field0": "value0",

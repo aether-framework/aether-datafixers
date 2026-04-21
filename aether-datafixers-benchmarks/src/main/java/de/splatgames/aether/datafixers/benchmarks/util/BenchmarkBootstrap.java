@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h2>Available Fixer Configurations</h2>
  * <table border="1">
+ *   <caption>Available fixer factory methods and their use cases</caption>
  *   <tr><th>Method</th><th>Fix Count</th><th>Fix Types</th><th>Use Case</th></tr>
  *   <tr>
  *     <td>{@link #createSingleFixFixer()}</td>
@@ -207,8 +208,9 @@ public final class BenchmarkBootstrap {
      *
      * <p>Version mapping: v1 → v2 → v3 → ... → v(fixCount+1)</p>
      *
-     * <h3>Typical Parameter Values for Benchmarks</h3>
+     * <h4>Typical Parameter Values for Benchmarks</h4>
      * <table border="1">
+     *   <caption>Typical fixCount values and their benchmark scenarios</caption>
      *   <tr><th>fixCount</th><th>Scenario</th></tr>
      *   <tr><td>1</td><td>Baseline (compare with {@link #createSingleFixFixer()})</td></tr>
      *   <tr><td>5</td><td>Short chain (minor version updates)</td></tr>
@@ -254,6 +256,7 @@ public final class BenchmarkBootstrap {
      * scenarios:</p>
      *
      * <table border="1">
+     *   <caption>Rotating fix types by position in the chain</caption>
      *   <tr><th>Position (mod 4)</th><th>Fix Type</th><th>Operation</th></tr>
      *   <tr><td>0</td><td>Rename</td><td>Renames a field</td></tr>
      *   <tr><td>1</td><td>Add</td><td>Adds a new string field with default value</td></tr>
@@ -297,6 +300,7 @@ public final class BenchmarkBootstrap {
      * with four sequential fixes representing typical schema evolution:</p>
      *
      * <table border="1">
+     *   <caption>Player data migration fixes by version</caption>
      *   <tr><th>Version</th><th>Fix</th><th>Description</th></tr>
      *   <tr><td>v1 → v2</td><td>Rename</td><td>{@code name} → {@code playerName}</td></tr>
      *   <tr><td>v2 → v3</td><td>Add</td><td>Add {@code score} field (default: 0)</td></tr>

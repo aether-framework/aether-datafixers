@@ -38,42 +38,51 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Factory class for common data fix patterns.
+ * Factory class for common data fix patterns scoped to a specific
+ * {@link Type container type}.
  *
- * <p>This class provides high-level methods for creating {@link TypeRewriteRule}
- * instances that handle common data migration patterns. These patterns include field renaming, removal, addition,
- * transformation, and tagged choice handling.</p>
+ * <p>{@code Fixes} provides high-level {@link TypeRewriteRule} factories that
+ * handle common data migration patterns. They are thin wrappers over
+ * {@link Rules}: each method delegates to the corresponding {@code Rules}
+ * combinator and then filters the result with {@link TypeRewriteRule#ifType(Type)}
+ * so the rule only applies to values of the given container type.</p>
  *
- * <h2>Categories of Fixes</h2>
+ * <p>Prefer the type-filtered helpers here when you are writing rules against
+ * a {@link de.splatgames.aether.datafixers.api.type.Type}-aware
+ * {@code SchemaDataFix} and want automatic type gating. For plain
+ * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}-only work, use
+ * {@link Rules} directly.</p>
+ *
+ * <h2>Categories</h2>
  * <ul>
- *   <li><b>Typed Fixes:</b> {@link #fixTypeEverywhereTyped} and {@link #fixTypeEverywhere}
- *       for general type-based transformations</li>
- *   <li><b>Field Operations:</b> {@link #renameField}, {@link #removeField},
- *       {@link #addField}, {@link #transformField} for field-level changes</li>
- *   <li><b>Tagged Choice:</b> {@link #fixChoice} and {@link #renameChoice}
- *       for discriminated union migrations</li>
- *   <li><b>Recursive:</b> {@link #walkRecursive} for deep tree transformations</li>
- *   <li><b>Utility:</b> {@link #composite} and {@link #conditional} for combining rules</li>
+ *   <li><b>Typed fixes:</b> {@link #fixTypeEverywhereTyped} and
+ *       {@link #fixTypeEverywhere} for type-targeted transformations walked
+ *       over the whole structure.</li>
+ *   <li><b>Field operations:</b> {@link #renameField}, {@link #removeField},
+ *       {@link #addField}, {@link #transformField} for field-level changes
+ *       gated on the container type.</li>
+ *   <li><b>Tagged choice:</b> {@link #fixChoice} and {@link #renameChoice}
+ *       for discriminated-union migrations.</li>
+ *   <li><b>Recursive:</b> {@link #walkRecursive} for deep tree transformations.</li>
+ *   <li><b>Utility:</b> {@link #composite} and {@link #conditional} for
+ *       combining rules.</li>
  * </ul>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
- * // Rename a field in player data
+ * // Rename a field only on values of the player container type
  * TypeRewriteRule renameRule = Fixes.renameField(
- *     GsonOps.INSTANCE, "playerName", "name", playerType
- * );
+ *     GsonOps.INSTANCE, "playerName", "name", playerType);
  *
- * // Add a new field with default value
+ * // Add a new field with a default value; fieldType must be a concrete Type<A>
  * TypeRewriteRule addHealthRule = Fixes.addField(
- *     GsonOps.INSTANCE, "maxHealth", DSL.intType(), () -> 20, playerType
- * );
+ *     GsonOps.INSTANCE, "maxHealth", Type.INT, () -> 20, playerType);
  *
- * // Combine multiple fixes
+ * // Combine multiple fixes into a named composite
  * TypeRewriteRule composite = Fixes.composite("PlayerV1ToV2",
- *     renameRule, addHealthRule
- * );
+ *     renameRule, addHealthRule);
  *
- * // Apply the fix
+ * // Apply to a typed value
  * Typed<?> updated = composite.apply(typed);
  * }</pre>
  *

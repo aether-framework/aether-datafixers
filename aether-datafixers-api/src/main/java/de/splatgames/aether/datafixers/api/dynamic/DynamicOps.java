@@ -108,7 +108,8 @@ public interface DynamicOps<T> {
      *       serialization errors</li>
      * </ul>
      * <p>When converting between formats via {@link #convertTo}, null representations
-     * are normalized through this method.</p>
+     * are normalized through this method. Compare a value against the result of
+     * {@code empty()} to check for null regardless of the underlying representation.</p>
      *
      * @return the canonical empty/null value for this format
      */

@@ -23,15 +23,18 @@
 /**
  * Result types for representing success/failure outcomes.
  *
- * <p>This package provides the {@link de.splatgames.aether.datafixers.api.result.DataResult}
- * type, a functional alternative to exceptions for representing operations that may succeed or fail. This approach
- * enables explicit error handling and composition of fallible operations.</p>
+ * <p>This package provides the
+ * {@link de.splatgames.aether.datafixers.api.result.DataResult} type, a
+ * functional alternative to exceptions for operations that may succeed or
+ * fail. It makes error handling explicit in the type system and supports
+ * partial successes (a value produced alongside a warning).</p>
  *
  * <h2>Key Class</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.result.DataResult} - Represents
- *       either a successful result with a value, or a failure with an error message.
- *       Similar to {@code Either<Error, T>} or Rust's {@code Result<T, E>}.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.result.DataResult} —
+ *       Represents a successful result with a value, or a failure with a
+ *       {@link java.lang.String} error message. Conceptually similar to
+ *       Rust's {@code Result<T, String>} but with optional partial results.</li>
  * </ul>
  *
  * <h2>Creating Results</h2>
@@ -41,59 +44,71 @@
  *
  * // Failure
  * DataResult<Integer> failure = DataResult.error("Value must be positive");
+ *
+ * // Failure carrying a best-effort partial value
+ * DataResult<Integer> partial = DataResult.error("Out of range, clamped", 100);
  * }</pre>
  *
  * <h2>Handling Results</h2>
  * <pre>{@code
- * DataResult<Player> result = playerCodec.decode(dynamic);
+ * DataResult<Pair<Player, JsonElement>> result = playerCodec.decode(ops, root);
  *
- * // Pattern matching style
- * result.ifSuccess(player -> System.out.println("Loaded: " + player.name()))
- *       .ifError(error -> System.err.println("Failed: " + error.message()));
+ * // Chainable inspection — both blocks return the same DataResult
+ * result
+ *     .ifSuccess(pair -> System.out.println("Loaded: " + pair.first().name()))
+ *     .ifError(message -> System.err.println("Failed: " + message));
  *
- * // Get with default
+ * // Get with a default; side-channel any error message for logging
  * Player player = result.resultOrPartial(System.err::println)
- *                       .orElse(Player.DEFAULT);
+ *     .map(Pair::first)
+ *     .orElse(Player.DEFAULT);
  *
  * // Throw on error
- * Player player = result.getOrThrow(DecodeException::new);
+ * Pair<Player, JsonElement> decoded = result.getOrThrow(DecodeException::new);
  * }</pre>
  *
  * <h2>Composition</h2>
- * <p>DataResult supports monadic composition for chaining fallible operations:</p>
+ * <p>{@code DataResult} supports monadic composition for chaining fallible
+ * operations. {@link de.splatgames.aether.datafixers.api.result.DataResult#mapError(java.util.function.Function) mapError}
+ * transforms the <i>error message</i>, not the success value:</p>
  * <pre>{@code
  * DataResult<Config> loadConfig(Path path) {
- *     return readFile(path)                    // DataResult<String>
- *         .flatMap(this::parseJson)            // DataResult<JsonElement>
- *         .flatMap(configCodec::decode);       // DataResult<Config>
+ *     return readFile(path)                  // DataResult<String>
+ *         .flatMap(this::parseJson)          // DataResult<JsonElement>
+ *         .flatMap(configCodec::decode)      // DataResult<Pair<Config, JsonElement>>
+ *         .map(Pair::first);              // DataResult<Config>
  * }
  *
  * // Transform successful values
  * DataResult<Integer> doubled = result.map(x -> x * 2);
  *
- * // Provide fallback on error
- * DataResult<Integer> withFallback = result.mapError(e -> 0);
+ * // Rewrite the error message while preserving the shape
+ * DataResult<Integer> annotated = result.mapError(m -> "config load failed: " + m);
  * }</pre>
  *
  * <h2>Partial Results</h2>
- * <p>DataResult can represent partial success, where an operation produces both
- * a result and error information. This is useful for lenient parsing:</p>
+ * <p>{@code DataResult} can represent partial success, where an operation
+ * produces both a best-effort value and a warning. Inspect
+ * {@link de.splatgames.aether.datafixers.api.result.DataResult#isError() isError}
+ * together with
+ * {@link de.splatgames.aether.datafixers.api.result.DataResult#partialResult() partialResult}
+ * to detect this case. This is useful for lenient parsing paths:</p>
  * <pre>{@code
- * // Parse with warnings
  * DataResult<Config> result = parseConfig(input);
- * if (result.hasPartialResult()) {
+ * if (result.isError() && result.partialResult().isPresent()) {
  *     Config partial = result.partialResult().get();
- *     String warnings = result.error().get().message();
+ *     String warnings = result.error().orElse("unknown error");
  *     log.warn("Loaded config with warnings: {}", warnings);
+ *     return partial;
  * }
  * }</pre>
  *
- * <h2>Why DataResult over Exceptions?</h2>
+ * <h2>Why {@code DataResult} over Exceptions?</h2>
  * <ul>
- *   <li>Makes error handling explicit in the type system</li>
- *   <li>Enables functional composition without try-catch blocks</li>
- *   <li>Supports partial results and error recovery</li>
- *   <li>Better performance for expected failures (no stack trace)</li>
+ *   <li>Makes error handling explicit in the type system.</li>
+ *   <li>Enables functional composition without {@code try}/{@code catch} blocks.</li>
+ *   <li>Supports partial results and error recovery.</li>
+ *   <li>Better performance for expected failures — no stack trace is built.</li>
  * </ul>
  *
  * @see de.splatgames.aether.datafixers.api.result.DataResult

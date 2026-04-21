@@ -47,7 +47,7 @@
  * mvn exec:java -pl aether-datafixers-cli -Dexec.args="--help"
  *
  * # Run with the fat JAR
- * java -jar aether-datafixers-cli-0.3.0-fat.jar migrate --help
+ * java -jar aether-datafixers-cli-1.0.0-fat.jar migrate --help
  * }</pre>
  *
  * <h2>Package Structure</h2>

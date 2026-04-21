@@ -23,54 +23,65 @@
 /**
  * Codec interfaces for bidirectional data transformation.
  *
- * <p>This package provides the codec abstraction that enables encoding and decoding
- * of typed Java objects to and from format-agnostic {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}
- * representations. Codecs are central to the type system, allowing type-safe serialization without coupling to specific
- * formats like JSON or NBT.</p>
+ * <p>This package provides the codec abstraction that enables encoding and
+ * decoding of typed Java objects to and from format-agnostic
+ * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic} representations.
+ * Codecs are central to the type system, allowing type-safe serialization
+ * without coupling application models to specific formats like JSON, NBT, or
+ * YAML.</p>
  *
  * <h2>Key Interfaces</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.Codec} - The primary interface
- *       combining both encoding and decoding capabilities. Extends both
- *       {@link de.splatgames.aether.datafixers.api.codec.Encoder} and
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.Codec} — The primary
+ *       interface combining both encoding and decoding capabilities. Extends
+ *       both {@link de.splatgames.aether.datafixers.api.codec.Encoder} and
  *       {@link de.splatgames.aether.datafixers.api.codec.Decoder}.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.Encoder} - Transforms typed
- *       values into Dynamic representations.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.Decoder} - Transforms Dynamic
- *       representations back into typed values.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.MapCodec} - A codec that
- *       operates on map-like structures, enabling field-based encoding/decoding.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.RecordCodecBuilder} - A builder
- *       for constructing codecs for record/struct types with multiple fields.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.CodecRegistry} - Registry for
- *       looking up codecs by type.</li>
- *   <li>{@link de.splatgames.aether.datafixers.api.codec.Codecs} - Factory methods for
- *       common primitive codecs (string, int, boolean, etc.).</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.Encoder} — Transforms
+ *       typed values into {@code Dynamic} representations via a
+ *       {@link de.splatgames.aether.datafixers.api.dynamic.DynamicOps}.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.Decoder} — Transforms
+ *       raw format values back into typed objects.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.MapCodec} — A codec
+ *       specialised for map-like structures; the building block for per-field
+ *       encoding in records.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.RecordCodecBuilder} —
+ *       Builder for codecs over record/struct types with multiple fields.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.CodecRegistry} —
+ *       Registry for looking up codecs by type.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.api.codec.Codecs} — Factory
+ *       methods for common primitive codecs (string, int, long, float, double,
+ *       boolean, etc.) and generic combinators (lists, maps, optional).</li>
  * </ul>
  *
- * <h2>Codec Composition</h2>
- * <p>Codecs can be composed and transformed:</p>
+ * <h2>Building Codecs</h2>
  * <pre>{@code
- * // Primitive codecs
- * Codec<String> stringCodec = Codecs.STRING;
- * Codec<Integer> intCodec = Codecs.INT;
+ * // Primitive codecs are pre-defined
+ * Codec<String>  stringCodec = Codecs.STRING;
+ * Codec<Integer> intCodec    = Codecs.INT;
  *
- * // Record codec using builder
+ * // Record codec assembled field-by-field
  * Codec<Player> playerCodec = RecordCodecBuilder.create(instance ->
  *     instance.group(
  *         Codecs.STRING.fieldOf("name").forGetter(Player::name),
  *         Codecs.INT.fieldOf("level").forGetter(Player::level)
- *     ).apply(instance, Player::new)
- * );
+ *     ).apply(instance, Player::new));
  * }</pre>
  *
  * <h2>Error Handling</h2>
- * <p>Codec operations return {@link de.splatgames.aether.datafixers.api.result.DataResult}
- * to represent success or failure without throwing exceptions:</p>
+ * <p>Codec operations return
+ * {@link de.splatgames.aether.datafixers.api.result.DataResult} rather than
+ * throwing. The result can be inspected non-destructively and supports partial
+ * successes (a successful value accompanied by a warning):</p>
  * <pre>{@code
- * DataResult<Player> result = playerCodec.decode(dynamic);
- * result.ifSuccess(player -> System.out.println("Decoded: " + player))
- *       .ifError(error -> System.err.println("Failed: " + error.message()));
+ * DataResult<Pair<Player, JsonElement>> decoded = playerCodec.decode(ops, root);
+ * decoded
+ *     .ifSuccess(pair -> System.out.println("Decoded: " + pair.first()))
+ *     .ifError(message -> System.err.println("Failed: " + message));
+ *
+ * // Or fold to a value with a default
+ * Player player = decoded.result()
+ *     .map(Pair::first)
+ *     .orElse(Player.defaults());
  * }</pre>
  *
  * @see de.splatgames.aether.datafixers.api.codec.Codec

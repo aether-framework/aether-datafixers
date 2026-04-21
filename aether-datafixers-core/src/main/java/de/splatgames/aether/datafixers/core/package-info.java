@@ -29,24 +29,30 @@
  *
  * <h2>Key Class</h2>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.core.AetherDataFixer} - The main
- *       implementation of {@link de.splatgames.aether.datafixers.api.fix.DataFixer},
- *       providing the entry point for data migration operations.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.AetherDataFixer} — The
+ *       reference implementation of
+ *       {@link de.splatgames.aether.datafixers.api.fix.DataFixer}, providing
+ *       the entry point for data migration operations.</li>
  * </ul>
  *
  * <h2>Package Structure</h2>
- * <p>The core module is organized into the following sub-packages:</p>
+ * <p>The core module is organised into the following sub-packages:</p>
  * <ul>
- *   <li>{@link de.splatgames.aether.datafixers.core.bootstrap} - Factory classes
- *       for constructing data fixers from bootstrap definitions</li>
- *   <li>{@link de.splatgames.aether.datafixers.core.codec} - Default codec
- *       registry implementations</li>
- *   <li>{@link de.splatgames.aether.datafixers.core.fix} - DataFix implementations
- *       and supporting classes</li>
- *   <li>{@link de.splatgames.aether.datafixers.core.schema} - Schema registry
- *       implementations</li>
- *   <li>{@link de.splatgames.aether.datafixers.core.type} - Type registry
- *       implementations</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.bootstrap} — Factory
+ *       classes for constructing data fixers from bootstrap definitions.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.codec} — Default codec
+ *       registry implementations.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.diagnostic} — Default
+ *       implementation of the
+ *       {@link de.splatgames.aether.datafixers.api.diagnostic} API; auto-wired
+ *       via {@link java.util.ServiceLoader}.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.fix} — {@code DataFix}
+ *       implementations and supporting classes, including the preferred
+ *       {@code SchemaDataFix} base class for rule-driven migrations.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.schema} — Schema registry
+ *       implementations.</li>
+ *   <li>{@link de.splatgames.aether.datafixers.core.type} — Type registry
+ *       implementations.</li>
  * </ul>
  *
  * <h2>Creating a DataFixer</h2>
@@ -55,36 +61,40 @@
  * public class GameDataBootstrap implements DataFixerBootstrap {
  *     public static final DataVersion CURRENT_VERSION = new DataVersion(200);
  *
+ *     public static final TypeReference PLAYER = new TypeReference("player");
+ *
  *     @Override
  *     public void registerSchemas(SchemaRegistry schemas) {
- *         schemas.register(new DataVersion(100), new Schema100());
- *         schemas.register(new DataVersion(110), new Schema110());
- *         schemas.register(new DataVersion(200), new Schema200());
+ *         schemas.register(new Schema100());
+ *         schemas.register(new Schema110(new Schema100()));
+ *         schemas.register(new Schema200(new Schema110(new Schema100())));
  *     }
  *
  *     @Override
  *     public void registerFixes(FixRegistrar fixes) {
- *         fixes.register(new PlayerV1ToV2Fix());
- *         fixes.register(new PlayerV2ToV3Fix());
+ *         fixes.register(PLAYER, new PlayerV1ToV2Fix(schemas));
+ *         fixes.register(PLAYER, new PlayerV2ToV3Fix(schemas));
  *     }
  * }
  *
- * // Create the fixer
- * AetherDataFixer fixer = new DataFixerRuntimeFactory()
+ * // Build the executable fixer from the bootstrap
+ * DataFixer fixer = new DataFixerRuntimeFactory()
  *     .create(GameDataBootstrap.CURRENT_VERSION, new GameDataBootstrap());
  *
- * // Use the fixer
- * TaggedDynamic updated = fixer.update(
- *     taggedData,
+ * // Migrate a Dynamic forward. Use the 5-arg overload with a DiagnosticContext
+ * // to collect a MigrationReport.
+ * Dynamic<JsonElement> updated = fixer.update(
+ *     GameDataBootstrap.PLAYER,
+ *     new Dynamic<>(GsonOps.INSTANCE, json),
  *     new DataVersion(100),
- *     fixer.currentVersion()
- * );
+ *     fixer.currentVersion());
  * }</pre>
  *
  * <h2>Module Dependencies</h2>
  * <p>The core module depends on the API module and provides all runtime
  * functionality. Applications typically depend on core at runtime and may
- * also depend on additional codec modules for specific serialization formats.</p>
+ * also depend on additional codec modules (e.g. {@code aether-datafixers-codec})
+ * for specific serialization formats.</p>
  *
  * @see de.splatgames.aether.datafixers.core.AetherDataFixer
  * @see de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory

@@ -78,6 +78,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
  *
  * <h2>Available Benchmark Categories</h2>
  * <table border="1">
+ *   <caption>Benchmark categories grouped by focus area</caption>
  *   <tr><th>Category</th><th>Benchmarks</th><th>Focus</th></tr>
  *   <tr>
  *     <td><b>Core</b></td>
@@ -119,6 +120,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
  *
  * <h2>Default Configuration</h2>
  * <table border="1">
+ *   <caption>Default and quick-mode benchmark configuration values</caption>
  *   <tr><th>Setting</th><th>Default</th><th>Quick Mode</th></tr>
  *   <tr><td>Warmup iterations</td><td>5</td><td>2</td></tr>
  *   <tr><td>Measurement iterations</td><td>10</td><td>3</td></tr>
@@ -128,6 +130,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
  *
  * <h2>Common JMH Options</h2>
  * <table border="1">
+ *   <caption>Common JMH command-line options with examples</caption>
  *   <tr><th>Option</th><th>Description</th><th>Example</th></tr>
  *   <tr><td>{@code -wi}</td><td>Warmup iterations</td><td>{@code -wi 3}</td></tr>
  *   <tr><td>{@code -i}</td><td>Measurement iterations</td><td>{@code -i 5}</td></tr>
@@ -166,7 +169,7 @@ public final class BenchmarkRunner {
      *       via {@link #runAllBenchmarks()}</li>
      * </ul>
      *
-     * <h3>Exit Codes</h3>
+     * <h4>Exit Codes</h4>
      * <ul>
      *   <li>0 - Successful completion</li>
      *   <li>Non-zero - Error during benchmark execution</li>
@@ -193,7 +196,7 @@ public final class BenchmarkRunner {
      * {@code de.splatgames.aether.datafixers.benchmarks.*} with production-quality
      * settings suitable for reliable performance measurements.</p>
      *
-     * <h3>Configuration</h3>
+     * <h4>Configuration</h4>
      * <ul>
      *   <li>Warmup: 5 iterations</li>
      *   <li>Measurement: 10 iterations</li>
@@ -233,7 +236,7 @@ public final class BenchmarkRunner {
      *   <li>Verifying benchmark infrastructure works correctly</li>
      * </ul>
      *
-     * <h3>Configuration</h3>
+     * <h4>Configuration</h4>
      * <ul>
      *   <li>Benchmark: SingleFixBenchmark only</li>
      *   <li>Warmup: 2 iterations</li>
@@ -273,7 +276,7 @@ public final class BenchmarkRunner {
      *   <li>{@code SchemaLookupBenchmark} - Schema registry lookup performance</li>
      * </ul>
      *
-     * <h3>Configuration</h3>
+     * <h4>Configuration</h4>
      * <ul>
      *   <li>Warmup: 5 iterations</li>
      *   <li>Measurement: 10 iterations</li>
@@ -312,7 +315,7 @@ public final class BenchmarkRunner {
      *   <li>{@code CrossFormatBenchmark} - Format conversion performance</li>
      * </ul>
      *
-     * <h3>Configuration</h3>
+     * <h4>Configuration</h4>
      * <ul>
      *   <li>Warmup: 5 iterations</li>
      *   <li>Measurement: 10 iterations</li>

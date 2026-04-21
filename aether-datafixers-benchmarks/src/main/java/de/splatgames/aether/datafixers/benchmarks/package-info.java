@@ -30,6 +30,7 @@
  *
  * <h2>Package Structure</h2>
  * <table border="1">
+ *   <caption>Benchmark packages and their focus areas</caption>
  *   <tr>
  *     <th>Package</th>
  *     <th>Focus Area</th>
@@ -141,6 +142,7 @@
  *
  * <h2>Default Configuration</h2>
  * <table border="1">
+ *   <caption>Default JMH benchmark configuration</caption>
  *   <tr><th>Setting</th><th>Value</th><th>Purpose</th></tr>
  *   <tr><td>Warmup iterations</td><td>5</td><td>JIT compilation stabilization</td></tr>
  *   <tr><td>Measurement iterations</td><td>10</td><td>Statistical significance</td></tr>
@@ -159,6 +161,7 @@
  *
  * <h2>Common JMH Options</h2>
  * <table border="1">
+ *   <caption>Common command-line options accepted by JMH</caption>
  *   <tr><th>Option</th><th>Description</th></tr>
  *   <tr><td>{@code -wi N}</td><td>Number of warmup iterations</td></tr>
  *   <tr><td>{@code -i N}</td><td>Number of measurement iterations</td></tr>
