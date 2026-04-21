@@ -95,16 +95,24 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
     // OPTIC FINDERS - Navigate to specific fields
     // =========================================================================
 
-    /** Finder for the x coordinate field */
+    /**
+     * Finder for the x coordinate field
+     */
     private static final Finder<?> X_FINDER = Finder.field("x");
 
-    /** Finder for the y coordinate field */
+    /**
+     * Finder for the y coordinate field
+     */
     private static final Finder<?> Y_FINDER = Finder.field("y");
 
-    /** Finder for the z coordinate field */
+    /**
+     * Finder for the z coordinate field
+     */
     private static final Finder<?> Z_FINDER = Finder.field("z");
 
-    /** Finder for the gameMode field */
+    /**
+     * Finder for the gameMode field
+     */
     private static final Finder<?> GAME_MODE_FINDER = Finder.field("gameMode");
 
     /**
@@ -120,27 +128,6 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
                 schemas
         );
     }
-
-    @Override
-    @NotNull
-    protected TypeRewriteRule makeRule(@NotNull final Schema inputSchema,
-                                       @NotNull final Schema outputSchema) {
-        return Rules.seq(
-                // Step 1: Simple field renames using Rules
-                Rules.renameField(GsonOps.INSTANCE, "playerName", "name"),
-                Rules.renameField(GsonOps.INSTANCE, "xp", "experience"),
-
-                // Step 2: Transform gameMode from int to string
-                Rules.transformField(GsonOps.INSTANCE, "gameMode", PlayerV1ToV2Fix::gameModeIntToString),
-
-                // Step 3: Group x/y/z into nested position object using Finder optics
-                groupPositionFieldsWithOptics()
-        );
-    }
-
-    // =========================================================================
-    // TRANSFORMATION HELPERS
-    // =========================================================================
 
     /**
      * Converts gameMode from integer to string representation.
@@ -160,9 +147,12 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
         return dynamic.createString(modeString);
     }
 
+    // =========================================================================
+    // TRANSFORMATION HELPERS
+    // =========================================================================
+
     /**
-     * Creates a rule that groups x/y/z fields into a nested position object
-     * using Finder optics for field access.
+     * Creates a rule that groups x/y/z fields into a nested position object using Finder optics for field access.
      *
      * <p>Demonstrates optic-based field extraction:</p>
      * <pre>{@code
@@ -182,8 +172,7 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
             final double y = extractDouble(Y_FINDER, dynamic);
             final double z = extractDouble(Z_FINDER, dynamic);
 
-            @SuppressWarnings("unchecked")
-            final Dynamic<Object> objDynamic = (Dynamic<Object>) dynamic;
+            @SuppressWarnings("unchecked") final Dynamic<Object> objDynamic = (Dynamic<Object>) dynamic;
 
             // Create nested position object
             final Dynamic<Object> position = objDynamic.emptyMap()
@@ -208,7 +197,7 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
      * @return the double value, or 0.0 if not found
      */
     private static double extractDouble(@NotNull final Finder<?> finder,
-                                         @NotNull final Dynamic<?> dynamic) {
+                                        @NotNull final Dynamic<?> dynamic) {
         return finder.getOptional(dynamic)
                 .flatMap(d -> d.asDouble().result())
                 .orElse(0.0);
@@ -222,11 +211,16 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
      * @return a TypeRewriteRule that applies the transformation
      */
     @NotNull
-    private static TypeRewriteRule dynamicTransform(
-            @NotNull final String name,
-            @NotNull final Function<Dynamic<?>, Dynamic<?>> transform
-    ) {
+    private static TypeRewriteRule dynamicTransform(@NotNull final String name,
+                                                    @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -239,11 +233,43 @@ public final class PlayerV1ToV2Fix extends SchemaDataFix {
                 }).map(value -> new Typed<>((Type) input.type(), value)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
                 return name;
             }
         };
+    }
+
+    /**
+     * Constructs the full transformation rule for migrating player data from V1.0.0 to V1.1.0.
+     *
+     * <p>Combines simple field renames, a custom game mode transformation, and a complex restructuring using
+     * optics.</p>
+     *
+     * @param inputSchema  the schema of the input version (V1.0.0)
+     * @param outputSchema the schema of the output version (V1.1.0)
+     * @return a TypeRewriteRule that performs all necessary transformations
+     */
+    @Override
+    @NotNull
+    protected TypeRewriteRule makeRule(@NotNull final Schema inputSchema,
+                                       @NotNull final Schema outputSchema) {
+        return Rules.seq(
+                // Step 1: Simple field renames using Rules
+                Rules.renameField(GsonOps.INSTANCE, "playerName", "name"),
+                Rules.renameField(GsonOps.INSTANCE, "xp", "experience"),
+
+                // Step 2: Transform gameMode from int to string
+                Rules.transformField(GsonOps.INSTANCE, "gameMode", PlayerV1ToV2Fix::gameModeIntToString),
+
+                // Step 3: Group x/y/z into nested position object using Finder optics
+                groupPositionFieldsWithOptics()
+        );
     }
 }

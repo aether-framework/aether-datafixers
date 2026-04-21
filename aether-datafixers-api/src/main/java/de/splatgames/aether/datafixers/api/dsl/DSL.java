@@ -103,10 +103,8 @@ public final class DSL {
      * Private constructor to prevent instantiation.
      */
     private DSL() {
-        // private constructor to prevent instantiation
+        throw new UnsupportedOperationException("DSL is a utility class and cannot be instantiated");
     }
-
-    // ==================== Primitive Types ====================
 
     /**
      * Creates a boolean type template for true/false values.
@@ -340,8 +338,6 @@ public final class DSL {
     public static TypeTemplate shortType() {
         return new ConstTemplate("short", Type.SHORT);
     }
-
-    // ==================== Compound Types ====================
 
     /**
      * Creates a list type template for ordered collections of elements.
@@ -598,8 +594,6 @@ public final class DSL {
         return new OptionalTemplate(element);
     }
 
-    // ==================== Field Types ====================
-
     /**
      * Creates a required field type template that extracts a named field from objects.
      *
@@ -785,8 +779,6 @@ public final class DSL {
         return new RemainderTemplate();
     }
 
-    // ==================== Tagged Choice Types ====================
-
     /**
      * Creates a tagged choice type template (discriminated union) for polymorphic data.
      *
@@ -839,8 +831,7 @@ public final class DSL {
      */
     @NotNull
     public static TypeTemplate taggedChoice(@NotNull final String tagField,
-                                            @NotNull final Map<String, TypeTemplate> choices
-    ) {
+                                            @NotNull final Map<String, TypeTemplate> choices) {
         Preconditions.checkNotNull(tagField, "tagField must not be null");
         Preconditions.checkNotNull(choices, "choices must not be null");
         return new TaggedChoiceTemplate(tagField, choices);
@@ -880,15 +871,12 @@ public final class DSL {
     @NotNull
     public static TypeTemplate taggedChoiceTyped(@NotNull final String tagField,
                                                  @NotNull final TypeTemplate keyType,
-                                                 @NotNull final Map<String, TypeTemplate> choices
-    ) {
+                                                 @NotNull final Map<String, TypeTemplate> choices) {
         Preconditions.checkNotNull(tagField, "tagField must not be null");
         Preconditions.checkNotNull(keyType, "keyType must not be null");
         Preconditions.checkNotNull(choices, "choices must not be null");
         return new TaggedChoiceTemplate(tagField, choices);
     }
-
-    // ==================== Type Parameter References ====================
 
     /**
      * Creates a type parameter reference for parameterized types.
@@ -981,8 +969,6 @@ public final class DSL {
         Preconditions.checkNotNull(definition, "definition must not be null");
         return new RecursiveTemplate(name, definition);
     }
-
-    // ==================== Finders ====================
 
     /**
      * Creates a finder that locates a specific field in a map/object structure.
@@ -1103,8 +1089,6 @@ public final class DSL {
         return Finder.remainder(excludedFields);
     }
 
-    // ==================== Template Implementations ====================
-
     /**
      * A constant type template that always produces the same fixed type.
      *
@@ -1130,11 +1114,11 @@ public final class DSL {
         /**
          * Creates a new constant template with the given name and type.
          *
-         * @param name the human-readable name for descriptions
-         * @param type the fixed type to return on every application
+         * @param name the human-readable name for descriptions, must not be {@code null}
+         * @param type the fixed type to return on every application, must not be {@code null}
          */
-        ConstTemplate(final String name,
-                      final Type<?> type) {
+        ConstTemplate(@NotNull final String name,
+                      @NotNull final Type<?> type) {
             this.name = name;
             this.type = type;
         }
@@ -1144,6 +1128,9 @@ public final class DSL {
          *
          * <p>For constant templates, this always returns the fixed type,
          * ignoring the provided family.</p>
+         *
+         * @param family the type family (ignored for constant templates), must not be {@code null}
+         * @return the fixed type, never {@code null}
          */
         @NotNull
         @Override
@@ -1194,6 +1181,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Retrieves the type at this template's index from the provided family.</p>
+         *
+         * @param family the type family to look up the indexed type in, must not be {@code null}
+         * @return the type at this template's index in the family, never {@code null}
          */
         @NotNull
         @Override
@@ -1238,11 +1228,11 @@ public final class DSL {
         /**
          * Creates a new product template combining two sub-templates.
          *
-         * @param first  the template for the first component
-         * @param second the template for the second component
+         * @param first  the template for the first component, must not be {@code null}
+         * @param second the template for the second component, must not be {@code null}
          */
-        ProductTemplate(final TypeTemplate first,
-                        final TypeTemplate second) {
+        ProductTemplate(@NotNull final TypeTemplate first,
+                        @NotNull final TypeTemplate second) {
             this.first = first;
             this.second = second;
         }
@@ -1251,6 +1241,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates both sub-templates and creates a product type.</p>
+         *
+         * @param family the type family used to resolve both sub-templates, must not be {@code null}
+         * @return the product type of the two resolved sub-types, never {@code null}
          */
         @NotNull
         @Override
@@ -1295,11 +1288,11 @@ public final class DSL {
         /**
          * Creates a new sum template with two alternatives.
          *
-         * @param left  the template for the left alternative
-         * @param right the template for the right alternative
+         * @param left  the template for the left alternative, must not be {@code null}
+         * @param right the template for the right alternative, must not be {@code null}
          */
-        SumTemplate(final TypeTemplate left,
-                    final TypeTemplate right) {
+        SumTemplate(@NotNull final TypeTemplate left,
+                    @NotNull final TypeTemplate right) {
             this.left = left;
             this.right = right;
         }
@@ -1308,6 +1301,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates both alternatives and creates a sum type.</p>
+         *
+         * @param family the type family used to resolve both alternatives, must not be {@code null}
+         * @return the sum type of the two resolved alternatives, never {@code null}
          */
         @NotNull
         @Override
@@ -1346,9 +1342,9 @@ public final class DSL {
         /**
          * Creates a new list template for elements of the given type.
          *
-         * @param element the template for list elements
+         * @param element the template for list elements, must not be {@code null}
          */
-        ListTemplate(final TypeTemplate element) {
+        ListTemplate(@NotNull final TypeTemplate element) {
             this.element = element;
         }
 
@@ -1356,6 +1352,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates the element template and wraps it in a list type.</p>
+         *
+         * @param family the type family used to resolve the element template, must not be {@code null}
+         * @return the list type wrapping the resolved element type, never {@code null}
          */
         @NotNull
         @Override
@@ -1395,9 +1394,9 @@ public final class DSL {
         /**
          * Creates a new optional template wrapping the given type.
          *
-         * @param element the template for the optional element
+         * @param element the template for the optional element, must not be {@code null}
          */
-        OptionalTemplate(final TypeTemplate element) {
+        OptionalTemplate(@NotNull final TypeTemplate element) {
             this.element = element;
         }
 
@@ -1405,6 +1404,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Instantiates the element template and wraps it in an optional type.</p>
+         *
+         * @param family the type family used to resolve the element template, must not be {@code null}
+         * @return the optional type wrapping the resolved element type, never {@code null}
          */
         @NotNull
         @Override
@@ -1454,12 +1456,12 @@ public final class DSL {
         /**
          * Creates a new field template with the given name and type.
          *
-         * @param name     the field name in the object structure
-         * @param type     the template for the field's value type
+         * @param name     the field name in the object structure, must not be {@code null}
+         * @param type     the template for the field's value type, must not be {@code null}
          * @param optional whether the field is optional
          */
-        FieldTemplate(final String name,
-                      final TypeTemplate type,
+        FieldTemplate(@NotNull final String name,
+                      @NotNull final TypeTemplate type,
                       final boolean optional) {
             this.name = name;
             this.type = type;
@@ -1470,6 +1472,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Creates a field type with the resolved value type.</p>
+         *
+         * @param family the type family used to resolve the field's value type, must not be {@code null}
+         * @return the field type with the resolved value type, never {@code null}
          */
         @NotNull
         @Override
@@ -1514,11 +1519,11 @@ public final class DSL {
         /**
          * Creates a named wrapper around the given template.
          *
-         * @param name     the symbolic name for the type
-         * @param template the underlying type template
+         * @param name     the symbolic name for the type, must not be {@code null}
+         * @param template the underlying type template, must not be {@code null}
          */
-        NamedTemplate(final String name,
-                      final TypeTemplate template) {
+        NamedTemplate(@NotNull final String name,
+                      @NotNull final TypeTemplate template) {
             this.name = name;
             this.template = template;
         }
@@ -1527,6 +1532,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Creates a named type wrapping the resolved inner type.</p>
+         *
+         * @param family the type family used to resolve the inner template, must not be {@code null}
+         * @return the named type wrapping the resolved inner type, never {@code null}
          */
         @NotNull
         @Override
@@ -1561,6 +1569,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Always returns {@link Type#PASSTHROUGH} regardless of the family.</p>
+         *
+         * @param family the type family (ignored for remainder templates), must not be {@code null}
+         * @return {@link Type#PASSTHROUGH}, never {@code null}
          */
         @NotNull
         @Override
@@ -1605,11 +1616,11 @@ public final class DSL {
         /**
          * Creates a tagged choice template with the given tag field and choices.
          *
-         * @param tagField the name of the discriminator field
-         * @param choices  mapping from tag values to type templates
+         * @param tagField the name of the discriminator field, must not be {@code null}
+         * @param choices  mapping from tag values to type templates, must not be {@code null}
          */
-        TaggedChoiceTemplate(final String tagField,
-                             final Map<String, TypeTemplate> choices) {
+        TaggedChoiceTemplate(@NotNull final String tagField,
+                             @NotNull final Map<String, TypeTemplate> choices) {
             this.tagField = tagField;
             this.choices = Map.copyOf(choices);
         }
@@ -1618,6 +1629,9 @@ public final class DSL {
          * {@inheritDoc}
          *
          * <p>Resolves all choice templates and creates a tagged choice type.</p>
+         *
+         * @param family the type family used to resolve all choice templates, must not be {@code null}
+         * @return the tagged choice type with all resolved variant types, never {@code null}
          */
         @NotNull
         @Override
@@ -1639,7 +1653,7 @@ public final class DSL {
         @NotNull
         @Override
         public String describe() {
-            final String choicesStr = choices.entrySet().stream()
+            final String choicesStr = this.choices.entrySet().stream()
                     .map(e -> e.getKey() + " -> " + e.getValue().describe())
                     .collect(Collectors.joining(", "));
             return "TaggedChoice<" + this.tagField + ">{" + choicesStr + "}";
@@ -1671,11 +1685,11 @@ public final class DSL {
         /**
          * Creates a recursive template with the given name and definition.
          *
-         * @param name       the name for the recursive type
-         * @param definition function receiving self-reference, returning the type body
+         * @param name       the name for the recursive type, must not be {@code null}
+         * @param definition function receiving self-reference, returning the type body, must not be {@code null}
          */
-        RecursiveTemplate(final String name,
-                          final Function<TypeTemplate, TypeTemplate> definition) {
+        RecursiveTemplate(@NotNull final String name,
+                          @NotNull final Function<TypeTemplate, TypeTemplate> definition) {
             this.name = name;
             this.definition = definition;
         }
@@ -1685,6 +1699,9 @@ public final class DSL {
          *
          * <p>Creates a self-referential type using {@link TypeFamily#recursive}.
          * The definition function receives a template that references the type being defined.</p>
+         *
+         * @param family the type family used as the outer context for the recursive type, must not be {@code null}
+         * @return the self-referential type produced by the definition function, never {@code null}
          */
         @NotNull
         @Override
@@ -1694,6 +1711,12 @@ public final class DSL {
             final TypeFamily recursiveFamily = TypeFamily.recursive(self -> {
                 // Create a template that references the recursive type
                 final TypeTemplate selfRef = new TypeTemplate() {
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @param f {@inheritDoc}
+                     * @return {@inheritDoc}
+                     */
                     @NotNull
                     @Override
                     public Type<?> apply(@NotNull final TypeFamily f) {
@@ -1701,6 +1724,11 @@ public final class DSL {
                         return self.apply(0);
                     }
 
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @return {@inheritDoc}
+                     */
                     @NotNull
                     @Override
                     public String describe() {

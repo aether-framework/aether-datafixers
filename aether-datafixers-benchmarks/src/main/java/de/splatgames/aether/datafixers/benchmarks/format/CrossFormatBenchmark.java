@@ -30,6 +30,8 @@ import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
 import de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps;
 import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -43,8 +45,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for cross-format conversion performance between DynamicOps implementations.
@@ -243,8 +243,6 @@ public class CrossFormatBenchmark {
         this.jacksonYamlRoot = BenchmarkDataGenerator.generate(this.jacksonYamlOps, this.payloadSize).value();
     }
 
-    // ==================== Gson <-> Jackson JSON Conversions ====================
-
     /**
      * Benchmarks conversion from Gson JsonElement to Jackson JsonNode.
      *
@@ -254,7 +252,7 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void gsonToJackson(final Blackhole blackhole) {
+    public void gsonToJackson(@NotNull final Blackhole blackhole) {
         final JsonNode result = this.jacksonJsonOps.convertTo(this.gsonOps, this.gsonRoot);
         blackhole.consume(result);
     }
@@ -267,12 +265,10 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonToGson(final Blackhole blackhole) {
+    public void jacksonToGson(@NotNull final Blackhole blackhole) {
         final JsonElement result = this.gsonOps.convertTo(this.jacksonJsonOps, this.jacksonJsonRoot);
         blackhole.consume(result);
     }
-
-    // ==================== Gson <-> SnakeYAML Conversions ====================
 
     /**
      * Benchmarks conversion from Gson JsonElement to SnakeYAML native types.
@@ -283,7 +279,7 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void gsonToSnakeYaml(final Blackhole blackhole) {
+    public void gsonToSnakeYaml(@NotNull final Blackhole blackhole) {
         final Object result = this.snakeYamlOps.convertTo(this.gsonOps, this.gsonRoot);
         blackhole.consume(result);
     }
@@ -296,12 +292,10 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void snakeYamlToGson(final Blackhole blackhole) {
+    public void snakeYamlToGson(@NotNull final Blackhole blackhole) {
         final JsonElement result = this.gsonOps.convertTo(this.snakeYamlOps, this.snakeYamlRoot);
         blackhole.consume(result);
     }
-
-    // ==================== Jackson JSON <-> Jackson YAML Conversions ====================
 
     /**
      * Benchmarks conversion from Jackson JSON to Jackson YAML.
@@ -312,7 +306,7 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonJsonToYaml(final Blackhole blackhole) {
+    public void jacksonJsonToYaml(@NotNull final Blackhole blackhole) {
         final JsonNode result = this.jacksonYamlOps.convertTo(this.jacksonJsonOps, this.jacksonJsonRoot);
         blackhole.consume(result);
     }
@@ -325,12 +319,10 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonYamlToJson(final Blackhole blackhole) {
+    public void jacksonYamlToJson(@NotNull final Blackhole blackhole) {
         final JsonNode result = this.jacksonJsonOps.convertTo(this.jacksonYamlOps, this.jacksonYamlRoot);
         blackhole.consume(result);
     }
-
-    // ==================== SnakeYAML <-> Jackson YAML Conversions ====================
 
     /**
      * Benchmarks conversion from SnakeYAML native types to Jackson YAML JsonNode.
@@ -341,7 +333,7 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void snakeYamlToJacksonYaml(final Blackhole blackhole) {
+    public void snakeYamlToJacksonYaml(@NotNull final Blackhole blackhole) {
         final JsonNode result = this.jacksonYamlOps.convertTo(this.snakeYamlOps, this.snakeYamlRoot);
         blackhole.consume(result);
     }
@@ -354,7 +346,7 @@ public class CrossFormatBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonYamlToSnakeYaml(final Blackhole blackhole) {
+    public void jacksonYamlToSnakeYaml(@NotNull final Blackhole blackhole) {
         final Object result = this.snakeYamlOps.convertTo(this.jacksonYamlOps, this.jacksonYamlRoot);
         blackhole.consume(result);
     }

@@ -65,15 +65,13 @@ import java.util.Optional;
  * @see FieldOperation
  * @since 0.2.0
  */
-public record RuleApplication(
-        @NotNull String ruleName,
-        @NotNull String typeName,
-        @NotNull Instant timestamp,
-        @NotNull Duration duration,
-        boolean matched,
-        @Nullable String description,
-        @NotNull List<FieldOperation> fieldOperations
-) {
+public record RuleApplication(@NotNull String ruleName,
+                              @NotNull String typeName,
+                              @NotNull Instant timestamp,
+                              @NotNull Duration duration,
+                              boolean matched,
+                              @Nullable String description,
+                              @NotNull List<FieldOperation> fieldOperations) {
 
     /**
      * Creates a new rule application record.
@@ -107,13 +105,11 @@ public record RuleApplication(
      * @return the new rule application record
      */
     @NotNull
-    public static RuleApplication of(
-            @NotNull final String ruleName,
-            @NotNull final String typeName,
-            @NotNull final Instant timestamp,
-            @NotNull final Duration duration,
-            final boolean matched
-    ) {
+    public static RuleApplication of(@NotNull final String ruleName,
+                                     @NotNull final String typeName,
+                                     @NotNull final Instant timestamp,
+                                     @NotNull final Duration duration,
+                                     final boolean matched) {
         return new RuleApplication(ruleName, typeName, timestamp, duration, matched, null, List.of());
     }
 

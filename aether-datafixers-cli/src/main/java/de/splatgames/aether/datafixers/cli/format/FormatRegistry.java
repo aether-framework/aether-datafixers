@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 /**
  * Central registry for {@link FormatHandler} implementations.
@@ -95,7 +96,7 @@ public final class FormatRegistry {
     /**
      * Set of built-in format IDs that should not be overridden by ServiceLoader.
      */
-    private static final java.util.Set<String> BUILTIN_FORMAT_IDS = java.util.Set.of(
+    private static final Set<String> BUILTIN_FORMAT_IDS = Set.of(
             "json-gson",
             "json-jackson",
             "yaml-snakeyaml",

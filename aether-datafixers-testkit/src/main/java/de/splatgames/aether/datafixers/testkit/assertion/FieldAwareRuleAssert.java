@@ -85,8 +85,6 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
         super(actual, FieldAwareRuleAssert.class);
     }
 
-    // ==================== Counts ====================
-
     /**
      * Asserts that the rule carries exactly the given number of field operations.
      *
@@ -113,10 +111,8 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
      * @return this assertion for chaining, never {@code null}
      */
     @NotNull
-    public FieldAwareRuleAssert hasFieldOperationCountOfType(
-            @NotNull final FieldOperationType type,
-            final int expected
-    ) {
+    public FieldAwareRuleAssert hasFieldOperationCountOfType(@NotNull final FieldOperationType type,
+                                                             final int expected) {
         isNotNull();
         final long actualCount = this.actual.fieldOperations().stream()
                 .filter(op -> op.operationType() == type)
@@ -143,8 +139,6 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
         return this;
     }
 
-    // ==================== Convenience Containment ====================
-
     /**
      * Asserts that the rule contains a {@code RENAME} operation from the given
      * source name to the given target name.
@@ -154,10 +148,8 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
      * @return this assertion for chaining, never {@code null}
      */
     @NotNull
-    public FieldAwareRuleAssert containsRename(
-            @NotNull final String oldName,
-            @NotNull final String newName
-    ) {
+    public FieldAwareRuleAssert containsRename(@NotNull final String oldName,
+                                               @NotNull final String newName) {
         isNotNull();
         final boolean found = this.actual.fieldOperations().stream()
                 .anyMatch(op -> op.operationType() == FieldOperationType.RENAME
@@ -231,10 +223,8 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
      * @return this assertion for chaining
      */
     @NotNull
-    private FieldAwareRuleAssert containsTopLevelOperation(
-            @NotNull final FieldOperationType type,
-            @NotNull final String fieldName
-    ) {
+    private FieldAwareRuleAssert containsTopLevelOperation(@NotNull final FieldOperationType type,
+                                                           @NotNull final String fieldName) {
         isNotNull();
         final boolean found = this.actual.fieldOperations().stream()
                 .anyMatch(op -> op.operationType() == type
@@ -246,8 +236,6 @@ public final class FieldAwareRuleAssert extends AbstractAssert<FieldAwareRuleAss
         }
         return this;
     }
-
-    // ==================== Navigation ====================
 
     /**
      * Returns a {@link FieldOperationAssert} for the field operation at the given index.

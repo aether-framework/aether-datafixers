@@ -77,8 +77,16 @@ import org.slf4j.LoggerFactory;
  */
 public final class Slf4jDataFixerContext implements DataFixerContext {
 
+    /**
+     * The default logger name used when no custom name or logger is provided.
+     */
     private static final String DEFAULT_LOGGER_NAME = "de.splatgames.aether.datafixers";
 
+    /**
+     * The SLF4J logger instance used for logging fix messages.
+     *
+     * <p>Initialized in the constructor and never {@code null}.</p>
+     */
     private final Logger logger;
 
     /**
@@ -109,6 +117,15 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
         this.logger = logger;
     }
 
+    /**
+     * Logs an informational message using SLF4J.
+     *
+     * <p>Message formatting is delegated to SLF4J, which supports {} placeholders
+     * and handles argument evaluation lazily.</p>
+     *
+     * @param message the message to log, must not be {@code null}
+     * @param args    optional arguments for message formatting
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
@@ -116,6 +133,15 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
         this.logger.info(message, args);
     }
 
+    /**
+     * Logs a warning message using SLF4J.
+     *
+     * <p>Message formatting is delegated to SLF4J, which supports {} placeholders
+     * and handles argument evaluation lazily.</p>
+     *
+     * @param message the message to log, must not be {@code null}
+     * @param args    optional arguments for message formatting
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
@@ -133,6 +159,18 @@ public final class Slf4jDataFixerContext implements DataFixerContext {
         return this.logger;
     }
 
+    /**
+     * Formats a message by replacing '{}' placeholders with the provided arguments.
+     *
+     * <p>This method is not used in this implementation since SLF4J handles
+     * formatting internally. It is provided for completeness and potential use
+     * in other contexts.</p>
+     *
+     * @param message the message template containing '{}' placeholders
+     * @param args    the arguments to replace the placeholders
+     * @return the formatted message with placeholders replaced by arguments
+     */
+    @NotNull
     private static String formatMessage(@NotNull final String message, @Nullable final Object... args) {
         Preconditions.checkNotNull(message, "message must not be null");
         if (args == null || args.length == 0) {

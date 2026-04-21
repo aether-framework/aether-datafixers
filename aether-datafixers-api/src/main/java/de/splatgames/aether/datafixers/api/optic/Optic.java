@@ -94,12 +94,23 @@ public interface Optic<S, T, A, B> {
     @NotNull
     static <S> Optic<S, S, S, S> identity() {
         return new Optic<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "identity";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param other {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull <C, D> Optic<S, S, C, D> compose(@NotNull final Optic<S, S, C, D> other) {
                 Preconditions.checkNotNull(other, "other must not be null");

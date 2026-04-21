@@ -92,8 +92,6 @@ public final class Fixes {
         // private constructor to prevent instantiation
     }
 
-    // ==================== Typed Fixes ====================
-
     /**
      * Creates a rule that transforms typed values of a specific type.
      *
@@ -134,6 +132,13 @@ public final class Fixes {
         Preconditions.checkNotNull(rewrite, "rewrite must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -146,6 +151,11 @@ public final class Fixes {
                 return Optional.of(rewrite.apply(input));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -192,6 +202,13 @@ public final class Fixes {
         Preconditions.checkNotNull(rewrite, "rewrite must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param inputType {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -210,6 +227,11 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -217,8 +239,6 @@ public final class Fixes {
             }
         };
     }
-
-    // ==================== Field Operations ====================
 
     /**
      * Creates a rule that renames a field in the data.
@@ -285,6 +305,13 @@ public final class Fixes {
         Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
         Preconditions.checkNotNull(containerType, "containerType must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -310,6 +337,11 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) containerType, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -340,8 +372,6 @@ public final class Fixes {
         return Rules.transformField(ops, fieldName, transform).ifType(containerType);
     }
 
-    // ==================== Tagged Choice Operations ====================
-
     /**
      * Creates a rule that applies different fixes based on a tag value.
      *
@@ -362,6 +392,13 @@ public final class Fixes {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fixByTag, "fixByTag must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param inputType {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
@@ -392,6 +429,11 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -423,6 +465,13 @@ public final class Fixes {
         Preconditions.checkNotNull(newTag, "newTag must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param inputType {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
@@ -450,6 +499,11 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -457,8 +511,6 @@ public final class Fixes {
             }
         };
     }
-
-    // ==================== Recursive Operations ====================
 
     /**
      * Creates a rule that walks a type recursively, applying a transformation.
@@ -478,8 +530,6 @@ public final class Fixes {
         Preconditions.checkNotNull(walker, "walker must not be null");
         return Rules.everywhere(TypeRewriteRule.forType(name, (Type) type, value -> walker.apply(new Typed<>((Type) type, value)).value()));
     }
-
-    // ==================== Utility ====================
 
     /**
      * Creates a composite fix from multiple rules.
@@ -512,6 +562,13 @@ public final class Fixes {
         Preconditions.checkNotNull(condition, "condition must not be null");
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -524,6 +581,11 @@ public final class Fixes {
                 return rule.rewrite(type, input);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {

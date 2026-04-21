@@ -33,8 +33,7 @@ import java.util.regex.Pattern;
  * Configurable rules for schema convention checking.
  *
  * <p>Convention rules define naming patterns and constraints that schemas
- * should follow. This class provides predefined rule sets as well as a
- * builder for custom configurations.</p>
+ * should follow. This class provides predefined rule sets as well as a builder for custom configurations.</p>
  *
  * <h2>Predefined Rule Sets</h2>
  * <ul>
@@ -117,36 +116,43 @@ public final class ConventionRules {
     /**
      * Regex pattern that type names must match, or {@code null} to skip pattern check.
      */
+    @Nullable
     private final Pattern typeNamePattern;
 
     /**
      * Regex pattern that field names must match, or {@code null} to skip pattern check.
      */
+    @Nullable
     private final Pattern fieldNamePattern;
 
     /**
      * Required prefix for type names, or {@code null} if no prefix required.
      */
+    @Nullable
     private final String typeNamePrefix;
 
     /**
      * Expected prefix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
+    @Nullable
     private final String schemaClassPrefix;
 
     /**
      * Expected suffix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
+    @Nullable
     private final String schemaClassSuffix;
 
     /**
      * Expected prefix for fix class names, or {@code null} to skip.
      */
+    @Nullable
     private final String fixClassPrefix;
 
     /**
      * Expected suffix for fix class names (e.g., "Fix"), or {@code null} to skip.
      */
+    @Nullable
     private final String fixClassSuffix;
 
     /**
@@ -157,11 +163,13 @@ public final class ConventionRules {
     /**
      * Custom validation predicate for type names, or {@code null} if not used.
      */
+    @Nullable
     private final Predicate<String> customTypeValidator;
 
     /**
      * Custom validation predicate for field names, or {@code null} if not used.
      */
+    @Nullable
     private final Predicate<String> customFieldValidator;
 
     /**
@@ -181,19 +189,17 @@ public final class ConventionRules {
      * @param customTypeValidator     custom type name validator
      * @param customFieldValidator    custom field name validator
      */
-    private ConventionRules(
-            final boolean enabled,
-            final Pattern typeNamePattern,
-            final Pattern fieldNamePattern,
-            final String typeNamePrefix,
-            final String schemaClassPrefix,
-            final String schemaClassSuffix,
-            final String fixClassPrefix,
-            final String fixClassSuffix,
-            final boolean treatViolationsAsErrors,
-            final Predicate<String> customTypeValidator,
-            final Predicate<String> customFieldValidator
-    ) {
+    private ConventionRules(final boolean enabled,
+                            @Nullable final Pattern typeNamePattern,
+                            @Nullable final Pattern fieldNamePattern,
+                            @Nullable final String typeNamePrefix,
+                            @Nullable final String schemaClassPrefix,
+                            @Nullable final String schemaClassSuffix,
+                            @Nullable final String fixClassPrefix,
+                            @Nullable final String fixClassSuffix,
+                            final boolean treatViolationsAsErrors,
+                            @Nullable final Predicate<String> customTypeValidator,
+                            @Nullable final Predicate<String> customFieldValidator) {
         this.enabled = enabled;
         this.typeNamePattern = typeNamePattern;
         this.fieldNamePattern = fieldNamePattern;
@@ -405,22 +411,81 @@ public final class ConventionRules {
     }
 
     /**
-     * Builder for creating custom {@link ConventionRules}.
+     * Builder for creating custom ConventionRules instances.
+     * <p>
+     * This builder allows you to configure various aspects of convention checking, such as:
+     *     <ul>
+     *         <li>Enabling/disabling convention checks</li>
+     *         <li>Setting regex patterns for type and field names</li>
+     *         <li>Requiring specific prefixes/suffixes for type, schema, and
+     *         fix class names</li>
+     *         <li>Choosing whether violations are treated as errors or warnings</li>
+     *         <li>Providing custom validation predicates for type and field names</li>
+     *   </ul>
+     *   This builder is used to create immutable ConventionRules instances that can be applied during schema validation.
+     * </p>
+     *
+     * @see ConventionRules
      */
     public static final class Builder {
 
+        /**
+         * Builder fields with default values. All fields are nullable except 'enabled'.
+         */
         private boolean enabled = true;
+        /**
+         * Regex pattern for type names. If null, no pattern check is performed.
+         */
+        @Nullable
         private Pattern typeNamePattern;
+        /**
+         * Regex pattern for field names. If null, no pattern check is performed.
+         */
+        @Nullable
         private Pattern fieldNamePattern;
+        /**
+         * Prefix for type names. If null, no prefix is required.
+         */
+        @Nullable
         private String typeNamePrefix;
+        /**
+         * Expected prefix for schema class names. If null, no prefix check is performed.
+         */
+        @Nullable
         private String schemaClassPrefix;
+        /**
+         * Expected suffix for schema class names. If null, no suffix check is performed.
+         */
+        @Nullable
         private String schemaClassSuffix;
+        /**
+         * Expected prefix for fix class names. If null, no prefix check is performed.
+         */
+        @Nullable
         private String fixClassPrefix;
+        /**
+         * Expected suffix for fix class names. If null, no suffix check is performed.
+         */
+        @Nullable
         private String fixClassSuffix;
+        /**
+         * Flag indicating whether violations should be treated as errors (true) or warnings (false).
+         */
         private boolean treatViolationsAsErrors = false;
+        /**
+         * Custom validation predicate for type names. If null, no custom validation is performed.
+         */
+        @Nullable
         private Predicate<String> customTypeValidator;
+        /**
+         * Custom validation predicate for field names. If null, no custom validation is performed.
+         */
+        @Nullable
         private Predicate<String> customFieldValidator;
 
+        /**
+         * Private constructor to prevent direct instantiation. Use {@link ConventionRules#builder()} instead.
+         */
         private Builder() {
         }
 

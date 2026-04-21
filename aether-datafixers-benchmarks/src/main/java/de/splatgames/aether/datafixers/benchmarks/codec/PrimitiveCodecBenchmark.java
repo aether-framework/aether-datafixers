@@ -27,6 +27,8 @@ import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -39,8 +41,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for primitive type codec encode/decode performance.
@@ -244,8 +244,6 @@ public class PrimitiveCodecBenchmark {
         this.encodedString = Codecs.STRING.encodeStart(this.ops, TEST_STRING).result().orElseThrow();
     }
 
-    // ==================== Boolean Benchmarks ====================
-
     /**
      * Benchmarks boolean value encoding to JSON.
      *
@@ -255,7 +253,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeBool(final Blackhole blackhole) {
+    public void encodeBool(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = Codecs.BOOL.encodeStart(this.ops, TEST_BOOL);
         blackhole.consume(result);
     }
@@ -269,12 +267,10 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeBool(final Blackhole blackhole) {
+    public void decodeBool(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<Boolean, JsonElement>> result = Codecs.BOOL.decode(this.ops, this.encodedBool);
         blackhole.consume(result);
     }
-
-    // ==================== Integer Benchmarks ====================
 
     /**
      * Benchmarks integer value encoding to JSON.
@@ -285,7 +281,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeInt(final Blackhole blackhole) {
+    public void encodeInt(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = Codecs.INT.encodeStart(this.ops, TEST_INT);
         blackhole.consume(result);
     }
@@ -299,12 +295,10 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeInt(final Blackhole blackhole) {
+    public void decodeInt(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<Integer, JsonElement>> result = Codecs.INT.decode(this.ops, this.encodedInt);
         blackhole.consume(result);
     }
-
-    // ==================== Long Benchmarks ====================
 
     /**
      * Benchmarks long value encoding to JSON.
@@ -315,7 +309,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeLong(final Blackhole blackhole) {
+    public void encodeLong(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = Codecs.LONG.encodeStart(this.ops, TEST_LONG);
         blackhole.consume(result);
     }
@@ -329,12 +323,10 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeLong(final Blackhole blackhole) {
+    public void decodeLong(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<Long, JsonElement>> result = Codecs.LONG.decode(this.ops, this.encodedLong);
         blackhole.consume(result);
     }
-
-    // ==================== Float Benchmarks ====================
 
     /**
      * Benchmarks float value encoding to JSON.
@@ -346,7 +338,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeFloat(final Blackhole blackhole) {
+    public void encodeFloat(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = Codecs.FLOAT.encodeStart(this.ops, TEST_FLOAT);
         blackhole.consume(result);
     }
@@ -361,12 +353,10 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeFloat(final Blackhole blackhole) {
+    public void decodeFloat(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<Float, JsonElement>> result = Codecs.FLOAT.decode(this.ops, this.encodedFloat);
         blackhole.consume(result);
     }
-
-    // ==================== Double Benchmarks ====================
 
     /**
      * Benchmarks double value encoding to JSON.
@@ -378,7 +368,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeDouble(final Blackhole blackhole) {
+    public void encodeDouble(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = Codecs.DOUBLE.encodeStart(this.ops, TEST_DOUBLE);
         blackhole.consume(result);
     }
@@ -392,12 +382,10 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeDouble(final Blackhole blackhole) {
+    public void decodeDouble(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<Double, JsonElement>> result = Codecs.DOUBLE.decode(this.ops, this.encodedDouble);
         blackhole.consume(result);
     }
-
-    // ==================== String Benchmarks ====================
 
     /**
      * Benchmarks string value encoding to JSON.
@@ -409,7 +397,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeString(final Blackhole blackhole) {
+    public void encodeString(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = Codecs.STRING.encodeStart(this.ops, TEST_STRING);
         blackhole.consume(result);
     }
@@ -423,12 +411,10 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeString(final Blackhole blackhole) {
+    public void decodeString(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<String, JsonElement>> result = Codecs.STRING.decode(this.ops, this.encodedString);
         blackhole.consume(result);
     }
-
-    // ==================== Round-Trip Benchmarks ====================
 
     /**
      * Benchmarks complete integer round-trip (encode then decode).
@@ -443,7 +429,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void roundTripIntDirect(final Blackhole blackhole) {
+    public void roundTripIntDirect(@NotNull final Blackhole blackhole) {
         final JsonElement json = Codecs.INT.encodeStart(this.ops, TEST_INT).result().orElseThrow();
         final Pair<Integer, JsonElement> decoded = Codecs.INT.decode(this.ops, json).result().orElseThrow();
         blackhole.consume(decoded);
@@ -459,7 +445,7 @@ public class PrimitiveCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void roundTripStringDirect(final Blackhole blackhole) {
+    public void roundTripStringDirect(@NotNull final Blackhole blackhole) {
         final JsonElement json = Codecs.STRING.encodeStart(this.ops, TEST_STRING).result().orElseThrow();
         final Pair<String, JsonElement> decoded = Codecs.STRING.decode(this.ops, json).result().orElseThrow();
         blackhole.consume(decoded);

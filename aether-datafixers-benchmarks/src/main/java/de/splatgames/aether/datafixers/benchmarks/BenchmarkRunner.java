@@ -22,12 +22,12 @@
 
 package de.splatgames.aether.datafixers.benchmarks;
 
+import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import java.io.IOException;
 
 /**
  * Main entry point for running Aether Datafixers JMH benchmarks.
@@ -176,7 +176,7 @@ public final class BenchmarkRunner {
      * @throws RunnerException if benchmark execution fails
      * @throws IOException     if there is an I/O error reading benchmark metadata
      */
-    public static void main(final String[] args) throws RunnerException, IOException {
+    public static void main(@NotNull final String[] args) throws RunnerException, IOException {
         if (args.length > 0) {
             // If arguments are provided, delegate to JMH main
             org.openjdk.jmh.Main.main(args);

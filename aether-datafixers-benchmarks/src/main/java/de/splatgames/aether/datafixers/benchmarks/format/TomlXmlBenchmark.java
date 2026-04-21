@@ -31,6 +31,8 @@ import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkDataGenerator;
 import de.splatgames.aether.datafixers.benchmarks.util.PayloadSize;
 import de.splatgames.aether.datafixers.codec.toml.jackson.JacksonTomlOps;
 import de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -44,8 +46,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for TOML and XML DynamicOps implementations via Jackson.
@@ -222,8 +222,6 @@ public class TomlXmlBenchmark {
         this.toVersion = new DataVersion(2);
     }
 
-    // ==================== Data Generation Benchmarks ====================
-
     /**
      * Benchmarks Dynamic object generation using JacksonTomlOps.
      *
@@ -233,7 +231,7 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void tomlGenerate(final Blackhole blackhole) {
+    public void tomlGenerate(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> data = BenchmarkDataGenerator.generate(this.tomlOps, this.payloadSize);
         blackhole.consume(data);
     }
@@ -247,12 +245,10 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void xmlGenerate(final Blackhole blackhole) {
+    public void xmlGenerate(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> data = BenchmarkDataGenerator.generate(this.xmlOps, this.payloadSize);
         blackhole.consume(data);
     }
-
-    // ==================== Field Access Benchmarks ====================
 
     /**
      * Benchmarks field read access on TOML-backed Dynamic.
@@ -263,7 +259,7 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void tomlFieldRead(final Blackhole blackhole) {
+    public void tomlFieldRead(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> field = this.tomlData.get(FIELD_NAME);
         blackhole.consume(field);
     }
@@ -277,12 +273,10 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void xmlFieldRead(final Blackhole blackhole) {
+    public void xmlFieldRead(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> field = this.xmlData.get(FIELD_NAME);
         blackhole.consume(field);
     }
-
-    // ==================== Field Modification Benchmarks ====================
 
     /**
      * Benchmarks field set operation on TOML-backed Dynamic.
@@ -292,7 +286,7 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void tomlFieldSet(final Blackhole blackhole) {
+    public void tomlFieldSet(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.tomlData.set(
                 "newField",
                 this.tomlData.createString("newValue")
@@ -308,15 +302,13 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void xmlFieldSet(final Blackhole blackhole) {
+    public void xmlFieldSet(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.xmlData.set(
                 "newField",
                 this.xmlData.createString("newValue")
         );
         blackhole.consume(result);
     }
-
-    // ==================== Migration Benchmarks ====================
 
     /**
      * Benchmarks DataFixer migration on TOML-backed data.
@@ -327,7 +319,7 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void tomlMigration(final Blackhole blackhole) {
+    public void tomlMigration(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.fixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.tomlData,
@@ -346,7 +338,7 @@ public class TomlXmlBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void xmlMigration(final Blackhole blackhole) {
+    public void xmlMigration(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.fixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.xmlData,

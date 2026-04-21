@@ -246,9 +246,7 @@ public class DynamicOpsAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jacksonOps")
         @NotNull
-        public JacksonJsonOps jacksonOps(
-                @Autowired(required = false) @Nullable final ObjectMapper objectMapper
-        ) {
+        public JacksonJsonOps jacksonOps(@Autowired(required = false) @Nullable final ObjectMapper objectMapper) {
             // Use Spring's ObjectMapper if available for consistent configuration
             return objectMapper != null
                     ? new JacksonJsonOps(objectMapper)
@@ -293,17 +291,37 @@ public class DynamicOpsAutoConfiguration {
     @ConditionalOnClass(name = "com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
     static class JacksonYamlOpsConfiguration {
 
+        /**
+         * Provides the {@link JacksonYamlOps} instance with optional YAMLMapper integration.
+         *
+         * <p>If a Spring-managed {@link YAMLMapper} bean exists, it will be used to
+         * ensure consistent YAML configuration. If not, falls back to the default
+         * {@link JacksonYamlOps#INSTANCE}.</p>
+         *
+         * @param yamlMapper Spring's configured YAMLMapper, may be {@code null}
+         * @return the JacksonYamlOps instance configured with the appropriate YAMLMapper
+         */
         @Bean
         @ConditionalOnMissingBean(name = "jacksonYamlOps")
         @NotNull
-        public JacksonYamlOps jacksonYamlOps(
-                @Autowired(required = false) @Nullable final YAMLMapper yamlMapper
-        ) {
+        public JacksonYamlOps jacksonYamlOps(@Autowired(required = false) @Nullable final YAMLMapper yamlMapper) {
             return yamlMapper != null
                     ? new JacksonYamlOps(yamlMapper)
                     : JacksonYamlOps.INSTANCE;
         }
 
+        /**
+         * Registers {@link JacksonYamlOps} as the primary (default) {@link DynamicOps} bean.
+         *
+         * <p>This bean is created when:</p>
+         * <ul>
+         *   <li>No other DynamicOps bean is defined</li>
+         *   <li>{@code aether.datafixers.default-format} is explicitly set to {@code jackson_yaml}</li>
+         * </ul>
+         *
+         * @param jacksonYamlOps the JacksonYamlOps instance to register as primary
+         * @return the primary DynamicOps instance
+         */
         @Bean
         @Primary
         @ConditionalOnMissingBean(DynamicOps.class)
@@ -330,6 +348,15 @@ public class DynamicOpsAutoConfiguration {
     @ConditionalOnClass(name = "org.yaml.snakeyaml.Yaml")
     static class SnakeYamlOpsConfiguration {
 
+        /**
+         * Provides the {@link SnakeYamlOps} singleton instance.
+         *
+         * <p>Uses the stateless singleton {@link SnakeYamlOps#INSTANCE} which is suitable
+         * for most use cases. The bean is created only if no custom {@code snakeYamlOps}
+         * bean is already defined.</p>
+         *
+         * @return the SnakeYamlOps singleton instance
+         */
         @Bean
         @ConditionalOnMissingBean(name = "snakeYamlOps")
         @NotNull
@@ -337,6 +364,18 @@ public class DynamicOpsAutoConfiguration {
             return SnakeYamlOps.INSTANCE;
         }
 
+        /**
+         * Registers {@link SnakeYamlOps} as the primary (default) {@link DynamicOps} bean.
+         *
+         * <p>This bean is created when:</p>
+         * <ul>
+         *   <li>No other DynamicOps bean is defined</li>
+         *   <li>{@code aether.datafixers.default-format} is {@code snakeyaml}</li>
+         * </ul>
+         *
+         * @param snakeYamlOps the SnakeYamlOps instance to register as primary
+         * @return the primary DynamicOps instance
+         */
         @Bean
         @Primary
         @ConditionalOnMissingBean(DynamicOps.class)
@@ -363,17 +402,37 @@ public class DynamicOpsAutoConfiguration {
     @ConditionalOnClass(name = "com.fasterxml.jackson.dataformat.toml.TomlMapper")
     static class JacksonTomlOpsConfiguration {
 
+        /**
+         * Provides the {@link JacksonTomlOps} instance with optional TomlMapper integration.
+         *
+         * <p>If a Spring-managed {@link TomlMapper} bean exists, it will be used to
+         * ensure consistent TOML configuration. If not, falls back to the default
+         * {@link JacksonTomlOps#INSTANCE}.</p>
+         *
+         * @param tomlMapper Spring's configured TomlMapper, may be {@code null}
+         * @return the JacksonTomlOps instance configured with the appropriate TomlMapper
+         */
         @Bean
         @ConditionalOnMissingBean(name = "jacksonTomlOps")
         @NotNull
-        public JacksonTomlOps jacksonTomlOps(
-                @Autowired(required = false) @Nullable final TomlMapper tomlMapper
-        ) {
+        public JacksonTomlOps jacksonTomlOps(@Autowired(required = false) @Nullable final TomlMapper tomlMapper) {
             return tomlMapper != null
                     ? new JacksonTomlOps(tomlMapper)
                     : JacksonTomlOps.INSTANCE;
         }
 
+        /**
+         * Registers {@link JacksonTomlOps} as the primary (default) {@link DynamicOps} bean.
+         *
+         * <p>This bean is created when:</p>
+         * <ul>
+         *   <li>No other DynamicOps bean is defined</li>
+         *   <li>{@code aether.datafixers.default-format} is explicitly set to {@code jackson_toml}</li>
+         * </ul>
+         *
+         * @param jacksonTomlOps the JacksonTomlOps instance to register as primary
+         * @return the primary DynamicOps instance
+         */
         @Bean
         @Primary
         @ConditionalOnMissingBean(DynamicOps.class)
@@ -400,17 +459,37 @@ public class DynamicOpsAutoConfiguration {
     @ConditionalOnClass(name = "com.fasterxml.jackson.dataformat.xml.XmlMapper")
     static class JacksonXmlOpsConfiguration {
 
+        /**
+         * Provides the {@link JacksonXmlOps} instance with optional XmlMapper integration.
+         *
+         * <p>If a Spring-managed {@link XmlMapper} bean exists, it will be used to
+         * ensure consistent XML configuration. If not, falls back to the default
+         * {@link JacksonXmlOps#INSTANCE}.</p>
+         *
+         * @param xmlMapper Spring's configured XmlMapper, may be {@code null}
+         * @return the JacksonXmlOps instance configured with the appropriate XmlMapper
+         */
         @Bean
         @ConditionalOnMissingBean(name = "jacksonXmlOps")
         @NotNull
-        public JacksonXmlOps jacksonXmlOps(
-                @Autowired(required = false) @Nullable final XmlMapper xmlMapper
-        ) {
+        public JacksonXmlOps jacksonXmlOps(@Autowired(required = false) @Nullable final XmlMapper xmlMapper) {
             return xmlMapper != null
                     ? new JacksonXmlOps(xmlMapper)
                     : JacksonXmlOps.INSTANCE;
         }
 
+        /**
+         * Registers {@link JacksonXmlOps} as the primary (default) {@link DynamicOps} bean.
+         *
+         * <p>This bean is created when:</p>
+         * <ul>
+         *   <li>No other DynamicOps bean is defined</li>
+         *   <li>{@code aether.datafixers.default-format} is explicitly set to {@code jackson_xml}</li>
+         * </ul>
+         *
+         * @param jacksonXmlOps the JacksonXmlOps instance to register as primary
+         * @return the primary DynamicOps instance
+         */
         @Bean
         @Primary
         @ConditionalOnMissingBean(DynamicOps.class)

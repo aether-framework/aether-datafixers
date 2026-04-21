@@ -314,7 +314,7 @@ public sealed interface DataResult<A> {
      * @throws NullPointerException if {@code onError} is {@code null}
      */
     @NotNull
-    DataResult<A> mapError(@NotNull Function<String, String> onError);
+    DataResult<A> mapError(@NotNull final Function<String, String> onError);
 
     /**
      * Returns the successful value, or throws an exception if this is an error.
@@ -330,12 +330,13 @@ public sealed interface DataResult<A> {
      * }
      * }</pre>
      *
-     * @param exceptionFactory the factory to create the exception from the error message
+     * @param exceptionFactory the factory to create the exception from the error message, must not be {@code null}
      * @param <X>              the type of exception to throw
-     * @return the successful value if this is a success
+     * @return the successful value if this is a success, never {@code null}
      * @throws X                    if this is an error
      * @throws NullPointerException if {@code exceptionFactory} is {@code null}
      */
+    @NotNull
     <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) throws X;
 
     /**
@@ -352,11 +353,12 @@ public sealed interface DataResult<A> {
      * // value = 42
      * }</pre>
      *
-     * @param onError consumer to handle the error message before returning the partial result
-     * @return the result value or partial result
+     * @param onError consumer to handle the error message before returning the partial result, must not be {@code null}
+     * @return the result value or partial result, never {@code null}
      * @throws IllegalStateException if this is an error without a partial result
      * @throws NullPointerException  if {@code onError} is {@code null}
      */
+    @NotNull
     A resultOrPartial(@NotNull final Consumer<String> onError);
 
     /**
@@ -370,10 +372,12 @@ public sealed interface DataResult<A> {
      * Integer value2 = error.orElse(0);  // 0
      * }</pre>
      *
-     * @param defaultValue the default value to return if this is an error
-     * @return the result value if successful, otherwise the default value
+     * @param defaultValue the default value to return if this is an error, may be {@code null}
+     * @return the result value if successful, otherwise the default value; may be {@code null} if
+     *         {@code defaultValue} is {@code null} and this is an error
      */
-    A orElse(A defaultValue);
+    @Nullable
+    A orElse(@Nullable final A defaultValue);
 
     /**
      * Returns the result value if successful, otherwise computes a default using the supplier.
@@ -385,10 +389,11 @@ public sealed interface DataResult<A> {
      * Config config = result.orElseGet(() -> Config.defaults());
      * }</pre>
      *
-     * @param supplier the supplier to compute the default value
-     * @return the result value if successful, otherwise the computed default
+     * @param supplier the supplier to compute the default value, must not be {@code null}
+     * @return the result value if successful, otherwise the computed default, never {@code null}
      * @throws NullPointerException if {@code supplier} is {@code null}
      */
+    @NotNull
     A orElseGet(@NotNull final Supplier<? extends A> supplier);
 
     /**
@@ -531,6 +536,7 @@ public sealed interface DataResult<A> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
+         * @param value the successful value, must not be {@code null}
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Success {
@@ -640,12 +646,13 @@ public sealed interface DataResult<A> {
          *
          * <p>For Success, returns the value without throwing.</p>
          *
-         * @param exceptionFactory the factory (not used for Success)
+         * @param exceptionFactory the factory (not used for Success), must not be {@code null}
          * @param <X>              the exception type
-         * @return the successful value
+         * @return the successful value, never {@code null}
          */
+        @NotNull
         @Override
-        public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) throws X {
+        public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) {
             Preconditions.checkNotNull(exceptionFactory, "exceptionFactory must not be null");
             return this.value;
         }
@@ -655,9 +662,10 @@ public sealed interface DataResult<A> {
          *
          * <p>For Success, returns the value without invoking the error handler.</p>
          *
-         * @param onError the error handler (not invoked for Success)
-         * @return the successful value
+         * @param onError the error handler (not invoked for Success), must not be {@code null}
+         * @return the successful value, never {@code null}
          */
+        @NotNull
         @Override
         public A resultOrPartial(@NotNull final Consumer<String> onError) {
             Preconditions.checkNotNull(onError, "onError must not be null");
@@ -669,11 +677,12 @@ public sealed interface DataResult<A> {
          *
          * <p>For Success, returns the successful value, ignoring the default.</p>
          *
-         * @param defaultValue the default value (ignored for Success)
-         * @return the successful value
+         * @param defaultValue the default value (ignored for Success), may be {@code null}
+         * @return the successful value, never {@code null}
          */
+        @NotNull
         @Override
-        public A orElse(final A defaultValue) {
+        public A orElse(@Nullable final A defaultValue) {
             return this.value;
         }
 
@@ -682,9 +691,10 @@ public sealed interface DataResult<A> {
          *
          * <p>For Success, returns the value without invoking the supplier.</p>
          *
-         * @param supplier the supplier (not invoked for Success)
-         * @return the successful value
+         * @param supplier the supplier (not invoked for Success), must not be {@code null}
+         * @return the successful value, never {@code null}
          */
+        @NotNull
         @Override
         public A orElseGet(@NotNull final Supplier<? extends A> supplier) {
             Preconditions.checkNotNull(supplier, "supplier must not be null");
@@ -860,6 +870,8 @@ public sealed interface DataResult<A> {
          * <p>Validates that the error message is not {@code null}. The partial
          * result may be {@code null} to indicate no best-effort value is available.</p>
          *
+         * @param message the error message, must not be {@code null}
+         * @param partial the optional partial/best-effort result, may be {@code null}
          * @throws NullPointerException if {@code message} is {@code null}
          */
         public Error {
@@ -986,11 +998,12 @@ public sealed interface DataResult<A> {
          *
          * <p>For Error, always throws the exception created from the error message.</p>
          *
-         * @param exceptionFactory the factory to create the exception
+         * @param exceptionFactory the factory to create the exception, must not be {@code null}
          * @param <X>              the exception type
          * @return never returns normally
          * @throws X always thrown for Error, created from the error message
          */
+        @NotNull
         @Override
         public <X extends Throwable> A getOrThrow(@NotNull final Function<String, ? extends X> exceptionFactory) throws X {
             Preconditions.checkNotNull(exceptionFactory, "exceptionFactory must not be null");
@@ -1003,10 +1016,11 @@ public sealed interface DataResult<A> {
          * <p>For Error, invokes the error handler with the message, then returns the
          * partial result if available. If no partial result exists, throws an {@link IllegalStateException}.</p>
          *
-         * @param onError the error handler to invoke before returning partial
-         * @return the partial result if available
+         * @param onError the error handler to invoke before returning partial, must not be {@code null}
+         * @return the partial result if available, never {@code null}
          * @throws IllegalStateException if no partial result is available
          */
+        @NotNull
         @Override
         public A resultOrPartial(@NotNull final Consumer<String> onError) {
             Preconditions.checkNotNull(onError, "onError must not be null");
@@ -1022,11 +1036,12 @@ public sealed interface DataResult<A> {
          *
          * <p>For Error, always returns the provided default value.</p>
          *
-         * @param defaultValue the default value to return
-         * @return the default value
+         * @param defaultValue the default value to return, may be {@code null}
+         * @return the default value, may be {@code null}
          */
+        @Nullable
         @Override
-        public A orElse(final A defaultValue) {
+        public A orElse(@Nullable final A defaultValue) {
             return defaultValue;
         }
 
@@ -1035,9 +1050,10 @@ public sealed interface DataResult<A> {
          *
          * <p>For Error, always invokes the supplier and returns its result.</p>
          *
-         * @param supplier the supplier to compute the default value
-         * @return the computed default value
+         * @param supplier the supplier to compute the default value, must not be {@code null}
+         * @return the computed default value, never {@code null}
          */
+        @NotNull
         @Override
         public A orElseGet(@NotNull final Supplier<? extends A> supplier) {
             Preconditions.checkNotNull(supplier, "supplier must not be null");

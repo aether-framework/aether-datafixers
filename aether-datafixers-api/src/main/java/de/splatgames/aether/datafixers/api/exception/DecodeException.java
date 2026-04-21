@@ -148,7 +148,7 @@ public class DecodeException extends DataFixerException {
             sb.append("type=").append(typeReference.getId());
         }
         if (path != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(", ");
             }
             sb.append("path=").append(path);

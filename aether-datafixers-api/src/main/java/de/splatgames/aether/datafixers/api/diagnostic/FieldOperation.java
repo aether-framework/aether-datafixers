@@ -69,12 +69,10 @@ import java.util.Optional;
  * @see FieldAwareRule
  * @since 1.0.0
  */
-public record FieldOperation(
-        @NotNull FieldOperationType operationType,
-        @NotNull List<String> fieldPath,
-        @Nullable String targetFieldName,
-        @Nullable String description
-) {
+public record FieldOperation(@NotNull FieldOperationType operationType,
+                             @NotNull List<String> fieldPath,
+                             @Nullable String targetFieldName,
+                             @Nullable String description) {
 
     /**
      * Creates a new field operation record.

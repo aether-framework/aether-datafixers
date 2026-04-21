@@ -30,20 +30,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Field-level operations performed by a single {@link de.splatgames.aether.datafixers.api.fix.DataFix}
- * during a migration step, captured via static introspection.
+ * Field-level operations performed by a single {@link de.splatgames.aether.datafixers.api.fix.DataFix} during a
+ * migration step, captured via static introspection.
  *
  * <p>This record is the per-fix unit of a {@link FieldOperationReport}. It carries
- * the fix's name, the version range it migrates between, and the list of
- * {@link FieldOperation field operations} extracted from its rule via
- * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix#introspectRule}.</p>
+ * the fix's name, the version range it migrates between, and the list of {@link FieldOperation field operations}
+ * extracted from its rule via {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix#introspectRule}.</p>
  *
  * <h2>Introspectable vs. Opaque Fixes</h2>
  * <p>Only fixes extending
- * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix SchemaDataFix} can
- * be statically introspected. Other {@link de.splatgames.aether.datafixers.api.fix.DataFix DataFix}
- * implementations are recorded with {@code introspectable=false} and an empty
- * operations list — their behavior cannot be determined without running them.</p>
+ * {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix SchemaDataFix} can be statically introspected. Other
+ * {@link de.splatgames.aether.datafixers.api.fix.DataFix DataFix} implementations are recorded with
+ * {@code introspectable=false} and an empty operations list — their behavior cannot be determined without running
+ * them.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -61,31 +60,33 @@ import java.util.List;
  * }
  * }</pre>
  *
- * @param fixName       the name of the fix (from {@code DataFix.name()}), must not be {@code null}
- * @param fromVersion   the source version this fix migrates from, must not be {@code null}
- * @param toVersion     the target version this fix migrates to, must not be {@code null}
- * @param operations    the field operations performed by the fix's rule, must not be {@code null};
- *                      empty if the fix is not introspectable or has no field-aware rules
- * @param introspectable whether the fix could be statically introspected; {@code false} for
- *                      non-{@code SchemaDataFix} implementations
+ * @param fixName        the name of the fix (from {@code DataFix.name()}), must not be {@code null}
+ * @param fromVersion    the source version this fix migrates from, must not be {@code null}
+ * @param toVersion      the target version this fix migrates to, must not be {@code null}
+ * @param operations     the field operations performed by the fix's rule, must not be {@code null}; empty if the fix is
+ *                       not introspectable or has no field-aware rules
+ * @param introspectable whether the fix could be statically introspected; {@code false} for non-{@code SchemaDataFix}
+ *                       implementations
  * @author Erik Pförtner
  * @see FieldOperationReport
  * @see FieldOperation
  * @see de.splatgames.aether.datafixers.core.fix.SchemaDataFix#introspectRule
  * @since 1.0.0
  */
-public record FixFieldOperations(
-        @NotNull String fixName,
-        @NotNull DataVersion fromVersion,
-        @NotNull DataVersion toVersion,
-        @NotNull List<FieldOperation> operations,
-        boolean introspectable
-) {
+public record FixFieldOperations(@NotNull String fixName,
+                                 @NotNull DataVersion fromVersion,
+                                 @NotNull DataVersion toVersion,
+                                 @NotNull List<FieldOperation> operations,
+                                 boolean introspectable) {
 
     /**
-     * Compact constructor enforcing non-null arguments and creating a defensive
-     * copy of the operations list.
+     * Compact constructor enforcing non-null arguments and creating a defensive copy of the operations list.
      *
+     * @param fixName        the fix name, must not be {@code null}
+     * @param fromVersion    the source version, must not be {@code null}
+     * @param toVersion      the target version, must not be {@code null}
+     * @param operations     the field operations, must not be {@code null}
+     * @param introspectable whether this fix is introspectable
      * @throws NullPointerException if any required parameter is {@code null}
      */
     public FixFieldOperations {
@@ -106,12 +107,10 @@ public record FixFieldOperations(
      * @return a new introspectable record, never {@code null}
      */
     @NotNull
-    public static FixFieldOperations introspectable(
-            @NotNull final String fixName,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final List<FieldOperation> operations
-    ) {
+    public static FixFieldOperations introspectable(@NotNull final String fixName,
+                                                    @NotNull final DataVersion fromVersion,
+                                                    @NotNull final DataVersion toVersion,
+                                                    @NotNull final List<FieldOperation> operations) {
         return new FixFieldOperations(fixName, fromVersion, toVersion, operations, true);
     }
 
@@ -119,8 +118,8 @@ public record FixFieldOperations(
      * Creates a record for an opaque (non-introspectable) fix.
      *
      * <p>Used for {@link de.splatgames.aether.datafixers.api.fix.DataFix} implementations
-     * that do not extend {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix}
-     * and therefore cannot expose their rules statically.</p>
+     * that do not extend {@link de.splatgames.aether.datafixers.core.fix.SchemaDataFix} and therefore cannot expose
+     * their rules statically.</p>
      *
      * @param fixName     the fix name, must not be {@code null}
      * @param fromVersion the source version, must not be {@code null}
@@ -128,11 +127,9 @@ public record FixFieldOperations(
      * @return a new opaque record with an empty operations list, never {@code null}
      */
     @NotNull
-    public static FixFieldOperations opaque(
-            @NotNull final String fixName,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion
-    ) {
+    public static FixFieldOperations opaque(@NotNull final String fixName,
+                                            @NotNull final DataVersion fromVersion,
+                                            @NotNull final DataVersion toVersion) {
         return new FixFieldOperations(fixName, fromVersion, toVersion, List.of(), false);
     }
 

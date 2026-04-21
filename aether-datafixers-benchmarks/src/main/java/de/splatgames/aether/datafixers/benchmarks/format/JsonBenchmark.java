@@ -32,6 +32,9 @@ import de.splatgames.aether.datafixers.benchmarks.util.BenchmarkDataGenerator;
 import de.splatgames.aether.datafixers.benchmarks.util.PayloadSize;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.codec.json.jackson.JacksonJsonOps;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -44,10 +47,7 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
-import org.jetbrains.annotations.Nullable;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark comparing JSON DynamicOps implementations: Gson vs Jackson.
@@ -235,8 +235,6 @@ public class JsonBenchmark {
         this.toVersion = new DataVersion(2);
     }
 
-    // ==================== Data Generation Benchmarks ====================
-
     /**
      * Benchmarks Dynamic object generation using GsonOps.
      *
@@ -246,7 +244,7 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void gsonGenerate(final Blackhole blackhole) {
+    public void gsonGenerate(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> data = BenchmarkDataGenerator.generate(this.gsonOps, this.payloadSize);
         blackhole.consume(data);
     }
@@ -260,12 +258,10 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonGenerate(final Blackhole blackhole) {
+    public void jacksonGenerate(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> data = BenchmarkDataGenerator.generate(this.jacksonOps, this.payloadSize);
         blackhole.consume(data);
     }
-
-    // ==================== Field Access Benchmarks ====================
 
     /**
      * Benchmarks field read access on Gson-backed Dynamic.
@@ -276,7 +272,7 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void gsonFieldRead(final Blackhole blackhole) {
+    public void gsonFieldRead(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> field = this.gsonData.get(FIELD_NAME);
         blackhole.consume(field);
     }
@@ -290,12 +286,10 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonFieldRead(final Blackhole blackhole) {
+    public void jacksonFieldRead(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> field = this.jacksonData.get(FIELD_NAME);
         blackhole.consume(field);
     }
-
-    // ==================== Field Modification Benchmarks ====================
 
     /**
      * Benchmarks field set operation on Gson-backed Dynamic.
@@ -306,7 +300,7 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void gsonFieldSet(final Blackhole blackhole) {
+    public void gsonFieldSet(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = this.gsonData.set(
                 "newField",
                 this.gsonData.createString("newValue")
@@ -322,15 +316,13 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonFieldSet(final Blackhole blackhole) {
+    public void jacksonFieldSet(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.jacksonData.set(
                 "newField",
                 this.jacksonData.createString("newValue")
         );
         blackhole.consume(result);
     }
-
-    // ==================== Migration Benchmarks ====================
 
     /**
      * Benchmarks DataFixer migration on Gson-backed data.
@@ -342,7 +334,7 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void gsonMigration(final Blackhole blackhole) {
+    public void gsonMigration(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonElement> result = this.gsonFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.gsonData,
@@ -362,7 +354,7 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void jacksonMigration(final Blackhole blackhole) {
+    public void jacksonMigration(@NotNull final Blackhole blackhole) {
         if (this.jacksonFixer == null) {
             // No dedicated Jackson fixer available -> this would not be a fair "Jackson migration" benchmark.
             // Measure the cross-format behavior explicitly instead.
@@ -398,7 +390,7 @@ public class JsonBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void crossFormatMigrationJacksonInput(final Blackhole blackhole) {
+    public void crossFormatMigrationJacksonInput(@NotNull final Blackhole blackhole) {
         final Dynamic<JsonNode> result = this.gsonFixer.update(
                 BenchmarkBootstrap.BENCHMARK_TYPE,
                 this.jacksonData,

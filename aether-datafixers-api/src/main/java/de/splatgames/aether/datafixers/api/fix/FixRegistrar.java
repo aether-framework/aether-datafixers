@@ -84,6 +84,6 @@ public interface FixRegistrar {
      * @param type  the type reference these fixes apply to, must not be {@code null}
      * @param fixes the data fixes to register, must not be {@code null}
      */
-    void registerAll(@NotNull TypeReference type,
-                     @NotNull Iterable<? extends DataFix<?>> fixes);
+    void registerAll(@NotNull final TypeReference type,
+                     @NotNull final Iterable<? extends DataFix<?>> fixes);
 }

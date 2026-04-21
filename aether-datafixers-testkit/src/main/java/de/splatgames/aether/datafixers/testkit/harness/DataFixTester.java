@@ -90,13 +90,42 @@ import java.util.Objects;
  */
 public final class DataFixTester<T> {
 
+    /**
+     * The DataFix being tested. Never null.
+     */
+    @NotNull
     private final DataFix<T> fix;
+    /**
+     * The input Dynamic for the fix. Must be set before applying.
+     */
+    @Nullable
     private Dynamic<T> input;
+    /**
+     * The type reference for the fix. Must be set before applying.
+     */
+    @Nullable
     private TypeReference typeReference;
+    /**
+     * The context to use for the fix. Defaults to a silent AssertingContext.
+     */
+    @NotNull
     private DataFixerContext context;
+    /**
+     * The expected output for verification. Optional; if not set, verify() will only check for exceptions.
+     */
+    @Nullable
     private Dynamic<T> expectedOutput;
+    /**
+     * Whether to use a RecordingContext for verification. If true, context() in DataFixVerification will return the
+     * recording context.
+     */
     private boolean useRecordingContext;
 
+    /**
+     * Creates a new DataFixTester for the given fix.
+     *
+     * @param fix the DataFix to test
+     */
     private DataFixTester(@NotNull final DataFix<T> fix) {
         this.fix = Preconditions.checkNotNull(fix, "fix must not be null");
         this.context = AssertingContext.silent();
@@ -116,8 +145,6 @@ public final class DataFixTester<T> {
         Preconditions.checkNotNull(fix, "fix must not be null");
         return new DataFixTester<>(fix);
     }
-
-    // ==================== Configuration ====================
 
     /**
      * Sets the input data for the fix.
@@ -211,8 +238,6 @@ public final class DataFixTester<T> {
         return this;
     }
 
-    // ==================== Execution ====================
-
     /**
      * Applies the fix and returns the result.
      *
@@ -223,7 +248,10 @@ public final class DataFixTester<T> {
     public Dynamic<T> apply() {
         this.validateConfiguration();
 
-        return this.fix.apply(this.typeReference, this.input, this.resolveContext());
+        return this.fix.apply(
+                Objects.requireNonNull(this.typeReference),
+                Objects.requireNonNull(this.input),
+                this.resolveContext());
     }
 
     /**
@@ -240,7 +268,10 @@ public final class DataFixTester<T> {
         final DataFixerContext effectiveContext = this.resolveContext();
         final RecordingContext recordingContext = effectiveContext instanceof RecordingContext rc ? rc : null;
 
-        final Dynamic<T> result = this.fix.apply(this.typeReference, this.input, effectiveContext);
+        final Dynamic<T> result = this.fix.apply(
+                Objects.requireNonNull(this.typeReference),
+                Objects.requireNonNull(this.input),
+                effectiveContext);
 
         // Verify expected output if set
         if (this.expectedOutput != null) {
@@ -257,11 +288,10 @@ public final class DataFixTester<T> {
         return new DataFixVerification<>(result, recordingContext, true);
     }
 
-    // ==================== Internal ====================
-
     /**
-     * Resolves the effective context, ensuring a single instance is used
-     * across both apply() and verify().
+     * Resolves the effective context, ensuring a single instance is used across both apply() and verify().
+     *
+     * @return the DataFixerContext to use for the fix application
      */
     @NotNull
     private DataFixerContext resolveContext() {
@@ -271,8 +301,11 @@ public final class DataFixTester<T> {
         return this.context;
     }
 
-    // ==================== Validation ====================
-
+    /**
+     * Validates that the required configuration (input and type reference) is set before applying or verifying.
+     *
+     * @throws IllegalStateException if input or type reference is not set
+     */
     private void validateConfiguration() {
         if (this.input == null) {
             throw new IllegalStateException("Input not set. Call withInput() before apply() or verify().");
@@ -282,8 +315,6 @@ public final class DataFixTester<T> {
         }
     }
 
-    // ==================== Verification Result ====================
-
     /**
      * The result of a DataFix verification.
      *
@@ -291,15 +322,31 @@ public final class DataFixTester<T> {
      */
     public static final class DataFixVerification<T> {
 
+        /**
+         * The result of applying the fix. Never null.
+         */
+        @NotNull
         private final Dynamic<T> result;
+        /**
+         * The recording context if used, or null if not using recording.
+         */
+        @Nullable
         private final RecordingContext context;
+        /**
+         * Whether the verification passed. Always true if no exceptions were thrown.
+         */
         private final boolean passed;
 
-        DataFixVerification(
-                @NotNull final Dynamic<T> result,
-                @Nullable final RecordingContext context,
-                final boolean passed
-        ) {
+        /**
+         * Creates a new DataFixVerification.
+         *
+         * @param result  the result of applying the fix
+         * @param context the recording context if used, or null if not using recording
+         * @param passed  whether the verification passed
+         */
+        DataFixVerification(@NotNull final Dynamic<T> result,
+                            @Nullable final RecordingContext context,
+                            final boolean passed) {
             this.result = Preconditions.checkNotNull(result, "result must not be null");
             this.context = context;
             this.passed = passed;

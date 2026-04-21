@@ -297,11 +297,12 @@ public final class Rules {
      */
     private static final Map<String, Finder<?>> PATH_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * Private constructor to prevent instantiation. This class is a static factory and should not be instantiated.
+     */
     private Rules() {
-        // private constructor to prevent instantiation
+        throw new UnsupportedOperationException("Rules is a static factory class and cannot be instantiated");
     }
-
-    // ==================== Basic Combinators ====================
 
     /**
      * Creates a sequence of rules that are applied in order (strict AND composition).
@@ -342,6 +343,13 @@ public final class Rules {
         }
         final String ruleName = "seq(" + Arrays.toString(rules) + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -359,6 +367,11 @@ public final class Rules {
                 return Optional.of(current);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -405,6 +418,13 @@ public final class Rules {
         Preconditions.checkNotNull(rules, "rules must not be null");
         final String ruleName = "seqAll(" + Arrays.toString(rules) + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -418,6 +438,11 @@ public final class Rules {
                 return Optional.of(current);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -465,6 +490,13 @@ public final class Rules {
         Preconditions.checkNotNull(rules, "rules must not be null");
         final String ruleName = "choice(" + Arrays.toString(rules) + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -480,6 +512,11 @@ public final class Rules {
                 return Optional.empty();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -518,6 +555,13 @@ public final class Rules {
     public static TypeRewriteRule checkOnce(@NotNull final TypeRewriteRule rule) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -527,6 +571,11 @@ public final class Rules {
                 return rule.rewrite(type, input);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -562,8 +611,6 @@ public final class Rules {
         return rule.orKeep();
     }
 
-    // ==================== Traversal Combinators ====================
-
     /**
      * Creates a rule that applies a rule to all immediate children.
      *
@@ -597,6 +644,13 @@ public final class Rules {
         Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -631,6 +685,11 @@ public final class Rules {
                 return reconstructed.result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -655,6 +714,13 @@ public final class Rules {
     public static TypeRewriteRule all(@NotNull final TypeRewriteRule rule) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -665,6 +731,11 @@ public final class Rules {
                 return Optional.of(input);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -702,6 +773,13 @@ public final class Rules {
         Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -742,6 +820,11 @@ public final class Rules {
                 return reconstructed.result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -762,6 +845,13 @@ public final class Rules {
     public static TypeRewriteRule one(@NotNull final TypeRewriteRule rule) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -772,6 +862,11 @@ public final class Rules {
                 return Optional.empty();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -809,6 +904,13 @@ public final class Rules {
         Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -844,6 +946,11 @@ public final class Rules {
                 return reconstructed.result().or(() -> Optional.of(current));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -864,6 +971,13 @@ public final class Rules {
     public static TypeRewriteRule everywhere(@NotNull final TypeRewriteRule rule) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -874,6 +988,11 @@ public final class Rules {
                 return Optional.of(rule.rewrite(type, input).orElse(input));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -911,6 +1030,13 @@ public final class Rules {
         Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -943,6 +1069,11 @@ public final class Rules {
                 return Optional.of(rule.rewrite(current.type(), current).orElse(current));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -963,6 +1094,13 @@ public final class Rules {
     public static TypeRewriteRule bottomUp(@NotNull final TypeRewriteRule rule) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -973,6 +1111,11 @@ public final class Rules {
                 return Optional.of(rule.rewrite(type, input).orElse(input));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1010,6 +1153,13 @@ public final class Rules {
         Preconditions.checkNotNull(rule, "rule must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1044,6 +1194,11 @@ public final class Rules {
                 return reconstructed.result().or(() -> Optional.of(current));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1064,6 +1219,13 @@ public final class Rules {
     public static TypeRewriteRule topDown(@NotNull final TypeRewriteRule rule) {
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -1074,6 +1236,11 @@ public final class Rules {
                 return Optional.of(rule.rewrite(type, input).orElse(input));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1081,8 +1248,6 @@ public final class Rules {
             }
         };
     }
-
-    // ==================== Type-Specific Combinators ====================
 
     /**
      * Creates a rule that only applies to a specific type.
@@ -1118,8 +1283,6 @@ public final class Rules {
         return TypeRewriteRule.forType(name, type, transformer);
     }
 
-    // ==================== Dynamic Transformation Combinators ====================
-
     /**
      * Creates a rule that transforms the dynamic representation at a specific path.
      *
@@ -1140,6 +1303,13 @@ public final class Rules {
         Preconditions.checkNotNull(finder, "finder must not be null");
         Preconditions.checkNotNull(updater, "updater must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1151,6 +1321,11 @@ public final class Rules {
                 return updateResult.result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1194,6 +1369,13 @@ public final class Rules {
         Preconditions.checkNotNull(newName, "newName must not be null");
         final String ruleName = "renameField(" + oldName + " -> " + newName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1215,6 +1397,11 @@ public final class Rules {
                 }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1255,6 +1442,13 @@ public final class Rules {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         final String ruleName = "removeField(" + fieldName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1270,6 +1464,11 @@ public final class Rules {
                 }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1319,6 +1518,13 @@ public final class Rules {
         Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
         final String ruleName = "addField(" + fieldName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1340,6 +1546,11 @@ public final class Rules {
                 }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1393,8 +1604,6 @@ public final class Rules {
         final TypeRewriteRule base = updateAt(ruleName, ops, Finder.field(fieldName), transform);
         return withFieldOps(base, List.of(FieldOperation.transform(fieldName)), ruleName);
     }
-
-    // ==================== Batch Operations ====================
 
     /**
      * Creates a rule that applies multiple field operations in a single pass.
@@ -1459,8 +1668,6 @@ public final class Rules {
         return base;
     }
 
-    // ==================== Extended Dynamic Transformation Combinators ====================
-
     /**
      * Creates a rule that applies a custom transformation function to the dynamic representation.
      *
@@ -1499,6 +1706,13 @@ public final class Rules {
         Preconditions.checkNotNull(transform, "transform must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1513,6 +1727,11 @@ public final class Rules {
                 }).map(value -> new Typed<>((Type) input.type(), value)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1557,6 +1776,13 @@ public final class Rules {
         Preconditions.checkNotNull(value, "value must not be null");
         final String ruleName = "setField(" + fieldName + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1572,6 +1798,11 @@ public final class Rules {
                 }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1622,6 +1853,13 @@ public final class Rules {
 
         final String ruleName = "renameFields(" + renames + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1645,6 +1883,11 @@ public final class Rules {
                 }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1694,6 +1937,13 @@ public final class Rules {
 
         final String ruleName = "removeFields(" + Arrays.toString(fieldNames) + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -1712,6 +1962,11 @@ public final class Rules {
                 }).map(newValue -> new Typed<>((Type) input.type(), newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -1723,8 +1978,6 @@ public final class Rules {
                 .toList();
         return withFieldOps(base, fieldOps, ruleName);
     }
-
-    // ==================== Grouping and Moving Combinators ====================
 
     /**
      * Creates a rule that groups multiple fields into a nested object.
@@ -1956,8 +2209,6 @@ public final class Rules {
         return withFieldOps(base, List.of(FieldOperation.copy(sourcePath, targetPath)), ruleName);
     }
 
-    // ==================== Path-Based Combinators ====================
-
     /**
      * Creates a rule that transforms a field at a nested path.
      *
@@ -2146,8 +2397,6 @@ public final class Rules {
         return withFieldOps(base, List.of(FieldOperation.addPath(path)), ruleName);
     }
 
-    // ==================== Conditional Combinators ====================
-
     /**
      * Creates a rule that only executes if a field exists.
      *
@@ -2182,6 +2431,13 @@ public final class Rules {
 
         final String ruleName = "ifFieldExists(" + fieldName + ", " + rule + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -2200,6 +2456,11 @@ public final class Rules {
                 }
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -2240,6 +2501,13 @@ public final class Rules {
 
         final String ruleName = "ifFieldMissing(" + fieldName + ", " + rule + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -2258,6 +2526,11 @@ public final class Rules {
                 }
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -2303,6 +2576,13 @@ public final class Rules {
 
         final String ruleName = "ifFieldEquals(" + fieldName + " == " + value + ", " + rule + ")";
         final TypeRewriteRule base = new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -2341,6 +2621,11 @@ public final class Rules {
                 }
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {
@@ -2349,8 +2634,6 @@ public final class Rules {
         };
         return withFieldOps(base, List.of(FieldOperation.conditional(fieldName, "equals")), ruleName);
     }
-
-    // ==================== Single-Pass Conditional Combinators ====================
 
     /**
      * Creates a rule that conditionally applies a transformation based on a predicate.
@@ -2377,10 +2660,9 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T> TypeRewriteRule conditionalTransform(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final Predicate<Dynamic<T>> condition,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T> TypeRewriteRule conditionalTransform(@NotNull final DynamicOps<T> ops,
+                                                           @NotNull final Predicate<Dynamic<T>> condition,
+                                                           @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(condition, "condition must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -2422,10 +2704,9 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T> TypeRewriteRule ifFieldExists(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldName,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T> TypeRewriteRule ifFieldExists(@NotNull final DynamicOps<T> ops,
+                                                    @NotNull final String fieldName,
+                                                    @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -2469,10 +2750,9 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T> TypeRewriteRule ifFieldMissing(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldName,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T> TypeRewriteRule ifFieldMissing(@NotNull final DynamicOps<T> ops,
+                                                     @NotNull final String fieldName,
+                                                     @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -2519,11 +2799,10 @@ public final class Rules {
      * @since 0.2.0
      */
     @NotNull
-    public static <T, V> TypeRewriteRule ifFieldEquals(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldName,
-            @NotNull final V value,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
+    public static <T, V> TypeRewriteRule ifFieldEquals(@NotNull final DynamicOps<T> ops,
+                                                       @NotNull final String fieldName,
+                                                       @NotNull final V value,
+                                                       @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
@@ -2558,7 +2837,8 @@ public final class Rules {
      * @param <V>   the value type
      * @return true if the field value matches
      */
-    private static <T, V> boolean matchesValue(@NotNull final Dynamic<T> field, @NotNull final V value) {
+    private static <T, V> boolean matchesValue(@NotNull final Dynamic<T> field,
+                                               @NotNull final V value) {
         if (value instanceof Integer) {
             return field.asInt().result().map(v -> v.equals(value)).orElse(false);
         } else if (value instanceof Long) {
@@ -2574,8 +2854,6 @@ public final class Rules {
         }
         return false;
     }
-
-    // ==================== Field-Aware Wrapper ====================
 
     /**
      * Wraps a {@link TypeRewriteRule} with field-level metadata.
@@ -2634,8 +2912,6 @@ public final class Rules {
     private static Finder<?> parsePath(@NotNull final String path) {
         return PATH_CACHE.computeIfAbsent(path, Rules::parsePathInternal);
     }
-
-    // ==================== Private Helpers ====================
 
     /**
      * Internal method that parses a path without caching. Uses character-based parsing for better performance than
@@ -2806,8 +3082,6 @@ public final class Rules {
         return TypeRewriteRule.identity();
     }
 
-    // ==================== Noop and Debug ====================
-
     /**
      * Creates a rule that logs when applied using the default System.out logger.
      *
@@ -2858,6 +3132,13 @@ public final class Rules {
         Preconditions.checkNotNull(logger, "logger must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type, @NotNull final Typed<?> input) {
@@ -2867,6 +3148,11 @@ public final class Rules {
                 return rule.rewrite(type, input);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             public String toString() {

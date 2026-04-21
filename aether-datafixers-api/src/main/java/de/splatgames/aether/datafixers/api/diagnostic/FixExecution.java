@@ -68,16 +68,14 @@ import java.util.Optional;
  * @see MigrationReport
  * @since 0.2.0
  */
-public record FixExecution(
-        @NotNull String fixName,
-        @NotNull DataVersion fromVersion,
-        @NotNull DataVersion toVersion,
-        @NotNull Instant startTime,
-        @NotNull Duration duration,
-        @NotNull List<RuleApplication> ruleApplications,
-        @Nullable String beforeSnapshot,
-        @Nullable String afterSnapshot
-) {
+public record FixExecution(@NotNull String fixName,
+                           @NotNull DataVersion fromVersion,
+                           @NotNull DataVersion toVersion,
+                           @NotNull Instant startTime,
+                           @NotNull Duration duration,
+                           @NotNull List<RuleApplication> ruleApplications,
+                           @Nullable String beforeSnapshot,
+                           @Nullable String afterSnapshot) {
 
     /**
      * Creates a new fix execution record.

@@ -28,6 +28,10 @@ import de.splatgames.aether.datafixers.api.codec.Codecs;
 import de.splatgames.aether.datafixers.api.result.DataResult;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -41,10 +45,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for collection codec encode/decode performance.
@@ -245,8 +245,6 @@ public class CollectionCodecBenchmark {
                 .result().orElseThrow();
     }
 
-    // ==================== String List Benchmarks ====================
-
     /**
      * Benchmarks string list encoding to JSON array.
      *
@@ -264,7 +262,7 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeStringList(final Blackhole blackhole) {
+    public void encodeStringList(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = this.stringListCodec.encodeStart(this.ops, this.stringList);
         blackhole.consume(result);
     }
@@ -286,12 +284,10 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeStringList(final Blackhole blackhole) {
+    public void decodeStringList(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<List<String>, JsonElement>> result = this.stringListCodec.decode(this.ops, this.encodedStringList);
         blackhole.consume(result);
     }
-
-    // ==================== Integer List Benchmarks ====================
 
     /**
      * Benchmarks integer list encoding to JSON array.
@@ -303,7 +299,7 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void encodeIntList(final Blackhole blackhole) {
+    public void encodeIntList(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> result = this.intListCodec.encodeStart(this.ops, this.intList);
         blackhole.consume(result);
     }
@@ -318,12 +314,10 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void decodeIntList(final Blackhole blackhole) {
+    public void decodeIntList(@NotNull final Blackhole blackhole) {
         final DataResult<Pair<List<Integer>, JsonElement>> result = this.intListCodec.decode(this.ops, this.encodedIntList);
         blackhole.consume(result);
     }
-
-    // ==================== Round-Trip Benchmarks (Direct Style) ====================
 
     /**
      * Benchmarks complete string list round-trip with direct result extraction.
@@ -338,7 +332,7 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void roundTripStringListDirect(final Blackhole blackhole) {
+    public void roundTripStringListDirect(@NotNull final Blackhole blackhole) {
         final JsonElement json = this.stringListCodec.encodeStart(this.ops, this.stringList)
                 .result().orElseThrow();
         final Pair<List<String>, JsonElement> decoded = this.stringListCodec.decode(this.ops, json)
@@ -355,15 +349,13 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void roundTripIntListDirect(final Blackhole blackhole) {
+    public void roundTripIntListDirect(@NotNull final Blackhole blackhole) {
         final JsonElement json = this.intListCodec.encodeStart(this.ops, this.intList)
                 .result().orElseThrow();
         final Pair<List<Integer>, JsonElement> decoded = this.intListCodec.decode(this.ops, json)
                 .result().orElseThrow();
         blackhole.consume(decoded);
     }
-
-    // ==================== Round-Trip Benchmarks (Functional Style) ====================
 
     /**
      * Benchmarks complete string list round-trip using functional API.
@@ -379,7 +371,7 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void roundTripStringListFunctional(final Blackhole blackhole) {
+    public void roundTripStringListFunctional(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> encoded = this.stringListCodec.encodeStart(this.ops, this.stringList);
         final DataResult<Pair<List<String>, JsonElement>> decoded = encoded.flatMap(
                 json -> this.stringListCodec.decode(this.ops, json)
@@ -396,7 +388,7 @@ public class CollectionCodecBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void roundTripIntListFunctional(final Blackhole blackhole) {
+    public void roundTripIntListFunctional(@NotNull final Blackhole blackhole) {
         final DataResult<JsonElement> encoded = this.intListCodec.encodeStart(this.ops, this.intList);
         final DataResult<Pair<List<Integer>, JsonElement>> decoded = encoded.flatMap(
                 json -> this.intListCodec.decode(this.ops, json)

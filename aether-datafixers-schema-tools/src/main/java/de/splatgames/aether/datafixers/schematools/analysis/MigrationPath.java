@@ -37,8 +37,8 @@ import java.util.Set;
  * The result of analyzing a migration path between versions.
  *
  * <p>A MigrationPath contains all steps required to migrate data from a source
- * version to a target version. It provides convenience methods for analyzing
- * the path, such as finding affected types and steps with fixes.</p>
+ * version to a target version. It provides convenience methods for analyzing the path, such as finding affected types
+ * and steps with fixes.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -73,8 +73,8 @@ import java.util.Set;
 public final class MigrationPath {
 
     /**
-     * Singleton instance representing an empty migration path.
-     * Used to avoid unnecessary object creation for no-op migrations.
+     * Singleton instance representing an empty migration path. Used to avoid unnecessary object creation for no-op
+     * migrations.
      */
     private static final MigrationPath EMPTY = new MigrationPath(
             new DataVersion(0), new DataVersion(0), List.of()
@@ -91,20 +91,20 @@ public final class MigrationPath {
     private final DataVersion targetVersion;
 
     /**
-     * The ordered list of migration steps from source to target version.
-     * This is an immutable copy of the provided steps.
+     * The ordered list of migration steps from source to target version. This is an immutable copy of the provided
+     * steps.
      */
     private final List<MigrationStep> steps;
 
     /**
-     * The aggregated set of all types affected by any step in the path.
-     * Pre-computed for efficient {@link #affects(TypeReference)} queries.
+     * The aggregated set of all types affected by any step in the path. Pre-computed for efficient
+     * {@link #affects(TypeReference)} queries.
      */
     private final Set<TypeReference> affectedTypes;
 
     /**
-     * The cached count of steps that have an associated DataFix.
-     * Pre-computed for efficient {@link #fixCount()} access.
+     * The cached count of steps that have an associated DataFix. Pre-computed for efficient {@link #fixCount()}
+     * access.
      */
     private final int fixCount;
 
@@ -118,11 +118,9 @@ public final class MigrationPath {
      * @param targetVersion the target version, must not be {@code null}
      * @param steps         the migration steps in order, must not be {@code null}
      */
-    private MigrationPath(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final List<MigrationStep> steps
-    ) {
+    private MigrationPath(@NotNull final DataVersion sourceVersion,
+                          @NotNull final DataVersion targetVersion,
+                          @NotNull final List<MigrationStep> steps) {
         this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         this.steps = List.copyOf(Preconditions.checkNotNull(steps, "steps must not be null"));
@@ -159,11 +157,9 @@ public final class MigrationPath {
      * @return a new MigrationPath, never {@code null}
      */
     @NotNull
-    public static MigrationPath of(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final List<MigrationStep> steps
-    ) {
+    public static MigrationPath of(@NotNull final DataVersion sourceVersion,
+                                   @NotNull final DataVersion targetVersion,
+                                   @NotNull final List<MigrationStep> steps) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(steps, "steps must not be null");
@@ -178,10 +174,8 @@ public final class MigrationPath {
      * @return a new builder, never {@code null}
      */
     @NotNull
-    public static Builder builder(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion
-    ) {
+    public static Builder builder(@NotNull final DataVersion sourceVersion,
+                                  @NotNull final DataVersion targetVersion) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
@@ -334,6 +328,11 @@ public final class MigrationPath {
         return this.affectedTypes.contains(type);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     public String toString() {
@@ -348,18 +347,37 @@ public final class MigrationPath {
     }
 
     /**
-     * Builder for creating {@link MigrationPath} instances.
+     * Builder for constructing MigrationPath instances.
+     *
+     * <p>This builder allows incremental construction of a migration path by
+     * adding steps one by one or in batches. It ensures that the source and target versions are set and provides a
+     * fluent API for building the path.</p>
+     *
+     * @see MigrationPath
      */
     public static final class Builder {
 
+        /**
+         * The overall source version for the path being built.
+         */
         private final DataVersion sourceVersion;
+        /**
+         * The overall target version for the path being built.
+         */
         private final DataVersion targetVersion;
+        /**
+         * The ordered list of migration steps being accumulated for the path.
+         */
         private final List<MigrationStep> steps = new ArrayList<>();
 
-        private Builder(
-                @NotNull final DataVersion sourceVersion,
-                @NotNull final DataVersion targetVersion
-        ) {
+        /**
+         * Creates a new builder with the specified source and target versions.
+         *
+         * @param sourceVersion the overall source version, must not be {@code null}
+         * @param targetVersion the overall target version, must not be {@code null}
+         */
+        private Builder(@NotNull final DataVersion sourceVersion,
+                        @NotNull final DataVersion targetVersion) {
             this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
             this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         }

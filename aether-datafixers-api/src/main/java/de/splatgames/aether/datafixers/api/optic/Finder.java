@@ -149,12 +149,23 @@ public interface Finder<A> {
     static Finder<Object> field(@NotNull final String fieldName) {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "field[" + fieldName + "]";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -162,6 +173,13 @@ public interface Finder<A> {
                 return root.get(fieldName);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
@@ -213,12 +231,23 @@ public interface Finder<A> {
     static Finder<Object> index(final int index) {
         Preconditions.checkArgument(index >= 0, "index must not be negative, got: %s", index);
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "index[" + index + "]";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
                 Preconditions.checkNotNull(root, "root must not be null");
@@ -228,6 +257,13 @@ public interface Finder<A> {
                         .orElse(null);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings("unchecked")
             public @NotNull Dynamic<?> set(@NotNull final Dynamic<?> root,
@@ -294,12 +330,23 @@ public interface Finder<A> {
     @NotNull
     static Finder<Object> identity() {
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "identity";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -307,6 +354,13 @@ public interface Finder<A> {
                 return root;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
@@ -364,12 +418,23 @@ public interface Finder<A> {
         Preconditions.checkNotNull(excludedFields, "excludedFields must not be null");
         final java.util.Set<String> excluded = java.util.Set.of(excludedFields);
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "remainder";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings("unchecked")
             public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -394,6 +459,13 @@ public interface Finder<A> {
                 return new Dynamic<>(typedRoot.ops(), typedRoot.ops().createMap(filtered));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings("unchecked")
@@ -585,12 +657,23 @@ public interface Finder<A> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Finder<A> self = this;
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -602,6 +685,13 @@ public interface Finder<A> {
                 return other.get(intermediate);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,

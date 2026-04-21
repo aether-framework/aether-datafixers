@@ -100,10 +100,8 @@ public final class StructureValidator {
      * @return the validation result, never {@code null}
      */
     @NotNull
-    public static ValidationResult validate(
-            @NotNull final Schema schema,
-            @Nullable final SchemaRegistry registry
-    ) {
+    public static ValidationResult validate(@NotNull final Schema schema,
+                                            @Nullable final SchemaRegistry registry) {
         Preconditions.checkNotNull(schema, "schema must not be null");
 
         final ValidationResult.Builder result = ValidationResult.builder();
@@ -185,12 +183,10 @@ public final class StructureValidator {
      * @param result   the builder to accumulate issues
      * @param location the location string for issue reporting
      */
-    private static void validateParentChain(
-            @NotNull final Schema schema,
-            @Nullable final SchemaRegistry registry,
-            @NotNull final ValidationResult.Builder result,
-            @NotNull final String location
-    ) {
+    private static void validateParentChain(@NotNull final Schema schema,
+                                            @Nullable final SchemaRegistry registry,
+                                            @NotNull final ValidationResult.Builder result,
+                                            @NotNull final String location) {
         Preconditions.checkNotNull(schema, "schema must not be null");
         Preconditions.checkNotNull(result, "result must not be null");
         Preconditions.checkNotNull(location, "location must not be null");

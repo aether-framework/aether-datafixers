@@ -27,6 +27,9 @@ import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
 import de.splatgames.aether.datafixers.testkit.factory.MockSchemas;
+import java.util.SplittableRandom;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -40,9 +43,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import java.util.SplittableRandom;
-import java.util.concurrent.TimeUnit;
 
 /**
  * JMH benchmark for schema registry lookup performance.
@@ -126,9 +126,9 @@ public class SchemaLookupBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void exactLookup(final BenchmarkState s,
-                            final ThreadState t,
-                            final Blackhole blackhole) {
+    public void exactLookup(@NotNull final BenchmarkState s,
+                            @NotNull final ThreadState t,
+                            @NotNull final Blackhole blackhole) {
         final int index = t.nextExactIndex();
         final Schema schema = s.registry.get(s.versions[index]);
         blackhole.consume(schema);
@@ -149,9 +149,9 @@ public class SchemaLookupBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void floorLookup(final BenchmarkState s,
-                            final ThreadState t,
-                            final Blackhole blackhole) {
+    public void floorLookup(@NotNull final BenchmarkState s,
+                            @NotNull final ThreadState t,
+                            @NotNull final Blackhole blackhole) {
         final int index = t.nextFloorIndex();
         final Schema schema = s.registry.get(s.lookupVersions[index]);
         blackhole.consume(schema);
@@ -170,8 +170,8 @@ public class SchemaLookupBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void latestLookup(final BenchmarkState s,
-                             final Blackhole blackhole) {
+    public void latestLookup(@NotNull final BenchmarkState s,
+                             @NotNull final Blackhole blackhole) {
         final Schema schema = s.registry.latest();
         blackhole.consume(schema);
     }
@@ -191,8 +191,8 @@ public class SchemaLookupBenchmark {
      * @param blackhole JMH blackhole to prevent dead code elimination
      */
     @Benchmark
-    public void sequentialLookup(final BenchmarkState s,
-                                 final Blackhole blackhole) {
+    public void sequentialLookup(@NotNull final BenchmarkState s,
+                                 @NotNull final Blackhole blackhole) {
         for (final DataVersion version : s.versions) {
             final Schema schema = s.registry.get(version);
             blackhole.consume(schema);
@@ -350,7 +350,7 @@ public class SchemaLookupBenchmark {
          * @param s the shared benchmark state providing array bounds
          */
         @Setup(Level.Iteration)
-        public void setupIteration(final BenchmarkState s) {
+        public void setupIteration(@NotNull final BenchmarkState s) {
             for (int i = 0; i < INDEX_BUFFER_SIZE; i++) {
                 this.exactIndices[i] = this.random.nextInt(s.versions.length);
                 this.floorIndices[i] = this.random.nextInt(s.lookupVersions.length);

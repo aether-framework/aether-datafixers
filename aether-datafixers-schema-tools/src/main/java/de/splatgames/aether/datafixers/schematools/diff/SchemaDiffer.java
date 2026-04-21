@@ -255,11 +255,9 @@ public final class SchemaDiffer {
      * @return a TypeDiff containing all field-level differences, never {@code null}
      */
     @NotNull
-    private TypeDiff diffType(
-            @NotNull final TypeReference ref,
-            @NotNull final Type<?> sourceType,
-            @NotNull final Type<?> targetType
-    ) {
+    private TypeDiff diffType(@NotNull final TypeReference ref,
+                              @NotNull final Type<?> sourceType,
+                              @NotNull final Type<?> targetType) {
         Preconditions.checkNotNull(ref, "ref must not be null");
         Preconditions.checkNotNull(sourceType, "sourceType must not be null");
         Preconditions.checkNotNull(targetType, "targetType must not be null");

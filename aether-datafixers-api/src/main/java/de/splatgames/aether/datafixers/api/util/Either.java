@@ -253,12 +253,13 @@ public sealed interface Either<L, R> {
      * // result = "Success: 42"
      * }</pre>
      *
-     * @param leftMapper  the function to apply if this is a left value
-     * @param rightMapper the function to apply if this is a right value
+     * @param leftMapper  the function to apply if this is a left value, must not be {@code null}
+     * @param rightMapper the function to apply if this is a right value, must not be {@code null}
      * @param <T>         the result type of both functions
-     * @return the result of applying the appropriate function
+     * @return the result of applying the appropriate function, never {@code null}
      * @throws NullPointerException if {@code leftMapper} or {@code rightMapper} is {@code null}
      */
+    @NotNull
     <T> T fold(@NotNull final Function<? super L, ? extends T> leftMapper,
                @NotNull final Function<? super R, ? extends T> rightMapper);
 
@@ -330,12 +331,13 @@ public sealed interface Either<L, R> {
      * }
      * }</pre>
      *
-     * @param exceptionMapper function to create the exception from the left value
+     * @param exceptionMapper function to create the exception from the left value, must not be {@code null}
      * @param <X>             the type of exception to throw
-     * @return the right value if this is a right
+     * @return the right value if this is a right, never {@code null}
      * @throws X                    if this is a left value
      * @throws NullPointerException if {@code exceptionMapper} is {@code null}
      */
+    @NotNull
     <X extends Throwable> R orElseThrow(@NotNull final Function<? super L, ? extends X> exceptionMapper) throws X;
 
     /**
@@ -349,10 +351,11 @@ public sealed interface Either<L, R> {
      * Integer value2 = left.orElse(0);  // 0
      * }</pre>
      *
-     * @param defaultValue the default value to return if this is a left
-     * @return the right value if present, otherwise the default value
+     * @param defaultValue the default value to return if this is a left, must not be {@code null}
+     * @return the right value if present, otherwise the default value, never {@code null}
      */
-    R orElse(R defaultValue);
+    @NotNull
+    R orElse(@NotNull final R defaultValue);
 
     /**
      * Returns the right value if present, otherwise computes a default from the left value.
@@ -366,10 +369,11 @@ public sealed interface Either<L, R> {
      * // result = "Error code: 404"
      * }</pre>
      *
-     * @param other function to compute the default value from the left value
-     * @return the right value if present, otherwise the computed default
+     * @param other function to compute the default value from the left value, must not be {@code null}
+     * @return the right value if present, otherwise the computed default, never {@code null}
      * @throws NullPointerException if {@code other} is {@code null}
      */
+    @NotNull
     R orElseGet(@NotNull final Function<? super L, ? extends R> other);
 
     // --- Implementations ---
@@ -411,6 +415,7 @@ public sealed interface Either<L, R> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
+         * @param value the left value, must not be {@code null}
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Left {
@@ -513,11 +518,12 @@ public sealed interface Either<L, R> {
          *
          * <p>For Left, applies the {@code leftMapper} to the left value.</p>
          *
-         * @param leftMapper  the function to apply to the left value
-         * @param rightMapper the function for right values (not used for Left)
+         * @param leftMapper  the function to apply to the left value, must not be {@code null}
+         * @param rightMapper the function for right values (not used for Left), must not be {@code null}
          * @param <T>         the result type
-         * @return the result of applying {@code leftMapper} to the left value
+         * @return the result of applying {@code leftMapper} to the left value, never {@code null}
          */
+        @NotNull
         @Override
         public <T> T fold(@NotNull final Function<? super L, ? extends T> leftMapper,
                           @NotNull final Function<? super R, ? extends T> rightMapper) {
@@ -575,11 +581,12 @@ public sealed interface Either<L, R> {
          *
          * <p>For Left, always throws the exception created from the left value.</p>
          *
-         * @param exceptionMapper the function to create an exception from the left value
+         * @param exceptionMapper the function to create an exception from the left value, must not be {@code null}
          * @param <X>             the exception type
          * @return never returns normally
          * @throws X always thrown, created from the left value
          */
+        @NotNull
         @Override
         public <X extends Throwable> R orElseThrow(@NotNull final Function<? super L, ? extends X> exceptionMapper) throws X {
             Preconditions.checkNotNull(exceptionMapper, "exceptionMapper must not be null");
@@ -591,11 +598,12 @@ public sealed interface Either<L, R> {
          *
          * <p>For Left, always returns the default value.</p>
          *
-         * @param defaultValue the value to return
-         * @return the provided default value
+         * @param defaultValue the value to return, must not be {@code null}
+         * @return the provided default value, never {@code null}
          */
+        @NotNull
         @Override
-        public R orElse(final R defaultValue) {
+        public R orElse(@NotNull final R defaultValue) {
             return defaultValue;
         }
 
@@ -604,9 +612,10 @@ public sealed interface Either<L, R> {
          *
          * <p>For Left, applies the function to the left value to compute the result.</p>
          *
-         * @param other the function to compute the result from the left value
-         * @return the result of applying {@code other} to the left value
+         * @param other the function to compute the result from the left value, must not be {@code null}
+         * @return the result of applying {@code other} to the left value, never {@code null}
          */
+        @NotNull
         @Override
         public R orElseGet(@NotNull final Function<? super L, ? extends R> other) {
             Preconditions.checkNotNull(other, "other must not be null");
@@ -691,6 +700,7 @@ public sealed interface Either<L, R> {
          *
          * <p>Validates that the provided value is not {@code null}.</p>
          *
+         * @param value the right value, must not be {@code null}
          * @throws NullPointerException if {@code value} is {@code null}
          */
         public Right {
@@ -791,11 +801,12 @@ public sealed interface Either<L, R> {
          *
          * <p>For Right, applies the {@code rightMapper} to the right value.</p>
          *
-         * @param leftMapper  the function for left values (not used for Right)
-         * @param rightMapper the function to apply to the right value
+         * @param leftMapper  the function for left values (not used for Right), must not be {@code null}
+         * @param rightMapper the function to apply to the right value, must not be {@code null}
          * @param <T>         the result type
-         * @return the result of applying {@code rightMapper} to the right value
+         * @return the result of applying {@code rightMapper} to the right value, never {@code null}
          */
+        @NotNull
         @Override
         public <T> T fold(@NotNull final Function<? super L, ? extends T> leftMapper,
                           @NotNull final Function<? super R, ? extends T> rightMapper) {
@@ -853,10 +864,11 @@ public sealed interface Either<L, R> {
          *
          * <p>For Right, returns the right value without throwing.</p>
          *
-         * @param exceptionMapper the function to create an exception (not used for Right)
+         * @param exceptionMapper the function to create an exception (not used for Right), must not be {@code null}
          * @param <X>             the exception type
-         * @return the right value
+         * @return the right value, never {@code null}
          */
+        @NotNull
         @Override
         public <X extends Throwable> R orElseThrow(@NotNull final Function<? super L, ? extends X> exceptionMapper) throws X {
             Preconditions.checkNotNull(exceptionMapper, "exceptionMapper must not be null");
@@ -868,11 +880,12 @@ public sealed interface Either<L, R> {
          *
          * <p>For Right, always returns the right value, ignoring the default.</p>
          *
-         * @param defaultValue the default value (ignored for Right)
-         * @return the right value
+         * @param defaultValue the default value (ignored for Right), must not be {@code null}
+         * @return the right value, never {@code null}
          */
+        @NotNull
         @Override
-        public R orElse(final R defaultValue) {
+        public R orElse(@NotNull final R defaultValue) {
             return this.value;
         }
 
@@ -881,9 +894,10 @@ public sealed interface Either<L, R> {
          *
          * <p>For Right, always returns the right value without invoking the function.</p>
          *
-         * @param other the function to compute a result (not invoked for Right)
-         * @return the right value
+         * @param other the function to compute a result (not invoked for Right), must not be {@code null}
+         * @return the right value, never {@code null}
          */
+        @NotNull
         @Override
         public R orElseGet(@NotNull final Function<? super L, ? extends R> other) {
             Preconditions.checkNotNull(other, "other must not be null");

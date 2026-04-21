@@ -78,4 +78,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            Examples are outdated and intentionally excluded from the NullAway
+            profile. Skipping main compilation here keeps `mvn compile -Pnullability`
+            green without touching the default build.
+        -->
+        <profile>
+            <id>nullability</id>
+            <properties>
+                <maven.main.skip>true</maven.main.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

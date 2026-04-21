@@ -26,12 +26,12 @@ import de.splatgames.aether.datafixers.api.dynamic.Dynamic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.assertj.core.api.AbstractAssert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * AssertJ assertions for {@link Dynamic} objects.
@@ -109,16 +109,14 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
      *
      * @param actual the Dynamic to assert on
      */
-    public DynamicAssert(final Dynamic<T> actual) {
+    public DynamicAssert(@NotNull final Dynamic<T> actual) {
         this(actual, "");
     }
 
-    private DynamicAssert(final Dynamic<T> actual, final String path) {
+    private DynamicAssert(@NotNull final Dynamic<T> actual, @NotNull final String path) {
         super(actual, DynamicAssert.class);
         this.path = path;
     }
-
-    // ==================== Type Assertions ====================
 
     /**
      * Asserts that the Dynamic is a map/object.
@@ -194,8 +192,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         }
         return this;
     }
-
-    // ==================== Field Existence ====================
 
     /**
      * Asserts that the Dynamic has a field with the given key.
@@ -275,8 +271,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Field Value Assertions ====================
-
     /**
      * Asserts that a field has a specific string value.
      *
@@ -291,7 +285,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasStringField(@NotNull final String key, @NotNull final String expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final String actualValue = fieldValue.asString().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be '%s' but was '%s'",
@@ -314,7 +308,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasIntField(@NotNull final String key, final int expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Integer actualValue = fieldValue.asInt().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be %d but was %s",
@@ -337,7 +331,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasLongField(@NotNull final String key, final long expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Long actualValue = fieldValue.asLong().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be %d but was %s",
@@ -361,7 +355,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasDoubleField(@NotNull final String key, final double expected, final double epsilon) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Double actualValue = fieldValue.asDouble().orElse(null);
         if (actualValue == null || Math.abs(expected - actualValue) > epsilon) {
             failWithMessage("Expected%s field '%s' to be %f (±%f) but was %s",
@@ -384,7 +378,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
     @NotNull
     public DynamicAssert<T> hasBooleanField(@NotNull final String key, final boolean expected) {
         this.hasField(key);
-        final Dynamic<T> fieldValue = this.actual.get(key);
+        final Dynamic<T> fieldValue = Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)");
         final Boolean actualValue = fieldValue.asBoolean().orElse(null);
         if (!Objects.equals(expected, actualValue)) {
             failWithMessage("Expected%s field '%s' to be %b but was %s",
@@ -392,8 +386,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         }
         return this;
     }
-
-    // ==================== Direct Value Assertions ====================
 
     /**
      * Asserts that this Dynamic has the given string value.
@@ -481,8 +473,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Navigation ====================
-
     /**
      * Navigates to a field and returns an assertion for it.
      *
@@ -494,7 +484,9 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         isNotNull();
         this.hasField(key);
         final String newPath = this.path.isEmpty() ? key : this.path + "." + key;
-        return new DynamicAssert<>(this.actual.get(key), newPath);
+        return new DynamicAssert<>(
+                Objects.requireNonNull(this.actual.get(key), "field value guaranteed by hasField(key)"),
+                newPath);
     }
 
     /**
@@ -519,7 +511,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
                 failWithMessage("Path '%s' not found: field '%s' does not exist at '%s'. Available fields: %s",
                         dotPath, part, currentPath, this.fieldsOf(current));
             }
-            current = current.get(part);
+            current = Objects.requireNonNull(current.get(part), "path segment guaranteed by has(part) check");
             if (!currentPath.isEmpty()) {
                 currentPath.append(".");
             }
@@ -551,8 +543,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         final String newPath = this.path.isEmpty() ? "[" + index + "]" : this.path + "[" + index + "]";
         return new DynamicAssert<>(elements.get(index), newPath);
     }
-
-    // ==================== List Assertions ====================
 
     /**
      * Asserts that the Dynamic list has the expected size.
@@ -597,7 +587,7 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         this.isList();
         final long size = this.actual.asListStream()
                 .result()
-                .map(s -> s.count())
+                .map(Stream::count)
                 .orElse(0L);
 
         if (size == 0) {
@@ -676,8 +666,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Equality ====================
-
     /**
      * Asserts that this Dynamic equals the expected Dynamic.
      *
@@ -694,8 +682,6 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Custom Validation ====================
-
     /**
      * Applies custom validation using a consumer.
      *
@@ -709,12 +695,22 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return this;
     }
 
-    // ==================== Internal Helpers ====================
-
+    /**
+     * Helper to format the current path for error messages.
+     *
+     * @return formatted path info
+     */
+    @NotNull
     private String pathInfo() {
         return this.path.isEmpty() ? "" : " at '" + this.path + "'";
     }
 
+    /**
+     * Helper to describe the actual value for error messages.
+     *
+     * @return a string description of the actual value
+     */
+    @NotNull
     private String describeActual() {
         if (this.actual.isMap()) {
             return "map";
@@ -734,32 +730,71 @@ public final class DynamicAssert<T> extends AbstractAssert<DynamicAssert<T>, Dyn
         return "unknown: " + this.actual.value();
     }
 
+    /**
+     * Helper to get a list of available field names if this Dynamic is a map.
+     *
+     * @return list of field names or empty list if not a map
+     */
+    @NotNull
     private List<String> availableFieldsList() {
         return this.actual.asMapStream()
                 .result()
-                .map(s -> s.map(p -> p.first().asString().orElse("?")).collect(Collectors.toList()))
+                .map(s -> s.map(p -> Objects.requireNonNull(p.first(), "map entry key").asString().orElse("?")).collect(Collectors.toList()))
                 .orElse(List.of());
     }
 
-    @Nullable
+    /**
+     * Helper to get a comma-separated string of available field names for error messages.
+     *
+     * @return comma-separated field names or "(none)" if not a map or no fields
+     */
+    @NotNull
     private String availableFields() {
         final List<String> fields = this.availableFieldsList();
         return fields.isEmpty() ? "(none)" : String.join(", ", fields);
     }
 
-    private String describeElement(final Dynamic<T> element) {
-        if (element.isString()) return "string: " + element.asString().orElse("?");
-        if (element.isNumber()) return "number: " + element.asNumber().orElse(null);
-        if (element.isBoolean()) return "boolean: " + element.asBoolean().orElse(null);
-        if (element.isMap()) return "map";
-        if (element.isList()) return "list";
+    /**
+     * Helper to describe an element in a list for error messages.
+     *
+     * @param element the element to describe
+     * @return a string description of the element
+     */
+    @NotNull
+    private String describeElement(@NotNull final Dynamic<T> element) {
+        if (element.isString()) {
+            return "string: " + element.asString().orElse("?");
+        }
+
+        if (element.isNumber()) {
+            return "number: " + element.asNumber().orElse(null);
+        }
+
+        if (element.isBoolean()) {
+            return "boolean: " + element.asBoolean().orElse(null);
+        }
+
+        if (element.isMap()) {
+            return "map";
+        }
+
+        if (element.isList()) {
+            return "list";
+        }
         return "unknown: " + element.value();
     }
 
-    private String fieldsOf(final Dynamic<T> d) {
+    /**
+     * Helper to get a comma-separated string of field names from a Dynamic map for error messages.
+     *
+     * @param d the Dynamic to extract field names from
+     * @return comma-separated field names or "(none)" if not a map or no fields
+     */
+    @NotNull
+    private String fieldsOf(@NotNull final Dynamic<T> d) {
         return d.asMapStream()
                 .result()
-                .map(s -> s.map(p -> p.first().asString().orElse("?")).collect(Collectors.joining(", ")))
+                .map(s -> s.map(p -> Objects.requireNonNull(p.first(), "map entry key").asString().orElse("?")).collect(Collectors.joining(", ")))
                 .orElse("(none)");
     }
 }
