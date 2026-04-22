@@ -3,10 +3,103 @@
 <buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <variables></variables>
+    <!--
+        Global variables applied to every build profile.
+        Override anything here inside a <build-profile> block below.
+    -->
+    <variables>
+        <!--
+            Branding.
+
+            Restrained by design: "frozen" is the default cool-neutral accent and
+            "soft" is the lowest-contrast color preset. The combination keeps the
+            UI close to plain black-on-white with only a whisper of color on
+            focused TOC items, active tabs, and links — matching the JetBrains
+            SDK docs aesthetic.
+
+            Other restrained options if the brand direction changes:
+              primary-color: metallic | deep-ocean | #HEX
+              color-preset:  soft | contrast (default) | vivid
+        -->
+        <primary-color>frozen</primary-color>
+        <color-preset>soft</color-preset>
+
+        <!--
+            Branding assets.
+
+            Drop these files into Writerside/images/ and uncomment the matching
+            lines below. Keep the lines commented until the files exist —
+            Writerside fails the build on missing asset references.
+
+              header-logo (1 file, required for top-left brand mark):
+                  aether-logo.svg       — vector, rendered at ~24px height in the header.
+                                          Dark/light-theme safe (use currentColor or two
+                                          variants if needed).
+
+              custom-favicons (up to 5 files, ordered smallest to largest):
+                  favicon-16.png        — 16x16   (browser tab, default)
+                  favicon-32.png        — 32x32   (browser tab, HiDPI)
+                  favicon-96.png        — 96x96   (bookmark / shortcut)
+                  favicon-300.png       — 300x300 (pinned tab, Android)
+                  favicon-500.png       — 500x500 (app icon, social share fallback)
+
+                  Safari does not render SVG favicons — prefer PNG/ICO.
+        -->
+        <!-- <header-logo>aether-logo.svg</header-logo> -->
+        <!-- <custom-favicons>favicon-16.png,favicon-32.png,favicon-96.png,favicon-300.png,favicon-500.png</custom-favicons> -->
+
+        <!--
+            Header CTA button (right side).
+
+            Writerside only exposes one slot here; it's the same mechanism the
+            JetBrains docs use for their "IntelliJ Platform Explorer" button.
+            Pointed at the GitHub repo because that's the single entry point
+            for source, releases, and issues. Swap to Maven Central if users
+            should land on the coordinates page instead.
+        -->
+        <download-page>https://github.com/aether-framework/aether-datafixers</download-page>
+        <download-title>View on GitHub</download-title>
+        <showDownloadButton>true</showDownloadButton>
+
+        <!-- Contribution link — renders a subtle GitHub edit icon on every topic. -->
+        <contribute-url>https://github.com/aether-framework/aether-datafixers/edit/main/Writerside</contribute-url>
+    </variables>
+
+    <!--
+        Footer is shared across all profiles and rendered at the bottom of every page.
+    -->
+    <footer>
+        <social type="github" href="https://github.com/aether-framework/aether-datafixers">Aether-Datafixers on GitHub</social>
+
+        <link href="https://github.com/aether-framework/aether-datafixers/issues">Issue tracker</link>
+        <link href="https://central.sonatype.com/artifact/de.splatgames.aether.datafixers/aether-datafixers">Maven Central</link>
+        <link href="https://software.splatgames.de">Splatgames.de Software</link>
+
+        <copyright>2025-2026 Splatgames.de Software and Contributors. Licensed under MIT.</copyright>
+    </footer>
+
+    <!--
+        Production profile for the aether-datafixers instance.
+        Generates a sitemap, opens content to indexing, and wires up Open Graph
+        metadata for social link previews.
+    -->
     <build-profile instance="aether-datafixers">
+        <sitemap priority="0.8" change-frequency="weekly"/>
         <variables>
             <noindex-content>false</noindex-content>
+
+            <!--
+                Replace with the final canonical URL once the site is deployed
+                (e.g. https://aether-framework.github.io/aether-datafixers/ or a custom domain).
+            -->
+            <web-root>https://aether-framework.github.io/aether-datafixers</web-root>
+            <product-web-url>https://aether-framework.github.io/aether-datafixers</product-web-url>
+
+            <!--
+                Open Graph / social preview. Uncomment once the preview image exists at the URL.
+            -->
+            <!-- <og-image>https://aether-framework.github.io/aether-datafixers/images/og-preview.png</og-image> -->
+            <!-- <og-twitter>@aether_framework</og-twitter> -->
         </variables>
     </build-profile>
 

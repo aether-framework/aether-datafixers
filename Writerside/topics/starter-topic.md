@@ -1,79 +1,79 @@
-# About Aether-Datafixers
+# Welcome to %product%
 
-<!--Writerside adds this topic when you create a new documentation project.
-You can use it as a sandbox to play with Writerside features, and remove it from the TOC when you don't need it anymore.-->
+<tldr>
+    <p>%tagline% Forward-patch serialized data across schema versions — in JSON, YAML, TOML, XML, or any custom format — through a single composable API.</p>
+    <p>Current release: <b>%latest_version%</b> · Requires Java %java_min%+ and Maven %maven_min%+.</p>
+</tldr>
 
-## Add new topics
-You can create empty topics, or choose a template for different types of content that contains some boilerplate structure to help you get started:
+## What is %product%?
 
-![Create new topic options](new_topic_options.png){ width=290 }{border-effect=line}
+%product% lets you evolve persisted data as your code evolves. You define a
+**schema per version** and the **fixes between them** — the framework picks the right
+fixes, runs them in the right order, and hands back data at the target version.
 
-## Write content
-%product% supports two types of markup: Markdown and XML.
-When you create a new help article, you can choose between two topic types, but this doesn't mean you have to stick to a single format.
-You can author content in Markdown and extend it with semantic attributes or inject entire XML elements.
+It is inspired by Minecraft's *DataFixer Upper (DFU)*, but designed from the ground
+up for **simplicity**, **clarity**, and **developer ergonomics**.
 
-## Inject XML
-For example, this is how you inject a procedure:
+## Highlights
 
-<procedure title="Inject a procedure" id="inject-a-procedure">
+- **Forward patching** — data migrates old → new through a chain of `DataFix` instances.
+- **Format-agnostic** — works with JSON, YAML, TOML, XML, or any custom format via `DynamicOps<T>`.
+- **Immutable & thread-safe** — safe for concurrent, high-throughput environments.
+- **Modular** — pick only what you need: core, codec, CLI, Spring Boot starter, testkit, schema tools.
+- **Testable** — fluent test builders, custom AssertJ assertions, and dedicated migration harnesses.
+
+## A Migration in Four Steps
+
+<procedure title="From raw data to migrated data" id="four-step-migration">
     <step>
-        <p>Start typing and select a procedure type from the completion suggestions:</p>
-        <img src="completion_procedure.png" alt="completion suggestions for procedure" border-effect="line"/>
+        <p>Add <code>aether-datafixers-core</code> (and a codec of your choice) to your build.</p>
     </step>
     <step>
-        <p>Press <shortcut>Tab</shortcut> or <shortcut>Enter</shortcut> to insert the markup.</p>
+        <p>Implement a <code>DataFixerBootstrap</code> that registers your <code>Schema</code>s and <code>DataFix</code>es.</p>
+    </step>
+    <step>
+        <p>Create the fixer via <code>DataFixerRuntimeFactory.create(currentVersion, bootstrap)</code>.</p>
+    </step>
+    <step>
+        <p>Call <code>fixer.update(tagged, fromVersion, toVersion)</code> — receive the migrated <code>Dynamic&lt;T&gt;</code>.</p>
     </step>
 </procedure>
 
-## Add interactive elements
+## At a Glance
 
-### Tabs
-To add switchable content, you can make use of tabs (inject them by starting to type `tab` on a new line):
+| Concept             | Role                                                                           |
+|---------------------|--------------------------------------------------------------------------------|
+| **DataVersion**     | Integer-based version identifier for a schema snapshot.                        |
+| **TypeReference**   | String-based key that routes data to the correct fixes (e.g. `"player"`).      |
+| **Schema**          | Associates a `DataVersion` with a `TypeRegistry` of typed references.          |
+| **DataFix**         | A single migration step from one version to the next.                          |
+| **Dynamic\<T\>**    | Format-agnostic wrapper around your data.                                      |
+| **DynamicOps\<T\>** | Operations interface for a specific format (Gson, Jackson, SnakeYAML, …).      |
 
-<tabs>
-    <tab title="Markdown">
-        <code-block lang="plain text">![Alt Text](new_topic_options.png){ width=450 }</code-block>
-    </tab>
-    <tab title="Semantic markup">
-        <code-block lang="xml">
-            <![CDATA[<img src="new_topic_options.png" alt="Alt text" width="450px"/>]]></code-block>
-    </tab>
-</tabs>
+## Where to Go Next
 
-### Collapsible blocks
-Apart from injecting entire XML elements, you can use attributes to configure the behavior of certain elements.
-For example, you can collapse a chapter that contains non-essential information:
+<note>
+    <p>
+        This documentation is being set up. More topics will land here as the Writerside
+        tree fills in — Getting Started, Core Concepts, How-To Guides, and integrations.
+    </p>
+</note>
 
-#### Supplementary info {collapsible="true"}
-Content under a collapsible header will be collapsed by default,
-but you can modify the behavior by adding the following attribute:
-`default-state="expanded"`
-
-### Convert selection to XML
-If you need to extend an element with more functions, you can convert selected content from Markdown to semantic markup.
-For example, if you want to merge cells in a table, it's much easier to convert it to XML than do this in Markdown.
-Position the caret anywhere in the table and press <shortcut>Alt+Enter</shortcut>:
-
-<img src="convert_table_to_xml.png" alt="Convert table to XML" width="706" border-effect="line"/>
-
-## Feedback and support
-Please report any issues, usability improvements, or feature requests to our
-<a href="https://youtrack.jetbrains.com/newIssue?project=WRS">YouTrack project</a>
-(you will need to register).
-
-You are welcome to join our
-<a href="https://jb.gg/WRS_Slack">public Slack workspace</a>.
-Before you do, please read our [Code of conduct](https://www.jetbrains.com/help/writerside/writerside-code-of-conduct.html).
-We assume that you’ve read and acknowledged it before joining.
-
-You can also always email us at [writerside@jetbrains.com](mailto:writerside@jetbrains.com).
-
-<seealso>
-    <category ref="wrs">
-        <a href="https://www.jetbrains.com/help/writerside/markup-reference.html">Markup reference</a>
-        <a href="https://www.jetbrains.com/help/writerside/manage-table-of-contents.html">Reorder topics in the TOC</a>
-        <a href="https://www.jetbrains.com/help/writerside/local-build.html">Build and publish</a>
-        <a href="https://www.jetbrains.com/help/writerside/configure-search.html">Configure Search</a>
+<seealso style="cards">
+    <category ref="aether-project">
+        <a href="https://github.com/aether-framework/aether-datafixers"
+           summary="Source code, issue tracker, and releases.">%product% on GitHub</a>
+        <a href="https://central.sonatype.com/artifact/de.splatgames.aether.datafixers/aether-datafixers"
+           summary="GPG-signed artifacts published to Maven Central.">Maven Central</a>
+    </category>
+    <category ref="aether-docs">
+        <a href="https://github.com/aether-framework/aether-datafixers/blob/main/docs/getting-started/quick-start.md"
+           summary="Installation, bootstrapping, and your first migration.">Getting Started</a>
+        <a href="https://github.com/aether-framework/aether-datafixers/blob/main/docs/concepts/index.md"
+           summary="Schemas, DataFixes, Dynamic, Codecs, and Optics explained.">Core Concepts</a>
+        <a href="https://github.com/aether-framework/aether-datafixers/blob/main/docs/testkit/index.md"
+           summary="Fluent builders, AssertJ assertions, and migration test harnesses.">Testkit</a>
+        <a href="https://github.com/aether-framework/aether-datafixers/blob/main/docs/spring-boot/index.md"
+           summary="Auto-configuration, MigrationService, Actuator, and metrics.">Spring Boot Starter</a>
     </category>
 </seealso>

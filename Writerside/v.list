@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
 <vars>
-    <var name="product" value="Writerside"/>
+    <!-- Product identity -->
+    <var name="product" value="Aether-Datafixers"/>
+    <var name="product_short" value="Datafixers"/>
+    <var name="tagline" value="A lightweight, format-agnostic data migration framework for the JVM."/>
+
+    <!-- Maven coordinates -->
+    <var name="group_id" value="de.splatgames.aether.datafixers"/>
+    <var name="artifact_bom" value="aether-datafixers-bom"/>
+    <var name="artifact_api" value="aether-datafixers-api"/>
+    <var name="artifact_core" value="aether-datafixers-core"/>
+    <var name="artifact_codec" value="aether-datafixers-codec"/>
+    <var name="artifact_testkit" value="aether-datafixers-testkit"/>
+    <var name="artifact_cli" value="aether-datafixers-cli"/>
+    <var name="artifact_schema_tools" value="aether-datafixers-schema-tools"/>
+    <var name="artifact_spring_boot" value="aether-datafixers-spring-boot-starter"/>
+
+    <!-- Versioning -->
+    <var name="latest_version" value="1.0.0"/>
+    <var name="snapshot_version" value="1.0.0-SNAPSHOT"/>
+
+    <!-- Platform requirements -->
+    <var name="java_min" value="17"/>
+    <var name="maven_min" value="3.9.6"/>
+
+    <!-- External URLs -->
+    <var name="github_url" value="https://github.com/aether-framework/aether-datafixers"/>
+    <var name="issues_url" value="https://github.com/aether-framework/aether-datafixers/issues"/>
+    <var name="maven_central_url"
+         value="https://central.sonatype.com/artifact/de.splatgames.aether.datafixers/aether-datafixers"/>
+    <var name="ci_url"
+         value="https://github.com/aether-framework/aether-datafixers/actions/workflows/ci-push.yml"/>
+    <var name="contribute_url"
+         value="https://github.com/aether-framework/aether-datafixers/edit/main"/>
+
+    <!-- Legal -->
+    <var name="vendor" value="Splatgames.de Software"/>
+    <var name="vendor_url" value="https://software.splatgames.de"/>
+    <var name="copyright_years" value="2025-2026"/>
+    <var name="license" value="MIT"/>
 </vars>
