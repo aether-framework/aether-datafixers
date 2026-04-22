@@ -2,7 +2,7 @@
 <!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
 <vars>
     <!-- Product identity -->
-    <var name="product" value="Aether-Datafixers"/>
+    <var name="product" value="Aether Datafixers"/>
     <var name="product_short" value="Datafixers"/>
     <var name="tagline" value="A lightweight, format-agnostic data migration framework for the JVM."/>
 
