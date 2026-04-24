@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+
+<topic xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       title="Optics"
+       id="optics-overview">
+
+    <section-starting-page>
+
+        <title>Optics</title>
+        <description>
+            Composable, type-safe accessors for nested data. %product% ships a full
+            profunctor-style optics hierarchy &mdash; <code>Getter</code>,
+            <code>Lens</code>, <code>Prism</code>, <code>Iso</code>,
+            <code>Affine</code>, <code>Traversal</code> &mdash; plus
+            <code>Finder</code> for runtime <code>Dynamic</code> navigation.
+        </description>
+
+        <spotlight>
+            <card href="finder.md"
+                  badge="start"
+                  summary="The day-to-day optic inside DataFixes: navigate Dynamic values by field and index.">
+                Finder
+            </card>
+            <card href="lens.md"
+                  badge="search"
+                  summary="The workhorse optic for typed data &mdash; focus on one part, get and set.">
+                Lens
+            </card>
+        </spotlight>
+
+        <primary>
+            <title>Read-only</title>
+            <card href="getter.md"
+                  summary="A pure extraction function with an identity &mdash; the simplest optic."/>
+        </primary>
+
+        <secondary>
+            <title>Read &amp; write (exactly one focus)</title>
+            <card href="lens.md"
+                  summary="Get + set on a guaranteed-present field."/>
+            <card href="iso.md"
+                  summary="Lossless, bidirectional conversion &mdash; an invertible Lens."/>
+        </secondary>
+
+        <misc>
+            <cards>
+                <title>Maybe present (0 or 1 focus)</title>
+                <card href="prism.md"
+                      summary="Match a specific variant of a sum type &mdash; e.g. a case of Either."/>
+                <card href="affine.md"
+                      summary="Partial field access: getOption + set. Combines Lens and Prism."/>
+            </cards>
+
+            <cards>
+                <title>Many foci</title>
+                <card href="traversal.md"
+                      summary="Zero-to-many focus &mdash; walk every element of a list or map."/>
+            </cards>
+
+            <cards>
+                <title>Runtime navigation</title>
+                <card href="finder.md"
+                      summary="Field-and-index access into Dynamic values. Used inside DataFixes."/>
+            </cards>
+
+            <links narrow="true">
+                <group>
+                    <title>Back</title>
+                    <a href="overview.topic" summary="All concept topics."/>
+                    <a href="datafix-system.md"
+                       summary="Where optics power real migrations."/>
+                </group>
+            </links>
+        </misc>
+
+    </section-starting-page>
+
+</topic>

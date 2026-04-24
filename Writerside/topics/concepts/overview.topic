@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+
+<topic xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       title="Core Concepts"
+       id="overview">
+
+    <section-starting-page>
+
+        <title>Core Concepts</title>
+        <description>
+            The ideas, types, and data flow that power %product%. Start with the
+            architecture, pick up the vocabulary, then dig into the pieces you need.
+        </description>
+
+        <spotlight>
+            <card href="architecture.md"
+                  badge="start"
+                  summary="How schemas, fixes, and the fixer fit together. Begin here.">
+                Architecture overview
+            </card>
+            <card href="datafix-system.md"
+                  badge="search"
+                  summary="The migration engine: fixes, the fix chain, and SchemaDataFix.">
+                DataFix system
+            </card>
+        </spotlight>
+
+        <primary>
+            <title>Foundations</title>
+            <card href="data-version.md"
+                  summary="Integer identifiers for schema versions and version ordering."/>
+            <card href="type-reference.md"
+                  summary="String keys that route data to the right fixes and schemas."/>
+            <card href="schema-system.md"
+                  summary="Versioned type registries, schema inheritance, and the DSL."/>
+            <card href="type-system.md"
+                  summary="Type, TypeRegistry, and how types carry codecs."/>
+        </primary>
+
+        <secondary>
+            <title>Migration &amp; transformation</title>
+            <card href="datafix-system.md"
+                  summary="DataFix, DataFixer, SchemaDataFix, and how the chain is picked."/>
+            <card href="rewrite-rules.md"
+                  summary="The Rules DSL: rename, transform, group, move, conditional, and combinators."/>
+            <card href="dsl.md"
+                  summary="Type templates &mdash; field, optional, list, and, taggedChoice, remainder."/>
+        </secondary>
+
+        <misc>
+            <cards>
+                <title>Data &amp; encoding</title>
+                <card href="dynamic-system.md"
+                      summary="Format-agnostic data access through Dynamic and DynamicOps."/>
+                <card href="codec-system.md"
+                      summary="Bidirectional transforms between Java types and Dynamic form."/>
+            </cards>
+
+            <cards>
+                <title>Advanced</title>
+                <card href="optics-overview.topic"
+                      summary="Lens, Prism, Iso, Affine, Traversal, Finder &mdash; composable access into nested data."/>
+                <card href="data-result.md"
+                      summary="Railway-style error handling for decoding and rewrites."/>
+                <card href="thread-safety.md"
+                      summary="Immutability guarantees and safe concurrent use."/>
+            </cards>
+
+            <links narrow="true">
+                <group>
+                    <title>Jump back</title>
+                    <a href="starter-topic.md"
+                       summary="Introduction, install instructions, and the four-step migration flow.">
+                        Welcome to %product%
+                    </a>
+                </group>
+            </links>
+        </misc>
+
+    </section-starting-page>
+
+</topic>
