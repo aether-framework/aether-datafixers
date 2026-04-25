@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "java-dev-assistant-local",
+  "description": "Local wrapper marketplace bundling pluginagentmarketplace/custom-plugin-java for offline-first install in the devcontainer.",
+  "owner": {
+    "name": "splatgames-devcontainer"
+  },
+  "plugins": [
+    {
+      "name": "java-development-assistant",
+      "description": "Production-grade Java development plugin: 8 agents, 12 skills, 4 slash commands covering core Java, Spring, testing, JPA, build tools, microservices and DevOps.",
+      "category": "development",
+      "source": "./custom-plugin-java",
+      "homepage": "https://github.com/pluginagentmarketplace/custom-plugin-java"
+    }
+  ]
+}

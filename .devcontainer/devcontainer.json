@@ -1,5 +1,5 @@
 {
-  "name": "Java + Python + Claude Code - Hardened Sandbox",
+  "name": "Java + Python + Node + Claude Code - Hardened Sandbox",
 
   "build": {
     "dockerfile": "Dockerfile"
@@ -14,6 +14,10 @@
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.12",
       "installPipx": true
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts",
+      "nodeGypDependencies": true
     }
   },
 
@@ -61,5 +65,5 @@
     "no_proxy": "localhost,127.0.0.1"
   },
 
-  "postStartCommand": "echo \"Hardened sandbox active: Java + Python + Native Claude Code\""
+  "postStartCommand": "echo \"Hardened sandbox active: Java + Python + Node + Native Claude Code (Context7 MCP, 3 plugin marketplaces pre-registered, user-scope skills baked in). After first \\`claude\\` login, open /plugin to install frontend-design, impeccable, java-development-assistant.\""
 }
