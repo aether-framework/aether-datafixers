@@ -30,13 +30,6 @@ else
     echo "WARN: claude CLI not on PATH"
 fi
 
-# ----- Primary path: write the user-scope config files directly -------------
-# In a fresh, unauthenticated devcontainer the `claude` CLI subcommands for
-# MCP/plugins behave inconsistently (some require an interactive session, some
-# require login). Writing the config files directly is independent of CLI
-# state, idempotent, and survives every rebuild. The CLI calls below are kept
-# as a best-effort layer that takes over once `claude login` has been run.
-
 echo "=== Writing user-scope MCP config to ~/.claude.json (Context7) ==="
 mkdir -p /home/vscode/.claude
 CLAUDE_USER_JSON=/home/vscode/.claude.json
@@ -50,53 +43,135 @@ chown vscode:vscode "$CLAUDE_USER_JSON"
 echo "context7 MCP entry written:"
 jq '.mcpServers' "$CLAUDE_USER_JSON"
 
-echo "=== Writing user-scope plugin marketplaces to ~/.claude/settings.json ==="
-CLAUDE_SETTINGS=/home/vscode/.claude/settings.json
-if [ ! -s "$CLAUDE_SETTINGS" ]; then
-    echo '{}' > "$CLAUDE_SETTINGS"
-fi
+# ----- Plugin provisioning ---------------------------------------------------
+# All three marketplaces are baked into the image at /opt/claude-marketplaces/.
+# We deterministically replicate what `claude plugin install` would do, but
+# without ever needing an authenticated Claude session:
+#
+#   1. Resolve each plugin's source directory from its marketplace.json.
+#   2. Copy the plugin into ~/.claude/plugins/cache/<mkt>/<plugin>/<sha>/
+#      using the on-disk format Claude Code expects (per anthropics/claude-code
+#      issue #15642).
+#   3. Append an entry to ~/.claude/plugins/installed_plugins.json so the CLI
+#      treats the plugin as already installed.
+#   4. Register each marketplace as a `directory` source in
+#      ~/.claude/settings.json (extraKnownMarketplaces) and enable the plugin
+#      via enabledPlugins.
+#
+# Trade-off: installed_plugins.json's schema is not officially documented, so
+# a future Claude Code change could break this provisioning. If that happens,
+# removing the cache + installed_plugins.json and running `/plugin install
+# <name>@<marketplace>` after `claude login` is the documented recovery path.
+
+# Each entry: <marketplace-dir-on-disk>:<plugin-name-from-marketplace.json>
+PLUGIN_TARGETS=(
+    "/opt/claude-marketplaces/claude-plugins-official:frontend-design"
+    "/opt/claude-marketplaces/impeccable:impeccable"
+    "/opt/claude-marketplaces/java-dev-assistant:java-development-assistant"
+)
+
+PLUGINS_DIR=/home/vscode/.claude/plugins
+PLUGINS_CACHE=$PLUGINS_DIR/cache
+INSTALLED_FILE=$PLUGINS_DIR/installed_plugins.json
+SETTINGS_FILE=/home/vscode/.claude/settings.json
+
+mkdir -p "$PLUGINS_CACHE"
+[ -s "$INSTALLED_FILE" ] || echo '{}' > "$INSTALLED_FILE"
+[ -s "$SETTINGS_FILE"  ] || echo '{}' > "$SETTINGS_FILE"
+
+# Make sure the top-level objects exist so subsequent jq merges have something
+# to land on, regardless of whether the file was empty or pre-existing.
 tmp=$(mktemp)
-jq '
-    .extraKnownMarketplaces = (.extraKnownMarketplaces // {})
-    | .extraKnownMarketplaces["claude-plugins-official"]    = {"source":{"source":"github","repo":"anthropics/claude-plugins-official"}}
-    | .extraKnownMarketplaces["pbakaus-impeccable"]         = {"source":{"source":"github","repo":"pbakaus/impeccable"}}
-    | .extraKnownMarketplaces["java-dev-assistant-local"]   = {"source":{"source":"directory","path":"/opt/claude-marketplaces/java-dev-assistant"}}
-    | .enabledPlugins = (.enabledPlugins // {})
-    | .enabledPlugins["frontend-design@claude-plugins-official"]              = true
-    | .enabledPlugins["impeccable@pbakaus-impeccable"]                        = true
-    | .enabledPlugins["java-development-assistant@java-dev-assistant-local"]  = true
-' "$CLAUDE_SETTINGS" > "$tmp" && mv "$tmp" "$CLAUDE_SETTINGS"
+jq '.extraKnownMarketplaces = (.extraKnownMarketplaces // {})
+    | .enabledPlugins         = (.enabledPlugins // {})' \
+    "$SETTINGS_FILE" > "$tmp" && mv "$tmp" "$SETTINGS_FILE"
+
+echo "=== Pre-populating ~/.claude/plugins/cache from baked-in marketplaces ==="
+for target in "${PLUGIN_TARGETS[@]}"; do
+    mkt_dir="${target%%:*}"
+    plugin="${target##*:}"
+    mkt_json="$mkt_dir/.claude-plugin/marketplace.json"
+
+    if [ ! -f "$mkt_json" ]; then
+        echo "ERROR: marketplace.json missing at $mkt_json — skipping $plugin"
+        continue
+    fi
+
+    mkt_name=$(jq -r '.name' "$mkt_json")
+    plugin_src=$(jq -r --arg n "$plugin" \
+        '.plugins[] | select(.name == $n) | .source' "$mkt_json")
+    if [ -z "$plugin_src" ] || [ "$plugin_src" = "null" ]; then
+        echo "ERROR: plugin '$plugin' not found in $mkt_json — skipping"
+        continue
+    fi
+
+    case "$plugin_src" in
+        /*) plugin_dir="$plugin_src" ;;
+        *)  plugin_dir="$mkt_dir/$plugin_src" ;;
+    esac
+    if [ ! -d "$plugin_dir" ]; then
+        echo "ERROR: plugin source directory missing: $plugin_dir — skipping $plugin"
+        continue
+    fi
+
+    # Version resolution order matches Claude Code's documented precedence:
+    # plugin.json.version -> marketplace entry .version -> short git SHA -> "unknown"
+    version=""
+    if [ -f "$plugin_dir/.claude-plugin/plugin.json" ]; then
+        version=$(jq -r '.version // empty' "$plugin_dir/.claude-plugin/plugin.json")
+    fi
+    if [ -z "$version" ]; then
+        version=$(jq -r --arg n "$plugin" \
+            '.plugins[] | select(.name == $n) | .version // empty' "$mkt_json")
+    fi
+    git_sha=$(git -C "$plugin_dir" rev-parse HEAD 2>/dev/null \
+              || git -C "$mkt_dir" rev-parse HEAD 2>/dev/null \
+              || echo "")
+    if [ -z "$version" ]; then
+        if [ -n "$git_sha" ]; then
+            version="${git_sha:0:12}"
+        else
+            version="unknown"
+        fi
+    fi
+
+    cache_dir="$PLUGINS_CACHE/$mkt_name/$plugin/$version"
+    rm -rf "$cache_dir"
+    mkdir -p "$cache_dir"
+    cp -a "$plugin_dir/." "$cache_dir/"
+
+    key="$plugin@$mkt_name"
+    lastUpdated=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+
+    tmp=$(mktemp)
+    jq --arg k "$key" \
+       --arg ip "$cache_dir" \
+       --arg ver "$version" \
+       --arg ts "$lastUpdated" \
+       --arg sha "$git_sha" \
+       '.[$k] = [{
+            "scope": "user",
+            "installPath": $ip,
+            "version": $ver,
+            "lastUpdated": $ts,
+            "gitCommitSha": $sha
+        }]' "$INSTALLED_FILE" > "$tmp" && mv "$tmp" "$INSTALLED_FILE"
+
+    tmp=$(mktemp)
+    jq --arg n "$mkt_name" --arg p "$mkt_dir" --arg k "$key" \
+       '.extraKnownMarketplaces[$n] = {"source":{"source":"directory","path":$p}}
+        | .enabledPlugins[$k] = true' \
+       "$SETTINGS_FILE" > "$tmp" && mv "$tmp" "$SETTINGS_FILE"
+
+    echo "OK: $key version=$version sha=${git_sha:0:12} -> $cache_dir"
+done
+
 chown -R vscode:vscode /home/vscode/.claude
-echo "Plugin marketplaces and enabledPlugins written:"
-jq '{extraKnownMarketplaces, enabledPlugins}' "$CLAUDE_SETTINGS"
 
-# ----- Best-effort path: run the official CLI commands ----------------------
-# These succeed once the user has run `claude login`. If they fail now, the
-# direct settings written above still register the marketplaces, so the user
-# can finish the install with `/plugin install <name>@<marketplace>` from
-# inside Claude Code in seconds.
-
-echo "=== Best-effort CLI registration (may fail before claude login) ==="
-if command -v claude >/dev/null 2>&1; then
-    echo "--- claude mcp add context7"
-    claude mcp remove --scope user context7 2>&1 || true
-    claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp 2>&1 || \
-        echo "INFO: claude mcp add failed; settings.json fallback is in place"
-
-    for entry in \
-        "anthropics/claude-plugins-official|frontend-design@claude-plugins-official" \
-        "pbakaus/impeccable|impeccable@pbakaus-impeccable" \
-        "/opt/claude-marketplaces/java-dev-assistant|java-development-assistant@java-dev-assistant-local"
-    do
-        marketplace_src="${entry%%|*}"
-        plugin_id="${entry##*|}"
-        echo "--- claude plugin marketplace add $marketplace_src"
-        claude plugin marketplace add "$marketplace_src" 2>&1 || true
-        echo "--- claude plugin install $plugin_id"
-        claude plugin install "$plugin_id" --scope user 2>&1 || \
-            echo "INFO: claude plugin install $plugin_id failed; settings.json fallback is in place"
-    done
-fi
+echo "installed_plugins.json:"
+jq . "$INSTALLED_FILE"
+echo "settings.json (relevant fields):"
+jq '{extraKnownMarketplaces, enabledPlugins}' "$SETTINGS_FILE"
 
 echo "=== Verifying Claude Code state ==="
 if command -v claude >/dev/null 2>&1; then
@@ -137,12 +212,15 @@ git config --global --add safe.directory /workspace
 echo "=== Dev Container ready ==="
 echo "Claude Code (native) is installed. Run: claude"
 echo "MCP servers (in ~/.claude.json): context7"
-echo "Plugin marketplaces (in ~/.claude/settings.json): claude-plugins-official, pbakaus-impeccable, java-dev-assistant-local"
+echo "Plugin marketplaces (directory sources in ~/.claude/settings.json):"
+echo "  claude-plugins-official, impeccable, java-dev-assistant-local"
+echo "Plugins pre-installed (cache + installed_plugins.json + enabledPlugins):"
+echo "  frontend-design@claude-plugins-official"
+echo "  impeccable@impeccable"
+echo "  java-development-assistant@java-dev-assistant-local"
 echo "User-scope skills available under ~/.claude/skills/ (incl. taste-skill collection)"
 echo ""
-echo "First run: launch \`claude\`, sign in, then run \`/plugin\` to install"
-echo "frontend-design, impeccable, and java-development-assistant from the"
-echo "pre-registered marketplaces (or re-run this script after login to"
-echo "have the best-effort CLI block do it for you)."
+echo "After \`claude login\`, /plugin should list all three plugins as enabled"
+echo "with no manual install step required."
 echo ""
 echo "Egress firewall active - only whitelisted domains allowed"
