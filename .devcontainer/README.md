@@ -277,5 +277,9 @@ runs the installer itself under `bash -x` so its internal steps are
 visible too. To turn it on for the initial postCreate run, add
 `"DEVCONTAINER_DEBUG": "1"` to `containerEnv` in `devcontainer.json`.
 
-The image rebuild path is the standard one: VS Code "Dev Containers: Rebuild
-Container" or `devcontainer build`.
+### Rebuilding the image
+
+For changes to the `Dockerfile` itself (not just `post-create.sh`), use your
+IDE's standard rebuild action — JetBrains Gateway "Rebuild and Restart
+Container", VS Code "Dev Containers: Rebuild Container", or
+`devcontainer build` from the CLI.
