@@ -21,6 +21,7 @@
     }
   },
 
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
 
   "containerUser": "vscode",
@@ -65,5 +66,5 @@
     "no_proxy": "localhost,127.0.0.1"
   },
 
-  "postStartCommand": "echo \"Hardened sandbox active: Java + Python + Node + Native Claude Code (Context7 MCP, 3 plugin marketplaces pre-registered as directory sources, plugins pre-installed into the cache, user-scope skills baked in). After first \\`claude\\` login, /plugin will already list frontend-design, impeccable, and java-development-assistant as enabled.\""
+  "postStartCommand": "echo \"Hardened sandbox active: Java + Python + Node + Native Claude Code (Context7 MCP, 3 plugin marketplaces pre-registered as directory sources, plugins pre-installed into the cache, user-scope skills baked in). After first \\`claude\\` login, /plugin will already list frontend-design, impeccable, and java-development-assistant as enabled (their marketplaces are aether-vendor-plugins, impeccable, and java-dev-assistant-local).\""
 }

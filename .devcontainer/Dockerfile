@@ -102,5 +102,19 @@ COPY --from=skill-sources --chown=vscode:vscode /skills/custom-plugin-java/ \
 # would block the clone after post-create finishes anyway).
 COPY --from=skill-sources --chown=vscode:vscode /marketplaces/claude-plugins-official/ \
         /opt/claude-marketplaces/claude-plugins-official/
+# Rewrite the marketplace's declared name. Claude Code reserves any name
+# matching the regex ^(claude|anthropic)-? for official Anthropic marketplaces
+# (anthropics/claude-code#46786) — this rejects both "claude-plugins-official"
+# (exact-match, only allowed for github sources from the anthropics org) and
+# anything else starting with "claude-" or "anthropic-". The local mirror
+# therefore needs a name outside that namespace; "aether-vendor-plugins"
+# scopes it to this project and unambiguously passes validation. Plugin
+# contents and IDs are unchanged. post-create.sh reads .name from this file,
+# so registration and the enabledPlugins key flow naturally.
+RUN tmp=$(mktemp) && \
+    jq '.name = "aether-vendor-plugins"' \
+        /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json > "$tmp" && \
+    mv "$tmp" /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json && \
+    chown vscode:vscode /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json
 COPY --from=skill-sources --chown=vscode:vscode /marketplaces/impeccable/ \
         /opt/claude-marketplaces/impeccable/

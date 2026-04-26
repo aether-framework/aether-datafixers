@@ -117,9 +117,22 @@ Currently provisioned:
 
 | Plugin                        | Marketplace name           | Marketplace source on disk                            |
 |-------------------------------|----------------------------|-------------------------------------------------------|
-| `frontend-design`             | `claude-plugins-official`  | `anthropics/claude-plugins-official` (cloned)         |
+| `frontend-design`             | `aether-vendor-plugins`    | `anthropics/claude-plugins-official` (cloned, renamed at image build — see note below) |
 | `impeccable`                  | `impeccable`               | `pbakaus/impeccable` (cloned)                         |
 | `java-development-assistant`  | `java-dev-assistant-local` | `pluginagentmarketplace/custom-plugin-java` (wrapped) |
+
+> **Why `aether-vendor-plugins`?** Claude Code reserves any marketplace name
+> matching the regex `^(claude|anthropic)-?` for official Anthropic
+> marketplaces ([anthropics/claude-code#46786][reserved-names]) — that
+> rejects both the literal `claude-plugins-official` (only allowed for
+> `github` sources from the `anthropics` org) and any `claude-…` /
+> `anthropic-…` suffix variants. Since the egress firewall blocks GitHub at
+> runtime we have to register the local clone as a `directory` source, so
+> the `Dockerfile` rewrites the `.name` field of the cloned
+> `marketplace.json` to `aether-vendor-plugins` (project-scoped, outside the
+> reserved namespace). Plugin contents and IDs are unchanged.
+
+[reserved-names]: https://github.com/anthropics/claude-code/issues/46786
 
 ### First-run flow inside the container
 
@@ -137,7 +150,7 @@ on a freshly built container. Recovery path:
 ```bash
 rm -rf ~/.claude/plugins/cache ~/.claude/plugins/installed_plugins.json
 # inside `claude` after login:
-/plugin install frontend-design@claude-plugins-official
+/plugin install frontend-design@aether-vendor-plugins
 /plugin install impeccable@impeccable
 /plugin install java-development-assistant@java-dev-assistant-local
 ```
@@ -245,6 +258,24 @@ which is why `xvfb` and the X11 client libs are in the runtime stage.
 ```bash
 bash /workspace/.devcontainer/post-create.sh
 ```
+
+### Debug mode
+
+`post-create.sh` is silent on the happy path, which makes it hard to tell
+whether a long-running step (e.g. the Claude Code installer pulling the
+binary) is hung or just slow. Set `DEVCONTAINER_DEBUG=1` to enable verbose
+output:
+
+```bash
+# Ad-hoc re-run with full tracing:
+DEVCONTAINER_DEBUG=1 bash /workspace/.devcontainer/post-create.sh
+```
+
+This activates `bash`'s `set -x` (every command is printed before
+execution), drops `curl -s` so the installer download shows progress, and
+runs the installer itself under `bash -x` so its internal steps are
+visible too. To turn it on for the initial postCreate run, add
+`"DEVCONTAINER_DEBUG": "1"` to `containerEnv` in `devcontainer.json`.
 
 The image rebuild path is the standard one: VS Code "Dev Containers: Rebuild
 Container" or `devcontainer build`.

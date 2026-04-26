@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
 set -u
 
+# Opt-in debug mode. Set DEVCONTAINER_DEBUG=1 (env var when invoking the
+# script, or via "containerEnv" in devcontainer.json) to:
+#   * trace every command in this script (set -x)
+#   * keep the Claude Code installer's curl progress visible (drop curl -s)
+#   * trace every command inside the installer itself (bash -x)
+# Without it, output stays clean for the normal happy path.
+CURL_FLAGS="-fsSL"
+BASH_DEBUG_FLAG=""
+if [ -n "${DEVCONTAINER_DEBUG:-}" ]; then
+    set -x
+    CURL_FLAGS="-fSL"
+    BASH_DEBUG_FLAG="-x"
+fi
+
 echo "=== Setting up ownership..."
 sudo chown -R vscode:vscode /workspace 2>/dev/null || true
 sudo chown -R vscode:vscode /home/vscode/.claude 2>/dev/null || true
 
 echo "=== Installing Claude Code native binary..."
-curl -fsSL https://claude.ai/install.sh | bash
+curl $CURL_FLAGS https://claude.ai/install.sh | bash $BASH_DEBUG_FLAG
 
 # The Claude Code installer drops the binary into ~/.local/bin and updates
 # the user's shell init files, but this non-interactive script has not
@@ -213,9 +227,9 @@ echo "=== Dev Container ready ==="
 echo "Claude Code (native) is installed. Run: claude"
 echo "MCP servers (in ~/.claude.json): context7"
 echo "Plugin marketplaces (directory sources in ~/.claude/settings.json):"
-echo "  claude-plugins-official, impeccable, java-dev-assistant-local"
+echo "  aether-vendor-plugins, impeccable, java-dev-assistant-local"
 echo "Plugins pre-installed (cache + installed_plugins.json + enabledPlugins):"
-echo "  frontend-design@claude-plugins-official"
+echo "  frontend-design@aether-vendor-plugins"
 echo "  impeccable@impeccable"
 echo "  java-development-assistant@java-dev-assistant-local"
 echo "User-scope skills available under ~/.claude/skills/ (incl. taste-skill collection)"
