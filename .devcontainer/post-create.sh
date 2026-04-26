@@ -14,8 +14,15 @@ if [ -n "${DEVCONTAINER_DEBUG:-}" ]; then
     BASH_DEBUG_FLAG="-x"
 fi
 
+# Resolve the workspace path. Preferred source is $WORKSPACE_DIR injected via
+# devcontainer.json's containerEnv (which substitutes ${containerWorkspaceFolder}
+# at container-create time, so we don't have to assume any particular mount
+# point). As a fallback for ad-hoc re-runs, derive it from this script's own
+# location: post-create.sh lives in <workspace>/.devcontainer/.
+WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
 echo "=== Setting up ownership ==="
-sudo chown -R vscode:vscode /workspace 2>/dev/null || true
+sudo chown -R vscode:vscode "$WORKSPACE_DIR" 2>/dev/null || true
 sudo chown -R vscode:vscode /home/vscode/.claude 2>/dev/null || true
 
 echo "=== Installing Claude Code native binary ==="
@@ -220,7 +227,7 @@ for domain in \
     done
 done
 
-git config --global --add safe.directory /workspace
+git config --global --add safe.directory "$WORKSPACE_DIR"
 
 echo "=== Dev Container ready ==="
 echo "Run \`claude\` to start. After login, /plugin lists all three plugins as enabled."

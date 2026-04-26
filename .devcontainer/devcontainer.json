@@ -21,9 +21,6 @@
     }
   },
 
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-  "workspaceFolder": "/workspace",
-
   "containerUser": "vscode",
 
   "customizations": {
@@ -58,12 +55,13 @@
     "--add-host=host.docker.internal:host-gateway"
   ],
 
-  "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh",
+  "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post-create.sh",
 
   "containerEnv": {
     "CLAUDE_CODE_SANDBOX": "true",
     "NO_PROXY": "localhost,127.0.0.1",
-    "no_proxy": "localhost,127.0.0.1"
+    "no_proxy": "localhost,127.0.0.1",
+    "WORKSPACE_DIR": "${containerWorkspaceFolder}"
   },
 
   "postStartCommand": "echo 'Aether-Datafixers sandbox active. Egress firewall locked down to the whitelist. Run `claude` to start; plugins and MCP are pre-provisioned.'"

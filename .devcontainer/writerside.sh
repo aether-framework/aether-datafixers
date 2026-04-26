@@ -7,8 +7,13 @@
 #   writerside <module>/<instance> [output-dir] [-- additional helpbuilderinspect flags]
 #
 # Example:
-#   writerside Writerside/hi /workspace/output
+#   writerside Writerside/hi $WORKSPACE_DIR/output
 set -euo pipefail
+
+# Workspace path is injected by devcontainer.json's containerEnv (resolved
+# from ${containerWorkspaceFolder}). Fall back to /workspace for ad-hoc
+# invocations on hosts that don't set it.
+: "${WORKSPACE_DIR:=/workspace}"
 
 export DISPLAY="${DISPLAY:-:99}"
 
@@ -28,9 +33,9 @@ fi
 # Convenience mode: `writerside <module>/<instance> [output]`
 if [[ "${1:-}" == */* && "${1:-}" != -* ]]; then
     module_instance="$1"; shift
-    output_dir="${1:-/workspace/artifacts/help}"
+    output_dir="${1:-$WORKSPACE_DIR/artifacts/help}"
     if [[ $# -ge 1 && "${1:-}" != -* ]]; then shift; fi
-    source_dir="${WRITERSIDE_SOURCE_DIR:-/workspace}"
+    source_dir="${WRITERSIDE_SOURCE_DIR:-$WORKSPACE_DIR}"
     runner="${WRITERSIDE_RUNNER:-other}"
 
     exec /opt/builder/bin/idea.sh helpbuilderinspect \

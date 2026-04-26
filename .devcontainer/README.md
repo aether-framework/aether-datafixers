@@ -70,7 +70,7 @@ in …` block in `post-create.sh`.
 
 Runs in this order:
 
-1. **Take ownership** of `/workspace` and `~/.claude`.
+1. **Take ownership** of `$WORKSPACE_DIR` and `~/.claude`.
 2. **Install the Claude Code native binary** via the official installer.
 3. **Pre-install Context7 MCP** (`@upstash/context7-mcp`) globally so `npx`
    resolves it offline once the firewall blocks the npm registry.
@@ -222,10 +222,10 @@ The image embeds JetBrains' headless Writerside builder
 
 ```bash
 # Convenience mode: <module>/<instance> [output-dir]
-writerside Writerside/hi /workspace/artifacts/help
+writerside Writerside/hi "$WORKSPACE_DIR/artifacts/help"
 
 # Pass-through mode: forward flags directly to helpbuilderinspect
-writerside --source-dir /workspace --product Writerside/hi --output-dir /tmp/out --runner other
+writerside --source-dir "$WORKSPACE_DIR" --product Writerside/hi --output-dir /tmp/out --runner other
 ```
 
 `writerside.sh` starts an Xvfb display on demand
@@ -256,8 +256,13 @@ which is why `xvfb` and the X11 client libs are in the runtime stage.
 - you've added a new plugin or marketplace and want to provision it now.
 
 ```bash
-bash /workspace/.devcontainer/post-create.sh
+bash "$WORKSPACE_DIR/.devcontainer/post-create.sh"
 ```
+
+`$WORKSPACE_DIR` is set by `containerEnv` in `devcontainer.json` and points
+at whatever path the IDE chose to mount the source under (VS Code defaults
+to `/workspaces/<basename>`, JetBrains may pick a different path). Inside
+the container, use this variable rather than hard-coding `/workspace`.
 
 ### Debug mode
 
@@ -268,7 +273,7 @@ output:
 
 ```bash
 # Ad-hoc re-run with full tracing:
-DEVCONTAINER_DEBUG=1 bash /workspace/.devcontainer/post-create.sh
+DEVCONTAINER_DEBUG=1 bash "$WORKSPACE_DIR/.devcontainer/post-create.sh"
 ```
 
 This activates `bash`'s `set -x` (every command is printed before
