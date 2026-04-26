@@ -86,6 +86,7 @@ jq '.mcpServers' "$CLAUDE_USER_JSON"
 # Each entry: <marketplace-dir-on-disk>:<plugin-name-from-marketplace.json>
 PLUGIN_TARGETS=(
     "/opt/claude-marketplaces/claude-plugins-official:frontend-design"
+    "/opt/claude-marketplaces/claude-plugins-official:jdtls-lsp"
     "/opt/claude-marketplaces/impeccable:impeccable"
     "/opt/claude-marketplaces/java-dev-assistant:java-development-assistant"
 )
@@ -230,11 +231,13 @@ done
 git config --global --add safe.directory "$WORKSPACE_DIR"
 
 echo "=== Dev Container ready ==="
-echo "Run \`claude\` to start. After login, /plugin lists all three plugins as enabled."
+echo "Run \`claude\` to start. After login, /plugin lists all four plugins as enabled."
 echo ""
 echo "  MCP servers : context7"
 echo "  Plugins     : frontend-design@aether-vendor-plugins"
+echo "                jdtls-lsp@aether-vendor-plugins"
 echo "                impeccable@impeccable"
 echo "                java-development-assistant@java-dev-assistant-local"
+echo "  LSP         : jdtls on PATH (auto-activates for .java)"
 echo "  Skills      : user-scope, under ~/.claude/skills/"
 echo "  Firewall    : active — only whitelisted hosts reachable"

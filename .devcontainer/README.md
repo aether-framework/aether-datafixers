@@ -118,6 +118,7 @@ Currently provisioned:
 | Plugin                         | Marketplace name            | Marketplace source on disk                                                             |
 |--------------------------------|-----------------------------|----------------------------------------------------------------------------------------|
 | `frontend-design`              | `aether-vendor-plugins`     | `anthropics/claude-plugins-official` (cloned, renamed at image build — see note below) |
+| `jdtls-lsp`                    | `aether-vendor-plugins`     | same as above — wires Eclipse JDT.LS into Claude Code's LSP integration                |
 | `impeccable`                   | `impeccable`                | `pbakaus/impeccable` (cloned)                                                          |
 | `java-development-assistant`   | `java-dev-assistant-local`  | `pluginagentmarketplace/custom-plugin-java` (wrapped)                                  |
 
@@ -138,8 +139,11 @@ Currently provisioned:
 
 1. Run `claude` and complete the OAuth login.
 2. `/plugin → Marketplaces`: all three marketplaces are listed.
-3. `/plugin → Plugins`: all three plugins already appear as enabled — no
+3. `/plugin → Plugins`: all four plugins already appear as enabled — no
    manual install step required.
+4. Open any `.java` file: the `jdtls-lsp` plugin auto-starts the JDT
+   language server (`/usr/local/bin/jdtls`, baked into the image) so Claude
+   Code sees real diagnostics, hover info, and go-to-definition.
 
 ### Brittleness disclaimer
 
@@ -151,6 +155,7 @@ on a freshly built container. Recovery path:
 rm -rf ~/.claude/plugins/cache ~/.claude/plugins/installed_plugins.json
 # inside `claude` after login:
 /plugin install frontend-design@aether-vendor-plugins
+/plugin install jdtls-lsp@aether-vendor-plugins
 /plugin install impeccable@impeccable
 /plugin install java-development-assistant@java-dev-assistant-local
 ```

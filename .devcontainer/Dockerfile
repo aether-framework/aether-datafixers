@@ -52,6 +52,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfontconfig1 \
     && rm -rf /var/lib/apt/lists/*
 
+# Eclipse JDT Language Server. The jdtls-lsp plugin shipped in the
+# claude-plugins-official marketplace expects a `jdtls` binary on PATH and
+# auto-activates for every .java file. Installing here (build time) means the
+# egress firewall doesn't need to allow download.eclipse.org at runtime. The
+# upstream tarball ships a Python launcher at bin/jdtls that requires Python
+# 3.9+, which is provided by the python devcontainer feature at run time.
+#
+# --no-same-owner: the upstream tarball encodes its files with a high UID
+# (~1001380000) that rootless BuildKit's user namespace cannot set. Without
+# this flag, tar fails with "Cannot change ownership ... Invalid argument"
+# on every entry. With it, extracted files get the current user's UID/GID.
+RUN mkdir -p /opt/jdtls && \
+    curl -fsSL https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz \
+        | tar -xz --no-same-owner -C /opt/jdtls && \
+    ln -s /opt/jdtls/bin/jdtls /usr/local/bin/jdtls
+
 # JetBrains Writerside builder (helpbuilderinspect). Pulled at image-build time
 # from the official image so the resulting container needs no Docker socket and
 # stays compatible with the hardened egress firewall configured at postCreate.
@@ -107,5 +123,23 @@ RUN tmp=$(mktemp) && \
         /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json > "$tmp" && \
     mv "$tmp" /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json && \
     chown vscode:vscode /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json
+
+# Synthesize a plugin manifest for jdtls-lsp. The upstream plugin source dir
+# (anthropics/claude-plugins-official/plugins/jdtls-lsp/) ships only LICENSE +
+# README.md — no .claude-plugin/plugin.json — and Claude Code's plugin loader
+# silently ignores cached plugins without a manifest, so /plugin shows the
+# plugin missing even though installed_plugins.json and enabledPlugins are
+# set. We reconstruct the manifest from the marketplace.json's plugins[]
+# entry (which carries name, description, version, author, lspServers etc.),
+# stripping fields that only make sense in marketplace context (source,
+# category, strict). Single source of truth: anything that changes upstream
+# in marketplace.json automatically propagates on next image rebuild.
+RUN install -d -o vscode -g vscode \
+        /opt/claude-marketplaces/claude-plugins-official/plugins/jdtls-lsp/.claude-plugin && \
+    jq '.plugins[] | select(.name == "jdtls-lsp") | del(.source, .category, .strict)' \
+        /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json \
+        > /opt/claude-marketplaces/claude-plugins-official/plugins/jdtls-lsp/.claude-plugin/plugin.json && \
+    chown vscode:vscode /opt/claude-marketplaces/claude-plugins-official/plugins/jdtls-lsp/.claude-plugin/plugin.json
+
 COPY --from=skill-sources --chown=vscode:vscode /marketplaces/impeccable/ \
         /opt/claude-marketplaces/impeccable/
