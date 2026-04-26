@@ -118,7 +118,9 @@ Currently provisioned:
 | Plugin                         | Marketplace name            | Marketplace source on disk                                                             |
 |--------------------------------|-----------------------------|----------------------------------------------------------------------------------------|
 | `frontend-design`              | `aether-vendor-plugins`     | `anthropics/claude-plugins-official` (cloned, renamed at image build — see note below) |
-| `jdtls-lsp`                    | `aether-vendor-plugins`     | same as above — wires Eclipse JDT.LS into Claude Code's LSP integration                |
+| `jdtls-lsp`                    | `aether-vendor-plugins`     | same as above — wires Eclipse JDT.LS (`jdtls`) into Claude Code's LSP integration      |
+| `typescript-lsp`               | `aether-vendor-plugins`     | same as above — wires `typescript-language-server` for `.ts/.tsx/.js/.jsx` and friends |
+| `kotlin-lsp`                   | `aether-vendor-plugins`     | same as above — wires JetBrains' standalone Kotlin LSP for `.kt/.kts`                  |
 | `impeccable`                   | `impeccable`                | `pbakaus/impeccable` (cloned)                                                          |
 | `java-development-assistant`   | `java-dev-assistant-local`  | `pluginagentmarketplace/custom-plugin-java` (wrapped)                                  |
 
@@ -139,11 +141,19 @@ Currently provisioned:
 
 1. Run `claude` and complete the OAuth login.
 2. `/plugin → Marketplaces`: all three marketplaces are listed.
-3. `/plugin → Plugins`: all four plugins already appear as enabled — no
+3. `/plugin → Plugins`: all six plugins already appear as enabled — no
    manual install step required.
 4. Open any `.java` file: the `jdtls-lsp` plugin auto-starts the JDT
    language server (`/usr/local/bin/jdtls`, baked into the image) so Claude
    Code sees real diagnostics, hover info, and go-to-definition.
+5. Open any `.ts` / `.tsx` / `.js` / `.jsx` file: the `typescript-lsp`
+   plugin auto-starts `typescript-language-server` (installed globally via
+   npm at postCreate, alongside `typescript`) for the same set of LSP
+   capabilities on frontend code.
+6. Open any `.kt` / `.kts` file: the `kotlin-lsp` plugin auto-starts
+   JetBrains' standalone Kotlin LSP (`/usr/local/bin/kotlin-lsp`, baked
+   into the image as a launcher symlink to `/opt/kotlin-lsp/kotlin-lsp.sh`)
+   for Kotlin code intelligence on JVM-only Gradle/Maven projects.
 
 ### Brittleness disclaimer
 
@@ -156,6 +166,8 @@ rm -rf ~/.claude/plugins/cache ~/.claude/plugins/installed_plugins.json
 # inside `claude` after login:
 /plugin install frontend-design@aether-vendor-plugins
 /plugin install jdtls-lsp@aether-vendor-plugins
+/plugin install typescript-lsp@aether-vendor-plugins
+/plugin install kotlin-lsp@aether-vendor-plugins
 /plugin install impeccable@impeccable
 /plugin install java-development-assistant@java-dev-assistant-local
 ```

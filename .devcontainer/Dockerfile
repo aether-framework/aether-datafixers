@@ -42,6 +42,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     jq \
+    unzip \
     xvfb \
     x11-utils \
     libxext6 \
@@ -67,6 +68,24 @@ RUN mkdir -p /opt/jdtls && \
     curl -fsSL https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz \
         | tar -xz --no-same-owner -C /opt/jdtls && \
     ln -s /opt/jdtls/bin/jdtls /usr/local/bin/jdtls
+
+# JetBrains Kotlin Language Server. The kotlin-lsp plugin (in
+# claude-plugins-official) expects a `kotlin-lsp` binary on PATH and
+# auto-activates for .kt and .kts. JetBrains distributes the standalone
+# Kotlin LSP via download-cdn.jetbrains.com — their GitHub Releases pages
+# link to it but don't attach assets directly, so there's no "latest"
+# alias to follow; the version is pinned. Bump when newer releases land at
+# https://github.com/Kotlin/kotlin-lsp/releases. Linux x64 only — if you
+# ever build this image on arm64, swap the asset suffix.
+RUN curl -fsSL \
+        "https://download-cdn.jetbrains.com/kotlin-lsp/262.2310.0/kotlin-lsp-262.2310.0-linux-x64.zip" \
+        -o /tmp/kotlin-lsp.zip && \
+    mkdir -p /opt/kotlin-lsp && \
+    unzip -q /tmp/kotlin-lsp.zip -d /opt/kotlin-lsp && \
+    rm /tmp/kotlin-lsp.zip && \
+    kotlin_lsp_sh="$(find /opt/kotlin-lsp -name kotlin-lsp.sh -type f | head -1)" && \
+    chmod +x "$kotlin_lsp_sh" && \
+    ln -s "$kotlin_lsp_sh" /usr/local/bin/kotlin-lsp
 
 # JetBrains Writerside builder (helpbuilderinspect). Pulled at image-build time
 # from the official image so the resulting container needs no Docker socket and
@@ -124,22 +143,27 @@ RUN tmp=$(mktemp) && \
     mv "$tmp" /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json && \
     chown vscode:vscode /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json
 
-# Synthesize a plugin manifest for jdtls-lsp. The upstream plugin source dir
-# (anthropics/claude-plugins-official/plugins/jdtls-lsp/) ships only LICENSE +
-# README.md — no .claude-plugin/plugin.json — and Claude Code's plugin loader
-# silently ignores cached plugins without a manifest, so /plugin shows the
-# plugin missing even though installed_plugins.json and enabledPlugins are
-# set. We reconstruct the manifest from the marketplace.json's plugins[]
-# entry (which carries name, description, version, author, lspServers etc.),
-# stripping fields that only make sense in marketplace context (source,
-# category, strict). Single source of truth: anything that changes upstream
-# in marketplace.json automatically propagates on next image rebuild.
-RUN install -d -o vscode -g vscode \
-        /opt/claude-marketplaces/claude-plugins-official/plugins/jdtls-lsp/.claude-plugin && \
-    jq '.plugins[] | select(.name == "jdtls-lsp") | del(.source, .category, .strict)' \
-        /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json \
-        > /opt/claude-marketplaces/claude-plugins-official/plugins/jdtls-lsp/.claude-plugin/plugin.json && \
-    chown vscode:vscode /opt/claude-marketplaces/claude-plugins-official/plugins/jdtls-lsp/.claude-plugin/plugin.json
+# Synthesize a plugin manifest for the LSP plugins listed below. Their
+# upstream source dirs (anthropics/claude-plugins-official/plugins/<name>/)
+# ship only LICENSE + README.md — no .claude-plugin/plugin.json — and Claude
+# Code's plugin loader silently ignores cached plugins without a manifest, so
+# /plugin shows them missing even though installed_plugins.json and
+# enabledPlugins are set. We reconstruct the manifest from marketplace.json's
+# plugins[] entry (which carries name, description, version, author,
+# lspServers etc.), stripping fields that only make sense in marketplace
+# context (source, category, strict). Single source of truth: anything that
+# changes upstream in marketplace.json automatically propagates on next
+# image rebuild. Add a plugin to LSP_THIN_PLUGINS to provision its manifest.
+RUN for p in jdtls-lsp typescript-lsp kotlin-lsp; do \
+        install -d -o vscode -g vscode \
+            "/opt/claude-marketplaces/claude-plugins-official/plugins/$p/.claude-plugin" && \
+        jq --arg n "$p" \
+            '.plugins[] | select(.name == $n) | del(.source, .category, .strict)' \
+            /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json \
+            > "/opt/claude-marketplaces/claude-plugins-official/plugins/$p/.claude-plugin/plugin.json" && \
+        chown vscode:vscode \
+            "/opt/claude-marketplaces/claude-plugins-official/plugins/$p/.claude-plugin/plugin.json"; \
+    done
 
 COPY --from=skill-sources --chown=vscode:vscode /marketplaces/impeccable/ \
         /opt/claude-marketplaces/impeccable/

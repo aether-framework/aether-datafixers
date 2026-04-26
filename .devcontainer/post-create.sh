@@ -33,14 +33,21 @@ curl $CURL_FLAGS https://claude.ai/install.sh | bash $BASH_DEBUG_FLAG
 # make subsequent `claude` calls work in this same process.
 export PATH="$HOME/.local/bin:$PATH"
 
-echo "=== Pre-installing Context7 MCP server (offline-resolvable via npx) ==="
-# Installing globally up front means `npx @upstash/context7-mcp` finds the
-# package locally once the egress firewall blocks the npm registry.
+echo "=== Pre-installing npm-based tooling (offline-resolvable) ==="
+# Installing globally up front means runtime invocations find these locally
+# once the egress firewall blocks the npm registry. The set:
+#   * @upstash/context7-mcp — referenced by ~/.claude.json mcpServers
+#   * typescript-language-server + typescript — used by the typescript-lsp
+#     plugin (auto-spawns `typescript-language-server --stdio` for .ts/.tsx/
+#     .js/.jsx and friends; needs `typescript` as a peer dependency for tsc)
 if command -v npm >/dev/null 2>&1; then
-    npm install -g @upstash/context7-mcp || \
-        echo "WARN: failed to globally install @upstash/context7-mcp; Context7 will need npm registry access at runtime"
+    npm install -g \
+            @upstash/context7-mcp \
+            typescript \
+            typescript-language-server || \
+        echo "WARN: global npm install failed; affected tools will need npm registry access at runtime"
 else
-    echo "WARN: npm not on PATH; skipping Context7 pre-install"
+    echo "WARN: npm not on PATH; skipping npm-based pre-install"
 fi
 
 echo "=== claude CLI version ==="
@@ -87,6 +94,8 @@ jq '.mcpServers' "$CLAUDE_USER_JSON"
 PLUGIN_TARGETS=(
     "/opt/claude-marketplaces/claude-plugins-official:frontend-design"
     "/opt/claude-marketplaces/claude-plugins-official:jdtls-lsp"
+    "/opt/claude-marketplaces/claude-plugins-official:typescript-lsp"
+    "/opt/claude-marketplaces/claude-plugins-official:kotlin-lsp"
     "/opt/claude-marketplaces/impeccable:impeccable"
     "/opt/claude-marketplaces/java-dev-assistant:java-development-assistant"
 )
@@ -231,13 +240,17 @@ done
 git config --global --add safe.directory "$WORKSPACE_DIR"
 
 echo "=== Dev Container ready ==="
-echo "Run \`claude\` to start. After login, /plugin lists all four plugins as enabled."
+echo "Run \`claude\` to start. After login, /plugin lists all six plugins as enabled."
 echo ""
 echo "  MCP servers : context7"
 echo "  Plugins     : frontend-design@aether-vendor-plugins"
 echo "                jdtls-lsp@aether-vendor-plugins"
+echo "                typescript-lsp@aether-vendor-plugins"
+echo "                kotlin-lsp@aether-vendor-plugins"
 echo "                impeccable@impeccable"
 echo "                java-development-assistant@java-dev-assistant-local"
-echo "  LSP         : jdtls on PATH (auto-activates for .java)"
+echo "  LSP         : jdtls (auto-activates for .java)"
+echo "                typescript-language-server (auto-activates for .ts/.tsx/.js/.jsx)"
+echo "                kotlin-lsp (auto-activates for .kt/.kts)"
 echo "  Skills      : user-scope, under ~/.claude/skills/"
 echo "  Firewall    : active — only whitelisted hosts reachable"
