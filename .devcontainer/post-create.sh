@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -u
 
-# Opt-in debug mode. Set DEVCONTAINER_DEBUG=1 (env var when invoking the
-# script, or via "containerEnv" in devcontainer.json) to:
-#   * trace every command in this script (set -x)
-#   * keep the Claude Code installer's curl progress visible (drop curl -s)
-#   * trace every command inside the installer itself (bash -x)
-# Without it, output stays clean for the normal happy path.
+# Opt-in debug mode. Set DEVCONTAINER_DEBUG=1 (inline or via "containerEnv"
+# in devcontainer.json) to enable:
+#   * set -x  — trace every command in this script
+#   * curl    — drop -s so the installer download shows progress
+#   * bash -x — trace every command inside the installer itself
 CURL_FLAGS="-fsSL"
 BASH_DEBUG_FLAG=""
 if [ -n "${DEVCONTAINER_DEBUG:-}" ]; then
@@ -15,19 +14,19 @@ if [ -n "${DEVCONTAINER_DEBUG:-}" ]; then
     BASH_DEBUG_FLAG="-x"
 fi
 
-echo "=== Setting up ownership..."
+echo "=== Setting up ownership ==="
 sudo chown -R vscode:vscode /workspace 2>/dev/null || true
 sudo chown -R vscode:vscode /home/vscode/.claude 2>/dev/null || true
 
-echo "=== Installing Claude Code native binary..."
+echo "=== Installing Claude Code native binary ==="
 curl $CURL_FLAGS https://claude.ai/install.sh | bash $BASH_DEBUG_FLAG
 
-# The Claude Code installer drops the binary into ~/.local/bin and updates
-# the user's shell init files, but this non-interactive script has not
-# re-sourced them yet. Export it directly so subsequent `claude` calls work.
+# Installer drops the binary into ~/.local/bin and rewrites the shell rc
+# files, but this script's PATH was set before that, so we add it now to
+# make subsequent `claude` calls work in this same process.
 export PATH="$HOME/.local/bin:$PATH"
 
-echo "=== Pre-installing Context7 MCP server (offline-resolvable via npx)..."
+echo "=== Pre-installing Context7 MCP server (offline-resolvable via npx) ==="
 # Installing globally up front means `npx @upstash/context7-mcp` finds the
 # package locally once the egress firewall blocks the npm registry.
 if command -v npm >/dev/null 2>&1; then
@@ -63,7 +62,7 @@ jq '.mcpServers' "$CLAUDE_USER_JSON"
 # without ever needing an authenticated Claude session:
 #
 #   1. Resolve each plugin's source directory from its marketplace.json.
-#   2. Copy the plugin into ~/.claude/plugins/cache/<mkt>/<plugin>/<sha>/
+#   2. Copy the plugin into ~/.claude/plugins/cache/<mkt>/<plugin>/<version>/
 #      using the on-disk format Claude Code expects (per anthropics/claude-code
 #      issue #15642).
 #   3. Append an entry to ~/.claude/plugins/installed_plugins.json so the CLI
@@ -197,7 +196,7 @@ if command -v claude >/dev/null 2>&1; then
     claude plugin list 2>&1 || echo "INFO: claude plugin list unavailable"
 fi
 
-echo "=== Configuring strict egress firewall..."
+echo "=== Configuring strict egress firewall ==="
 sudo iptables -P OUTPUT DROP
 sudo iptables -A OUTPUT -o lo -j ACCEPT
 sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT
@@ -224,17 +223,11 @@ done
 git config --global --add safe.directory /workspace
 
 echo "=== Dev Container ready ==="
-echo "Claude Code (native) is installed. Run: claude"
-echo "MCP servers (in ~/.claude.json): context7"
-echo "Plugin marketplaces (directory sources in ~/.claude/settings.json):"
-echo "  aether-vendor-plugins, impeccable, java-dev-assistant-local"
-echo "Plugins pre-installed (cache + installed_plugins.json + enabledPlugins):"
-echo "  frontend-design@aether-vendor-plugins"
-echo "  impeccable@impeccable"
-echo "  java-development-assistant@java-dev-assistant-local"
-echo "User-scope skills available under ~/.claude/skills/ (incl. taste-skill collection)"
+echo "Run \`claude\` to start. After login, /plugin lists all three plugins as enabled."
 echo ""
-echo "After \`claude login\`, /plugin should list all three plugins as enabled"
-echo "with no manual install step required."
-echo ""
-echo "Egress firewall active - only whitelisted domains allowed"
+echo "  MCP servers : context7"
+echo "  Plugins     : frontend-design@aether-vendor-plugins"
+echo "                impeccable@impeccable"
+echo "                java-development-assistant@java-dev-assistant-local"
+echo "  Skills      : user-scope, under ~/.claude/skills/"
+echo "  Firewall    : active — only whitelisted hosts reachable"

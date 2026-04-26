@@ -1,22 +1,15 @@
-# Stage 1: pull third-party skill and plugin-marketplace repositories at
-# image-build time. Cloning here (rather than in postCreate) keeps the install
-# reproducible, means the artifacts are baked into the image regardless of
-# runtime firewall state, and lets post-create.sh pre-populate the Claude Code
-# plugin cache without ever needing `claude login` or network egress.
+# Stage 1: pull third-party skill and plugin-marketplace repos at image-build
+# time. Cloning here (not in postCreate) keeps the install reproducible, bakes
+# the artifacts into the image, and lets post-create.sh pre-populate the
+# plugin cache without ever needing `claude login` or runtime network egress.
 #
-# Why debian:bookworm-slim + apt-get git instead of alpine/git: rootless
-# BuildKit's DNS resolver intermittently times out for back-to-back GitHub
-# clones, and Alpine's musl libc resolver makes that noticeably worse than
-# glibc. The bind-mount of /etc/resolv.conf is the same; glibc just degrades
-# more gracefully (longer retries, no hard 12s fail loop). Cost is one extra
-# apt-get layer (~50 MB), which the BuildKit cache reuses on rebuilds.
+# Debian + glibc instead of alpine/git: rootless BuildKit's DNS resolver is
+# flaky for back-to-back clones, and glibc tolerates that better than musl.
+# Cost: one extra apt layer (~50 MB), reused from the BuildKit cache.
 #
-# Each clone is its own RUN layer with a 3-attempt retry loop:
-#   * Splitting clones across layers means a transient failure for one repo
-#     doesn't invalidate the layers that already cloned successfully — the
-#     build resumes from the failed step on the next attempt.
-#   * The trailing `exit 1` only fires when all 3 attempts failed in a row,
-#     surfacing a real error instead of a silent skip.
+# Each clone is its own RUN layer with a 3-attempt retry loop. Splitting per
+# layer means a transient failure for one repo doesn't invalidate layers
+# already cached. The trailing `exit 1` only fires when all 3 attempts failed.
 FROM debian:bookworm-slim AS skill-sources
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
@@ -102,15 +95,13 @@ COPY --from=skill-sources --chown=vscode:vscode /skills/custom-plugin-java/ \
 # would block the clone after post-create finishes anyway).
 COPY --from=skill-sources --chown=vscode:vscode /marketplaces/claude-plugins-official/ \
         /opt/claude-marketplaces/claude-plugins-official/
-# Rewrite the marketplace's declared name. Claude Code reserves any name
-# matching the regex ^(claude|anthropic)-? for official Anthropic marketplaces
-# (anthropics/claude-code#46786) — this rejects both "claude-plugins-official"
-# (exact-match, only allowed for github sources from the anthropics org) and
-# anything else starting with "claude-" or "anthropic-". The local mirror
-# therefore needs a name outside that namespace; "aether-vendor-plugins"
-# scopes it to this project and unambiguously passes validation. Plugin
-# contents and IDs are unchanged. post-create.sh reads .name from this file,
-# so registration and the enabledPlugins key flow naturally.
+# Rewrite .name to a non-reserved value. Claude Code rejects any marketplace
+# name matching ^(claude|anthropic)-? when registered as a `directory` source
+# (anthropics/claude-code#46786) — that namespace is reserved for official
+# `github`-source marketplaces from the anthropics org. We have to use a
+# directory source because the egress firewall blocks GitHub at runtime, so
+# we pick a project-scoped name outside the reserved range. Plugin contents
+# and IDs are unchanged; post-create.sh reads .name from this file.
 RUN tmp=$(mktemp) && \
     jq '.name = "aether-vendor-plugins"' \
         /opt/claude-marketplaces/claude-plugins-official/.claude-plugin/marketplace.json > "$tmp" && \

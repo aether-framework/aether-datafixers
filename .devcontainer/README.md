@@ -8,14 +8,14 @@ ready-to-use Writerside documentation builder on the side.
 
 ## Files
 
-| File                                                  | Purpose                                                                                                  |
-|-------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| `Dockerfile`                                          | Multi-stage image: clones third-party skill/marketplace repos, then layers them onto the Java devcontainer base, plus the Writerside builder and user-scope Claude Code skills. |
-| `devcontainer.json`                                   | Devcontainer spec: features, security flags, port forwarding, post-create hook.                          |
-| `post-create.sh`                                      | One-shot provisioning run on first container start. Installs Claude Code, writes MCP/plugin config, pre-populates the plugin cache, then enables the egress firewall. |
-| `writerside.sh`                                       | Wrapper around JetBrains' headless Writerside builder (`helpbuilderinspect`). Starts an Xvfb display on demand and forwards arguments. Available on `$PATH` as `writerside`. |
-| `claude/skills/`                                      | User-scope Claude Code skills, baked into `~/.claude/skills/` at image build.                            |
-| `claude/marketplaces/java-dev-assistant/marketplace.json` | Local wrapper marketplace pointing at the cloned `pluginagentmarketplace/custom-plugin-java` plugin.   |
+| File                                                      | Purpose                                                                                                                                                                         |
+|-----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Dockerfile`                                              | Multi-stage image: clones third-party skill/marketplace repos, then layers them onto the Java devcontainer base, plus the Writerside builder and user-scope Claude Code skills. |
+| `devcontainer.json`                                       | Devcontainer spec: features, security flags, port forwarding, post-create hook.                                                                                                 |
+| `post-create.sh`                                          | One-shot provisioning run on first container start. Installs Claude Code, writes MCP/plugin config, pre-populates the plugin cache, then enables the egress firewall.           |
+| `writerside.sh`                                           | Wrapper around JetBrains' headless Writerside builder (`helpbuilderinspect`). Starts an Xvfb display on demand and forwards arguments. Available on `$PATH` as `writerside`.    |
+| `claude/skills/`                                          | User-scope Claude Code skills, baked into `~/.claude/skills/` at image build.                                                                                                   |
+| `claude/marketplaces/java-dev-assistant/marketplace.json` | Local wrapper marketplace pointing at the cloned `pluginagentmarketplace/custom-plugin-java` plugin.                                                                            |
 
 ## Image build
 
@@ -115,11 +115,11 @@ For each target plugin, `post-create.sh`:
 
 Currently provisioned:
 
-| Plugin                        | Marketplace name           | Marketplace source on disk                            |
-|-------------------------------|----------------------------|-------------------------------------------------------|
-| `frontend-design`             | `aether-vendor-plugins`    | `anthropics/claude-plugins-official` (cloned, renamed at image build — see note below) |
-| `impeccable`                  | `impeccable`               | `pbakaus/impeccable` (cloned)                         |
-| `java-development-assistant`  | `java-dev-assistant-local` | `pluginagentmarketplace/custom-plugin-java` (wrapped) |
+| Plugin                         | Marketplace name            | Marketplace source on disk                                                             |
+|--------------------------------|-----------------------------|----------------------------------------------------------------------------------------|
+| `frontend-design`              | `aether-vendor-plugins`     | `anthropics/claude-plugins-official` (cloned, renamed at image build — see note below) |
+| `impeccable`                   | `impeccable`                | `pbakaus/impeccable` (cloned)                                                          |
+| `java-development-assistant`   | `java-dev-assistant-local`  | `pluginagentmarketplace/custom-plugin-java` (wrapped)                                  |
 
 > **Why `aether-vendor-plugins`?** Claude Code reserves any marketplace name
 > matching the regex `^(claude|anthropic)-?` for official Anthropic
@@ -240,10 +240,10 @@ which is why `xvfb` and the X11 client libs are in the runtime stage.
 
 ## Container env
 
-| Variable               | Value          | Purpose                                                              |
-|------------------------|----------------|----------------------------------------------------------------------|
-| `CLAUDE_CODE_SANDBOX`  | `true`         | Tells Claude Code it's running in a sandboxed environment.           |
-| `NO_PROXY` / `no_proxy`| `localhost,127.0.0.1` | Bypass any inherited proxy for loopback traffic. |
+| Variable                | Value                 | Purpose                                                               |
+|-------------------------|-----------------------|-----------------------------------------------------------------------|
+| `CLAUDE_CODE_SANDBOX`   | `true`                | Tells Claude Code it's running in a sandboxed environment.            |
+| `NO_PROXY` / `no_proxy` | `localhost,127.0.0.1` | Bypass any inherited proxy for loopback traffic.                      |
 
 ## Re-running provisioning
 
