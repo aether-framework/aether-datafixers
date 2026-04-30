@@ -51,14 +51,32 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxi6 \
     libfreetype6 \
     libfontconfig1 \
+    python3 \
+    python3-pip \
+    python3-venv \
+    pipx \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+# Node.js LTS via NodeSource. We install Node here rather than via the
+# devcontainers/features/node OCI feature because JetBrains Gateway's feature
+# resolver fails to substitute the image into ghcr.io's anonymous auth scope —
+# the token request goes out as `repository:user/image:pull` and ghcr.io 403s.
+# Baking Node at image-build time also matches the rest of this Dockerfile and
+# means the runtime egress firewall doesn't need to allow ghcr.io. NodeSource
+# pins their setup script to the current LTS line; bump if you need a specific
+# major. nodeGypDependencies (build-essential, python3) are already installed
+# above, so native module compilation works out of the box.
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y --no-install-recommends nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
 # Eclipse JDT Language Server. The jdtls-lsp plugin shipped in the
 # claude-plugins-official marketplace expects a `jdtls` binary on PATH and
 # auto-activates for every .java file. Installing here (build time) means the
 # egress firewall doesn't need to allow download.eclipse.org at runtime. The
 # upstream tarball ships a Python launcher at bin/jdtls that requires Python
-# 3.9+, which is provided by the python devcontainer feature at run time.
+# 3.9+, which is satisfied by the python3 package installed above.
 #
 # --no-same-owner: the upstream tarball encodes its files with a high UID
 # (~1001380000) that rootless BuildKit's user namespace cannot set. Without

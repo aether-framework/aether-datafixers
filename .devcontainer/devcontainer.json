@@ -5,22 +5,6 @@
     "dockerfile": "Dockerfile"
   },
 
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "21",
-      "installMaven": true,
-      "installGradle": true
-    },
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.12",
-      "installPipx": true
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts",
-      "nodeGypDependencies": true
-    }
-  },
-
   "containerUser": "vscode",
 
   "customizations": {
