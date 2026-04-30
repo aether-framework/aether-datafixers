@@ -101,11 +101,11 @@ RUN chmod +x /usr/local/bin/writerside
 RUN install -d -o vscode -g vscode /home/vscode/.claude /home/vscode/.claude/skills
 COPY --chown=vscode:vscode claude/skills/ /home/vscode/.claude/skills/
 
-# leonxlnx/taste-skill: curated frontend/design skill collection. Both sub-trees
-# (`skills/` and `imagegen-skills/`) follow the standard `<name>/SKILL.md`
-# layout, so they merge directly into the user-scope skills directory.
+# leonxlnx/taste-skill: curated frontend/design skill collection. Every entry
+# under `skills/` follows the standard `<name>/SKILL.md` layout, so the tree
+# merges directly into the user-scope skills directory. The stray `llms.txt`
+# alongside the skill dirs has no SKILL.md and is ignored by skill discovery.
 COPY --from=skill-sources --chown=vscode:vscode /skills/taste-skill/skills/ /home/vscode/.claude/skills/
-COPY --from=skill-sources --chown=vscode:vscode /skills/taste-skill/imagegen-skills/ /home/vscode/.claude/skills/
 
 # claudiocebpaz/vite-react-best-practices: single skill with SKILL.md at the
 # repo root, so the whole repository is the skill directory.
