@@ -55,7 +55,7 @@
         <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
         <plugin.spotbugs.version>4.9.8.2</plugin.spotbugs.version>
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-        <plugin.owasp.version>12.2.0</plugin.owasp.version>
+        <plugin.owasp.version>12.2.2</plugin.owasp.version>
         <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
 
         <!-- QA configuration -->
@@ -313,7 +313,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.8.0</version>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
