@@ -6,6 +6,108 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.0-rc.1] - 2026-05-12
+
+### Release Candidate
+
+First **release candidate** for the upcoming 1.0.0 GA. The public API has been frozen since v0.5.0 and is now hardened with field-level diagnostics, pervasive null-safety annotations, modernized Javadoc, and a stress / chaos testing framework. Deprecated APIs announced in v0.5.0 have been removed.
+
+### Breaking Changes
+
+The deprecated wrappers announced in v0.5.0 have been **removed**:
+
+| Removed                                                           | Replacement                                                                                                          |
+|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `de.splatgames.aether.datafixers.codec.gson.GsonOps`              | `de.splatgames.aether.datafixers.codec.json.gson.GsonOps`                                                            |
+| `de.splatgames.aether.datafixers.codec.jackson.JacksonOps`        | `codec.json.jackson.JacksonJsonOps` (JSON) or the format-specific classes (`JacksonYamlOps`, `JacksonTomlOps`, `JacksonXmlOps`) |
+| `TestData.jackson()`                                              | `TestData.jacksonJson()`                                                                                             |
+
+All other public API is source-compatible with v0.5.0.
+
+### Added
+
+#### Field-Level Diagnostics (`aether-datafixers-api`, `aether-datafixers-core`)
+
+- New `FieldOperation` record capturing structured per-field metadata (type, field name, operation type, type reference)
+- New `FieldOperationType` enum (`RENAME`, `ADD`, `REMOVE`, `TRANSFORM`, ...)
+- New `FieldAwareRule` marker interface implemented by every field operation in `Rules`
+- Field metadata propagates through `seq`, `seqAll`, `choice`, `batch`, `topDown`, and `bottomUp` combinators
+- `MigrationReport` and `FixExecution` expose field operations per executed rule
+- CLI `--diagnostics` flag emits field-level details in text and JSON reports
+- Spring Boot Actuator `/actuator/datafixers` endpoint reports field operations per execution
+- Static field-level coverage analysis available via `MigrationAnalyzer`
+
+#### JMH Benchmark Suite (`aether-datafixers-benchmarks`)
+
+- New module with reproducible JMH benchmarks for the core migration paths
+- Shaded benchmark JAR built via `mvn package`; run via `./run-benchmarks.sh`
+- Baseline results committed under `benchmark-results/`
+
+#### Stress & Chaos Tests (`aether-datafixers-functional-tests`)
+
+- `HighConcurrencyMigrationStressIT` — 100+ concurrent migration threads
+- `SustainedLoadMigrationStressIT` — minutes-long sustained throughput
+- `MixedRegistryAccessStressIT` — concurrent registry read/write workloads
+- `MemoryPressureStressIT` — GC pressure and memory-leak detection
+- `RandomDelaysChaosIT` — random delays injected into fix execution
+- `RandomFailuresChaosIT` — random failure injection in fix execution
+- Reusable harness: `StressTestConfig`, `StressTestMetrics`, `ThreadOrchestrator`, `ChaosInjector`, `FailingDataFix`
+
+#### Documentation
+
+- Migration guide `docs/migration/v0.5-to-v1.0.md` covering breaking changes, automated migration patterns, and troubleshooting
+- Operational documentation under `docs/operations/` (debugging guide, error scenarios, monitoring & alerting, recovery procedures)
+- Expanded `Rules` Javadoc with comprehensive field-aware API documentation
+- Field-level diagnostics documentation and examples
+
+#### Project Hygiene
+
+- `DCO` file added; PRs now sign off under the Developer Certificate of Origin
+- `CONTRIBUTORS.md` added to recognize project contributors
+- `AI_USAGE.md` added documenting AI usage guidelines
+- Hardened devcontainer for Java / Python / Claude Code sandboxing
+- Aether Style Guard integrated into PR and push CI workflows; opt-in `styleguard` profile wired up on every module
+- Automated PR retargeting from `main` to `develop` via GitHub workflow
+- Dependabot configured to target `develop` directly
+
+### Changed
+
+- Comprehensive Javadoc modernization across every module for 1.0.0 readiness
+- Pervasive `@NotNull` / `@Nullable` annotations applied across the public API and internals
+- `MigrationResult` now implements `equals` / `hashCode`
+- `Finder.index()` validates non-negative indices at construction (throws `IllegalArgumentException`)
+- `Typed.encodeAndGet` now returns `DataResult` with structured error reporting for missing paths
+- Stricter state validation in migration and fix handling
+- CLI command descriptions refined; error classification improved
+- `DataFixerRuntimeFactory` now logs schema registration via SLF4J
+- `SchemaValidator` dynamically determines max schema version with stricter error handling
+- `fixTypeEverywhere` simplified by directly returning `Optional` from `DataResult#result`
+
+### Fixed
+
+- 100+ targeted bug fixes across `aether-datafixers-api`, `-codec`, `-core`, `-cli`, `-testkit`, `-schema-tools`, and `-spring-boot-starter` (see merged bugfix batches in PRs #223–#274)
+- `Type.equals` no longer treats objects with same `ref`/`describe` but different `codec` as equal
+- `Finder.index()` rejects negative indices at construction
+- Robustness of dynamic key extraction in `Rules` improved (null checks, streamlined `asString` handling)
+- Javadoc typos in `TypeDiff`, `DataVersion`, optics, and format classes corrected
+- `RandomFailuresChaosIT` updated to handle `FixException` instead of `ChaosException`
+- `DataFixerEndpointTest` now uses a real `FixExecution` record instead of mocks
+
+### Removed
+
+- Deprecated `de.splatgames.aether.datafixers.codec.gson.GsonOps` wrapper class
+- Deprecated `de.splatgames.aether.datafixers.codec.jackson.JacksonOps` wrapper class
+- Deprecated `TestData.jackson()` factory method
+- Unused `compose` method from reversed `Iso` implementation
+- Unnecessary checked exceptions from `ConventionRules.Builder` and `DiagnosticOptions.Builder` constructors
+
+### Documentation Index
+
+- See [Documentation Changelog](docs/appendix/changelog.md) for documentation-specific changes
+- See [Migration Guide](docs/migration/v0.5-to-v1.0.md) for the v0.5.x → 1.0.0 upgrade walkthrough
+
+---
+
 ## [0.5.0] - 2026-01-16
 
 ### API Freeze
