@@ -1,24 +1,35 @@
-# 🚀 **Aether Datafixers v0.5.0 - API Freeze & Release Readiness**
+# 🚀 **Aether Datafixers v1.0.0-rc.1 - First Release Candidate**
 
-The API freeze release with stabilized public interfaces, comprehensive validation tooling, extended codec support, and full multi-format integration across all modules.
+The first **release candidate** for the upcoming 1.0.0 GA. Public API is frozen since v0.5.0 and now hardened with field-level diagnostics, modernized Javadoc, comprehensive null-safety annotations, and a stress/chaos testing framework. Deprecated APIs from the 0.5.0 line have been removed.
+
+> [!IMPORTANT]
+> This is a **release candidate** intended for evaluation and integration testing. The public API is considered stable, but until 1.0.0 GA we reserve the right to apply corrective changes in response to RC feedback.
 
 ---
 
-## 🎯 Highlights in v0.5.0
+## 🎯 Highlights since v0.5.0
 
-- ✅ **API Freeze** - Public API is now stable; no breaking changes expected before v1.0.0
-- ✅ **Schema Validation Integration** - Full `MigrationAnalyzer` integration for fix coverage validation
-- ✅ **MigrationService.withOps()** - Custom `DynamicOps` support for format conversion during migrations
-- ✅ **Extended Codec Support** - Multi-format DynamicOps integration for CLI, Testkit and Spring Boot modules
-- ✅ **Functional Tests Module** - New `aether-datafixers-functional-tests` with E2E and integration tests
-- ✅ **Comprehensive Documentation** - Complete documentation suite covering all modules and features
+- ✅ **API Hardening** - Public API surface frozen since 0.5.0; deprecated wrappers from the 0.5.0 line removed
+- ✅ **Field-Level Diagnostics** - New `FieldOperation` / `FieldAwareRule` model surfaces per-field metadata in `MigrationReport`
+- ✅ **Modernized Javadoc** - Comprehensive Javadoc overhaul across every module for 1.0.0 readiness
+- ✅ **Pervasive Null-Safety** - `@NotNull` / `@Nullable` annotations applied across the public API and internals
+- ✅ **JMH Benchmark Suite** - New `aether-datafixers-benchmarks` module with reproducible performance benchmarks
+- ✅ **Stress & Chaos Testing** - High-concurrency, sustained-load, memory-pressure, and chaos injection ITs
+- ✅ **Migration Guide** - Detailed v0.5.x → 1.0.0 migration documentation including automated patterns
+- ✅ **Operational Runbook** - Production troubleshooting guide and operational documentation
+- ✅ **Aether Style Guard** - CI-enforced style guard ensures consistent code style across all modules
+- ✅ **DCO & Contributor Recognition** - Developer Certificate of Origin and `CONTRIBUTORS.md` added
+- ✅ **Bug Fix Sweep** - 100+ issues addressed across API, codec, core, CLI, testkit, schema-tools, and Spring Boot starter
 
 ---
 
 ## 📦 Installation
 
 > [!TIP]
-> All Aether artifacts are available on **Maven Central** - no extra repository required.
+> All Aether artifacts are published to **Maven Central** — no extra repository required.
+
+> [!WARNING]
+> Release candidates are pre-release artifacts. Pin the exact version; do **not** rely on version ranges in production code paths.
 
 ### Maven
 
@@ -26,7 +37,7 @@ The API freeze release with stabilized public interfaces, comprehensive validati
 <dependency>
   <groupId>de.splatgames.aether.datafixers</groupId>
   <artifactId>aether-datafixers-core</artifactId>
-  <version>0.5.0</version>
+  <version>1.0.0-rc.1</version>
 </dependency>
 ```
 
@@ -38,7 +49,7 @@ The API freeze release with stabilized public interfaces, comprehensive validati
     <dependency>
       <groupId>de.splatgames.aether.datafixers</groupId>
       <artifactId>aether-datafixers-bom</artifactId>
-      <version>0.5.0</version>
+      <version>1.0.0-rc.1</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -58,9 +69,9 @@ The API freeze release with stabilized public interfaces, comprehensive validati
 
 ```groovy
 dependencies {
-  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.5.0'
+  implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1'
   // Or with BOM:
-  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.5.0')
+  implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0-rc.1')
   implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
 }
 ```
@@ -69,9 +80,9 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.5.0")
+  implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1")
   // Or with BOM:
-  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.5.0"))
+  implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0-rc.1"))
   implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
 }
 ```
@@ -80,93 +91,110 @@ dependencies {
 
 ## 🆕 What's New
 
-### 🔍 SchemaValidator Fix Coverage Integration
+### 🔬 Field-Level Diagnostics
 
-The `SchemaValidator.validateFixCoverage()` method now performs actual coverage analysis using `MigrationAnalyzer`:
+`TypeRewriteRule` instances now carry structured `FieldOperation` metadata, enabling field-aware diagnostics throughout the migration pipeline.
 
 ```java
-ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
-    .validateFixCoverage()
-    .validate();
+MigrationReport report = fixer.update(typeRef, dynamic, fromVersion, toVersion);
 
-if (result.hasWarnings()) {
-    for (ValidationIssue issue : result.warnings()) {
-        System.out.println("Missing fix: " + issue.message());
-        // e.g., "Missing DataFix for type 'player' field 'health': FIELD_ADDED"
+for (FixExecution exec : report.executions()) {
+    for (FieldOperation op : exec.fieldOperations()) {
+        System.out.printf("%s on field '%s' (type %s)%n",
+            op.type(),      // FieldOperationType: RENAME, ADD, REMOVE, TRANSFORM, ...
+            op.fieldName(),
+            op.typeReference());
     }
 }
 ```
 
 **Features:**
-- Automatically analyzes the full version range from schema registry
-- Detects missing DataFixes for schema changes (field additions, removals, type changes)
-- Reports field-level coverage gaps with detailed context
-- Integrates seamlessly with existing validation pipeline
 
-### 🔄 MigrationService.withOps() Support
+- `FieldAwareRule` marker interface implemented by all field operations and compositions in `Rules`
+- Field operations bubble up through `seq`, `seqAll`, `choice`, `batch`, `topDown`, `bottomUp`
+- CLI exposes field-level details via the `--diagnostics` flag (`aether-datafixers-cli`)
+- Spring Boot Actuator `/actuator/datafixers` endpoint reports field operations per execution
+- Static field-level coverage analysis available via `MigrationAnalyzer`
 
-The Spring Boot `MigrationService` now fully supports custom `DynamicOps` for format conversion:
+### 📚 Modernized Javadoc
 
-```java
-// Convert input data to Jackson YAML format during migration
-MigrationResult result = migrationService
-    .migrate(gsonData)
-    .from(100)
-    .to(200)
-    .withOps(JacksonYamlOps.INSTANCE)  // Now fully functional!
-    .execute();
+Every public type in every module received a Javadoc pass focused on the 1.0.0 audience:
 
-// Result data is now in Jackson YAML format
-Dynamic<JsonNode> yamlResult = (Dynamic<JsonNode>) result.getData();
-```
+- Consistent voice and structure across modules
+- Explicit thread-safety contracts on every public type
+- Behavioral guarantees, ordering invariants, and failure modes documented
+- `{@inheritDoc}` with explicit `@param` / `@return` to satisfy the Aether Style Guard
+- Cross-references (`{@link}`) between related types repaired and expanded
 
-**Use Cases:**
-- Convert between serialization formats during migration
-- Normalize data to a specific format for downstream processing
-- Work with format-specific features (e.g., YAML anchors, TOML tables)
+### 🛡️ Pervasive Null-Safety
 
-### 🔌 Extended Codec Support for CLI & Testkit
-
-Full multi-format DynamicOps integration for the CLI and Testkit modules:
-
-**CLI Format Handlers:**
-
-| Format ID        | Library      | Data Type     | File Extensions |
-|------------------|--------------|---------------|-----------------|
-| `json-gson`      | Gson         | `JsonElement` | `.json`         |
-| `json-jackson`   | Jackson      | `JsonNode`    | `.json`         |
-| `yaml-snakeyaml` | SnakeYAML    | `Object`      | `.yaml`, `.yml` |
-| `yaml-jackson`   | Jackson YAML | `JsonNode`    | `.yaml`, `.yml` |
-| `toml-jackson`   | Jackson TOML | `JsonNode`    | `.toml`         |
-| `xml-jackson`    | Jackson XML  | `JsonNode`    | `.xml`          |
-
-**Testkit Factory Methods:**
+`@NotNull` and `@Nullable` annotations now cover the public API and internals, providing static null-safety guarantees for callers using nullability-aware tooling (IntelliJ, Checker Framework, NullAway).
 
 ```java
-// All formats now supported in TestData
-Dynamic<JsonElement> gson = TestData.gson().object().put("key", "value").build();
-Dynamic<JsonNode> jackson = TestData.jacksonJson().object().put("key", "value").build();
-Dynamic<Object> yaml = TestData.snakeYaml().object().put("key", "value").build();
-Dynamic<JsonNode> yamlJ = TestData.jacksonYaml().object().put("key", "value").build();
-Dynamic<JsonNode> toml = TestData.jacksonToml().object().put("key", "value").build();
-Dynamic<JsonNode> xml = TestData.jacksonXml().object().put("key", "value").build();
+// API contracts are now explicit at compile time
+@NotNull DataResult<Typed<T>> apply(@NotNull Typed<T> input,
+                                    @Nullable DiagnosticContext context);
 ```
 
-### 🧪 Functional Tests Module
+### ⚡ JMH Benchmark Suite
 
-New `aether-datafixers-functional-tests` module with comprehensive E2E and integration tests:
-
-| Test Category           | Description                                                  |
-|-------------------------|--------------------------------------------------------------|
-| Cross-Format Migration  | Validate migrations work identically across all DynamicOps   |
-| Error Recovery          | Test graceful handling of malformed data and fix failures    |
-| Field Transformations   | E2E tests for rename, add, remove, and restructure operations|
-
-Run integration tests with:
+The new `aether-datafixers-benchmarks` module provides reproducible JMH benchmarks for the core migration paths:
 
 ```bash
-mvn verify -Pit
+# Build the shaded benchmark JAR and run the suite
+./run-benchmarks.sh
 ```
+
+Initial baselines are committed under `benchmark-results/` for regression comparisons.
+
+### 🧪 Stress & Chaos Testing
+
+New stress / chaos integration tests under `aether-datafixers-functional-tests`:
+
+| Test                                  | Focus                                          |
+|---------------------------------------|------------------------------------------------|
+| `HighConcurrencyMigrationStressIT`    | 100+ concurrent migration threads              |
+| `SustainedLoadMigrationStressIT`      | Minutes-long sustained throughput              |
+| `MixedRegistryAccessStressIT`         | Concurrent registry read/write workloads       |
+| `MemoryPressureStressIT`              | GC pressure and memory-leak detection          |
+| `RandomDelaysChaosIT`                 | Random delays injected into fix execution      |
+| `RandomFailuresChaosIT`               | Random failure injection in fix execution      |
+
+Run with:
+
+```bash
+mvn verify -Pstress -pl aether-datafixers-functional-tests
+mvn verify -Pit    -pl aether-datafixers-functional-tests -Dgroups=chaos
+```
+
+### 🎨 Aether Style Guard
+
+Code style is now enforced in CI via the Aether Style Guard. The opt-in `styleguard` profile is wired up on every module and validated by `.github/workflows/ci-pr.yml` and `ci-push.yml`.
+
+### 📖 Migration Guide & Runbook
+
+- **v0.5.x → 1.0.0 Migration Guide** — step-by-step migration patterns, breaking changes, and troubleshooting ([`docs/migration/`](docs/migration/v0.5-to-v1.0.md))
+- **Operational Runbook** — production debugging, error scenarios, monitoring, and recovery procedures ([`docs/operations/`](docs/operations/index.md))
+- **Troubleshooting Guide** — common errors and debugging tips ([`docs/troubleshooting/`](docs/troubleshooting/index.md))
+
+### 🤝 DCO & Contributor Recognition
+
+- `DCO` file added; PRs now sign off under the Developer Certificate of Origin
+- `CONTRIBUTORS.md` recognizes every contributor to the project
+
+---
+
+## 💥 Breaking Changes from v0.5.0
+
+The deprecated wrappers announced in v0.5.0 have been **removed** in 1.0.0:
+
+| Removed                                                           | Replacement                                                                                                          |
+|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `de.splatgames.aether.datafixers.codec.gson.GsonOps`              | `de.splatgames.aether.datafixers.codec.json.gson.GsonOps`                                                            |
+| `de.splatgames.aether.datafixers.codec.jackson.JacksonOps`        | `codec.json.jackson.JacksonJsonOps` (JSON) or the format-specific classes (`JacksonYamlOps`, `JacksonTomlOps`, `JacksonXmlOps`) |
+| `TestData.jackson()`                                              | `TestData.jacksonJson()`                                                                                             |
+
+See [docs/migration/v0.5-to-v1.0.md](docs/migration/v0.5-to-v1.0.md) for the full migration guide.
 
 ---
 
@@ -174,7 +202,7 @@ mvn verify -Pit
 
 | Module                                  | Description                                                  |
 |-----------------------------------------|--------------------------------------------------------------|
-| `aether-datafixers-api`                 | Core interfaces and API contracts (stable)                   |
+| `aether-datafixers-api`                 | Core interfaces and API contracts (stable, frozen)           |
 | `aether-datafixers-core`                | Default implementations                                      |
 | `aether-datafixers-codec`               | DynamicOps for JSON, YAML, TOML, XML                         |
 | `aether-datafixers-testkit`             | Testing utilities with fluent API + multi-format support     |
@@ -182,63 +210,77 @@ mvn verify -Pit
 | `aether-datafixers-schema-tools`        | Schema analysis, validation, and diffing                     |
 | `aether-datafixers-spring-boot-starter` | Spring Boot 3.x auto-configuration                           |
 | `aether-datafixers-examples`            | Practical usage examples                                     |
-| `aether-datafixers-functional-tests`    | E2E and integration tests                                    |
+| `aether-datafixers-functional-tests`    | E2E, integration, stress, and chaos tests                    |
+| `aether-datafixers-benchmarks`          | JMH benchmark suite                                          |
 | `aether-datafixers-bom`                 | Bill of Materials for version management                     |
 
 ---
 
 ## 📝 Changelog
 
-**New in 0.5.0**
+**New in 1.0.0-rc.1**
 
-- `SchemaValidator.validateFixCoverage()` now performs actual coverage analysis via `MigrationAnalyzer`
-- `MigrationService.withOps()` fully implemented for format conversion during migrations
-- Extended codec support: CLI format handlers for YAML, TOML, XML
-- Extended codec support: Testkit factory methods for all DynamicOps implementations
-- New `aether-datafixers-functional-tests` module with comprehensive E2E and IT tests
-- Cross-format migration tests (Gson, Jackson JSON, Jackson YAML, SnakeYAML, TOML, XML)
-- Error recovery integration tests with graceful failure handling
-- Field transformation E2E tests (rename, add, group operations)
-- API stabilization: public interfaces frozen for v1.0.0
-- Comprehensive documentation updates across all modules
+- Introduced field-level diagnostics: `FieldOperation`, `FieldOperationType`, and `FieldAwareRule` propagated through every combinator in `Rules`
+- Static field-level coverage analysis added to `MigrationAnalyzer`
+- CLI `--field-diagnostics` flag and Spring Boot Actuator endpoint surface field-level details
+- New `aether-datafixers-benchmarks` module with JMH benchmark suite and baseline results
+- Stress and chaos integration tests: `HighConcurrencyMigrationStressIT`, `SustainedLoadMigrationStressIT`, `MixedRegistryAccessStressIT`, `MemoryPressureStressIT`, `RandomDelaysChaosIT`, `RandomFailuresChaosIT`
+- Comprehensive Javadoc modernization across all modules
+- Pervasive `@NotNull` / `@Nullable` annotations across the public API and internals
+- Aether Style Guard integrated into PR and push CI workflows
+- Migration guide (v0.5.x → 1.0.0), benchmark guide, and operational runbook added
+- Developer Certificate of Origin (DCO) and `CONTRIBUTORS.md` introduced
+- `MigrationResult` now implements `equals` / `hashCode`
+- `Finder.index()` validates non-negative indices at construction
+- `Typed.encodeAndGet` now returns `DataResult` with structured error reporting
+- 100+ targeted bug fixes across API, codec, core, CLI, testkit, schema-tools, and the Spring Boot starter
+- Hardened devcontainer for Java / Python / Claude Code sandboxing
 
-**Deprecations (removal planned for v1.0.0)**
+**Removed (previously deprecated in 0.5.0)**
 
-- `de.splatgames.aether.datafixers.codec.gson.GsonOps` - Use `codec.json.gson.GsonOps`
-- `de.splatgames.aether.datafixers.codec.jackson.JacksonOps` - Use `codec.json.jackson.JacksonJsonOps` for JSON, or the format-specific classes (`JacksonYamlOps`, `JacksonTomlOps`, `JacksonXmlOps`)
-- `TestData.jackson()` - Use `TestData.jacksonJson()` instead
+- `de.splatgames.aether.datafixers.codec.gson.GsonOps` wrapper
+- `de.splatgames.aether.datafixers.codec.jackson.JacksonOps` wrapper
+- `TestData.jackson()` factory method
 
-**Full Changelog:** [v0.4.0...v0.5.0](https://github.com/aether-framework/aether-datafixers/compare/v0.4.0...v0.5.0)
+**Full Changelog:** [v0.5.0...v1.0.0-rc.1](https://github.com/aether-framework/aether-datafixers/compare/v0.5.0...v1.0.0-rc.1)
 
 ---
 
-## 🔄 Migration from v0.4.0
+## 🔄 Migration from v0.5.0
 
 ### Breaking Changes
 
-None. v0.5.0 is fully backward compatible with v0.4.0.
+Only the three deprecated wrappers from 0.5.0 are removed (see table above). All other public API is source-compatible with v0.5.0.
 
-### Deprecated API Updates
+### Recommended Steps
 
-If using deprecated wrapper classes, update imports:
+1. Update Maven / Gradle coordinates to `1.0.0-rc.1`
+2. Replace any remaining imports of the removed wrappers with their replacements
+3. Re-run `mvn verify` against your project; the compiler will catch every removed reference
+4. Optional: opt into field-level diagnostics by inspecting `FixExecution#fieldOperations` on `MigrationReport`
 
-```java
-// Old (deprecated)
-import de.splatgames.aether.datafixers.codec.gson.GsonOps;
+Detailed walkthrough in [docs/migration/v0.5-to-v1.0.md](docs/migration/v0.5-to-v1.0.md).
 
-// New
-import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
-```
+---
+
+## 🧪 RC Feedback
+
+Please file RC feedback as GitHub issues against the [aether-datafixers repository](https://github.com/aether-framework/aether-datafixers/issues). Any blocker reported during the RC window will be considered for inclusion in the 1.0.0 GA.
 
 ---
 
 ## 🗺️ Roadmap
 
-### v1.0.0 (next)
+### v1.0.0 (GA)
 
-- **Stable Release** - Production-ready with semantic versioning guarantees
-- **Performance Benchmarks** - Published benchmark suite
-- **Extended Documentation** - Video tutorials and cookbook examples
+- Promote `1.0.0-rc.1` to `1.0.0` after the RC feedback window
+- Final documentation polish and tutorial coverage
+- Semantic-versioning guarantees activated for the 1.0.x line
+
+### Post-1.0.0
+
+- Extended cookbook and video tutorials
+- Additional codec integrations driven by community demand
 
 ---
 
