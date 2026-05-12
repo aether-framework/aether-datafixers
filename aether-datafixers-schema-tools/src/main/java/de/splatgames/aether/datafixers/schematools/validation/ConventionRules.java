@@ -412,18 +412,17 @@ public final class ConventionRules {
 
     /**
      * Builder for creating custom ConventionRules instances.
-     * <p>
-     * This builder allows you to configure various aspects of convention checking, such as:
-     *     <ul>
-     *         <li>Enabling/disabling convention checks</li>
-     *         <li>Setting regex patterns for type and field names</li>
-     *         <li>Requiring specific prefixes/suffixes for type, schema, and
-     *         fix class names</li>
-     *         <li>Choosing whether violations are treated as errors or warnings</li>
-     *         <li>Providing custom validation predicates for type and field names</li>
-     *   </ul>
-     *   This builder is used to create immutable ConventionRules instances that can be applied during schema validation.
-     * </p>
+     *
+     * <p>This builder allows you to configure various aspects of convention checking, such as:</p>
+     * <ul>
+     *     <li>Enabling/disabling convention checks</li>
+     *     <li>Setting regex patterns for type and field names</li>
+     *     <li>Requiring specific prefixes/suffixes for type, schema, and fix class names</li>
+     *     <li>Choosing whether violations are treated as errors or warnings</li>
+     *     <li>Providing custom validation predicates for type and field names</li>
+     * </ul>
+     *
+     * <p>This builder is used to create immutable ConventionRules instances that can be applied during schema validation.</p>
      *
      * @see ConventionRules
      */
