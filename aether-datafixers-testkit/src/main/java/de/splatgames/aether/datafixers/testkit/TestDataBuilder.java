@@ -90,13 +90,11 @@ public final class TestDataBuilder<T> {
 
     /**
      * Internal state:
-     * <p>
-     *     <ul>
-     *         <li>{@code ops}: The DynamicOps used for creating values.</li>
-     *         <li>{@code fields}: A map of field names to their Dynamic values.</li>
-     *         <li>{@code isObjectMode}: A flag to ensure object() is called before adding fields.</li>
-     *     </ul>
-     * </p>
+     * <ul>
+     *     <li>{@code ops}: The DynamicOps used for creating values.</li>
+     *     <li>{@code fields}: A map of field names to their Dynamic values.</li>
+     *     <li>{@code isObjectMode}: A flag to ensure object() is called before adding fields.</li>
+     * </ul>
      */
     private final DynamicOps<T> ops;
     /**
