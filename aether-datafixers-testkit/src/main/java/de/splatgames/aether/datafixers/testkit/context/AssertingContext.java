@@ -69,15 +69,13 @@ public final class AssertingContext implements DataFixerContext {
 
     /**
      * Defines the behavior of the AssertingContext when a warning is logged.
-     * <p>
-     *  <ul>
+     * <ul>
      *     <li><strong>FAIL_ON_WARN</strong>: Throws an AssertionError immediately on any warn() call.</li>
      *     <li><strong>COLLECT</strong>: Collects warning messages for later
      *     assertion via warnings(), warningCount(), hasWarnings(), and assertNoWarnings().</li>
      *     <li><strong>SILENT</strong>: Ignores all warn()
      *     calls without throwing or collecting (useful when warnings are expected).</li>
-     *  </ul>
-     * </p>
+     * </ul>
      */
     private final Mode mode;
     /**
