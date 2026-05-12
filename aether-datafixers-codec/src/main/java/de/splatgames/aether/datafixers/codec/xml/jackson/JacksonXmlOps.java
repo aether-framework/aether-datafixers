@@ -156,6 +156,12 @@ import java.util.stream.StreamSupport;
  * become child elements, but this can be customized with Jackson annotations or mapper
  * configuration.</p>
  *
+ * <p><b>Important:</b> The {@code DynamicOps<JsonNode>} model treats all properties uniformly
+ * as map entries. XML attribute information is <b>not preserved</b> through Dynamic round-trips.
+ * Attributes become nested map entries indistinguishable from child elements, and re-serialized
+ * XML may differ structurally from the original. For use cases requiring attribute fidelity,
+ * process XML directly with Jackson's XML annotations rather than through the Dynamic API.</p>
+ *
  * <h3>Arrays and Repeated Elements</h3>
  * <p>XML has no native array type. Arrays are typically represented as repeated elements
  * with the same name or wrapped in a container element. The {@link XmlMapper}'s
@@ -380,6 +386,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      *
      * @return the XML mapper used by this instance; never {@code null}
      */
+    @NotNull
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP",
             justification = "XmlMapper exposure is intentional API design for serialization and parsing operations."
@@ -387,8 +394,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
     public XmlMapper mapper() {
         return this.mapper;
     }
-
-    // ==================== Empty/Null Operations ====================
 
     /**
      * {@inheritDoc}
@@ -412,8 +417,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
     public JsonNode empty() {
         return NullNode.getInstance();
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -540,8 +543,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -786,8 +787,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
         return DoubleNode.valueOf(value.doubleValue());
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -902,8 +901,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
         }
         return DataResult.success(input.asBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1046,8 +1043,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
         result.add(value);
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1370,7 +1365,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(newValue, "newValue must not be null");
         if (!input.isObject()) {
-            final ObjectNode result = nodeFactory.objectNode();
+            final ObjectNode result = this.nodeFactory.objectNode();
             result.set(key, newValue);
             return result;
         }
@@ -1461,8 +1456,6 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
         }
         return input.has(key);
     }
-
-    // ==================== Conversion Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1557,6 +1550,23 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
     }
 
     /**
+     * Validates that the given node is suitable for XML serialization.
+     *
+     * <p>XML requires exactly one root element. This method checks that the given
+     * node is an object (map) node, which will become the root element when serialized.</p>
+     *
+     * @param node the node to validate, must not be {@code null}
+     * @throws IllegalArgumentException if the node is not suitable for XML serialization
+     */
+    public static void validateForSerialization(@NotNull final JsonNode node) {
+        Preconditions.checkNotNull(node, "node must not be null");
+        if (!node.isObject()) {
+            throw new IllegalArgumentException(
+                    "XML serialization requires an object node as root, but got: " + node.getNodeType());
+        }
+    }
+
+    /**
      * Returns a string representation of this {@code DynamicOps} instance.
      *
      * <p>This method returns a fixed string identifying the implementation, useful for
@@ -1567,6 +1577,7 @@ public final class JacksonXmlOps implements DynamicOps<JsonNode> {
      * @return the string {@code "JacksonXmlOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "JacksonXmlOps";
     }

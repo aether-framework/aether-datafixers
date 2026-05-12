@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -92,26 +93,25 @@ public final class SchemaDiff {
     private final Schema target;
 
     /**
-     * Type references that exist in the target but not in the source schema.
-     * These represent newly introduced types.
+     * Type references that exist in the target but not in the source schema. These represent newly introduced types.
      */
     private final Set<TypeReference> addedTypes;
 
     /**
-     * Type references that exist in the source but not in the target schema.
-     * These represent deprecated or removed types.
+     * Type references that exist in the source but not in the target schema. These represent deprecated or removed
+     * types.
      */
     private final Set<TypeReference> removedTypes;
 
     /**
-     * Type references that exist in both schemas (intersection).
-     * These types may have field-level changes tracked in {@link #typeDiffs}.
+     * Type references that exist in both schemas (intersection). These types may have field-level changes tracked in
+     * {@link #typeDiffs}.
      */
     private final Set<TypeReference> commonTypes;
 
     /**
-     * Detailed field-level diffs for types that exist in both schemas.
-     * This map is empty if field-level diffing was not enabled.
+     * Detailed field-level diffs for types that exist in both schemas. This map is empty if field-level diffing was not
+     * enabled.
      */
     private final Map<TypeReference, TypeDiff> typeDiffs;
 
@@ -127,14 +127,12 @@ public final class SchemaDiff {
      * @param commonTypes  types in both schemas, must not be {@code null}
      * @param typeDiffs    field-level diffs for common types, must not be {@code null}
      */
-    private SchemaDiff(
-            @NotNull final Schema source,
-            @NotNull final Schema target,
-            @NotNull final Set<TypeReference> addedTypes,
-            @NotNull final Set<TypeReference> removedTypes,
-            @NotNull final Set<TypeReference> commonTypes,
-            @NotNull final Map<TypeReference, TypeDiff> typeDiffs
-    ) {
+    private SchemaDiff(@NotNull final Schema source,
+                       @NotNull final Schema target,
+                       @NotNull final Set<TypeReference> addedTypes,
+                       @NotNull final Set<TypeReference> removedTypes,
+                       @NotNull final Set<TypeReference> commonTypes,
+                       @NotNull final Map<TypeReference, TypeDiff> typeDiffs) {
         this.source = Preconditions.checkNotNull(source, "source must not be null");
         this.target = Preconditions.checkNotNull(target, "target must not be null");
         this.addedTypes = Set.copyOf(Preconditions.checkNotNull(addedTypes, "addedTypes must not be null"));
@@ -281,14 +279,14 @@ public final class SchemaDiff {
      * Compares this schema diff to another object for equality.
      *
      * <p>Two {@code SchemaDiff} instances are equal if they compare the same
-     * schema versions and have identical sets of added, removed, and common types,
-     * as well as identical type-level diffs.</p>
+     * schema versions and have identical sets of added, removed, and common types, as well as identical type-level
+     * diffs.</p>
      *
      * @param obj the object to compare with, may be {@code null}
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -332,6 +330,7 @@ public final class SchemaDiff {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "SchemaDiff{" +
                 "source=" + this.source.version() +
@@ -347,8 +346,7 @@ public final class SchemaDiff {
      * Internal builder for constructing {@link SchemaDiff} instances.
      *
      * <p>This builder is package-private and used by {@link SchemaDiffer}
-     * to construct diff results. External code should use {@link SchemaDiffer}
-     * to create schema diffs.</p>
+     * to construct diff results. External code should use {@link SchemaDiffer} to create schema diffs.</p>
      *
      * @author Erik Pförtner
      * @since 0.3.0

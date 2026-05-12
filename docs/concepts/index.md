@@ -163,18 +163,18 @@ TaggedDynamic migrated = fixer.update(
 
 For newcomers, we recommend reading the concepts in this order:
 
-1. **[Architecture Overview](architecture-overview.md)** — Understand the big picture
-2. **[DataVersion](data-version.md)** — Version numbering
-3. **[TypeReference](type-reference.md)** — Type identification
-4. **[Schema System](schema-system.md)** — Defining data structures
-5. **[DataFix System](datafix-system.md)** — Creating migrations
-6. **[Dynamic System](dynamic-system.md)** — Data manipulation
-7. **[DSL](dsl.md)** — Type template language
-8. **[Rewrite Rules](rewrite-rules.md)** — Transformation rules
-9. **[Codec System](codec-system.md)** — Encoding/decoding
-10. **[Optics](optics/index.md)** — Advanced data access
-11. **[DataResult](data-result.md)** — Error handling
-12. **[Thread Safety](thread-safety.md)** — Concurrency
+1. **[Architecture Overview](architecture-overview.md)** - Understand the big picture
+2. **[DataVersion](data-version.md)** - Version numbering
+3. **[TypeReference](type-reference.md)** - Type identification
+4. **[Schema System](schema-system.md)** - Defining data structures
+5. **[DataFix System](datafix-system.md)** - Creating migrations
+6. **[Dynamic System](dynamic-system.md)** - Data manipulation
+7. **[DSL](dsl.md)** - Type template language
+8. **[Rewrite Rules](rewrite-rules.md)** - Transformation rules
+9. **[Codec System](codec-system.md)** - Encoding/decoding
+10. **[Optics](optics/index.md)** - Advanced data access
+11. **[DataResult](data-result.md)** - Error handling
+12. **[Thread Safety](thread-safety.md)** - Concurrency
 
 ---
 

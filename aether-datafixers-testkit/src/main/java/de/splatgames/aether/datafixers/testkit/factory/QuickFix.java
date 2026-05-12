@@ -38,8 +38,8 @@ import java.util.function.Predicate;
  * Factory methods for creating common {@link DataFix} patterns quickly.
  *
  * <p>{@code QuickFix} reduces the boilerplate needed to create simple fixes
- * for testing. Instead of implementing the full {@code DataFix} interface,
- * you can use factory methods to create fixes for common operations.</p>
+ * for testing. Instead of implementing the full {@code DataFix} interface, you can use factory methods to create fixes
+ * for common operations.</p>
  *
  * <h2>Rename Field</h2>
  * <pre>{@code
@@ -90,11 +90,13 @@ import java.util.function.Predicate;
  */
 public final class QuickFix {
 
+    /**
+     * The QuickFix class is a utility class with static factory methods, so we make the constructor private to prevent
+     * instantiation.
+     */
     private QuickFix() {
-        // Factory class
+        throw new UnsupportedOperationException("QuickFix is a utility class and cannot be instantiated");
     }
-
-    // ==================== Simple Lambda Fix ====================
 
     /**
      * Creates a simple fix from a lambda function.
@@ -107,37 +109,56 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> simple(
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
-    ) {
+    public static <T> DataFix<T> simple(@NotNull final String name,
+                                        final int fromVersion,
+                                        final int toVersion,
+                                        @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
 
         return new DataFix<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull String name() {
                 return name;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull DataVersion fromVersion() {
                 return new DataVersion(fromVersion);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
             public @NotNull DataVersion toVersion() {
                 return new DataVersion(toVersion);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @param context {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
-            public @NotNull Dynamic<T> apply(
-                    @NotNull final TypeReference type,
-                    @NotNull final Dynamic<T> input,
-                    @NotNull final DataFixerContext context
-            ) {
+            public @NotNull Dynamic<T> apply(@NotNull final TypeReference type,
+                                             @NotNull final Dynamic<T> input,
+                                             @NotNull final DataFixerContext context) {
                 Preconditions.checkNotNull(type, "type must not be null");
                 Preconditions.checkNotNull(input, "input must not be null");
                 Preconditions.checkNotNull(context, "context must not be null");
@@ -157,12 +178,10 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> simple(
-            @NotNull final String name,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
-    ) {
+    public static <T> DataFix<T> simple(@NotNull final String name,
+                                        @NotNull final DataVersion fromVersion,
+                                        @NotNull final DataVersion toVersion,
+                                        @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         Preconditions.checkNotNull(toVersion, "toVersion must not be null");
@@ -170,12 +189,10 @@ public final class QuickFix {
         return simple(name, fromVersion.getVersion(), toVersion.getVersion(), transform);
     }
 
-    // ==================== Rename Field ====================
-
     /**
      * Creates a fix that renames a field.
      *
-     * @param ops         the DynamicOps to use
+     * @param ops         reserved for future use (currently unused), must not be {@code null}
      * @param name        the fix name
      * @param fromVersion the source version
      * @param toVersion   the target version
@@ -185,14 +202,12 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> renameField(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final String oldField,
-            @NotNull final String newField
-    ) {
+    public static <T> DataFix<T> renameField(@NotNull final DynamicOps<T> ops,
+                                             @NotNull final String name,
+                                             final int fromVersion,
+                                             final int toVersion,
+                                             @NotNull final String oldField,
+                                             @NotNull final String newField) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(oldField, "oldField must not be null");
@@ -207,12 +222,10 @@ public final class QuickFix {
         });
     }
 
-    // ==================== Add Field ====================
-
     /**
      * Creates a fix that adds a string field with a default value.
      *
-     * @param ops          the DynamicOps to use
+     * @param ops          reserved for future use (currently unused), must not be {@code null}
      * @param name         the fix name
      * @param fromVersion  the source version
      * @param toVersion    the target version
@@ -222,14 +235,12 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> addStringField(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final String field,
-            @NotNull final String defaultValue
-    ) {
+    public static <T> DataFix<T> addStringField(@NotNull final DynamicOps<T> ops,
+                                                @NotNull final String name,
+                                                final int fromVersion,
+                                                final int toVersion,
+                                                @NotNull final String field,
+                                                @NotNull final String defaultValue) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
@@ -246,7 +257,7 @@ public final class QuickFix {
     /**
      * Creates a fix that adds an integer field with a default value.
      *
-     * @param ops          the DynamicOps to use
+     * @param ops          reserved for future use (currently unused), must not be {@code null}
      * @param name         the fix name
      * @param fromVersion  the source version
      * @param toVersion    the target version
@@ -256,14 +267,12 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> addIntField(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final String field,
-            final int defaultValue
-    ) {
+    public static <T> DataFix<T> addIntField(@NotNull final DynamicOps<T> ops,
+                                             @NotNull final String name,
+                                             final int fromVersion,
+                                             final int toVersion,
+                                             @NotNull final String field,
+                                             final int defaultValue) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
@@ -279,7 +288,7 @@ public final class QuickFix {
     /**
      * Creates a fix that adds a boolean field with a default value.
      *
-     * @param ops          the DynamicOps to use
+     * @param ops          reserved for future use (currently unused), must not be {@code null}
      * @param name         the fix name
      * @param fromVersion  the source version
      * @param toVersion    the target version
@@ -289,14 +298,12 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> addBooleanField(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final String field,
-            final boolean defaultValue
-    ) {
+    public static <T> DataFix<T> addBooleanField(@NotNull final DynamicOps<T> ops,
+                                                 @NotNull final String name,
+                                                 final int fromVersion,
+                                                 final int toVersion,
+                                                 @NotNull final String field,
+                                                 final boolean defaultValue) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
@@ -309,12 +316,10 @@ public final class QuickFix {
         });
     }
 
-    // ==================== Remove Field ====================
-
     /**
      * Creates a fix that removes a field.
      *
-     * @param ops         the DynamicOps to use
+     * @param ops         reserved for future use (currently unused), must not be {@code null}
      * @param name        the fix name
      * @param fromVersion the source version
      * @param toVersion   the target version
@@ -323,13 +328,11 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> removeField(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final String field
-    ) {
+    public static <T> DataFix<T> removeField(@NotNull final DynamicOps<T> ops,
+                                             @NotNull final String name,
+                                             final int fromVersion,
+                                             final int toVersion,
+                                             @NotNull final String field) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
@@ -337,12 +340,10 @@ public final class QuickFix {
         return simple(name, fromVersion, toVersion, input -> input.remove(field));
     }
 
-    // ==================== Transform Field ====================
-
     /**
      * Creates a fix that transforms a field value.
      *
-     * @param ops         the DynamicOps to use
+     * @param ops         reserved for future use (currently unused), must not be {@code null}
      * @param name        the fix name
      * @param fromVersion the source version
      * @param toVersion   the target version
@@ -352,14 +353,12 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> transformField(
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final String field,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
-    ) {
+    public static <T> DataFix<T> transformField(@NotNull final DynamicOps<T> ops,
+                                                @NotNull final String name,
+                                                final int fromVersion,
+                                                final int toVersion,
+                                                @NotNull final String field,
+                                                @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(field, "field must not be null");
@@ -374,8 +373,6 @@ public final class QuickFix {
         });
     }
 
-    // ==================== Identity Fix ====================
-
     /**
      * Creates an identity fix that does nothing (useful for testing).
      *
@@ -386,16 +383,12 @@ public final class QuickFix {
      * @return a new DataFix that returns input unchanged
      */
     @NotNull
-    public static <T> DataFix<T> identity(
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion
-    ) {
+    public static <T> DataFix<T> identity(@NotNull final String name,
+                                          final int fromVersion,
+                                          final int toVersion) {
         Preconditions.checkNotNull(name, "name must not be null");
         return simple(name, fromVersion, toVersion, Function.identity());
     }
-
-    // ==================== Conditional Fix ====================
 
     /**
      * Creates a fix that only applies when a condition is met.
@@ -409,13 +402,11 @@ public final class QuickFix {
      * @return a new DataFix
      */
     @NotNull
-    public static <T> DataFix<T> conditional(
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Predicate<Dynamic<T>> condition,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>> transform
-    ) {
+    public static <T> DataFix<T> conditional(@NotNull final String name,
+                                             final int fromVersion,
+                                             final int toVersion,
+                                             @NotNull final Predicate<Dynamic<T>> condition,
+                                             @NotNull final Function<Dynamic<T>, Dynamic<T>> transform) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(condition, "condition must not be null");
         Preconditions.checkNotNull(transform, "transform must not be null");
@@ -427,8 +418,6 @@ public final class QuickFix {
             return input;
         });
     }
-
-    // ==================== Composed Fix ====================
 
     /**
      * Creates a fix that applies multiple transformations in sequence.
@@ -442,12 +431,10 @@ public final class QuickFix {
      */
     @SafeVarargs
     @NotNull
-    public static <T> DataFix<T> compose(
-            @NotNull final String name,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Function<Dynamic<T>, Dynamic<T>>... transforms
-    ) {
+    public static <T> DataFix<T> compose(@NotNull final String name,
+                                         final int fromVersion,
+                                         final int toVersion,
+                                         @NotNull final Function<Dynamic<T>, Dynamic<T>>... transforms) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(transforms, "transforms must not be null");
 

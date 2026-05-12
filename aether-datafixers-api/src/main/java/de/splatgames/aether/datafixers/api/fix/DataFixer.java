@@ -30,40 +30,60 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The main entry point for applying data fixes across version boundaries.
  *
- * <p>A {@code DataFixer} orchestrates the application of {@link DataFix} instances
- * to migrate data from one {@link DataVersion} to another. It maintains a registry of fixes and automatically
+ * <p>A {@code DataFixer} orchestrates the application of {@link DataFix}
+ * instances to migrate data from one {@link DataVersion} to another. It holds
+ * the registry of fixes assembled at bootstrap time and automatically
  * determines which fixes to apply based on the source and target versions.</p>
  *
  * <h2>Version Migration</h2>
  * <p>When updating data, the fixer:</p>
  * <ol>
- *   <li>Identifies all fixes between the source and target versions</li>
- *   <li>Orders fixes by version to ensure correct application order</li>
- *   <li>Applies each fix in sequence, passing the output of one to the next</li>
+ *   <li>Selects all registered fixes that sit between the source and target
+ *       versions for the given {@link TypeReference}.</li>
+ *   <li>Orders them by their {@link DataFix#fromVersion() fromVersion} so they
+ *       form a correct forward chain.</li>
+ *   <li>Applies each fix in sequence, feeding the output of one into the next.</li>
  * </ol>
+ *
+ * <h2>Obtaining a {@code DataFixer}</h2>
+ * <p>Applications build a fixer by writing a
+ * {@link de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap} and
+ * handing it to
+ * {@code de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory}:</p>
+ * <pre>{@code
+ * DataFixer fixer = new DataFixerRuntimeFactory()
+ *     .create(new DataVersion(200), new MyGameBootstrap());
+ * }</pre>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
- * DataFixer fixer = DataFixerBootstrap.create();
- *
- * // Update player data from version 1 to current version
+ * // Update player data from its stored version up to the current one
  * Dynamic<JsonElement> oldData = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
- * Dynamic<JsonElement> updatedData = fixer.update(
+ * Dynamic<JsonElement> updated = fixer.update(
  *     TypeReferences.PLAYER,
  *     oldData,
- *     DataVersion.of(1),
- *     fixer.currentVersion()
- * );
+ *     new DataVersion(1),
+ *     fixer.currentVersion());
+ *
+ * // Or with a diagnostic context to collect a detailed MigrationReport
+ * DiagnosticContext diag = DiagnosticContext.create();
+ * Dynamic<JsonElement> withReport = fixer.update(
+ *     TypeReferences.PLAYER, oldData,
+ *     new DataVersion(1), fixer.currentVersion(), diag);
+ * MigrationReport report = diag.getReport();
  * }</pre>
  *
  * <h2>Thread Safety</h2>
- * <p>Implementations should be thread-safe, allowing concurrent updates
- * to different data instances.</p>
+ * <p>Implementations must be thread-safe and allow concurrent updates against
+ * different data instances. {@link DataFixerContext} parameters, by contrast,
+ * are per-migration and should not be shared between concurrent calls.</p>
  *
  * @author Erik Pförtner
  * @see DataFix
  * @see DataVersion
  * @see TypeReference
+ * @see de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap
+ * @see de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext
  * @since 0.1.0
  */
 public interface DataFixer {
@@ -82,14 +102,16 @@ public interface DataFixer {
     /**
      * Updates data from one version to another using a default context.
      *
-     * <p>This is a convenience method that creates a no-op context for
-     * cases where logging is not required.</p>
+     * <p>Convenience overload equivalent to {@link #update(TypeReference,
+     * Dynamic, DataVersion, DataVersion, DataFixerContext)} with a no-op
+     * context. If {@code from} is already greater than or equal to {@code to},
+     * no fixes are applied and {@code input} is returned unchanged.</p>
      *
      * @param type  the type reference identifying what kind of data is being updated, must not be {@code null}
      * @param input the input data to update, must not be {@code null}
      * @param from  the source version of the input data, must not be {@code null}
      * @param to    the target version to update to, must not be {@code null}
-     * @param <T>   the type of the dynamic representation
+     * @param <T>   the backing type of the {@link Dynamic}
      * @return the updated data at the target version, never {@code null}
      */
     @NotNull <T> Dynamic<T> update(@NotNull final TypeReference type,
@@ -100,15 +122,20 @@ public interface DataFixer {
     /**
      * Updates data from one version to another with a custom context.
      *
-     * <p>Applies all registered fixes between the source and target versions
-     * in order. The context receives logging callbacks during the update process.</p>
+     * <p>Applies every registered fix whose {@code [fromVersion, toVersion]}
+     * overlaps the requested range, in ascending order. The provided
+     * {@link DataFixerContext} receives logging callbacks for each fix. Passing
+     * a {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}
+     * here enables the migration-report capture described in the package-level
+     * documentation of
+     * {@link de.splatgames.aether.datafixers.api.diagnostic}.</p>
      *
      * @param type    the type reference identifying what kind of data is being updated, must not be {@code null}
      * @param input   the input data to update, must not be {@code null}
      * @param from    the source version of the input data, must not be {@code null}
      * @param to      the target version to update to, must not be {@code null}
-     * @param context the fixer context for logging and diagnostics, must not be {@code null}
-     * @param <T>     the type of the dynamic representation
+     * @param context the fixer context for logging and optional diagnostics, must not be {@code null}
+     * @param <T>     the backing type of the {@link Dynamic}
      * @return the updated data at the target version, never {@code null}
      */
     @NotNull <T> Dynamic<T> update(@NotNull final TypeReference type,

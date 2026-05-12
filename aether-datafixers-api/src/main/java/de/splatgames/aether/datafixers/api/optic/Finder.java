@@ -149,12 +149,23 @@ public interface Finder<A> {
     static Finder<Object> field(@NotNull final String fieldName) {
         Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "field[" + fieldName + "]";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -162,6 +173,13 @@ public interface Finder<A> {
                 return root.get(fieldName);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
@@ -179,8 +197,10 @@ public interface Finder<A> {
      * Creates a finder that navigates to an element by index in a list/array structure.
      *
      * <p>The returned finder extracts and modifies the element at the specified
-     * index position. If the index is out of bounds (negative or beyond the list size), {@link #get} returns
-     * {@code null} and {@link #set} returns the root unchanged.</p>
+     * index position. A negative {@code index} is rejected immediately by throwing
+     * {@link IllegalArgumentException} at construction time. If the index is non-negative
+     * but beyond the list size, {@link #get} returns {@code null} and {@link #set} returns
+     * the root unchanged.</p>
      *
      * <h4>Example</h4>
      * <pre>{@code
@@ -195,23 +215,39 @@ public interface Finder<A> {
      * Dynamic<?> updated = firstScoreFinder.set(data, data.createInt(100));
      * // updated: {"scores": [100, 92, 78]}
      *
-     * // Out of bounds access
+     * // Out-of-range (positive) index - get returns null, set returns root unchanged
      * Finder<?> outOfBounds = scoresFinder.then(Finder.index(10));
      * Dynamic<?> missing = outOfBounds.get(data);  // null
+     *
+     * // Negative index - throws IllegalArgumentException immediately
+     * Finder.index(-1);  // throws IllegalArgumentException
      * }</pre>
      *
-     * @param index the zero-based index of the element to focus on
+     * @param index the zero-based index of the element to focus on; must not be negative
+     * @throws IllegalArgumentException if {@code index} is negative
      * @return a finder that navigates to the element at the specified index, never {@code null}
      */
     @NotNull
     static Finder<Object> index(final int index) {
+        Preconditions.checkArgument(index >= 0, "index must not be negative, got: %s", index);
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "index[" + index + "]";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
                 Preconditions.checkNotNull(root, "root must not be null");
@@ -221,6 +257,13 @@ public interface Finder<A> {
                         .orElse(null);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings("unchecked")
             public @NotNull Dynamic<?> set(@NotNull final Dynamic<?> root,
@@ -232,7 +275,7 @@ public interface Finder<A> {
                     return root;
                 }
                 final var list = listResult.result().orElseThrow().toList();
-                if (index < 0 || index >= list.size()) {
+                if (index >= list.size()) {
                     return root;
                 }
                 final List<Dynamic<Object>> newList = new ArrayList<>();
@@ -252,7 +295,7 @@ public interface Finder<A> {
     /**
      * Creates an identity finder that focuses on the root dynamic value itself.
      *
-     * <p>The identity finder is the simplest possible finder—it returns the entire
+     * <p>The identity finder is the simplest possible finder-it returns the entire
      * root as its focus and replaces the entire root when set. This is useful as a starting point for composition or as
      * a neutral element in finder chains.</p>
      *
@@ -287,12 +330,23 @@ public interface Finder<A> {
     @NotNull
     static Finder<Object> identity() {
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "identity";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -300,6 +354,13 @@ public interface Finder<A> {
                 return root;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,
@@ -357,12 +418,23 @@ public interface Finder<A> {
         Preconditions.checkNotNull(excludedFields, "excludedFields must not be null");
         final java.util.Set<String> excluded = java.util.Set.of(excludedFields);
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "remainder";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings("unchecked")
             public @Nullable Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -387,6 +459,13 @@ public interface Finder<A> {
                 return new Dynamic<>(typedRoot.ops(), typedRoot.ops().createMap(filtered));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             @SuppressWarnings("unchecked")
@@ -578,12 +657,23 @@ public interface Finder<A> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Finder<A> self = this;
         return new Finder<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Nullable
             @Override
             public Dynamic<?> get(@NotNull final Dynamic<?> root) {
@@ -595,6 +685,13 @@ public interface Finder<A> {
                 return other.get(intermediate);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param root {@inheritDoc}
+             * @param newValue {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Dynamic<?> set(@NotNull final Dynamic<?> root,

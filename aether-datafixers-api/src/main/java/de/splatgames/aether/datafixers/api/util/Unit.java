@@ -23,6 +23,10 @@
 package de.splatgames.aether.datafixers.api.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * A singleton type representing the absence of a meaningful value.
@@ -65,7 +69,7 @@ import org.jetbrains.annotations.NotNull;
  * @see de.splatgames.aether.datafixers.api.result.DataResult
  * @since 0.1.0
  */
-public final class Unit {
+public final class Unit implements Serializable {
 
     /**
      * The singleton instance of Unit.
@@ -75,6 +79,15 @@ public final class Unit {
      */
     @NotNull
     public static final Unit INSTANCE = new Unit();
+
+    /**
+     * Serial version UID for serialization compatibility.
+     *
+     * <p>This value is arbitrary but should be changed if the class structure changes in a way that affects
+     * serialization.</p>
+     */
+    @Serial
+    private static final long serialVersionUID = -7628105959309438762L;
 
     /**
      * Private constructor to prevent external instantiation.
@@ -91,6 +104,7 @@ public final class Unit {
      * @return the string {@code "Unit"}, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "Unit";
     }
@@ -117,7 +131,18 @@ public final class Unit {
      * @return {@code true} if the specified object is a Unit, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         return obj instanceof Unit;
+    }
+
+    /**
+     * Preserves the singleton guarantee during deserialization.
+     *
+     * @return {@link #INSTANCE}
+     */
+    @NotNull
+    @Serial
+    private Object readResolve() {
+        return INSTANCE;
     }
 }

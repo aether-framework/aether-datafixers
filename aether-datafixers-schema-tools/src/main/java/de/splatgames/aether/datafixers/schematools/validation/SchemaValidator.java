@@ -33,9 +33,11 @@ import de.splatgames.aether.datafixers.schematools.analysis.CoverageGap;
 import de.splatgames.aether.datafixers.schematools.analysis.FixCoverage;
 import de.splatgames.aether.datafixers.schematools.analysis.MigrationAnalyzer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Fluent API for validating schemas and schema registries.
@@ -91,17 +93,20 @@ public final class SchemaValidator {
     /**
      * The single schema to validate, or {@code null} if validating a registry/bootstrap.
      */
+    @Nullable
     private final Schema singleSchema;
 
     /**
      * The schema registry to validate, or {@code null} if validating a single schema.
      */
+    @Nullable
     private final SchemaRegistry registry;
 
     /**
      * The DataFixerBuilder for fix coverage validation, or {@code null} if not available.
      * Only populated when created via {@link #forBootstrap(DataFixerBootstrap)}.
      */
+    @Nullable
     private final DataFixerBuilder fixerBuilder;
 
     /**
@@ -135,11 +140,9 @@ public final class SchemaValidator {
      * @param registry     the schema registry, or {@code null}
      * @param fixerBuilder the fixer builder for coverage validation, or {@code null}
      */
-    private SchemaValidator(
-            final Schema singleSchema,
-            final SchemaRegistry registry,
-            final DataFixerBuilder fixerBuilder
-    ) {
+    private SchemaValidator(@Nullable final Schema singleSchema,
+                            @Nullable final SchemaRegistry registry,
+                            @Nullable final DataFixerBuilder fixerBuilder) {
         this.singleSchema = singleSchema;
         this.registry = registry;
         this.fixerBuilder = fixerBuilder;
@@ -190,9 +193,14 @@ public final class SchemaValidator {
 
         // Bootstrap into capturing registries
         final SchemaRegistry schemaRegistry = new SimpleSchemaRegistry();
-        final DataFixerBuilder fixerBuilder = new DataFixerBuilder(new DataVersion(Integer.MAX_VALUE));
-
         bootstrap.registerSchemas(schemaRegistry);
+
+        final int maxVersion = schemaRegistry.stream()
+                .mapToInt(s -> s.version().getVersion())
+                .max()
+                .orElse(0);
+
+        final DataFixerBuilder fixerBuilder = new DataFixerBuilder(new DataVersion(maxVersion));
         bootstrap.registerFixes(fixerBuilder);
 
         return new SchemaValidator(null, schemaRegistry, fixerBuilder);
@@ -309,10 +317,8 @@ public final class SchemaValidator {
      * @return the merged validation result including new issues
      */
     @NotNull
-    private ValidationResult validateSingleSchema(
-            @NotNull final Schema schema,
-            @NotNull ValidationResult result
-    ) {
+    private ValidationResult validateSingleSchema(@NotNull final Schema schema,
+                                                  @NotNull ValidationResult result) {
         Preconditions.checkNotNull(schema, "schema must not be null");
         Preconditions.checkNotNull(result, "result must not be null");
         if (this.validateStructure) {
@@ -342,10 +348,8 @@ public final class SchemaValidator {
      * @return the merged validation result including new issues
      */
     @NotNull
-    private ValidationResult validateRegistry(
-            @NotNull final SchemaRegistry registry,
-            @NotNull ValidationResult result
-    ) {
+    private ValidationResult validateRegistry(@NotNull final SchemaRegistry registry,
+                                              @NotNull ValidationResult result) {
         Preconditions.checkNotNull(registry, "registry must not be null");
         Preconditions.checkNotNull(result, "result must not be null");
         // Structure validation
@@ -379,8 +383,13 @@ public final class SchemaValidator {
      */
     @NotNull
     private ValidationResult validateFixCoverageInternal() {
+        final SchemaRegistry reg = Objects.requireNonNull(this.registry,
+                "validateFixCoverage() requires a registry; guarded by caller");
+        final DataFixerBuilder builder = Objects.requireNonNull(this.fixerBuilder,
+                "validateFixCoverage() requires a fixer builder; only available via forBootstrap()");
+
         // Get version range from the registry
-        final List<Schema> schemas = this.registry.stream().toList();
+        final List<Schema> schemas = reg.stream().toList();
         if (schemas.size() < 2) {
             // Not enough schemas to analyze coverage
             return ValidationResult.empty();
@@ -390,11 +399,11 @@ public final class SchemaValidator {
         final int minVersion = schemas.stream()
                 .map(s -> s.version().getVersion())
                 .min(Comparator.naturalOrder())
-                .orElse(0);
+                .orElseThrow();
         final int maxVersion = schemas.stream()
                 .map(s -> s.version().getVersion())
                 .max(Comparator.naturalOrder())
-                .orElse(0);
+                .orElseThrow();
 
         if (minVersion == maxVersion) {
             return ValidationResult.empty();
@@ -402,8 +411,8 @@ public final class SchemaValidator {
 
         // Use MigrationAnalyzer to analyze coverage
         final MigrationAnalyzer analyzer = MigrationAnalyzer.forRegistries(
-                this.registry,
-                this.fixerBuilder.getFixRegistry()
+                reg,
+                builder.getFixRegistry()
         );
 
         final FixCoverage coverage = analyzer

@@ -59,23 +59,23 @@ import java.util.Optional;
  * @param startTime        the instant when the fix started
  * @param duration         the total time taken to apply the fix
  * @param ruleApplications list of individual rule applications within this fix
- * @param beforeSnapshot   optional snapshot of data before the fix was applied
- * @param afterSnapshot    optional snapshot of data after the fix was applied
+ * @param beforeSnapshot   snapshot of data before the fix was applied, or {@code null}
+ *                         if snapshot capture was disabled in {@link DiagnosticOptions}
+ * @param afterSnapshot    snapshot of data after the fix was applied, or {@code null}
+ *                         if snapshot capture was disabled or the fix failed
  * @author Erik Pförtner
  * @see RuleApplication
  * @see MigrationReport
  * @since 0.2.0
  */
-public record FixExecution(
-        @NotNull String fixName,
-        @NotNull DataVersion fromVersion,
-        @NotNull DataVersion toVersion,
-        @NotNull Instant startTime,
-        @NotNull Duration duration,
-        @NotNull List<RuleApplication> ruleApplications,
-        @Nullable String beforeSnapshot,
-        @Nullable String afterSnapshot
-) {
+public record FixExecution(@NotNull String fixName,
+                           @NotNull DataVersion fromVersion,
+                           @NotNull DataVersion toVersion,
+                           @NotNull Instant startTime,
+                           @NotNull Duration duration,
+                           @NotNull List<RuleApplication> ruleApplications,
+                           @Nullable String beforeSnapshot,
+                           @Nullable String afterSnapshot) {
 
     /**
      * Creates a new fix execution record.
@@ -148,6 +148,31 @@ public record FixExecution(
         return (int) this.ruleApplications.stream()
                 .filter(RuleApplication::matched)
                 .count();
+    }
+
+    /**
+     * Returns all field operations across all rule applications in this fix.
+     *
+     * @return unmodifiable list of all field operations, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public List<FieldOperation> allFieldOperations() {
+        return this.ruleApplications.stream()
+                .flatMap(r -> r.fieldOperations().stream())
+                .toList();
+    }
+
+    /**
+     * Returns the total number of field operations across all rule applications.
+     *
+     * @return total field operation count
+     * @since 1.0.0
+     */
+    public int fieldOperationCount() {
+        return this.ruleApplications.stream()
+                .mapToInt(r -> r.fieldOperations().size())
+                .sum();
     }
 
     /**

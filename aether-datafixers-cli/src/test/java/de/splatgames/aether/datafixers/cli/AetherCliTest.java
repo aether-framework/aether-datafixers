@@ -138,7 +138,7 @@ class AetherCliTest {
             final int exitCode = cmd.execute("--version");
 
             assertThat(exitCode).isEqualTo(0);
-            assertThat(outContent.toString()).contains("0.3.0");
+            assertThat(outContent.toString()).contains("1.0.0");
         }
 
         @Test

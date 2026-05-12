@@ -293,9 +293,9 @@ String value = dynamic.get("nullableField")
 
 ## Best Practices
 
-1. **Use GsonOps.INSTANCE** — It's a singleton, no need to create new instances
+1. **Use GsonOps.INSTANCE** - It's a singleton, no need to create new instances
 
-2. **Wrap early** — Convert to Dynamic as soon as you parse JSON
+2. **Wrap early** - Convert to Dynamic as soon as you parse JSON
 
 3. **Use codecs** for typed deserialization after migration
 
@@ -304,7 +304,7 @@ String value = dynamic.get("nullableField")
    new GsonBuilder().setPrettyPrinting().create()
    ```
 
-5. **Handle JsonNull** — Check for null values when reading
+5. **Handle JsonNull** - Check for null values when reading
 
 ## Related
 

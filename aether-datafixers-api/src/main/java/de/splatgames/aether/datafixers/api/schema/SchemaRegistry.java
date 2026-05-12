@@ -67,7 +67,9 @@ import java.util.stream.Stream;
  * }</pre>
  *
  * <h2>Thread Safety</h2>
- * <p>Implementations should be thread-safe for concurrent access.</p>
+ * <p>Implementations must be thread-safe for concurrent <b>reads</b> after
+ * {@code freeze()} has been called. Registration methods are not required to be
+ * thread-safe and should only be called during single-threaded initialization.</p>
  *
  * @author Erik Pförtner
  * @see Schema

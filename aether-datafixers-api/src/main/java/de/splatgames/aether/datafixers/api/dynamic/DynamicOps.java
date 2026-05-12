@@ -96,15 +96,22 @@ import java.util.stream.Stream;
  */
 public interface DynamicOps<T> {
 
-    // ==================== Empty/Null ====================
-
     /**
-     * Creates an empty value representation.
+     * Creates an empty/null value representation.
      *
-     * <p>Implementations typically return an empty map/object node, but the exact meaning is
-     * defined by the concrete ops.</p>
+     * <p>The returned value is the canonical "null" representation for this format.
+     * Implementations differ in how they represent null:</p>
+     * <ul>
+     *   <li>Jackson-based (JSON, YAML, XML): {@code NullNode.getInstance()}</li>
+     *   <li>SnakeYAML: {@code YamlNull} sentinel object</li>
+     *   <li>TOML: Note that TOML has no null representation — null values may cause
+     *       serialization errors</li>
+     * </ul>
+     * <p>When converting between formats via {@link #convertTo}, null representations
+     * are normalized through this method. Compare a value against the result of
+     * {@code empty()} to check for null regardless of the underlying representation.</p>
      *
-     * @return an empty value
+     * @return the canonical empty/null value for this format
      */
     @NotNull T empty();
 
@@ -121,8 +128,6 @@ public interface DynamicOps<T> {
      * @return an empty list
      */
     @NotNull T emptyList();
-
-    // ==================== Type Checks ====================
 
     /**
      * Checks if the given value is a map/object node.
@@ -163,8 +168,6 @@ public interface DynamicOps<T> {
      * @return {@code true} if the given value is a boolean
      */
     boolean isBoolean(@NotNull final T value);
-
-    // ==================== Primitive Creation ====================
 
     /**
      * Creates a string value.
@@ -238,8 +241,6 @@ public interface DynamicOps<T> {
      */
     @NotNull T createNumeric(@NotNull final Number value);
 
-    // ==================== Primitive Reading ====================
-
     /**
      * Reads a string value.
      *
@@ -263,8 +264,6 @@ public interface DynamicOps<T> {
      * @return the boolean value, or an error if not a boolean
      */
     @NotNull DataResult<Boolean> getBooleanValue(@NotNull final T input);
-
-    // ==================== List Operations ====================
 
     /**
      * Creates a list value from a stream of elements.
@@ -291,8 +290,6 @@ public interface DynamicOps<T> {
      */
     @NotNull DataResult<T> mergeToList(@NotNull final T list,
                                        @NotNull final T value);
-
-    // ==================== Map Operations ====================
 
     /**
      * Reads the value associated with {@code key} from the given map/object node.
@@ -386,10 +383,20 @@ public interface DynamicOps<T> {
     @NotNull DataResult<T> mergeToMap(@NotNull final T map,
                                       @NotNull final T other);
 
-    // ==================== Conversion ====================
-
     /**
      * Converts a value from another DynamicOps representation.
+     *
+     * <p><b>Cross-format edge cases:</b> Converting between different format representations
+     * may lose information or fail for format-specific features:</p>
+     * <ul>
+     *   <li><b>Null values:</b> TOML has no null representation; nulls may be lost or cause errors</li>
+     *   <li><b>Array types:</b> TOML requires homogeneous arrays; heterogeneous arrays will fail</li>
+     *   <li><b>XML attributes:</b> Attribute/element distinction is lost through Dynamic round-trips</li>
+     *   <li><b>Numeric precision:</b> BigDecimal handling varies between implementations</li>
+     *   <li><b>Key types:</b> SnakeYAML uses raw strings, Jackson uses TextNode for map keys</li>
+     * </ul>
+     * <p>For maximum compatibility, use data shapes that are valid across all target formats:
+     * string/number/boolean primitives, homogeneous arrays, and non-null values.</p>
      *
      * @param ops   the source ops
      * @param input the input value

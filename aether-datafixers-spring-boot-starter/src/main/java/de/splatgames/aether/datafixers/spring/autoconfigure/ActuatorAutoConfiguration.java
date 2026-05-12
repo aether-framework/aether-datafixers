@@ -27,7 +27,12 @@ import de.splatgames.aether.datafixers.spring.actuator.DataFixerEndpoint;
 import de.splatgames.aether.datafixers.spring.actuator.DataFixerHealthIndicator;
 import de.splatgames.aether.datafixers.spring.actuator.DataFixerInfoContributor;
 import de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics;
+import de.splatgames.aether.datafixers.spring.service.DefaultMigrationService;
+import de.splatgames.aether.datafixers.spring.service.DiagnosticReportStore;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
@@ -184,9 +189,8 @@ public class ActuatorAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "dataFixerHealthIndicator")
-        public DataFixerHealthIndicator dataFixerHealthIndicator(
-                final DataFixerRegistry registry
-        ) {
+        @NotNull
+        public DataFixerHealthIndicator dataFixerHealthIndicator(@NotNull final DataFixerRegistry registry) {
             return new DataFixerHealthIndicator(registry);
         }
     }
@@ -215,9 +219,8 @@ public class ActuatorAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "dataFixerInfoContributor")
-        public DataFixerInfoContributor dataFixerInfoContributor(
-                final DataFixerRegistry registry
-        ) {
+        @NotNull
+        public DataFixerInfoContributor dataFixerInfoContributor(@NotNull final DataFixerRegistry registry) {
             return new DataFixerInfoContributor(registry);
         }
     }
@@ -241,18 +244,25 @@ public class ActuatorAutoConfiguration {
          * <p>The endpoint provides two operations:</p>
          * <ul>
          *   <li>GET /actuator/datafixers - Summary of all domains</li>
-         *   <li>GET /actuator/datafixers/{domain} - Details for specific domain</li>
+         *   <li>GET /actuator/datafixers/{domain} - Details for specific domain
+         *       (includes field-level diagnostics from last diagnostic migration)</li>
          * </ul>
          *
-         * @param registry the DataFixer registry for querying domain information
+         * @param registry         the DataFixer registry for querying domain information
+         * @param migrationService the migration service providing diagnostic report storage,
+         *                         may be {@code null} if not available
          * @return a new DataFixerEndpoint instance
          */
         @Bean
         @ConditionalOnMissingBean
-        public DataFixerEndpoint dataFixerEndpoint(
-                final DataFixerRegistry registry
-        ) {
-            return new DataFixerEndpoint(registry);
+        @NotNull
+        public DataFixerEndpoint dataFixerEndpoint(@NotNull final DataFixerRegistry registry,
+                                                   @Autowired(required = false)
+                                                   @Nullable final DefaultMigrationService migrationService) {
+            final DiagnosticReportStore store = migrationService != null
+                    ? migrationService.getDiagnosticReportStore()
+                    : null;
+            return new DataFixerEndpoint(registry, store);
         }
     }
 
@@ -287,7 +297,8 @@ public class ActuatorAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean
-        public MigrationMetrics migrationMetrics(final MeterRegistry meterRegistry) {
+        @NotNull
+        public MigrationMetrics migrationMetrics(@NotNull final MeterRegistry meterRegistry) {
             return new MigrationMetrics(meterRegistry);
         }
     }

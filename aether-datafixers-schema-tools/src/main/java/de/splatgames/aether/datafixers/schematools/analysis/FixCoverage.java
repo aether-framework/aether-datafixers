@@ -37,8 +37,8 @@ import java.util.Set;
  * The result of analyzing DataFix coverage for schema changes.
  *
  * <p>Fix coverage analysis determines whether all schema changes between
- * versions have corresponding DataFixes to handle the migration. This helps
- * identify potential data migration issues before they occur at runtime.</p>
+ * versions have corresponding DataFixes to handle the migration. This helps identify potential data migration issues
+ * before they occur at runtime.</p>
  *
  * <h2>Coverage Analysis</h2>
  * <p>The analyzer checks:</p>
@@ -78,8 +78,8 @@ import java.util.Set;
 public final class FixCoverage {
 
     /**
-     * Singleton instance representing full coverage (no gaps, no orphans).
-     * Used to avoid unnecessary object creation for fully covered migrations.
+     * Singleton instance representing full coverage (no gaps, no orphans). Used to avoid unnecessary object creation
+     * for fully covered migrations.
      */
     private static final FixCoverage EMPTY = new FixCoverage(
             new DataVersion(0), new DataVersion(0), List.of(), List.of()
@@ -96,20 +96,20 @@ public final class FixCoverage {
     private final DataVersion targetVersion;
 
     /**
-     * The list of coverage gaps (schema changes without corresponding DataFixes).
-     * This is an immutable copy of the provided gaps.
+     * The list of coverage gaps (schema changes without corresponding DataFixes). This is an immutable copy of the
+     * provided gaps.
      */
     private final List<CoverageGap> gaps;
 
     /**
-     * The list of orphan fixes (DataFixes without corresponding schema changes).
-     * This is an immutable copy of the provided fixes.
+     * The list of orphan fixes (DataFixes without corresponding schema changes). This is an immutable copy of the
+     * provided fixes.
      */
     private final List<DataFix<?>> orphanFixes;
 
     /**
-     * The set of types that have at least one coverage gap.
-     * Pre-computed for efficient {@link #isCovered(TypeReference)} queries.
+     * The set of types that have at least one coverage gap. Pre-computed for efficient
+     * {@link #isCovered(TypeReference)} queries.
      */
     private final Set<TypeReference> uncoveredTypes;
 
@@ -124,12 +124,10 @@ public final class FixCoverage {
      * @param gaps          the coverage gaps, must not be {@code null}
      * @param orphanFixes   the orphan fixes, must not be {@code null}
      */
-    private FixCoverage(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final List<CoverageGap> gaps,
-            @NotNull final List<DataFix<?>> orphanFixes
-    ) {
+    private FixCoverage(@NotNull final DataVersion sourceVersion,
+                        @NotNull final DataVersion targetVersion,
+                        @NotNull final List<CoverageGap> gaps,
+                        @NotNull final List<DataFix<?>> orphanFixes) {
         this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         this.gaps = List.copyOf(Preconditions.checkNotNull(gaps, "gaps must not be null"));
@@ -161,10 +159,8 @@ public final class FixCoverage {
      * @return a result indicating full coverage, never {@code null}
      */
     @NotNull
-    public static FixCoverage fullyCovered(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion
-    ) {
+    public static FixCoverage fullyCovered(@NotNull final DataVersion sourceVersion,
+                                           @NotNull final DataVersion targetVersion) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new FixCoverage(sourceVersion, targetVersion, List.of(), List.of());
@@ -178,10 +174,8 @@ public final class FixCoverage {
      * @return a new builder, never {@code null}
      */
     @NotNull
-    public static Builder builder(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion
-    ) {
+    public static Builder builder(@NotNull final DataVersion sourceVersion,
+                                  @NotNull final DataVersion targetVersion) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
@@ -347,7 +341,13 @@ public final class FixCoverage {
         return (coveredChanges * 100.0) / totalChanges;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
+    @NotNull
     public String toString() {
         if (isFullyCovered()) {
             return String.format(
@@ -367,19 +367,36 @@ public final class FixCoverage {
     }
 
     /**
-     * Builder for creating {@link FixCoverage} instances.
+     * Builder for constructing FixCoverage instances.
+     *
+     * <p>Provides a fluent API for adding gaps and orphan fixes before building the final result.</p>
      */
     public static final class Builder {
-
+        /**
+         * The source version for the coverage analysis.
+         */
         private final DataVersion sourceVersion;
+        /**
+         * The target version for the coverage analysis.
+         */
         private final DataVersion targetVersion;
+        /**
+         * The list of coverage gaps to be included in the result.
+         */
         private final List<CoverageGap> gaps = new ArrayList<>();
+        /**
+         * The list of orphan fixes to be included in the result.
+         */
         private final List<DataFix<?>> orphanFixes = new ArrayList<>();
 
-        private Builder(
-                @NotNull final DataVersion sourceVersion,
-                @NotNull final DataVersion targetVersion
-        ) {
+        /**
+         * Creates a new builder with the specified source and target versions.
+         *
+         * @param sourceVersion the source version, must not be {@code null}
+         * @param targetVersion the target version, must not be {@code null}
+         */
+        private Builder(@NotNull final DataVersion sourceVersion,
+                        @NotNull final DataVersion targetVersion) {
             this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
             this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         }

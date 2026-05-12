@@ -32,8 +32,7 @@ import java.util.List;
  * The result of a schema validation operation.
  *
  * <p>Contains all validation issues found during validation, categorized by
- * severity. Provides convenience methods for checking validity and filtering
- * issues.</p>
+ * severity. Provides convenience methods for checking validity and filtering issues.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -69,8 +68,8 @@ import java.util.List;
 public final class ValidationResult {
 
     /**
-     * Singleton instance for empty validation results.
-     * Used to avoid unnecessary object creation for successful validations.
+     * Singleton instance for empty validation results. Used to avoid unnecessary object creation for successful
+     * validations.
      */
     private static final ValidationResult EMPTY = new ValidationResult(List.of());
 
@@ -98,8 +97,7 @@ public final class ValidationResult {
      * Creates a new immutable ValidationResult with the given issues.
      *
      * <p>The constructor pre-computes severity counts for efficient
-     * access via {@link #errorCount()}, {@link #warningCount()}, and
-     * {@link #infoCount()}.</p>
+     * access via {@link #errorCount()}, {@link #warningCount()}, and {@link #infoCount()}.</p>
      *
      * @param issues the list of validation issues, must not be {@code null}
      */
@@ -119,6 +117,27 @@ public final class ValidationResult {
         this.errorCount = errors;
         this.warningCount = warnings;
         this.infoCount = infos;
+    }
+
+    /**
+     * Creates a new ValidationResult with the given issues and pre-computed counts.
+     *
+     * <p>This constructor is used internally for merging results where counts are
+     * already known, avoiding the need to re-count issues.</p>
+     *
+     * @param issues       the list of validation issues, must not be {@code null}
+     * @param errorCount   the number of ERROR-level issues
+     * @param warningCount the number of WARNING-level issues
+     * @param infoCount    the number of INFO-level issues
+     */
+    private ValidationResult(@NotNull final List<ValidationIssue> issues,
+                             final int errorCount,
+                             final int warningCount,
+                             final int infoCount) {
+        this.issues = List.copyOf(Preconditions.checkNotNull(issues, "issues must not be null"));
+        this.errorCount = errorCount;
+        this.warningCount = warningCount;
+        this.infoCount = infoCount;
     }
 
     /**
@@ -321,10 +340,19 @@ public final class ValidationResult {
         final List<ValidationIssue> merged = new ArrayList<>(this.issues.size() + other.issues.size());
         merged.addAll(this.issues);
         merged.addAll(other.issues);
-        return new ValidationResult(merged);
+        return new ValidationResult(merged,
+                this.errorCount + other.errorCount,
+                this.warningCount + other.warningCount,
+                this.infoCount + other.infoCount);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
+    @NotNull
     public String toString() {
         if (this.issues.isEmpty()) {
             return "ValidationResult[valid, no issues]";
@@ -342,8 +370,8 @@ public final class ValidationResult {
      * Builder for constructing {@link ValidationResult} instances.
      *
      * <p>Provides a fluent API for accumulating validation issues during
-     * a validation operation. Issues can be added individually or in batches,
-     * and convenience methods are provided for creating common issue types.</p>
+     * a validation operation. Issues can be added individually or in batches, and convenience methods are provided for
+     * creating common issue types.</p>
      *
      * <p><b>Usage Example:</b></p>
      * <pre>{@code

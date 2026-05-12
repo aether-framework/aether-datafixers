@@ -33,7 +33,7 @@ import java.util.function.Function;
  *
  * <p>An {@code Iso} (isomorphism) is the most powerful optic, representing a 1-to-1
  * correspondence between two types. It can convert from S to A and back to S without any loss of information. Because
- * of this bidirectional nature, an iso is simultaneously both a {@link Lens} and a {@link Prism}—it can be used
+ * of this bidirectional nature, an iso is simultaneously both a {@link Lens} and a {@link Prism}-it can be used
  * anywhere either is expected.</p>
  *
  * <h2>When to Use an Iso</h2>
@@ -170,12 +170,23 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
         Preconditions.checkNotNull(to, "to must not be null");
         Preconditions.checkNotNull(from, "from must not be null");
         return new Iso<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A to(@NotNull final S source) {
@@ -183,6 +194,12 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return to.apply(source);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param target {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S from(@NotNull final A target) {
@@ -190,6 +207,13 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return from.apply(target);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S modify(@NotNull final S source, @NotNull final Function<A, A> modifier) {
@@ -225,12 +249,23 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @NotNull
     static <S> Iso<S, S, S, S> identity() {
         return new Iso<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return "identity";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S to(@NotNull final S source) {
@@ -238,6 +273,12 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return source;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param target {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S from(@NotNull final S target) {
@@ -245,6 +286,13 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return target;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public S modify(@NotNull final S source,
@@ -298,12 +346,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @NotNull
     @Override
     default A get(@NotNull final S source) {
+        Preconditions.checkNotNull(source, "source must not be null");
         return to(source);
     }
 
     @NotNull
     @Override
     default T set(@NotNull final S source, @NotNull final B value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return from(value);
     }
 
@@ -311,12 +361,14 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     @NotNull
     @Override
     default Optional<A> getOption(@NotNull final S source) {
+        Preconditions.checkNotNull(source, "source must not be null");
         return Optional.of(to(source));
     }
 
     @NotNull
     @Override
     default T reverseGet(@NotNull final B value) {
+        Preconditions.checkNotNull(value, "value must not be null");
         return from(value);
     }
 
@@ -356,12 +408,23 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
     default Iso<B, A, T, S> reverse() {
         final Iso<S, T, A, B> self = this;
         return new Iso<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + ".reverse";
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T to(@NotNull final B source) {
@@ -369,6 +432,12 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return self.from(source);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param target {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A from(@NotNull final S target) {
@@ -376,6 +445,13 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return self.to(target);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A modify(@NotNull final B source,
@@ -383,13 +459,6 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 Preconditions.checkNotNull(source, "source must not be null");
                 Preconditions.checkNotNull(modifier, "modifier must not be null");
                 return from(modifier.apply(to(source)));
-            }
-
-            @NotNull
-            @Override
-            public <C, D> Optic<B, A, C, D> compose(@NotNull final Optic<T, S, C, D> other) {
-                Preconditions.checkNotNull(other, "other must not be null");
-                throw new UnsupportedOperationException("Compose on reversed iso");
             }
         };
     }
@@ -433,12 +502,23 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Iso<S, T, A, B> self = this;
         return new Iso<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public C to(@NotNull final S source) {
@@ -446,6 +526,12 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return other.to(self.to(source));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param target {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T from(@NotNull final D target) {
@@ -453,6 +539,13 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return self.from(other.from(target));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @param modifier {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public T modify(@NotNull final S source,
@@ -462,6 +555,12 @@ public interface Iso<S, T, A, B> extends Lens<S, T, A, B>, Prism<S, T, A, B> {
                 return from(modifier.apply(to(source)));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param next {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public <E, F> Optic<S, T, E, F> compose(@NotNull final Optic<C, D, E, F> next) {

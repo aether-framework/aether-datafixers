@@ -26,6 +26,8 @@ import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.spring.metrics.MigrationMetrics;
 import de.splatgames.aether.datafixers.spring.service.DefaultMigrationService;
 import de.splatgames.aether.datafixers.spring.service.MigrationService;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -152,10 +154,9 @@ public class MigrationServiceAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public MigrationService migrationService(
-            final DataFixerRegistry registry,
-            @Autowired(required = false) final MigrationMetrics metrics
-    ) {
+    @NotNull
+    public MigrationService migrationService(@NotNull final DataFixerRegistry registry,
+                                             @Autowired(required = false) @Nullable final MigrationMetrics metrics) {
         return new DefaultMigrationService(registry, metrics);
     }
 }

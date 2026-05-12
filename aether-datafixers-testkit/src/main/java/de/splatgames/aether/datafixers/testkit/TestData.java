@@ -39,8 +39,8 @@ import org.jetbrains.annotations.NotNull;
  * Entry point for creating test data using a fluent API.
  *
  * <p>{@code TestData} provides convenient factory methods for building {@link Dynamic}
- * objects without the boilerplate of manual JSON construction. It follows the Aether
- * Datafixers philosophy: simple to start, powerful when needed.</p>
+ * objects without the boilerplate of manual JSON construction. It follows the Aether Datafixers philosophy: simple to
+ * start, powerful when needed.</p>
  *
  * <h2>Quick Start</h2>
  * <pre>{@code
@@ -103,11 +103,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class TestData {
 
+    /**
+     * Private constructor to prevent instantiation. This class is a utility holder for static factory methods.
+     */
     private TestData() {
-        // Utility class
+        throw new UnsupportedOperationException("TestData is a utility class and cannot be instantiated");
     }
-
-    // ==================== Factory Methods ====================
 
     /**
      * Creates a builder using the specified {@link DynamicOps}.
@@ -142,24 +143,9 @@ public final class TestData {
     /**
      * Creates a builder using {@link JacksonJsonOps}.
      *
-     * <p>Use this when testing with Jackson's JSON representation.</p>
-     *
-     * @return a new {@link TestDataBuilder} for Jackson JSON
-     * @deprecated Since 0.5.0. Use {@link #jacksonJson()} instead for explicit format naming.
-     *             This method will be removed in version 1.0.0.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    @NotNull
-    public static TestDataBuilder<JsonNode> jackson() {
-        return jacksonJson();
-    }
-
-    /**
-     * Creates a builder using {@link JacksonJsonOps}.
-     *
      * <p>Use this when testing with Jackson's JSON representation. This method provides
-     * explicit naming to distinguish from other Jackson-based format builders like
-     * {@link #jacksonYaml()}, {@link #jacksonToml()}, and {@link #jacksonXml()}.</p>
+     * explicit naming to distinguish from other Jackson-based format builders like {@link #jacksonYaml()},
+     * {@link #jacksonToml()}, and {@link #jacksonXml()}.</p>
      *
      * @return a new {@link TestDataBuilder} for Jackson JSON
      * @since 0.5.0
@@ -173,8 +159,7 @@ public final class TestData {
      * Creates a builder using {@link SnakeYamlOps}.
      *
      * <p>Use this when testing with SnakeYAML's native Java type representation.
-     * The underlying data types are standard Java objects (Map, List, String,
-     * Number, Boolean).</p>
+     * The underlying data types are standard Java objects (Map, List, String, Number, Boolean).</p>
      *
      * @return a new {@link TestDataBuilder} for SnakeYAML
      * @since 0.5.0
@@ -188,8 +173,7 @@ public final class TestData {
      * Creates a builder using {@link JacksonYamlOps}.
      *
      * <p>Use this when testing with Jackson's YAML representation. This is useful
-     * when you need consistency with other Jackson-based formats or when you need
-     * Jackson's advanced features.</p>
+     * when you need consistency with other Jackson-based formats or when you need Jackson's advanced features.</p>
      *
      * @return a new {@link TestDataBuilder} for Jackson YAML
      * @since 0.5.0
@@ -203,8 +187,8 @@ public final class TestData {
      * Creates a builder using {@link JacksonTomlOps}.
      *
      * <p>Use this when testing with TOML data. Note that TOML has some structural
-     * constraints: root element must be a table (object), arrays can only contain
-     * elements of the same type, and null values are not supported.</p>
+     * constraints: root element must be a table (object), arrays can only contain elements of the same type, and null
+     * values are not supported.</p>
      *
      * @return a new {@link TestDataBuilder} for Jackson TOML
      * @since 0.5.0
@@ -218,8 +202,7 @@ public final class TestData {
      * Creates a builder using {@link JacksonXmlOps}.
      *
      * <p>Use this when testing with XML data. Note that XML has some structural
-     * requirements: a single root element is required, and element names must
-     * follow XML naming conventions.</p>
+     * requirements: a single root element is required, and element names must follow XML naming conventions.</p>
      *
      * @return a new {@link TestDataBuilder} for Jackson XML
      * @since 0.5.0
@@ -228,8 +211,6 @@ public final class TestData {
     public static TestDataBuilder<JsonNode> jacksonXml() {
         return new TestDataBuilder<>(JacksonXmlOps.INSTANCE);
     }
-
-    // ==================== Quick Primitive Helpers ====================
 
     /**
      * Creates a {@link Dynamic} containing a string value.
@@ -242,7 +223,7 @@ public final class TestData {
      */
     @NotNull
     public static <T> Dynamic<T> string(@NotNull final DynamicOps<T> ops,
-                                         @NotNull final String value) {
+                                        @NotNull final String value) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
         return new Dynamic<>(ops, ops.createString(value));
@@ -259,7 +240,7 @@ public final class TestData {
      */
     @NotNull
     public static <T> Dynamic<T> integer(@NotNull final DynamicOps<T> ops,
-                                          final int value) {
+                                         final int value) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         return new Dynamic<>(ops, ops.createInt(value));
     }
@@ -275,7 +256,7 @@ public final class TestData {
      */
     @NotNull
     public static <T> Dynamic<T> longValue(@NotNull final DynamicOps<T> ops,
-                                            final long value) {
+                                           final long value) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         return new Dynamic<>(ops, ops.createLong(value));
     }
@@ -291,7 +272,7 @@ public final class TestData {
      */
     @NotNull
     public static <T> Dynamic<T> doubleValue(@NotNull final DynamicOps<T> ops,
-                                              final double value) {
+                                             final double value) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         return new Dynamic<>(ops, ops.createDouble(value));
     }
@@ -307,7 +288,7 @@ public final class TestData {
      */
     @NotNull
     public static <T> Dynamic<T> bool(@NotNull final DynamicOps<T> ops,
-                                       final boolean value) {
+                                      final boolean value) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         return new Dynamic<>(ops, ops.createBoolean(value));
     }

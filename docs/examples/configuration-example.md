@@ -372,10 +372,10 @@ public class ConfigMigrator {
 
 ## Key Patterns Demonstrated
 
-1. **Flat to nested restructuring** — Group related settings
-2. **Adding defaults** — New settings with sensible defaults
-3. **Feature flags** — Conditional behavior toggles
-4. **Version detection** — Infer version from structure
+1. **Flat to nested restructuring** - Group related settings
+2. **Adding defaults** - New settings with sensible defaults
+3. **Feature flags** - Conditional behavior toggles
+4. **Version detection** - Infer version from structure
 
 ## Related
 

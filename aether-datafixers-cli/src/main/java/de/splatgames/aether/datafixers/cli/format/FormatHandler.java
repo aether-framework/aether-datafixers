@@ -33,12 +33,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h2>Built-in Format Handlers</h2>
  * <ul>
- *   <li>{@code json-gson} — JSON format using Google Gson</li>
- *   <li>{@code json-jackson} — JSON format using Jackson Databind</li>
- *   <li>{@code yaml-snakeyaml} — YAML format using SnakeYAML</li>
- *   <li>{@code yaml-jackson} — YAML format using Jackson YAML</li>
- *   <li>{@code toml-jackson} — TOML format using Jackson TOML</li>
- *   <li>{@code xml-jackson} — XML format using Jackson XML</li>
+ *   <li>{@code json-gson} - JSON format using Google Gson</li>
+ *   <li>{@code json-jackson} - JSON format using Jackson Databind</li>
+ *   <li>{@code yaml-snakeyaml} - YAML format using SnakeYAML</li>
+ *   <li>{@code yaml-jackson} - YAML format using Jackson YAML</li>
+ *   <li>{@code toml-jackson} - TOML format using Jackson TOML</li>
+ *   <li>{@code xml-jackson} - XML format using Jackson XML</li>
  * </ul>
  *
  * <h2>Implementing a Custom Format Handler</h2>
@@ -118,7 +118,7 @@ public interface FormatHandler<T> {
      * @throws FormatParseException if parsing fails
      */
     @NotNull
-    T parse(@NotNull String content);
+    T parse(@NotNull final String content);
 
     /**
      * Serializes data to a compact string representation.
@@ -127,7 +127,7 @@ public interface FormatHandler<T> {
      * @return the serialized string
      */
     @NotNull
-    String serialize(@NotNull T data);
+    String serialize(@NotNull final T data);
 
     /**
      * Serializes data with pretty printing enabled.
@@ -138,7 +138,7 @@ public interface FormatHandler<T> {
      * @return the formatted string
      */
     @NotNull
-    default String serializePretty(@NotNull T data) {
+    default String serializePretty(@NotNull final T data) {
         return serialize(data);
     }
 }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers</artifactId>
-        <version>0.5.0</version>
+        <version>1.0.0-rc.1</version>
     </parent>
 
     <artifactId>aether-datafixers-testkit</artifactId>
@@ -54,7 +54,7 @@
             <artifactId>gson</artifactId>
         </dependency>
 
-        <!-- Jackson for TestData.jackson() -->
+        <!-- Jackson for TestData.jacksonJson() -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

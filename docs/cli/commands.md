@@ -317,5 +317,5 @@ Custom handlers can be added via ServiceLoader. See [Format Handlers](format-han
 
 ## Next Steps
 
-→ [Format Handlers](format-handlers.md) — Create custom format handlers
-→ [Examples](examples.md) — Real-world usage examples
+→ [Format Handlers](format-handlers.md) - Create custom format handlers
+→ [Examples](examples.md) - Real-world usage examples

@@ -28,6 +28,8 @@ import de.splatgames.aether.datafixers.cli.format.FormatHandler;
 import de.splatgames.aether.datafixers.cli.format.FormatRegistry;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -89,6 +91,7 @@ public class InfoCommand implements Callable<Integer> {
             names = {"--bootstrap"},
             description = "Fully qualified class name of DataFixerBootstrap implementation."
     )
+    @Nullable
     private String bootstrapClass;
 
     /**
@@ -129,6 +132,7 @@ public class InfoCommand implements Callable<Integer> {
             names = {"--to"},
             description = "Target version (required when using --bootstrap)."
     )
+    @Nullable
     private Integer toVersion;
 
     /**
@@ -171,6 +175,7 @@ public class InfoCommand implements Callable<Integer> {
      * @see BootstrapLoader#load(String)
      */
     @Override
+    @NotNull
     public Integer call() {
         System.out.println("Aether Datafixers CLI v0.3.0");
         System.out.println("============================");
@@ -186,13 +191,13 @@ public class InfoCommand implements Callable<Integer> {
         }
 
         if (this.bootstrapClass != null) {
+            if (this.toVersion == null) {
+                System.err.println("Error: --to version is required when using --bootstrap");
+                return 1;
+            }
+
             try {
                 final DataFixerBootstrap bootstrap = BootstrapLoader.load(this.bootstrapClass);
-
-                if (this.toVersion == null) {
-                    System.err.println("Error: --to version is required when using --bootstrap");
-                    return 1;
-                }
 
                 final AetherDataFixer fixer = new DataFixerRuntimeFactory()
                         .create(new de.splatgames.aether.datafixers.api.DataVersion(this.toVersion), bootstrap);

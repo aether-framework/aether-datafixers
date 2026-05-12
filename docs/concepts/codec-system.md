@@ -476,17 +476,17 @@ public static final Codec<Player> CODEC = ...;
 
 ## Related
 
-- [Dynamic System](dynamic-system.md) — Format-agnostic data
-- [Type System](type-system.md) — Types contain codecs
-- [DataResult](data-result.md) — Error handling
+- [Dynamic System](dynamic-system.md) - Format-agnostic data
+- [Type System](type-system.md) - Types contain codecs
+- [DataResult](data-result.md) - Error handling
 
 ## Format-Specific Documentation
 
 For detailed documentation on `DynamicOps` implementations:
 
-- [Codec Module Overview](../codec/index.md) — All available implementations
-- [JSON Support](../codec/json.md) — GsonOps and JacksonJsonOps
-- [YAML Support](../codec/yaml.md) — SnakeYamlOps and JacksonYamlOps
-- [TOML Support](../codec/toml.md) — JacksonTomlOps
-- [XML Support](../codec/xml.md) — JacksonXmlOps
+- [Codec Module Overview](../codec/index.md) - All available implementations
+- [JSON Support](../codec/json.md) - GsonOps and JacksonJsonOps
+- [YAML Support](../codec/yaml.md) - SnakeYamlOps and JacksonYamlOps
+- [TOML Support](../codec/toml.md) - JacksonTomlOps
+- [XML Support](../codec/xml.md) - JacksonXmlOps
 

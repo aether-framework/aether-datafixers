@@ -140,7 +140,7 @@ Terminology used in Aether Datafixers.
 : Test harness for validating Schema configurations.
 
 **TestData**
-: Entry point for fluent test data builders (TestData.gson(), TestData.jackson()).
+: Entry point for fluent test data builders (TestData.gson(), TestData.jacksonJson()).
 
 **TestDataBuilder**
 : Fluent builder for creating Dynamic objects with fields.

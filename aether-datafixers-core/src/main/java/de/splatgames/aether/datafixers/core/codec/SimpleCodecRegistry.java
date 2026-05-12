@@ -59,9 +59,33 @@ import java.util.Map;
  */
 public final class SimpleCodecRegistry implements CodecRegistry {
 
+    /**
+     * The backing map storing codec registrations keyed by their type reference.
+     *
+     * <p>This field is initially a mutable {@link HashMap} and is replaced with an
+     * unmodifiable copy when the registry is {@link #freeze() frozen}.</p>
+     */
     private Map<TypeReference, Codec<?>> codecs = new HashMap<>();
+
+    /**
+     * Whether this registry has been frozen and is now immutable.
+     *
+     * <p>Marked {@code volatile} to ensure visibility across threads after
+     * {@link #freeze()} is called.</p>
+     */
     private volatile boolean frozen = false;
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>In this implementation, registering a codec for a {@link TypeReference}
+     * that already has a codec will silently replace the existing registration.</p>
+     *
+     * @param ref   the type reference to associate with the codec; must not be {@code null}
+     * @param codec the codec to register for the given type reference; must not be {@code null}
+     * @throws NullPointerException  if {@code ref} or {@code codec} is {@code null}
+     * @throws IllegalStateException if this registry has been {@link #freeze() frozen}
+     */
     @Override
     public void register(@NotNull final TypeReference ref, @NotNull final Codec<?> codec) {
         Preconditions.checkNotNull(ref, "ref must not be null");
@@ -71,6 +95,13 @@ public final class SimpleCodecRegistry implements CodecRegistry {
         this.codecs.put(ref, codec);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param ref the type reference to look up; must not be {@code null}
+     * @return the codec associated with the given reference, or {@code null} if none is registered
+     * @throws NullPointerException if {@code ref} is {@code null}
+     */
     @Override
     @Nullable
     public Codec<?> get(@NotNull final TypeReference ref) {
@@ -79,6 +110,13 @@ public final class SimpleCodecRegistry implements CodecRegistry {
         return this.codecs.get(ref);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param ref the type reference to check for registration; must not be {@code null}
+     * @return {@code true} if a codec is registered for the given reference; {@code false} otherwise
+     * @throws NullPointerException if {@code ref} is {@code null}
+     */
     @Override
     public boolean has(@NotNull final TypeReference ref) {
         Preconditions.checkNotNull(ref, "ref must not be null");
@@ -86,14 +124,27 @@ public final class SimpleCodecRegistry implements CodecRegistry {
         return this.codecs.containsKey(ref);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation is {@code synchronized} and idempotent. On the first call,
+     * the mutable {@link HashMap} backing store is replaced with an unmodifiable copy via
+     * {@link Map#copyOf(Map)}, and the {@link #frozen} flag is set to {@code true}. Subsequent
+     * calls have no effect.</p>
+     */
     @Override
-    public void freeze() {
+    public synchronized void freeze() {
         if (!this.frozen) {
             this.codecs = Map.copyOf(this.codecs);
             this.frozen = true;
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code true} if this registry has been frozen; {@code false} otherwise
+     */
     @Override
     public boolean isFrozen() {
         return this.frozen;

@@ -31,6 +31,7 @@ import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import de.splatgames.aether.datafixers.api.exception.DecodeException;
 import de.splatgames.aether.datafixers.api.exception.EncodeException;
 import de.splatgames.aether.datafixers.api.fix.DataFixer;
+import de.splatgames.aether.datafixers.api.fix.DataFixerContext;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import de.splatgames.aether.datafixers.api.type.Type;
@@ -38,57 +39,89 @@ import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * High-level facade for the Aether DataFixers system.
+ * High-level facade for the Aether Datafixers system.
  *
- * <p>{@code AetherDataFixer} provides a unified interface for encoding, decoding,
- * and migrating data across versions. It combines a {@link SchemaRegistry} for
- * type definitions with a {@link DataFixer} for version migrations.</p>
+ * <p>{@code AetherDataFixer} provides a unified, object-oriented interface
+ * for encoding, decoding, and migrating data across versions. It wraps a
+ * {@link SchemaRegistry} for type definitions and a {@link DataFixer} for
+ * version migrations, and offers conveniences for working with
+ * {@link TaggedDynamic} (type-annotated data) instead of raw
+ * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}.</p>
  *
  * <h2>Core Operations</h2>
  * <ul>
- *   <li>{@link #encode} - Serialize a Java object to a tagged dynamic format</li>
- *   <li>{@link #decode} - Deserialize a tagged dynamic to a Java object</li>
- *   <li>{@link #update} - Migrate data between versions</li>
+ *   <li>{@link #encode(DataVersion, TypeReference, Object, DynamicOps) encode} —
+ *       Serialize a Java object to a tagged dynamic format via the schema
+ *       codec.</li>
+ *   <li>{@link #decode(DataVersion, TaggedDynamic) decode} — Deserialize a
+ *       tagged dynamic to a Java object via the schema codec.</li>
+ *   <li>{@link #update(TaggedDynamic, DataVersion, DataVersion) update} — Run
+ *       the fix chain to migrate data from one version to another, preserving
+ *       the {@link TypeReference} tag.</li>
+ *   <li>{@link #update(TaggedDynamic, DataVersion, DataVersion, DataFixerContext) update}
+ *       — Same as above but with an explicit
+ *       {@link DataFixerContext}; pass a
+ *       {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}
+ *       to collect a
+ *       {@link de.splatgames.aether.datafixers.api.diagnostic.MigrationReport}.</li>
  * </ul>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
- * // Create the fixer using the factory
+ * // Build the fixer from a bootstrap
  * AetherDataFixer fixer = new DataFixerRuntimeFactory()
  *     .create(new DataVersion(5), myBootstrap);
  *
- * // Encode an object
+ * // Encode a Java object into a tagged JSON representation
  * TaggedDynamic encoded = fixer.encode(
  *     fixer.currentVersion(),
  *     TypeReferences.PLAYER,
  *     player,
- *     GsonOps.INSTANCE
- * );
+ *     GsonOps.INSTANCE);
  *
- * // Update old data to current version
+ * // Migrate legacy data up to the current version
  * TaggedDynamic updated = fixer.update(
  *     oldData,
- *     DataVersion.of(1),
- *     fixer.currentVersion()
- * );
+ *     new DataVersion(1),
+ *     fixer.currentVersion());
  *
- * // Decode to Java object
- * Player loadedPlayer = fixer.decode(fixer.currentVersion(), updated);
+ * // Decode back into a Java object using the current schema
+ * Player loaded = fixer.decode(fixer.currentVersion(), updated);
  * }</pre>
  *
+ * <h2>When to Use What</h2>
+ * <p>If you already have a plain {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic},
+ * call the underlying {@link DataFixer#update(TypeReference,
+ * de.splatgames.aether.datafixers.api.dynamic.Dynamic, DataVersion, DataVersion)
+ * DataFixer.update} directly. Use the {@code TaggedDynamic}-based methods here
+ * when you want the type tag to flow through the pipeline together with the
+ * data.</p>
+ *
  * <h2>Thread Safety</h2>
- * <p>This class is thread-safe if the underlying registries and fixer are thread-safe.</p>
+ * <p>This class is thread-safe provided the underlying registries and
+ * {@link DataFixer} are thread-safe (the stock implementations are).</p>
  *
  * @author Erik Pförtner
  * @see DataFixer
  * @see SchemaRegistry
  * @see DataFixerRuntimeFactory
+ * @see de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext
  * @since 0.1.0
  */
 public final class AetherDataFixer {
-
+    /**
+     * The current (latest) data version. This is used as the default target version for encoding and can be used to
+     * determine the latest schema for decoding. It should be set to the highest version number that has a registered
+     * schema in the SchemaRegistry.
+     */
     private final DataVersion currentVersion;
+    /**
+     * The schema registry containing all schemas and type definitions.
+     */
     private final SchemaRegistry schemaRegistry;
+    /**
+     * The underlying data fixer responsible for applying registered fixes during updates.
+     */
     private final DataFixer dataFixer;
 
     /**
@@ -99,11 +132,9 @@ public final class AetherDataFixer {
      * @param dataFixer      the underlying data fixer for migrations, must not be {@code null}
      * @throws NullPointerException if any argument is {@code null}
      */
-    public AetherDataFixer(
-            @NotNull final DataVersion currentVersion,
-            @NotNull final SchemaRegistry schemaRegistry,
-            @NotNull final DataFixer dataFixer
-    ) {
+    public AetherDataFixer(@NotNull final DataVersion currentVersion,
+                           @NotNull final SchemaRegistry schemaRegistry,
+                           @NotNull final DataFixer dataFixer) {
         Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
         Preconditions.checkNotNull(schemaRegistry, "schemaRegistry must not be null");
         Preconditions.checkNotNull(dataFixer, "dataFixer must not be null");
@@ -140,12 +171,10 @@ public final class AetherDataFixer {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public <A, T> TaggedDynamic encode(
-            @NotNull final DataVersion targetVersion,
-            @NotNull final TypeReference typeRef,
-            @NotNull final A value,
-            @NotNull final DynamicOps<T> ops
-    ) {
+    public <A, T> TaggedDynamic encode(@NotNull final DataVersion targetVersion,
+                                       @NotNull final TypeReference typeRef,
+                                       @NotNull final A value,
+                                       @NotNull final DynamicOps<T> ops) {
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(typeRef, "typeRef must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
@@ -173,19 +202,59 @@ public final class AetherDataFixer {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public TaggedDynamic update(
-            @NotNull final TaggedDynamic input,
-            @NotNull final DataVersion fromVersion,
-            @NotNull final DataVersion toVersion
-    ) {
+    public TaggedDynamic update(@NotNull final TaggedDynamic input,
+                                @NotNull final DataVersion fromVersion,
+                                @NotNull final DataVersion toVersion) {
         Preconditions.checkNotNull(input, "input must not be null");
         Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
         Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkArgument(
+                fromVersion.compareTo(toVersion) <= 0,
+                "fromVersion (%s) must be <= toVersion (%s)", fromVersion, toVersion
+        );
 
         @SuppressWarnings("unchecked") final Dynamic<Object> dyn = (Dynamic<Object>) input.value();
 
         final Dynamic<Object> updated =
                 this.dataFixer.update(input.type(), dyn, fromVersion, toVersion);
+
+        return new TaggedDynamic(input.type(), updated);
+    }
+
+    /**
+     * Updates data from one version to another using the specified context.
+     *
+     * <p>Applies all registered fixes between the source and target versions
+     * to migrate the data. The provided {@link DataFixerContext} controls logging and diagnostic behavior during
+     * migration. Pass a {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext} to capture detailed
+     * migration diagnostics including field-level operations.</p>
+     *
+     * @param input       the tagged dynamic data to update, must not be {@code null}
+     * @param fromVersion the source version of the data, must not be {@code null}
+     * @param toVersion   the target version to migrate to, must not be {@code null}
+     * @param context     the fixer context for logging and diagnostics, must not be {@code null}
+     * @return a new tagged dynamic with the updated data
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public TaggedDynamic update(@NotNull final TaggedDynamic input,
+                                @NotNull final DataVersion fromVersion,
+                                @NotNull final DataVersion toVersion,
+                                @NotNull final DataFixerContext context) {
+        Preconditions.checkNotNull(input, "input must not be null");
+        Preconditions.checkNotNull(fromVersion, "fromVersion must not be null");
+        Preconditions.checkNotNull(toVersion, "toVersion must not be null");
+        Preconditions.checkNotNull(context, "context must not be null");
+        Preconditions.checkArgument(
+                fromVersion.compareTo(toVersion) <= 0,
+                "fromVersion (%s) must be <= toVersion (%s)", fromVersion, toVersion
+        );
+
+        @SuppressWarnings("unchecked") final Dynamic<Object> dyn = (Dynamic<Object>) input.value();
+
+        final Dynamic<Object> updated =
+                this.dataFixer.update(input.type(), dyn, fromVersion, toVersion, context);
 
         return new TaggedDynamic(input.type(), updated);
     }
@@ -204,10 +273,8 @@ public final class AetherDataFixer {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public <A> A decode(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final TaggedDynamic input
-    ) {
+    public <A> A decode(@NotNull final DataVersion sourceVersion,
+                        @NotNull final TaggedDynamic input) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(input, "input must not be null");
 

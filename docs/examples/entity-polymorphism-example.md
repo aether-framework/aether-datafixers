@@ -378,10 +378,10 @@ public class EntityMigrator {
 
 ## Key Patterns Demonstrated
 
-1. **TaggedChoice** — Type discriminator for polymorphic data
-2. **Type-specific fixes** — Different migrations per entity type
-3. **Shared structure** — Common fields with varying data
-4. **Independent evolution** — Each type evolves separately
+1. **TaggedChoice** - Type discriminator for polymorphic data
+2. **Type-specific fixes** - Different migrations per entity type
+3. **Shared structure** - Common fields with varying data
+4. **Independent evolution** - Each type evolves separately
 
 ## Related
 

@@ -157,6 +157,18 @@ public interface MigrationReport {
                 .sum();
     }
 
+    /**
+     * Returns the total number of field-level operations across all fixes and rule applications.
+     *
+     * @return total field operation count
+     * @since 1.0.0
+     */
+    default int totalFieldOperationCount() {
+        return this.fixExecutions().stream()
+                .mapToInt(FixExecution::fieldOperationCount)
+                .sum();
+    }
+
     // -------------------------------------------------------------------------
     // Touched Types
     // -------------------------------------------------------------------------
@@ -303,11 +315,9 @@ public interface MigrationReport {
          * @throws IllegalStateException if migration was already started
          */
         @NotNull
-        Builder startMigration(
-                @NotNull TypeReference type,
-                @NotNull DataVersion fromVersion,
-                @NotNull DataVersion toVersion
-        );
+        Builder startMigration(@NotNull final TypeReference type,
+                               @NotNull final DataVersion fromVersion,
+                               @NotNull final DataVersion toVersion);
 
         /**
          * Sets the input data snapshot.
@@ -326,7 +336,7 @@ public interface MigrationReport {
          * @return this builder for method chaining; never {@code null}
          */
         @NotNull
-        Builder setInputSnapshot(@Nullable String snapshot);
+        Builder setInputSnapshot(@Nullable final String snapshot);
 
         /**
          * Marks the start of a fix execution.
@@ -347,7 +357,7 @@ public interface MigrationReport {
          * @see #endFix(DataFix, Duration, String)
          */
         @NotNull
-        Builder startFix(@NotNull DataFix<?> fix);
+        Builder startFix(@NotNull final DataFix<?> fix);
 
         /**
          * Sets the before snapshot for the current fix.
@@ -362,7 +372,7 @@ public interface MigrationReport {
          * @throws IllegalStateException if no fix is currently in progress
          */
         @NotNull
-        Builder setFixBeforeSnapshot(@Nullable String snapshot);
+        Builder setFixBeforeSnapshot(@Nullable final String snapshot);
 
         /**
          * Records a rule application within the current fix.
@@ -383,7 +393,7 @@ public interface MigrationReport {
          * @see RuleApplication
          */
         @NotNull
-        Builder recordRuleApplication(@NotNull RuleApplication application);
+        Builder recordRuleApplication(@NotNull final RuleApplication application);
 
         /**
          * Marks the end of a fix execution.
@@ -406,11 +416,9 @@ public interface MigrationReport {
          * @see #startFix(DataFix)
          */
         @NotNull
-        Builder endFix(
-                @NotNull DataFix<?> fix,
-                @NotNull Duration duration,
-                @Nullable String afterSnapshot
-        );
+        Builder endFix(@NotNull final DataFix<?> fix,
+                       @NotNull final Duration duration,
+                       @Nullable final String afterSnapshot);
 
         /**
          * Adds a touched type reference to the report.
@@ -428,7 +436,7 @@ public interface MigrationReport {
          * @throws NullPointerException if {@code type} is {@code null}
          */
         @NotNull
-        Builder addTouchedType(@NotNull TypeReference type);
+        Builder addTouchedType(@NotNull final TypeReference type);
 
         /**
          * Adds a warning message to the report.
@@ -449,7 +457,7 @@ public interface MigrationReport {
          * @throws NullPointerException if {@code message} is {@code null}
          */
         @NotNull
-        Builder addWarning(@NotNull String message);
+        Builder addWarning(@NotNull final String message);
 
         /**
          * Sets the output data snapshot.
@@ -467,7 +475,7 @@ public interface MigrationReport {
          * @return this builder for method chaining; never {@code null}
          */
         @NotNull
-        Builder setOutputSnapshot(@Nullable String snapshot);
+        Builder setOutputSnapshot(@Nullable final String snapshot);
 
         /**
          * Builds the immutable migration report.

@@ -95,11 +95,11 @@ RecordCodecBuilder.create(instance ->
 
 ### The Pattern Breakdown
 
-1. **`RecordCodecBuilder.create(instance -> ...)`** — Starts the builder
-2. **`instance.group(...)`** — Groups all field codecs
-3. **`Codecs.TYPE.fieldOf("key")`** — Creates a field codec for a JSON key
-4. **`.forGetter(Record::field)`** — Specifies how to get the value during encoding
-5. **`.apply(instance, Constructor::new)`** — Specifies how to construct during decoding
+1. **`RecordCodecBuilder.create(instance -> ...)`** - Starts the builder
+2. **`instance.group(...)`** - Groups all field codecs
+3. **`Codecs.TYPE.fieldOf("key")`** - Creates a field codec for a JSON key
+4. **`.forGetter(Record::field)`** - Specifies how to get the value during encoding
+5. **`.apply(instance, Constructor::new)`** - Specifies how to construct during decoding
 
 ## Multiple Fields (3+)
 
@@ -443,7 +443,7 @@ public static final Codec<Player> CODEC = ...;
 
 ## Next Steps
 
-- **[Polymorphic Data](polymorphic-data.md)** — Handle sum types
-- **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** — Full API
-- **[Using Codecs](using-codecs.md)** — Codec basics
+- **[Polymorphic Data](polymorphic-data.md)** - Handle sum types
+- **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** - Full API
+- **[Using Codecs](using-codecs.md)** - Codec basics
 

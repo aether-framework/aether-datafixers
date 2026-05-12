@@ -278,8 +278,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         // Singleton - use INSTANCE
     }
 
-    // ==================== Empty/Null Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -304,8 +302,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
     public Object empty() {
         return YamlNull.INSTANCE;
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -392,8 +388,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value instanceof Boolean;
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -557,8 +551,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return value;
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -653,8 +645,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         }
         return DataResult.success((Boolean) input);
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -771,8 +761,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return DataResult.success(result);
     }
 
-    // ==================== Map Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -828,7 +816,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
                 return; // Skip entries with null keys
             }
             final String key = keyObj.toString();
-            map.put(key, valueObj);
+            map.put(key, valueObj == null ? YamlNull.INSTANCE : valueObj);
         });
         return map;
     }
@@ -1124,8 +1112,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return ((Map<String, Object>) input).containsKey(key);
     }
 
-    // ==================== Conversion Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -1222,8 +1208,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return empty();
     }
 
-    // ==================== Helper Methods ====================
-
     /**
      * Creates a deep copy of the given value.
      *
@@ -1244,6 +1228,16 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      *       are immutable in Java)</li>
      * </ul>
      *
+     * <p><b>Performance Note:</b> Unlike Jackson-based implementations which delegate to
+     * the optimized {@code JsonNode.deepCopy()}, this method performs a manual recursive
+     * copy using Java reflection-free iteration. For very large data structures, this may
+     * be measurably slower. Consider using Jackson-based implementations
+     * ({@link de.splatgames.aether.datafixers.codec.yaml.jackson.JacksonYamlOps}) for
+     * performance-sensitive use cases.</p>
+     *
+     * <ul>
+     * </ul>
+     *
      * <p><b>Performance Note</b></p>
      * <p>Deep copying has O(n) time and space complexity where n is the total number of
      * elements in the structure. For large data structures, this can be significant.
@@ -1254,9 +1248,21 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * @return a deep copy of the value, or the value itself if it is immutable;
      *         {@code null} if the input is {@code null}
      */
+    private static final int MAX_DEEP_COPY_DEPTH = 512;
+
     @Nullable
     @SuppressWarnings("unchecked")
     private Object deepCopy(@Nullable final Object value) {
+        return deepCopy(value, 0);
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    private Object deepCopy(@Nullable final Object value, final int depth) {
+        if (depth > MAX_DEEP_COPY_DEPTH) {
+            throw new IllegalStateException(
+                    "YAML structure too deeply nested (depth > " + MAX_DEEP_COPY_DEPTH + ")");
+        }
         if (value == null) {
             return null;
         }
@@ -1267,7 +1273,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
             final Map<String, Object> original = (Map<String, Object>) value;
             final Map<String, Object> copy = new LinkedHashMap<>();
             for (final Map.Entry<String, Object> entry : original.entrySet()) {
-                copy.put(entry.getKey(), deepCopy(entry.getValue()));
+                copy.put(entry.getKey(), deepCopy(entry.getValue(), depth + 1));
             }
             return copy;
         }
@@ -1275,7 +1281,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
             final List<Object> original = (List<Object>) value;
             final List<Object> copy = new ArrayList<>();
             for (final Object element : original) {
-                copy.add(deepCopy(element));
+                copy.add(deepCopy(element, depth + 1));
             }
             return copy;
         }
@@ -1294,11 +1300,10 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
      * @return the string {@code "SnakeYamlOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "SnakeYamlOps";
     }
-
-    // ==================== Static Utility Methods ====================
 
     /**
      * Checks whether the given value is the YAML null sentinel.
@@ -1427,8 +1432,6 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
         return value;
     }
 
-    // ==================== Inner Classes ====================
-
     /**
      * Sentinel class representing the YAML null value.
      *
@@ -1457,6 +1460,7 @@ public final class SnakeYamlOps implements DynamicOps<Object> {
          *
          * @return the string {@code "null"}
          */
+        @NotNull
         @Override
         public String toString() {
             return "null";

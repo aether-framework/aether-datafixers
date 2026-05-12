@@ -389,7 +389,7 @@ class PlayerMigrationTest {
 
 ## Next Steps
 
-- **[Multi-Version Migration](multi-version-migration.md)** — Chain multiple fixes
-- **[Schema Inheritance](schema-inheritance.md)** — Organize large projects
-- **[How-To: Rename Field](../how-to/rename-field.md)** — More rename patterns
+- **[Multi-Version Migration](multi-version-migration.md)** - Chain multiple fixes
+- **[Schema Inheritance](schema-inheritance.md)** - Organize large projects
+- **[How-To: Rename Field](../how-to/rename-field.md)** - More rename patterns
 

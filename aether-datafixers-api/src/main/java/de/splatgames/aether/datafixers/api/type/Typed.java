@@ -32,6 +32,7 @@ import de.splatgames.aether.datafixers.api.util.Either;
 import de.splatgames.aether.datafixers.api.util.Pair;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,14 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public final class Typed<A> {
+    /**
+     * The type describing the structure of the value. This is used for encoding/decoding and type matching. It is
+     * immutable and thread-safe by contract, so we can safely store and return references to it.
+     */
     private final Type<A> type;
+    /**
+     * The actual value wrapped by this typed instance. It must conform to the structure defined by {@code type}.
+     */
     private final A value;
 
     /**
@@ -384,7 +392,8 @@ public final class Typed<A> {
      * @param ops    the dynamic operations for encoding, must not be {@code null}
      * @param finder the finder that locates the desired sub-value, must not be {@code null}
      * @param <T>    the underlying data format type
-     * @return a {@link DataResult} containing the found dynamic value or {@code null} if not found, never {@code null}
+     * @return a {@link DataResult} containing the found dynamic value on success, or an error result if the path was
+     * not found; never {@code null}
      * @throws NullPointerException if {@code ops} or {@code finder} is {@code null}
      * @see #updateAt(DynamicOps, Finder, Function)
      */
@@ -393,12 +402,12 @@ public final class Typed<A> {
                                             @NotNull final Finder<?> finder) {
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(finder, "finder must not be null");
-        return encode(ops).map(dynamic -> {
+        return encode(ops).flatMap(dynamic -> {
             final Dynamic<?> found = finder.get(dynamic);
             if (found == null) {
-                return null;
+                return DataResult.error("Path not found: " + finder);
             }
-            return found.convert(ops);
+            return DataResult.success(found.convert(ops));
         });
     }
 
@@ -675,8 +684,14 @@ public final class Typed<A> {
         return DataResult.error("Cannot apply children for type: " + this.type.describe());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param obj {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -686,12 +701,23 @@ public final class Typed<A> {
         return this.type.reference().equals(other.type.reference()) && this.value.equals(other.value);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return 31 * this.type.reference().hashCode() + this.value.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
+    @NotNull
     public String toString() {
         return "Typed{type=" + this.type.describe() + ", value=" + this.value + "}";
     }

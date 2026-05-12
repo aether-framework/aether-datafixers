@@ -23,6 +23,7 @@
 package de.splatgames.aether.datafixers.spring.service;
 
 import de.splatgames.aether.datafixers.api.DataVersion;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
 import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -238,6 +239,83 @@ class MigrationResultTest {
     }
 
     @Nested
+    @DisplayName("equals and hashCode")
+    class EqualsAndHashCode {
+
+        @Test
+        @DisplayName("equals() returns true for same values")
+        void equalsReturnsTrueForSameValues() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult a = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult b = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(a).isEqualTo(b);
+        }
+
+        @Test
+        @DisplayName("equals() returns false for different success status")
+        void equalsReturnsFalseForDifferentSuccess() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult success = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult failure = MigrationResult.failure(
+                    FROM_VERSION, TO_VERSION, DOMAIN, DURATION, new RuntimeException("error")
+            );
+
+            assertThat(success).isNotEqualTo(failure);
+        }
+
+        @Test
+        @DisplayName("equals() returns false for different versions")
+        void equalsReturnsFalseForDifferentVersions() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult a = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult b = MigrationResult.success(
+                    data, FROM_VERSION, new DataVersion(300), DOMAIN, DURATION
+            );
+
+            assertThat(a).isNotEqualTo(b);
+        }
+
+        @Test
+        @DisplayName("hashCode() is consistent for equal objects")
+        void hashCodeConsistentForEqualObjects() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult a = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+            MigrationResult b = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(a.hashCode()).isEqualTo(b.hashCode());
+        }
+
+        @Test
+        @DisplayName("equals() returns false for null")
+        void equalsReturnsFalseForNull() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(result).isNotEqualTo(null);
+        }
+    }
+
+    @Nested
     @DisplayName("toString")
     class ToStringMethod {
 
@@ -270,6 +348,58 @@ class MigrationResultTest {
             assertThat(result.toString())
                     .contains("success=false")
                     .contains("error=Test error");
+        }
+    }
+
+    @Nested
+    @DisplayName("Diagnostic Report")
+    class DiagnosticReportTests {
+
+        @Test
+        @DisplayName("success result without diagnostics has empty report")
+        void successWithoutDiagnostics() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION
+            );
+
+            assertThat(result.getDiagnosticReport()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("success result with diagnostics has report")
+        void successWithDiagnostics() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+            MigrationReport report = mock(MigrationReport.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION, report
+            );
+
+            assertThat(result.getDiagnosticReport()).contains(report);
+        }
+
+        @Test
+        @DisplayName("success result with null report has empty optional")
+        void successWithNullReport() {
+            TaggedDynamic data = mock(TaggedDynamic.class);
+
+            MigrationResult result = MigrationResult.success(
+                    data, FROM_VERSION, TO_VERSION, DOMAIN, DURATION, null
+            );
+
+            assertThat(result.getDiagnosticReport()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("failure result has empty diagnostic report")
+        void failureHasEmptyDiagnosticReport() {
+            MigrationResult result = MigrationResult.failure(
+                    FROM_VERSION, TO_VERSION, DOMAIN, DURATION, new RuntimeException("error")
+            );
+
+            assertThat(result.getDiagnosticReport()).isEmpty();
         }
     }
 }

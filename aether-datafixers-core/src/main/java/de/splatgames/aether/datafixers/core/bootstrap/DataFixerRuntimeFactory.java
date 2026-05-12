@@ -29,13 +29,15 @@ import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import de.splatgames.aether.datafixers.core.schema.SimpleSchemaRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for creating fully configured {@link AetherDataFixer} instances.
  *
  * <p>{@code DataFixerRuntimeFactory} simplifies the creation of data fixers by
- * orchestrating the bootstrap process. It creates the necessary registries,
- * invokes the bootstrap to populate them, and assembles the final fixer.</p>
+ * orchestrating the bootstrap process. It creates the necessary registries, invokes the bootstrap to populate them, and
+ * assembles the final fixer.</p>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
@@ -66,6 +68,10 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.1.0
  */
 public final class DataFixerRuntimeFactory {
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(DataFixerRuntimeFactory.class);
 
     /**
      * Creates a fully configured data fixer from a bootstrap.
@@ -76,15 +82,20 @@ public final class DataFixerRuntimeFactory {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public AetherDataFixer create(
-            @NotNull final DataVersion currentVersion,
-            @NotNull final DataFixerBootstrap bootstrap
-    ) {
+    public AetherDataFixer create(@NotNull final DataVersion currentVersion,
+                                  @NotNull final DataFixerBootstrap bootstrap) {
         Preconditions.checkNotNull(currentVersion, "currentVersion must not be null");
         Preconditions.checkNotNull(bootstrap, "bootstrap must not be null");
 
         final SimpleSchemaRegistry schemas = new SimpleSchemaRegistry();
         bootstrap.registerSchemas(schemas);
+
+        if (schemas.stream().findAny().isEmpty()) {
+            LOG.warn("Bootstrap registered no schemas — DataFixer may not function correctly");
+        } else if (schemas.get(currentVersion) == null) {
+            LOG.warn("No schema registered for currentVersion: {}", currentVersion);
+        }
+
         schemas.freeze();
 
         final DataFixerBuilder builder = new DataFixerBuilder(currentVersion);

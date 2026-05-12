@@ -36,8 +36,7 @@ import java.util.stream.Collectors;
  * A {@link DataFixerContext} that records all log calls for later inspection.
  *
  * <p>This context implementation captures all {@code info()} and {@code warn()}
- * calls, allowing tests to verify that DataFix implementations log appropriate
- * messages during migration.</p>
+ * calls, allowing tests to verify that DataFix implementations log appropriate messages during migration.</p>
  *
  * <h2>Usage</h2>
  * <pre>{@code
@@ -67,6 +66,9 @@ import java.util.stream.Collectors;
  */
 public final class RecordingContext implements DataFixerContext {
 
+    /**
+     * List of recorded log entries.
+     */
     private final List<LogEntry> logs;
 
     /**
@@ -76,17 +78,27 @@ public final class RecordingContext implements DataFixerContext {
         this.logs = new ArrayList<>();
     }
 
+    /**
+     * Records an INFO-level log entry.
+     *
+     * @param message the message format string
+     * @param args    the arguments for the message, may be {@code null}
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
         this.logs.add(new LogEntry(LogLevel.INFO, message, args));
     }
 
+    /**
+     * Records a WARN-level log entry.
+     *
+     * @param message the message format string
+     * @param args    the arguments for the message, may be {@code null}
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
         this.logs.add(new LogEntry(LogLevel.WARN, message, args));
     }
-
-    // ==================== Query Methods ====================
 
     /**
      * Returns all recorded log entries.
@@ -176,8 +188,6 @@ public final class RecordingContext implements DataFixerContext {
         return this.logs.isEmpty();
     }
 
-    // ==================== Assertion Helpers ====================
-
     /**
      * Asserts that no warnings were logged.
      *
@@ -214,8 +224,6 @@ public final class RecordingContext implements DataFixerContext {
         this.logs.clear();
     }
 
-    // ==================== Log Entry Record ====================
-
     /**
      * Log levels for recorded entries.
      */
@@ -230,14 +238,16 @@ public final class RecordingContext implements DataFixerContext {
      * @param message the message format string
      * @param args    the arguments (defensively copied)
      */
-    public record LogEntry(
-            @NotNull LogLevel level,
-            @NotNull String message,
-            @Nullable Object[] args
-    ) {
+    public record LogEntry(@NotNull LogLevel level,
+                           @NotNull String message,
+                           @Nullable Object[] args) {
 
         /**
          * Compact constructor that defensively copies the args array.
+         *
+         * @param level   the log level, must not be {@code null}
+         * @param message the message format string, must not be {@code null}
+         * @param args    the format arguments, may be {@code null}
          */
         public LogEntry {
             Preconditions.checkNotNull(level, "level must not be null");
@@ -252,8 +262,8 @@ public final class RecordingContext implements DataFixerContext {
          */
         @Override
         @Nullable
-        public Object[] args() {
-            return args != null ? args.clone() : null;
+        public Object @Nullable [] args() {
+            return this.args != null ? this.args.clone() : null;
         }
 
         /**
@@ -266,14 +276,24 @@ public final class RecordingContext implements DataFixerContext {
             if (this.args == null || this.args.length == 0) {
                 return this.message;
             }
-            String result = this.message;
+            final StringBuilder result = new StringBuilder(this.message);
             for (final Object arg : this.args) {
-                result = result.replaceFirst("\\{}", String.valueOf(arg));
+                final int idx = result.indexOf("{}");
+                if (idx < 0) {
+                    break;
+                }
+                result.replace(idx, idx + 2, String.valueOf(arg));
             }
-            return result;
+            return result.toString();
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @Override
+        @NotNull
         public String toString() {
             return "[" + this.level + "] " + this.formattedMessage();
         }

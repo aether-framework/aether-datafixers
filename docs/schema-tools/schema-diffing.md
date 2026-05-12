@@ -274,6 +274,6 @@ public class SchemaChangeReport {
 
 ## Related
 
-- [Type Introspection](type-introspection.md) — Understanding how types are analyzed
-- [Migration Analysis](migration-analysis.md) — Using diffs to analyze migration paths
-- [Schema System](../concepts/schema-system.md) — Core schema concepts
+- [Type Introspection](type-introspection.md) - Understanding how types are analyzed
+- [Migration Analysis](migration-analysis.md) - Using diffs to analyze migration paths
+- [Schema System](../concepts/schema-system.md) - Core schema concepts

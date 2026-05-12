@@ -26,7 +26,7 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,28 +88,32 @@ public final class ValidationIssue {
     /**
      * The severity level of this issue (ERROR, WARNING, or INFO).
      */
+    @NotNull
     private final IssueSeverity severity;
 
     /**
      * A unique code identifying the type of issue (e.g., "STRUCTURE_CYCLE").
      */
+    @NotNull
     private final String code;
 
     /**
      * A human-readable description of the issue.
      */
+    @NotNull
     private final String message;
 
     /**
-     * The location where the issue was found (e.g., "Schema@100/player").
-     * May be {@code null} if no specific location applies.
+     * The location where the issue was found (e.g., "Schema@100/player"). May be {@code null} if no specific location
+     * applies.
      */
+    @Nullable
     private final String location;
 
     /**
-     * Additional contextual information as key-value pairs.
-     * Always non-null but may be empty.
+     * Additional contextual information as key-value pairs. Always non-null but may be empty.
      */
+    @NotNull
     private final Map<String, Object> context;
 
     /**
@@ -124,13 +128,11 @@ public final class ValidationIssue {
      * @param location the location where found, may be {@code null}
      * @param context  additional context, must not be {@code null}
      */
-    private ValidationIssue(
-            @NotNull final IssueSeverity severity,
-            @NotNull final String code,
-            @NotNull final String message,
-            @Nullable final String location,
-            @NotNull final Map<String, Object> context
-    ) {
+    private ValidationIssue(@NotNull final IssueSeverity severity,
+                            @NotNull final String code,
+                            @NotNull final String message,
+                            @Nullable final String location,
+                            @NotNull final Map<String, Object> context) {
         this.severity = Preconditions.checkNotNull(severity, "severity must not be null");
         this.code = Preconditions.checkNotNull(code, "code must not be null");
         this.message = Preconditions.checkNotNull(message, "message must not be null");
@@ -204,9 +206,9 @@ public final class ValidationIssue {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
 
-        final Map<String, Object> newContext = new HashMap<>(this.context);
+        final Map<String, Object> newContext = new LinkedHashMap<>(this.context);
         newContext.put(key, value);
-        return new ValidationIssue(this.severity, this.code, this.message, this.location, newContext);
+        return new ValidationIssue(this.severity, this.code, this.message, this.location, Map.copyOf(newContext));
     }
 
     /**
@@ -296,7 +298,7 @@ public final class ValidationIssue {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -332,6 +334,7 @@ public final class ValidationIssue {
      * @return a formatted string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("[").append(this.severity).append("] ");

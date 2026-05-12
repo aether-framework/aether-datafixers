@@ -27,6 +27,7 @@ import de.splatgames.aether.datafixers.api.TypeReference;
 import de.splatgames.aether.datafixers.api.type.Type;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -101,12 +102,10 @@ public final class TypeDiff {
      * @param targetType the target type, must not be {@code null}
      * @param fieldDiffs the field diffs, must not be {@code null}
      */
-    private TypeDiff(
-            @NotNull final TypeReference reference,
-            @NotNull final Type<?> sourceType,
-            @NotNull final Type<?> targetType,
-            @NotNull final List<FieldDiff> fieldDiffs
-    ) {
+    private TypeDiff(@NotNull final TypeReference reference,
+                     @NotNull final Type<?> sourceType,
+                     @NotNull final Type<?> targetType,
+                     @NotNull final List<FieldDiff> fieldDiffs) {
         this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
         this.sourceType = Preconditions.checkNotNull(sourceType, "sourceType must not be null");
         this.targetType = Preconditions.checkNotNull(targetType, "targetType must not be null");
@@ -124,12 +123,10 @@ public final class TypeDiff {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public static TypeDiff of(
-            @NotNull final TypeReference reference,
-            @NotNull final Type<?> sourceType,
-            @NotNull final Type<?> targetType,
-            @NotNull final List<FieldDiff> fieldDiffs
-    ) {
+    public static TypeDiff of(@NotNull final TypeReference reference,
+                              @NotNull final Type<?> sourceType,
+                              @NotNull final Type<?> targetType,
+                              @NotNull final List<FieldDiff> fieldDiffs) {
         Preconditions.checkNotNull(reference, "reference must not be null");
         Preconditions.checkNotNull(sourceType, "sourceType must not be null");
         Preconditions.checkNotNull(targetType, "targetType must not be null");
@@ -199,7 +196,7 @@ public final class TypeDiff {
 
     /**
      * Returns only the removed fields.
-     *f
+     *
      * @return a list of field diffs with kind REMOVED, never {@code null}
      */
     @NotNull
@@ -265,7 +262,7 @@ public final class TypeDiff {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -298,6 +295,7 @@ public final class TypeDiff {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "TypeDiff{" +
                 "reference=" + this.reference +

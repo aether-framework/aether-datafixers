@@ -6,7 +6,7 @@
 
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers</artifactId>
-    <version>0.5.0</version>
+    <version>1.0.0-rc.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>aether-datafixers-api</module>
@@ -19,6 +19,7 @@
         <module>aether-datafixers-examples</module>
         <module>aether-datafixers-bom</module>
         <module>aether-datafixers-functional-tests</module>
+        <module>aether-datafixers-benchmarks</module>
     </modules>
 
     <properties>
@@ -30,26 +31,31 @@
         <!-- Skip integration tests by default -->
         <skipITs>true</skipITs>
 
+        <!-- Stress test configuration (defaults for optional stress profile) -->
+        <stress.threads>100</stress.threads>
+        <stress.duration.minutes>5</stress.duration.minutes>
+        <stress.operations.per.thread>1000</stress.operations.per.thread>
+
         <!-- definition of versions for dependencies -->
-        <jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
+        <jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
         <gson.version>2.13.2</gson.version>
-        <jackson.version>2.19.0</jackson.version>
+        <jackson.version>2.21.0</jackson.version>
         <guava.version>33.5.0-jre</guava.version>
         <junit.jupiter.version>5.13.4</junit.jupiter.version>
-        <assertj.version>3.27.6</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <slf4j.version>2.0.17</slf4j.version>
         <spotbugs.version>4.9.8</spotbugs.version>
 
         <!-- definition of versions for plugins -->
-        <plugin.compiler.version>3.11.0</plugin.compiler.version>
-        <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
-        <plugin.source.version>3.3.1</plugin.source.version>
-        <plugin.javadoc.version>3.10.1</plugin.javadoc.version>
-        <plugin.site.version>3.20.0</plugin.site.version>
-        <plugin.gpg.version>3.2.6</plugin.gpg.version>
-        <plugin.surefire.version>3.1.2</plugin.surefire.version>
-        <plugin.failsafe.version>3.1.2</plugin.failsafe.version>
-        <plugin.shade.version>3.5.1</plugin.shade.version>
+        <plugin.compiler.version>3.14.1</plugin.compiler.version>
+        <plugin.enforcer.version>3.6.2</plugin.enforcer.version>
+        <plugin.source.version>3.4.0</plugin.source.version>
+        <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
+        <plugin.site.version>3.21.0</plugin.site.version>
+        <plugin.gpg.version>3.2.8</plugin.gpg.version>
+        <plugin.surefire.version>3.5.4</plugin.surefire.version>
+        <plugin.failsafe.version>3.5.4</plugin.failsafe.version>
+        <plugin.shade.version>3.6.1</plugin.shade.version>
 
         <!-- QA plugin versions -->
         <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
@@ -58,15 +64,33 @@
         <plugin.owasp.version>12.2.0</plugin.owasp.version>
         <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
 
+        <!-- Nullability enforcement (NullAway via Error Prone) -->
+        <errorprone.version>2.36.0</errorprone.version>
+        <nullaway.version>0.12.7</nullaway.version>
+
+        <!-- Aether Style Guard (opt-in via -Pstyleguard) -->
+        <aether-style-guard.version>0.1.1</aether-style-guard.version>
+        <!--
+            Extra Error Prone flags appended to the -Xplugin:ErrorProne arg in the
+            styleguard profile. Empty by default. Override on the command line to
+            enable Error Prone's patch mode for bulk auto-fix:
+                mvn compile -Pstyleguard -pl aether-datafixers-api \
+                    -Dstyleguard.extra.args="-XepPatchChecks:RequireThisPrefix,RequireParameterNullness,RequireFinalParameter,RequireMethodReturnNullness -XepPatchLocation:IN_PLACE"
+        -->
+        <styleguard.extra.args/>
+
         <!-- QA configuration -->
         <jacoco.skip>false</jacoco.skip>
         <jacoco.coverage.minimum>0.75</jacoco.coverage.minimum>
 
         <!-- CLI dependencies -->
-        <picocli.version>4.7.6</picocli.version>
+        <picocli.version>4.7.7</picocli.version>
 
         <!-- Extra Ops dependencies -->
-        <snakeyaml.version>2.2</snakeyaml.version>
+        <snakeyaml.version>2.5</snakeyaml.version>
+
+        <!-- JMH Benchmark dependencies -->
+        <jmh.version>1.37</jmh.version>
     </properties>
 
     <name>Aether Datafixers :: Parent</name>
@@ -213,6 +237,18 @@
                 <version>${spotbugs.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- JMH Benchmarks -->
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -313,7 +349,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.8.0</version>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
@@ -379,6 +415,17 @@
             <id>it</id>
             <properties>
                 <skipITs>false</skipITs>
+            </properties>
+        </profile>
+
+        <!-- Stress Tests Profile: Run stress and chaos tests -->
+        <profile>
+            <id>stress</id>
+            <properties>
+                <skipITs>false</skipITs>
+                <stress.threads>100</stress.threads>
+                <stress.duration.minutes>5</stress.duration.minutes>
+                <stress.operations.per.thread>1000</stress.operations.per.thread>
             </properties>
         </profile>
 
@@ -517,6 +564,128 @@
                             <includeTestScope>false</includeTestScope>
                             <includeLicenseText>false</includeLicenseText>
                             <outputFormat>all</outputFormat>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Nullability Profile: NullAway via Error Prone -->
+        <!--
+            Activate with: mvn compile -Pnullability
+            Treats all unannotated reference types as @NotNull and fails the build
+            on any null-safety violation in the de.splatgames.aether.datafixers packages.
+            New code is automatically checked; legacy gaps surface as build errors.
+        -->
+        <profile>
+            <id>nullability</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${plugin.compiler.version}</version>
+                        <configuration>
+                            <source>${maven.compiler.release}</source>
+                            <target>${maven.compiler.release}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <showWarnings>true</showWarnings>
+                            <fork>true</fork>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>--should-stop=ifError=FLOW</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=de.splatgames.aether.datafixers</arg>
+                                <!-- Required JVM exports for ErrorProne on JDK 17+ -->
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${errorprone.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>com.uber.nullaway</groupId>
+                                    <artifactId>nullaway</artifactId>
+                                    <version>${nullaway.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Style Guard Profile: Aether Style Guard via Error Prone -->
+        <!--
+            Activate with: mvn compile -Pstyleguard
+            Enforces the five Aether Style Guard rules (this-prefix, parameter
+            nullness, final parameters, method return nullness, complete Javadoc)
+            as guard rails for AI-generated Java code.
+
+            WARNING: This is an opt-in profile that is NOT run by default. Enabling
+            it on the existing codebase will produce a large number of errors that
+            reflect legacy drift from the new rules. Recommended adoption path:
+
+              1. mvn compile -Pstyleguard -pl <single-module>  (scope the blast radius)
+              2. mvn compile -Pstyleguard -DcompilerArgument="-XepPatchChecks:RequireThisPrefix,RequireParameterNullness,RequireFinalParameter,RequireMethodReturnNullness -XepPatchLocation:IN_PLACE"
+                 (bulk auto-fix one module at a time)
+              3. Review the diff, commit, move to the next module
+
+            The Javadoc checkers do not currently ship an auto-fix; their
+            warnings/errors have to be addressed manually.
+        -->
+        <profile>
+            <id>styleguard</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${plugin.compiler.version}</version>
+                        <configuration>
+                            <source>${maven.compiler.release}</source>
+                            <target>${maven.compiler.release}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <showWarnings>true</showWarnings>
+                            <fork>true</fork>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>--should-stop=ifError=FLOW</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:RequireThisPrefix:ERROR -Xep:RequireParameterNullness:ERROR -Xep:RequireFinalParameter:ERROR -Xep:RequireMethodReturnNullness:ERROR -Xep:RequireJavadocPresent:WARN -Xep:RequireJavadocComplete:ERROR -XepOpt:AetherStyleGuard:NotNull=org.jetbrains.annotations.NotNull -XepOpt:AetherStyleGuard:Nullable=org.jetbrains.annotations.Nullable -XepExcludedPaths:.*/target/generated-sources/.* ${styleguard.extra.args}</arg>
+                                <!-- Required JVM exports for ErrorProne on JDK 17+ -->
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${errorprone.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>de.splatgames.aether.styleguard.labs</groupId>
+                                    <artifactId>aether-style-guard</artifactId>
+                                    <version>${aether-style-guard.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
                         </configuration>
                     </plugin>
                 </plugins>

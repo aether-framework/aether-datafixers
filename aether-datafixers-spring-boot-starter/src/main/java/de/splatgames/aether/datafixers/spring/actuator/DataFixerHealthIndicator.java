@@ -166,6 +166,7 @@ public class DataFixerHealthIndicator implements HealthIndicator {
      * @return the health status with detailed domain information
      */
     @Override
+    @NotNull
     public Health health() {
         final Map<String, AetherDataFixer> fixers = this.registry.getAll();
 
@@ -177,6 +178,7 @@ public class DataFixerHealthIndicator implements HealthIndicator {
 
         final Health.Builder builder = Health.up();
         builder.withDetail("totalDomains", fixers.size());
+        boolean allHealthy = true;
 
         for (final Map.Entry<String, AetherDataFixer> entry : fixers.entrySet()) {
             final String domain = entry.getKey();
@@ -188,12 +190,16 @@ public class DataFixerHealthIndicator implements HealthIndicator {
                 builder.withDetail(domain + ".status", "UP");
                 builder.withDetail(domain + ".currentVersion", currentVersion);
             } catch (final Exception e) {
-                return Health.down()
-                        .withDetail(domain + ".status", "DOWN")
-                        .withDetail(domain + ".error", e.getMessage())
-                        .withDetail("totalDomains", fixers.size())
-                        .build();
+                allHealthy = false;
+                builder.withDetail(domain + ".status", "DOWN");
+                builder.withDetail(domain + ".error", e.getMessage());
             }
+        }
+
+        if (!allHealthy) {
+            return Health.down()
+                    .withDetails(builder.build().getDetails())
+                    .build();
         }
 
         return builder.build();

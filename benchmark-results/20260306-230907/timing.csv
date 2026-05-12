@@ -1,0 +1,5 @@
+benchmark,exit_code,duration_seconds
+core,0,5050
+format,0,7812
+codec,0,3562
+concurrent,0,2218

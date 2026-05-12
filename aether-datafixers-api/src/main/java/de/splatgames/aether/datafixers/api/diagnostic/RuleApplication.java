@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,35 +50,39 @@ import java.util.Optional;
  * }
  * }</pre>
  *
- * @param ruleName    the name of the rule (from {@code TypeRewriteRule.toString()})
- * @param typeName    the name of the type being processed
- * @param timestamp   the instant when the rule was applied
- * @param duration    the time taken to apply the rule
- * @param matched     whether the rule matched and transformed the data
- * @param description optional additional description or context
+ * @param ruleName        the name of the rule (from {@code TypeRewriteRule.toString()})
+ * @param typeName        the name of the type being processed
+ * @param timestamp       the instant when the rule was applied
+ * @param duration        the time taken to apply the rule
+ * @param matched         whether the rule matched and transformed the data
+ * @param description     optional additional description or context
+ * @param fieldOperations structured metadata about field-level operations performed by this rule;
+ *                        empty if the rule does not carry field-level metadata or if field detail
+ *                        capture is disabled (since 1.0.0)
  * @author Erik Pförtner
  * @see FixExecution
  * @see MigrationReport
+ * @see FieldOperation
  * @since 0.2.0
  */
-public record RuleApplication(
-        @NotNull String ruleName,
-        @NotNull String typeName,
-        @NotNull Instant timestamp,
-        @NotNull Duration duration,
-        boolean matched,
-        @Nullable String description
-) {
+public record RuleApplication(@NotNull String ruleName,
+                              @NotNull String typeName,
+                              @NotNull Instant timestamp,
+                              @NotNull Duration duration,
+                              boolean matched,
+                              @Nullable String description,
+                              @NotNull List<FieldOperation> fieldOperations) {
 
     /**
      * Creates a new rule application record.
      *
-     * @param ruleName    the name of the rule, must not be {@code null}
-     * @param typeName    the name of the type being processed, must not be {@code null}
-     * @param timestamp   the instant when the rule was applied, must not be {@code null}
-     * @param duration    the time taken to apply the rule, must not be {@code null}
-     * @param matched     whether the rule matched and transformed the data
-     * @param description optional additional description (may be {@code null})
+     * @param ruleName        the name of the rule, must not be {@code null}
+     * @param typeName        the name of the type being processed, must not be {@code null}
+     * @param timestamp       the instant when the rule was applied, must not be {@code null}
+     * @param duration        the time taken to apply the rule, must not be {@code null}
+     * @param matched         whether the rule matched and transformed the data
+     * @param description     optional additional description (may be {@code null})
+     * @param fieldOperations field-level operation metadata, must not be {@code null}
      * @throws NullPointerException if any required parameter is {@code null}
      */
     public RuleApplication {
@@ -85,10 +90,12 @@ public record RuleApplication(
         Preconditions.checkNotNull(typeName, "typeName must not be null");
         Preconditions.checkNotNull(timestamp, "timestamp must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
+        Preconditions.checkNotNull(fieldOperations, "fieldOperations must not be null");
+        fieldOperations = List.copyOf(fieldOperations);
     }
 
     /**
-     * Creates a new rule application record without a description.
+     * Creates a new rule application record without a description or field operations.
      *
      * @param ruleName  the name of the rule, must not be {@code null}
      * @param typeName  the name of the type being processed, must not be {@code null}
@@ -98,14 +105,12 @@ public record RuleApplication(
      * @return the new rule application record
      */
     @NotNull
-    public static RuleApplication of(
-            @NotNull final String ruleName,
-            @NotNull final String typeName,
-            @NotNull final Instant timestamp,
-            @NotNull final Duration duration,
-            final boolean matched
-    ) {
-        return new RuleApplication(ruleName, typeName, timestamp, duration, matched, null);
+    public static RuleApplication of(@NotNull final String ruleName,
+                                     @NotNull final String typeName,
+                                     @NotNull final Instant timestamp,
+                                     @NotNull final Duration duration,
+                                     final boolean matched) {
+        return new RuleApplication(ruleName, typeName, timestamp, duration, matched, null, List.of());
     }
 
     /**
@@ -128,17 +133,47 @@ public record RuleApplication(
     }
 
     /**
+     * Returns whether this rule application carries field-level operation metadata.
+     *
+     * @return {@code true} if this application has at least one field operation
+     * @since 1.0.0
+     */
+    public boolean hasFieldOperations() {
+        return !this.fieldOperations.isEmpty();
+    }
+
+    /**
+     * Returns the field operations of a specific type.
+     *
+     * @param type the operation type to filter by, must not be {@code null}
+     * @return an unmodifiable list of matching field operations, never {@code null}
+     * @throws NullPointerException if {@code type} is {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public List<FieldOperation> fieldOperationsOfType(@NotNull final FieldOperationType type) {
+        Preconditions.checkNotNull(type, "type must not be null");
+        return this.fieldOperations.stream()
+                .filter(op -> op.operationType() == type)
+                .toList();
+    }
+
+    /**
      * Returns a human-readable summary of this rule application.
      *
      * @return formatted summary string
      */
     @NotNull
     public String toSummary() {
-        return String.format("%s on %s: %s in %dms",
+        final String base = String.format("%s on %s: %s in %dms",
                 this.ruleName,
                 this.typeName,
                 this.matched ? "matched" : "skipped",
                 this.durationMillis()
         );
+        if (this.fieldOperations.isEmpty()) {
+            return base;
+        }
+        return base + String.format(" (%d field ops)", this.fieldOperations.size());
     }
 }

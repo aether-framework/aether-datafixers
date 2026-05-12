@@ -38,42 +38,51 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Factory class for common data fix patterns.
+ * Factory class for common data fix patterns scoped to a specific
+ * {@link Type container type}.
  *
- * <p>This class provides high-level methods for creating {@link TypeRewriteRule}
- * instances that handle common data migration patterns. These patterns include field renaming, removal, addition,
- * transformation, and tagged choice handling.</p>
+ * <p>{@code Fixes} provides high-level {@link TypeRewriteRule} factories that
+ * handle common data migration patterns. They are thin wrappers over
+ * {@link Rules}: each method delegates to the corresponding {@code Rules}
+ * combinator and then filters the result with {@link TypeRewriteRule#ifType(Type)}
+ * so the rule only applies to values of the given container type.</p>
  *
- * <h2>Categories of Fixes</h2>
+ * <p>Prefer the type-filtered helpers here when you are writing rules against
+ * a {@link de.splatgames.aether.datafixers.api.type.Type}-aware
+ * {@code SchemaDataFix} and want automatic type gating. For plain
+ * {@link de.splatgames.aether.datafixers.api.dynamic.Dynamic}-only work, use
+ * {@link Rules} directly.</p>
+ *
+ * <h2>Categories</h2>
  * <ul>
- *   <li><b>Typed Fixes:</b> {@link #fixTypeEverywhereTyped} and {@link #fixTypeEverywhere}
- *       for general type-based transformations</li>
- *   <li><b>Field Operations:</b> {@link #renameField}, {@link #removeField},
- *       {@link #addField}, {@link #transformField} for field-level changes</li>
- *   <li><b>Tagged Choice:</b> {@link #fixChoice} and {@link #renameChoice}
- *       for discriminated union migrations</li>
- *   <li><b>Recursive:</b> {@link #walkRecursive} for deep tree transformations</li>
- *   <li><b>Utility:</b> {@link #composite} and {@link #conditional} for combining rules</li>
+ *   <li><b>Typed fixes:</b> {@link #fixTypeEverywhereTyped} and
+ *       {@link #fixTypeEverywhere} for type-targeted transformations walked
+ *       over the whole structure.</li>
+ *   <li><b>Field operations:</b> {@link #renameField}, {@link #removeField},
+ *       {@link #addField}, {@link #transformField} for field-level changes
+ *       gated on the container type.</li>
+ *   <li><b>Tagged choice:</b> {@link #fixChoice} and {@link #renameChoice}
+ *       for discriminated-union migrations.</li>
+ *   <li><b>Recursive:</b> {@link #walkRecursive} for deep tree transformations.</li>
+ *   <li><b>Utility:</b> {@link #composite} and {@link #conditional} for
+ *       combining rules.</li>
  * </ul>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
- * // Rename a field in player data
+ * // Rename a field only on values of the player container type
  * TypeRewriteRule renameRule = Fixes.renameField(
- *     GsonOps.INSTANCE, "playerName", "name", playerType
- * );
+ *     GsonOps.INSTANCE, "playerName", "name", playerType);
  *
- * // Add a new field with default value
+ * // Add a new field with a default value; fieldType must be a concrete Type<A>
  * TypeRewriteRule addHealthRule = Fixes.addField(
- *     GsonOps.INSTANCE, "maxHealth", DSL.intType(), () -> 20, playerType
- * );
+ *     GsonOps.INSTANCE, "maxHealth", Type.INT, () -> 20, playerType);
  *
- * // Combine multiple fixes
+ * // Combine multiple fixes into a named composite
  * TypeRewriteRule composite = Fixes.composite("PlayerV1ToV2",
- *     renameRule, addHealthRule
- * );
+ *     renameRule, addHealthRule);
  *
- * // Apply the fix
+ * // Apply to a typed value
  * Typed<?> updated = composite.apply(typed);
  * }</pre>
  *
@@ -91,8 +100,6 @@ public final class Fixes {
     private Fixes() {
         // private constructor to prevent instantiation
     }
-
-    // ==================== Typed Fixes ====================
 
     /**
      * Creates a rule that transforms typed values of a specific type.
@@ -121,7 +128,7 @@ public final class Fixes {
      * @param rewrite    the function that transforms the typed value; must not be {@code null}
      * @return a type rewrite rule that applies the transformation to matching types; never {@code null}
      * @throws NullPointerException if any parameter is {@code null}
-     * @see #fixTypeEverywhere(String, Type, Function)
+     * @see #fixTypeEverywhere(String, DynamicOps, Type, Function)
      */
     @NotNull
     public static TypeRewriteRule fixTypeEverywhereTyped(@NotNull final String name,
@@ -134,6 +141,13 @@ public final class Fixes {
         Preconditions.checkNotNull(rewrite, "rewrite must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -146,7 +160,13 @@ public final class Fixes {
                 return Optional.of(rewrite.apply(input));
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }
@@ -156,22 +176,51 @@ public final class Fixes {
     /**
      * Creates a rule that transforms the dynamic representation of a type.
      *
-     * @param name    the fix name
-     * @param type    the type to transform
-     * @param rewrite the dynamic transformation function
-     * @return a type rewrite rule
+     * <p>This method creates a {@link TypeRewriteRule} that matches values of the specified
+     * type and transforms them by encoding to {@link Dynamic}, applying the rewrite function, and decoding back. The
+     * rule only matches types with the same {@link de.splatgames.aether.datafixers.api.TypeReference} as the target
+     * type.</p>
+     *
+     * <h4>Example</h4>
+     * <pre>{@code
+     * TypeRewriteRule rule = Fixes.fixTypeEverywhere(
+     *     "addTimestamp",
+     *     GsonOps.INSTANCE,
+     *     playerType,
+     *     dynamic -> dynamic.set("timestamp", dynamic.createLong(0L))
+     * );
+     * }</pre>
+     *
+     * @param <T>     the dynamic type
+     * @param name    the fix name; must not be {@code null}
+     * @param ops     the dynamic ops for encoding/decoding; must not be {@code null}
+     * @param type    the type to transform; must not be {@code null}
+     * @param rewrite the dynamic transformation function; must not be {@code null}
+     * @return a type rewrite rule; never {@code null}
+     * @throws NullPointerException if any parameter is {@code null}
+     * @see #fixTypeEverywhereTyped(String, Type, Type, Function)
      */
     @NotNull
-    public static TypeRewriteRule fixTypeEverywhere(@NotNull final String name,
-                                                    @NotNull final Type<?> type,
-                                                    @NotNull final Function<Dynamic<?>, Dynamic<?>> rewrite) {
+    public static <T> TypeRewriteRule fixTypeEverywhere(@NotNull final String name,
+                                                        @NotNull final DynamicOps<T> ops,
+                                                        @NotNull final Type<?> type,
+                                                        @NotNull final Function<Dynamic<?>, Dynamic<?>> rewrite) {
         Preconditions.checkNotNull(name, "name must not be null");
+        Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(rewrite, "rewrite must not be null");
 
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param inputType {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
+            @SuppressWarnings({"unchecked", "rawtypes"})
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
                                               @NotNull final Typed<?> input) {
                 Preconditions.checkNotNull(inputType, "inputType must not be null");
@@ -180,19 +229,25 @@ public final class Fixes {
                     return Optional.empty();
                 }
 
-                // We need to get DynamicOps from somewhere - this requires the caller to provide it
-                // For now, we'll use a simplified approach
-                return Optional.of(input);
+                final DataResult<Dynamic<T>> encodeResult = input.encode(ops);
+                return encodeResult.flatMap(dynamic -> {
+                    final Dynamic<?> transformed = rewrite.apply(dynamic);
+                    return ((Type) type).read(transformed);
+                }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }
         };
     }
-
-    // ==================== Field Operations ====================
 
     /**
      * Creates a rule that renames a field in the data.
@@ -259,6 +314,13 @@ public final class Fixes {
         Preconditions.checkNotNull(defaultValue, "defaultValue must not be null");
         Preconditions.checkNotNull(containerType, "containerType must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -284,7 +346,13 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) containerType, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return "addField(" + fieldName + ")";
             }
@@ -313,8 +381,6 @@ public final class Fixes {
         return Rules.transformField(ops, fieldName, transform).ifType(containerType);
     }
 
-    // ==================== Tagged Choice Operations ====================
-
     /**
      * Creates a rule that applies different fixes based on a tag value.
      *
@@ -335,6 +401,13 @@ public final class Fixes {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fixByTag, "fixByTag must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param inputType {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
@@ -365,7 +438,13 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return "fixChoice(" + tagField + ", " + fixByTag.keySet() + ")";
             }
@@ -395,6 +474,13 @@ public final class Fixes {
         Preconditions.checkNotNull(newTag, "newTag must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param inputType {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
             public @NotNull Optional<Typed<?>> rewrite(@NotNull final Type<?> inputType,
@@ -422,14 +508,18 @@ public final class Fixes {
                 }).map(newValue -> new Typed<>((Type) type, newValue)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return "renameChoice(" + tagField + ": " + oldTag + " -> " + newTag + ")";
             }
         };
     }
-
-    // ==================== Recursive Operations ====================
 
     /**
      * Creates a rule that walks a type recursively, applying a transformation.
@@ -449,8 +539,6 @@ public final class Fixes {
         Preconditions.checkNotNull(walker, "walker must not be null");
         return Rules.everywhere(TypeRewriteRule.forType(name, (Type) type, value -> walker.apply(new Typed<>((Type) type, value)).value()));
     }
-
-    // ==================== Utility ====================
 
     /**
      * Creates a composite fix from multiple rules.
@@ -483,6 +571,13 @@ public final class Fixes {
         Preconditions.checkNotNull(condition, "condition must not be null");
         Preconditions.checkNotNull(rule, "rule must not be null");
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public Optional<Typed<?>> rewrite(@NotNull final Type<?> type,
@@ -495,7 +590,13 @@ public final class Fixes {
                 return rule.rewrite(type, input);
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }

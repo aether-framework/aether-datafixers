@@ -32,6 +32,7 @@ import de.splatgames.aether.datafixers.api.dynamic.TaggedDynamic;
 import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.core.AetherDataFixer;
 import de.splatgames.aether.datafixers.core.bootstrap.DataFixerRuntimeFactory;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Complete example demonstrating the Aether Datafixers workflow.
@@ -65,7 +66,7 @@ public final class GameExample {
      *
      * @param args command line arguments (unused)
      */
-    public static void main(final String[] args) {
+    public static void main(@NotNull final String[] args) {
         printHeader("Aether Datafixers - Game Data Migration Example");
 
         // =====================================================================
@@ -210,6 +211,7 @@ public final class GameExample {
      *
      * @return V1.0.0 format player data
      */
+    @NotNull
     private static JsonObject createV1SaveData() {
         final JsonObject data = new JsonObject();
         data.addProperty("playerName", "Steve");
@@ -224,7 +226,7 @@ public final class GameExample {
     /**
      * Prints a section header.
      */
-    private static void printSection(final String title) {
+    private static void printSection(@NotNull final String title) {
         System.out.println("--------------------------------------------------");
         System.out.println(title);
         System.out.println("--------------------------------------------------");
@@ -234,7 +236,7 @@ public final class GameExample {
     /**
      * Prints a main header.
      */
-    private static void printHeader(final String title) {
+    private static void printHeader(@NotNull final String title) {
         System.out.println();
         System.out.println("==================================================");
         System.out.println("  " + title);
@@ -245,7 +247,7 @@ public final class GameExample {
     /**
      * Prints JSON with indentation.
      */
-    private static void printJson(final JsonElement json) {
+    private static void printJson(@NotNull final JsonElement json) {
         final String formatted = GSON.toJson(json);
         for (final String line : formatted.split("\n")) {
             System.out.println("  " + line);

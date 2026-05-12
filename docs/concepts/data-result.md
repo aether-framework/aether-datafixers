@@ -444,7 +444,7 @@ DataResult<String> displayName = loadPlayer(id)
 
 ## Related
 
-- [Dynamic System](dynamic-system.md) — Returns DataResult for operations
-- [Codec System](codec-system.md) — Encode/decode with DataResult
-- [Type System](type-system.md) — Type operations use DataResult
+- [Dynamic System](dynamic-system.md) - Returns DataResult for operations
+- [Codec System](codec-system.md) - Encode/decode with DataResult
+- [Type System](type-system.md) - Type operations use DataResult
 

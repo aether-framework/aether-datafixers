@@ -6,9 +6,9 @@ The `schematools.validation` package provides utilities for validating schema st
 
 Schema validation helps maintain quality and consistency:
 
-- **Structure Validation** — Detect cycles, version ordering issues, empty schemas
-- **Convention Checking** — Enforce naming patterns for types, fields, and classes
-- **Fix Coverage Validation** — Ensure all schema changes have corresponding fixes
+- **Structure Validation** - Detect cycles, version ordering issues, empty schemas
+- **Convention Checking** - Enforce naming patterns for types, fields, and classes
+- **Fix Coverage Validation** - Ensure all schema changes have corresponding fixes
 
 ## Core Components
 
@@ -427,16 +427,16 @@ class SchemaValidationTest {
 
 ## Best Practices
 
-1. **Run validation in CI** — Catch issues before they reach production
-2. **Start with RELAXED conventions** — Tighten rules gradually as the codebase matures
-3. **Use location context** — Helps identify exactly where issues occur
-4. **Treat coverage gaps as errors** — Missing migrations cause data loss
-5. **Document intentional deviations** — If you skip a convention, document why
+1. **Run validation in CI** - Catch issues before they reach production
+2. **Start with RELAXED conventions** - Tighten rules gradually as the codebase matures
+3. **Use location context** - Helps identify exactly where issues occur
+4. **Treat coverage gaps as errors** - Missing migrations cause data loss
+5. **Document intentional deviations** - If you skip a convention, document why
 
 ---
 
 ## Related
 
-- [Migration Analysis](migration-analysis.md) — Detailed coverage analysis
-- [Schema Diffing](schema-diffing.md) — Understanding schema changes
-- [Type Introspection](type-introspection.md) — How types are analyzed
+- [Migration Analysis](migration-analysis.md) - Detailed coverage analysis
+- [Schema Diffing](schema-diffing.md) - Understanding schema changes
+- [Type Introspection](type-introspection.md) - How types are analyzed

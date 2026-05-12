@@ -79,11 +79,9 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
      *
      * @param actual the Typed to assert on
      */
-    public TypedAssert(final Typed<A> actual) {
+    public TypedAssert(@NotNull final Typed<A> actual) {
         super(actual, TypedAssert.class);
     }
-
-    // ==================== Type Assertions ====================
 
     /**
      * Asserts that the Typed has the expected type.
@@ -146,8 +144,6 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
         return this;
     }
 
-    // ==================== Value Assertions ====================
-
     /**
      * Asserts that the Typed has the expected value.
      *
@@ -195,8 +191,6 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
         return this;
     }
 
-    // ==================== Encoding ====================
-
     /**
      * Encodes the Typed value and returns a DynamicAssert for further assertions.
      *
@@ -215,12 +209,17 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
     @NotNull
     public <T> DynamicAssert<T> encodedWith(@NotNull final DynamicOps<T> ops) {
         isNotNull();
-        final Dynamic<T> encoded = this.actual.encode(ops)
-                .getOrThrow(msg -> new AssertionError("Failed to encode Typed value: " + msg));
-        return new DynamicAssert<>(encoded);
+        try {
+            final Dynamic<T> encoded = this.actual.encode(ops)
+                    .getOrThrow(msg -> new AssertionError("Failed to encode Typed value: " + msg));
+            return new DynamicAssert<>(encoded);
+        } catch (final AssertionError e) {
+            throw e;
+        } catch (final Exception e) {
+            // Preserve the original exception stack trace as the cause
+            throw new AssertionError("Failed to encode Typed value: " + e.getMessage(), e);
+        }
     }
-
-    // ==================== Extraction ====================
 
     /**
      * Extracts the value for further assertions with standard AssertJ.
@@ -243,8 +242,6 @@ public final class TypedAssert<A> extends AbstractAssert<TypedAssert<A>, Typed<A
         isNotNull();
         return Assertions.assertThat(this.actual.type());
     }
-
-    // ==================== Utility ====================
 
     /**
      * Applies custom validation using a consumer.

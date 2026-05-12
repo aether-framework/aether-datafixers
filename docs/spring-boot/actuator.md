@@ -519,6 +519,6 @@ public class DataFixerEndpointExtension {
 
 ## Related Documentation
 
-- [Configuration Reference](configuration.md) — Actuator property settings
-- [Metrics Integration](metrics.md) — Micrometer metrics for dashboards
-- [Multi-Domain Setup](multi-domain.md) — Domain-specific health checks
+- [Configuration Reference](configuration.md) - Actuator property settings
+- [Metrics Integration](metrics.md) - Micrometer metrics for dashboards
+- [Multi-Domain Setup](multi-domain.md) - Domain-specific health checks

@@ -436,4 +436,4 @@ public class YamlFormatHandler implements FormatHandler<YamlNode> {
 
 ## Next Steps
 
-→ [Examples](examples.md) — See format handlers in real-world scenarios
+→ [Examples](examples.md) - See format handlers in real-world scenarios

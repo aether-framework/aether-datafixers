@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -36,8 +37,9 @@ import java.util.stream.Stream;
  * A fluent builder for creating {@link Dynamic} objects.
  *
  * <p>This builder provides a clean, readable API for constructing test data
- * without the boilerplate of manual JSON construction. It supports primitives,
- * nested objects, and lists through method chaining.</p>
+ * without the boilerplate of manual JSON construction. Each builder instance should only be used for a single
+ * {@link #build()} call — create a new instance for each Dynamic value. It supports primitives, nested objects, and
+ * lists through method chaining.</p>
  *
  * <h2>Basic Usage</h2>
  * <pre>{@code
@@ -86,8 +88,24 @@ import java.util.stream.Stream;
  */
 public final class TestDataBuilder<T> {
 
+    /**
+     * Internal state:
+     * <p>
+     *     <ul>
+     *         <li>{@code ops}: The DynamicOps used for creating values.</li>
+     *         <li>{@code fields}: A map of field names to their Dynamic values.</li>
+     *         <li>{@code isObjectMode}: A flag to ensure object() is called before adding fields.</li>
+     *     </ul>
+     * </p>
+     */
     private final DynamicOps<T> ops;
+    /**
+     * Using LinkedHashMap to preserve insertion order, which can be helpful for testing and readability
+     */
     private final Map<String, Dynamic<T>> fields;
+    /**
+     * Flag to track if object() was called, ensuring correct usage of the builder
+     */
     private boolean isObjectMode;
 
     /**
@@ -100,8 +118,6 @@ public final class TestDataBuilder<T> {
         this.fields = new LinkedHashMap<>();
         this.isObjectMode = false;
     }
-
-    // ==================== Entry Point ====================
 
     /**
      * Starts building an object (map) structure.
@@ -134,8 +150,6 @@ public final class TestDataBuilder<T> {
     public TestDataListBuilder<T> list() {
         return new TestDataListBuilder<>(this.ops);
     }
-
-    // ==================== Primitive Fields ====================
 
     /**
      * Adds a string field.
@@ -288,14 +302,12 @@ public final class TestDataBuilder<T> {
     public TestDataBuilder<T> put(@NotNull final String key, @NotNull final Dynamic<T> value) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
-        Preconditions.checkArgument(this.ops == value.ops(),
+        Preconditions.checkArgument(Objects.equals(this.ops, value.ops()),
                 "Dynamic uses different DynamicOps");
         this.ensureObjectMode();
         this.fields.put(key, value);
         return this;
     }
-
-    // ==================== Nested Object Fields ====================
 
     /**
      * Adds a nested object field using a builder consumer.
@@ -315,7 +327,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putObject(@NotNull final String key,
-                                         @NotNull final Consumer<TestDataBuilder<T>> nested) {
+                                        @NotNull final Consumer<TestDataBuilder<T>> nested) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(nested, "nested must not be null");
         this.ensureObjectMode();
@@ -325,8 +337,6 @@ public final class TestDataBuilder<T> {
         this.fields.put(key, nestedBuilder.build());
         return this;
     }
-
-    // ==================== List Fields ====================
 
     /**
      * Adds a list field using a builder consumer.
@@ -345,7 +355,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putList(@NotNull final String key,
-                                       @NotNull final Consumer<TestDataListBuilder<T>> list) {
+                                      @NotNull final Consumer<TestDataListBuilder<T>> list) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(list, "list must not be null");
         this.ensureObjectMode();
@@ -367,7 +377,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putStrings(@NotNull final String key,
-                                          @NotNull final String... values) {
+                                         @NotNull final String... values) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(values, "values must not be null");
         this.ensureObjectMode();
@@ -393,7 +403,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putInts(@NotNull final String key,
-                                       final int... values) {
+                                      final int... values) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(values, "values must not be null");
         this.ensureObjectMode();
@@ -417,7 +427,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putLongs(@NotNull final String key,
-                                        final long... values) {
+                                       final long... values) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(values, "values must not be null");
         this.ensureObjectMode();
@@ -441,7 +451,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putDoubles(@NotNull final String key,
-                                          final double... values) {
+                                         final double... values) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(values, "values must not be null");
         this.ensureObjectMode();
@@ -465,7 +475,7 @@ public final class TestDataBuilder<T> {
      */
     @NotNull
     public TestDataBuilder<T> putBooleans(@NotNull final String key,
-                                           final boolean... values) {
+                                          final boolean... values) {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(values, "values must not be null");
         this.ensureObjectMode();
@@ -478,8 +488,6 @@ public final class TestDataBuilder<T> {
         this.fields.put(key, new Dynamic<>(this.ops, list));
         return this;
     }
-
-    // ==================== Quick Primitives (Direct Return) ====================
 
     /**
      * Creates a string {@link Dynamic} directly.
@@ -558,8 +566,6 @@ public final class TestDataBuilder<T> {
         return new Dynamic<>(this.ops, this.ops.emptyList());
     }
 
-    // ==================== Build ====================
-
     /**
      * Builds the {@link Dynamic} object from the configured fields.
      *
@@ -580,8 +586,6 @@ public final class TestDataBuilder<T> {
         }
         return result;
     }
-
-    // ==================== Internal ====================
 
     /**
      * Returns the DynamicOps used by this builder.

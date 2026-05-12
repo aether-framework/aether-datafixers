@@ -6,6 +6,108 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.0-rc.1] - 2026-05-12
+
+### Release Candidate
+
+First **release candidate** for the upcoming 1.0.0 GA. The public API has been frozen since v0.5.0 and is now hardened with field-level diagnostics, pervasive null-safety annotations, modernized Javadoc, and a stress / chaos testing framework. Deprecated APIs announced in v0.5.0 have been removed.
+
+### Breaking Changes
+
+The deprecated wrappers announced in v0.5.0 have been **removed**:
+
+| Removed                                                           | Replacement                                                                                                          |
+|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `de.splatgames.aether.datafixers.codec.gson.GsonOps`              | `de.splatgames.aether.datafixers.codec.json.gson.GsonOps`                                                            |
+| `de.splatgames.aether.datafixers.codec.jackson.JacksonOps`        | `codec.json.jackson.JacksonJsonOps` (JSON) or the format-specific classes (`JacksonYamlOps`, `JacksonTomlOps`, `JacksonXmlOps`) |
+| `TestData.jackson()`                                              | `TestData.jacksonJson()`                                                                                             |
+
+All other public API is source-compatible with v0.5.0.
+
+### Added
+
+#### Field-Level Diagnostics (`aether-datafixers-api`, `aether-datafixers-core`)
+
+- New `FieldOperation` record capturing structured per-field metadata (type, field name, operation type, type reference)
+- New `FieldOperationType` enum (`RENAME`, `ADD`, `REMOVE`, `TRANSFORM`, ...)
+- New `FieldAwareRule` marker interface implemented by every field operation in `Rules`
+- Field metadata propagates through `seq`, `seqAll`, `choice`, `batch`, `topDown`, and `bottomUp` combinators
+- `MigrationReport` and `FixExecution` expose field operations per executed rule
+- CLI `--diagnostics` flag emits field-level details in text and JSON reports
+- Spring Boot Actuator `/actuator/datafixers` endpoint reports field operations per execution
+- Static field-level coverage analysis available via `MigrationAnalyzer`
+
+#### JMH Benchmark Suite (`aether-datafixers-benchmarks`)
+
+- New module with reproducible JMH benchmarks for the core migration paths
+- Shaded benchmark JAR built via `mvn package`; run via `./run-benchmarks.sh`
+- Baseline results committed under `benchmark-results/`
+
+#### Stress & Chaos Tests (`aether-datafixers-functional-tests`)
+
+- `HighConcurrencyMigrationStressIT` — 100+ concurrent migration threads
+- `SustainedLoadMigrationStressIT` — minutes-long sustained throughput
+- `MixedRegistryAccessStressIT` — concurrent registry read/write workloads
+- `MemoryPressureStressIT` — GC pressure and memory-leak detection
+- `RandomDelaysChaosIT` — random delays injected into fix execution
+- `RandomFailuresChaosIT` — random failure injection in fix execution
+- Reusable harness: `StressTestConfig`, `StressTestMetrics`, `ThreadOrchestrator`, `ChaosInjector`, `FailingDataFix`
+
+#### Documentation
+
+- Migration guide `docs/migration/v0.5-to-v1.0.md` covering breaking changes, automated migration patterns, and troubleshooting
+- Operational documentation under `docs/operations/` (debugging guide, error scenarios, monitoring & alerting, recovery procedures)
+- Expanded `Rules` Javadoc with comprehensive field-aware API documentation
+- Field-level diagnostics documentation and examples
+
+#### Project Hygiene
+
+- `DCO` file added; PRs now sign off under the Developer Certificate of Origin
+- `CONTRIBUTORS.md` added to recognize project contributors
+- `AI_USAGE.md` added documenting AI usage guidelines
+- Hardened devcontainer for Java / Python / Claude Code sandboxing
+- Aether Style Guard integrated into PR and push CI workflows; opt-in `styleguard` profile wired up on every module
+- Automated PR retargeting from `main` to `develop` via GitHub workflow
+- Dependabot configured to target `develop` directly
+
+### Changed
+
+- Comprehensive Javadoc modernization across every module for 1.0.0 readiness
+- Pervasive `@NotNull` / `@Nullable` annotations applied across the public API and internals
+- `MigrationResult` now implements `equals` / `hashCode`
+- `Finder.index()` validates non-negative indices at construction (throws `IllegalArgumentException`)
+- `Typed.encodeAndGet` now returns `DataResult` with structured error reporting for missing paths
+- Stricter state validation in migration and fix handling
+- CLI command descriptions refined; error classification improved
+- `DataFixerRuntimeFactory` now logs schema registration via SLF4J
+- `SchemaValidator` dynamically determines max schema version with stricter error handling
+- `fixTypeEverywhere` simplified by directly returning `Optional` from `DataResult#result`
+
+### Fixed
+
+- 100+ targeted bug fixes across `aether-datafixers-api`, `-codec`, `-core`, `-cli`, `-testkit`, `-schema-tools`, and `-spring-boot-starter` (see merged bugfix batches in PRs #223–#274)
+- `Type.equals` no longer treats objects with same `ref`/`describe` but different `codec` as equal
+- `Finder.index()` rejects negative indices at construction
+- Robustness of dynamic key extraction in `Rules` improved (null checks, streamlined `asString` handling)
+- Javadoc typos in `TypeDiff`, `DataVersion`, optics, and format classes corrected
+- `RandomFailuresChaosIT` updated to handle `FixException` instead of `ChaosException`
+- `DataFixerEndpointTest` now uses a real `FixExecution` record instead of mocks
+
+### Removed
+
+- Deprecated `de.splatgames.aether.datafixers.codec.gson.GsonOps` wrapper class
+- Deprecated `de.splatgames.aether.datafixers.codec.jackson.JacksonOps` wrapper class
+- Deprecated `TestData.jackson()` factory method
+- Unused `compose` method from reversed `Iso` implementation
+- Unnecessary checked exceptions from `ConventionRules.Builder` and `DiagnosticOptions.Builder` constructors
+
+### Documentation Index
+
+- See [Documentation Changelog](docs/appendix/changelog.md) for documentation-specific changes
+- See [Migration Guide](docs/migration/v0.5-to-v1.0.md) for the v0.5.x → 1.0.0 upgrade walkthrough
+
+---
+
 ## [0.5.0] - 2026-01-16
 
 ### API Freeze
@@ -18,10 +120,10 @@ This release marks the **API freeze** for Aether Datafixers. The public API is n
 
 The `SchemaValidator.validateFixCoverage()` method now performs actual coverage analysis using `MigrationAnalyzer`:
 
-- **Full MigrationAnalyzer integration** — Detects missing DataFixes for schema changes
-- **Automatic version range detection** — Scans the entire schema registry to determine version bounds
-- **Field-level coverage gaps** — Reports issues for added, removed, or modified fields without fixes
-- **Detailed context** — Issues include type, field name, version range, and gap reason
+- **Full MigrationAnalyzer integration** - Detects missing DataFixes for schema changes
+- **Automatic version range detection** - Scans the entire schema registry to determine version bounds
+- **Field-level coverage gaps** - Reports issues for added, removed, or modified fields without fixes
+- **Detailed context** - Issues include type, field name, version range, and gap reason
 
 **Usage:**
 ```java
@@ -39,9 +141,9 @@ for (ValidationIssue issue : result.warnings()) {
 
 The Spring Boot `MigrationService` now fully supports custom `DynamicOps` for format conversion:
 
-- **Format conversion during migration** — Convert input data to specified format before migration
-- **Seamless API integration** — Works with the existing fluent builder API
-- **All formats supported** — Gson, Jackson JSON, YAML (both), TOML, and XML
+- **Format conversion during migration** - Convert input data to specified format before migration
+- **Seamless API integration** - Works with the existing fluent builder API
+- **All formats supported** - Gson, Jackson JSON, YAML (both), TOML, and XML
 
 **Usage:**
 ```java
@@ -61,9 +163,9 @@ Dynamic<JsonNode> yamlResult = (Dynamic<JsonNode>) result.getData();
 
 New module with comprehensive end-to-end and integration tests:
 
-- **Cross-format migration tests** — Verify migrations work identically across all DynamicOps implementations
-- **Error recovery tests** — Test graceful handling of malformed data and fix failures
-- **Field transformation E2E tests** — Validate rename, add, remove, and group operations
+- **Cross-format migration tests** - Verify migrations work identically across all DynamicOps implementations
+- **Error recovery tests** - Test graceful handling of malformed data and fix failures
+- **Field transformation E2E tests** - Validate rename, add, remove, and group operations
 
 **Running:**
 ```bash
@@ -75,14 +177,14 @@ mvn verify -Pit
 Extended the CLI with four new built-in format handlers:
 
 **YAML Support:**
-- `YamlSnakeYamlFormatHandler` — Format ID `yaml-snakeyaml`, uses SnakeYAML with native Java types
-- `YamlJacksonFormatHandler` — Format ID `yaml-jackson`, uses Jackson YAML with JsonNode
+- `YamlSnakeYamlFormatHandler` - Format ID `yaml-snakeyaml`, uses SnakeYAML with native Java types
+- `YamlJacksonFormatHandler` - Format ID `yaml-jackson`, uses Jackson YAML with JsonNode
 
 **TOML Support:**
-- `TomlJacksonFormatHandler` — Format ID `toml-jackson`, uses Jackson TOML with JsonNode
+- `TomlJacksonFormatHandler` - Format ID `toml-jackson`, uses Jackson TOML with JsonNode
 
 **XML Support:**
-- `XmlJacksonFormatHandler` — Format ID `xml-jackson`, uses Jackson XML with JsonNode
+- `XmlJacksonFormatHandler` - Format ID `xml-jackson`, uses Jackson XML with JsonNode
 
 **Usage Examples:**
 ```bash
@@ -171,10 +273,10 @@ Dynamic<JsonNode> xmlData = TestData.jacksonXml().object()
 
 Added test classes for all new format handlers with full coverage:
 
-- `YamlSnakeYamlFormatHandlerTest` — 21 tests for SnakeYAML handler
-- `YamlJacksonFormatHandlerTest` — 20 tests for Jackson YAML handler
-- `TomlJacksonFormatHandlerTest` — 19 tests for Jackson TOML handler
-- `XmlJacksonFormatHandlerTest` — 20 tests for Jackson XML handler
+- `YamlSnakeYamlFormatHandlerTest` - 21 tests for SnakeYAML handler
+- `YamlJacksonFormatHandlerTest` - 20 tests for Jackson YAML handler
+- `TomlJacksonFormatHandlerTest` - 19 tests for Jackson TOML handler
+- `XmlJacksonFormatHandlerTest` - 20 tests for Jackson XML handler
 
 Tests cover parsing, serialization, error handling, and round-trip consistency.
 
@@ -239,15 +341,15 @@ de.splatgames.aether.datafixers.codec.xml.jackson.JacksonXmlOps
 New DynamicOps implementations for YAML, TOML, and XML formats:
 
 **YAML Support:**
-- `SnakeYamlOps` — Uses native Java types (`Map`, `List`, primitives) via SnakeYAML 2.x
-- `JacksonYamlOps` — Uses `JsonNode` via Jackson YAML dataformat module
+- `SnakeYamlOps` - Uses native Java types (`Map`, `List`, primitives) via SnakeYAML 2.x
+- `JacksonYamlOps` - Uses `JsonNode` via Jackson YAML dataformat module
 
 **TOML Support:**
-- `JacksonTomlOps` — Uses `JsonNode` via Jackson TOML dataformat module
+- `JacksonTomlOps` - Uses `JsonNode` via Jackson TOML dataformat module
 - Note: TOML requires top-level tables and doesn't support null values
 
 **XML Support:**
-- `JacksonXmlOps` — Uses `JsonNode` via Jackson XML dataformat module
+- `JacksonXmlOps` - Uses `JsonNode` via Jackson XML dataformat module
 - Note: XML requires a root element and has different structural semantics
 
 **New Dependencies (all optional):**
@@ -280,32 +382,32 @@ New DynamicOps implementations for YAML, TOML, and XML formats:
 New module providing seamless Spring Boot integration with auto-configuration, fluent migration API, and observability features.
 
 **Auto-Configuration (`spring.autoconfigure`):**
-- `AetherDataFixersAutoConfiguration` — Main entry point coordinating all sub-configurations
-- `DynamicOpsAutoConfiguration` — Auto-configures `GsonOps` and `JacksonOps` beans based on classpath
-- `DataFixerAutoConfiguration` — Creates `AetherDataFixer` beans from `DataFixerBootstrap` definitions
-- `MigrationServiceAutoConfiguration` — Configures the `MigrationService` with metrics integration
-- `ActuatorAutoConfiguration` — Configures health indicators, info contributors, and custom endpoints
+- `AetherDataFixersAutoConfiguration` - Main entry point coordinating all sub-configurations
+- `DynamicOpsAutoConfiguration` - Auto-configures `GsonOps` and `JacksonOps` beans based on classpath
+- `DataFixerAutoConfiguration` - Creates `AetherDataFixer` beans from `DataFixerBootstrap` definitions
+- `MigrationServiceAutoConfiguration` - Configures the `MigrationService` with metrics integration
+- `ActuatorAutoConfiguration` - Configures health indicators, info contributors, and custom endpoints
 - Conditional activation via `aether.datafixers.enabled` property (default: `true`)
 - Version resolution from properties, bootstrap `CURRENT_VERSION` constant, or global default
 
 **Configuration Properties (`spring.config`):**
-- `AetherDataFixersProperties` — Root configuration with `aether.datafixers.*` prefix
-- `DataFixerDomainProperties` — Per-domain configuration (version, primary, description)
-- `DynamicOpsFormat` — Enum for selecting default serialization format:
-  - `GSON` — JSON via Google Gson
-  - `JACKSON` — JSON via Jackson Databind
-  - `JACKSON_YAML` — YAML via Jackson dataformat
-  - `SNAKEYAML` — YAML via SnakeYAML (native Java types)
-  - `JACKSON_TOML` — TOML via Jackson dataformat
-  - `JACKSON_XML` — XML via Jackson dataformat
-- `ActuatorProperties` — Control schema/fix detail exposure in actuator responses
-- `MetricsProperties` — Configure timing, counting, and domain tag name
+- `AetherDataFixersProperties` - Root configuration with `aether.datafixers.*` prefix
+- `DataFixerDomainProperties` - Per-domain configuration (version, primary, description)
+- `DynamicOpsFormat` - Enum for selecting default serialization format:
+  - `GSON` - JSON via Google Gson
+  - `JACKSON` - JSON via Jackson Databind
+  - `JACKSON_YAML` - YAML via Jackson dataformat
+  - `SNAKEYAML` - YAML via SnakeYAML (native Java types)
+  - `JACKSON_TOML` - TOML via Jackson dataformat
+  - `JACKSON_XML` - XML via Jackson dataformat
+- `ActuatorProperties` - Control schema/fix detail exposure in actuator responses
+- `MetricsProperties` - Configure timing, counting, and domain tag name
 
 **Migration Service (`spring.service`):**
-- `MigrationService` — High-level interface with fluent builder API
-- `MigrationService.MigrationRequestBuilder` — Builder for configuring migrations
-- `DefaultMigrationService` — Thread-safe implementation with metrics integration
-- `MigrationResult` — Immutable result object with success/failure, data, versions, duration, error
+- `MigrationService` - High-level interface with fluent builder API
+- `MigrationService.MigrationRequestBuilder` - Builder for configuring migrations
+- `DefaultMigrationService` - Thread-safe implementation with metrics integration
+- `MigrationResult` - Immutable result object with success/failure, data, versions, duration, error
 - Fluent API: `.migrate(data).from(version).to(version).execute()`
 - Domain selection: `.usingDomain("game")` for multi-domain setups
 - Latest version resolution: `.toLatest()` resolves at execution time
@@ -313,26 +415,26 @@ New module providing seamless Spring Boot integration with auto-configuration, f
 - Custom DynamicOps: `.withOps(ops)` for custom serialization
 
 **Multi-Domain Support (`spring.autoconfigure`):**
-- `DataFixerRegistry` — Thread-safe registry for managing multiple DataFixer instances
+- `DataFixerRegistry` - Thread-safe registry for managing multiple DataFixer instances
 - Support for `@Qualifier` annotated bootstrap beans
 - `createQualifiedFixer()` factory method for domain-specific DataFixer creation
 - Domain availability checking via `hasDomain()` and `getAvailableDomains()`
 - Default domain ("default") for single-bootstrap setups
 
 **Actuator Integration (`spring.actuator`):**
-- `DataFixerHealthIndicator` — Reports UP/DOWN/UNKNOWN based on DataFixer operational status
-- `DataFixerInfoContributor` — Adds `aether-datafixers` section to `/actuator/info`
-- `DataFixerEndpoint` — Custom endpoint at `/actuator/datafixers` with domain details
+- `DataFixerHealthIndicator` - Reports UP/DOWN/UNKNOWN based on DataFixer operational status
+- `DataFixerInfoContributor` - Adds `aether-datafixers` section to `/actuator/info`
+- `DataFixerEndpoint` - Custom endpoint at `/actuator/datafixers` with domain details
 - Per-domain health status and version information
 - Domain-specific endpoint: `/actuator/datafixers/{domain}`
 - Fail-fast on first domain error with detailed error message
 
 **Micrometer Metrics (`spring.metrics`):**
-- `MigrationMetrics` — Records migration metrics using Micrometer
-- `aether.datafixers.migrations.success` — Counter for successful migrations (tagged by domain)
-- `aether.datafixers.migrations.failure` — Counter for failed migrations (tagged by domain, error_type)
-- `aether.datafixers.migrations.duration` — Timer for migration execution time
-- `aether.datafixers.migrations.version.span` — Distribution summary of version spans
+- `MigrationMetrics` - Records migration metrics using Micrometer
+- `aether.datafixers.migrations.success` - Counter for successful migrations (tagged by domain)
+- `aether.datafixers.migrations.failure` - Counter for failed migrations (tagged by domain, error_type)
+- `aether.datafixers.migrations.duration` - Timer for migration execution time
+- `aether.datafixers.migrations.version.span` - Distribution summary of version spans
 - Automatic metric recording in `DefaultMigrationService`
 - Thread-safe meter caching per domain
 
@@ -340,11 +442,11 @@ New module providing seamless Spring Boot integration with auto-configuration, f
 
 #### Codec Formats Documentation
 - Added new `docs/codec/` section with comprehensive format documentation
-- [Codec Overview](docs/codec/index.md) — Format comparison, package structure, dependency guide
-- [JSON Support](docs/codec/json.md) — GsonOps and JacksonJsonOps usage, examples, comparison
-- [YAML Support](docs/codec/yaml.md) — SnakeYamlOps and JacksonYamlOps usage, examples, comparison
-- [TOML Support](docs/codec/toml.md) — JacksonTomlOps usage, configuration file examples
-- [XML Support](docs/codec/xml.md) — JacksonXmlOps usage, XML-to-JsonNode mapping
+- [Codec Overview](docs/codec/index.md) - Format comparison, package structure, dependency guide
+- [JSON Support](docs/codec/json.md) - GsonOps and JacksonJsonOps usage, examples, comparison
+- [YAML Support](docs/codec/yaml.md) - SnakeYamlOps and JacksonYamlOps usage, examples, comparison
+- [TOML Support](docs/codec/toml.md) - JacksonTomlOps usage, configuration file examples
+- [XML Support](docs/codec/xml.md) - JacksonXmlOps usage, XML-to-JsonNode mapping
 - Updated [Dynamic System](docs/concepts/dynamic-system.md) with all DynamicOps implementations table
 - Updated [Codec System](docs/concepts/codec-system.md) with links to format-specific docs
 - Updated [How-To Index](docs/how-to/index.md) with Format Integration section
@@ -371,41 +473,41 @@ New module providing seamless Spring Boot integration with auto-configuration, f
 New module for schema analysis, validation, and migration coverage checking.
 
 **Schema Diffing (`schematools.diff`):**
-- `SchemaDiffer` — Fluent API for comparing two schemas
-- `SchemaDiff` — Immutable result with added/removed/common types
-- `TypeDiff` — Field-level changes for types present in both schemas
-- `FieldDiff` — Individual field change (ADDED, REMOVED, MODIFIED, UNCHANGED)
-- `DiffKind` — Enumeration of change types
+- `SchemaDiffer` - Fluent API for comparing two schemas
+- `SchemaDiff` - Immutable result with added/removed/common types
+- `TypeDiff` - Field-level changes for types present in both schemas
+- `FieldDiff` - Individual field change (ADDED, REMOVED, MODIFIED, UNCHANGED)
+- `DiffKind` - Enumeration of change types
 - Optional field-level diffing via `includeFieldLevel(true)`
 - Type filtering via `ignoreTypes(...)`
 
 **Migration Analysis (`schematools.analysis`):**
-- `MigrationAnalyzer` — Fluent API for analyzing migration paths
-- `MigrationPath` — Complete migration sequence with all steps
-- `MigrationStep` — Single version transition with optional DataFix and SchemaDiff
-- `FixCoverage` — Analysis result showing fix coverage for schema changes
-- `CoverageGap` — Represents a schema change without corresponding DataFix
+- `MigrationAnalyzer` - Fluent API for analyzing migration paths
+- `MigrationPath` - Complete migration sequence with all steps
+- `MigrationStep` - Single version transition with optional DataFix and SchemaDiff
+- `FixCoverage` - Analysis result showing fix coverage for schema changes
+- `CoverageGap` - Represents a schema change without corresponding DataFix
 - Coverage gap reasons: TYPE_ADDED, TYPE_REMOVED, TYPE_MODIFIED, FIELD_ADDED, FIELD_REMOVED, FIELD_TYPE_CHANGED
 - Orphan fix detection (fixes without schema changes)
 
 **Schema Validation (`schematools.validation`):**
-- `SchemaValidator` — Fluent API for validating schemas
-- `ValidationResult` — Immutable collection of validation issues
-- `ValidationIssue` — Single issue with severity, code, message, location, context
-- `IssueSeverity` — ERROR, WARNING, INFO levels
-- `StructureValidator` — Validates schema structure (cycles, version ordering, parent chains)
-- `ConventionChecker` — Validates naming conventions for types, fields, classes
-- `ConventionRules` — Configurable naming rules (STRICT, RELAXED, NONE, or custom)
+- `SchemaValidator` - Fluent API for validating schemas
+- `ValidationResult` - Immutable collection of validation issues
+- `ValidationIssue` - Single issue with severity, code, message, location, context
+- `IssueSeverity` - ERROR, WARNING, INFO levels
+- `StructureValidator` - Validates schema structure (cycles, version ordering, parent chains)
+- `ConventionChecker` - Validates naming conventions for types, fields, classes
+- `ConventionRules` - Configurable naming rules (STRICT, RELAXED, NONE, or custom)
 - Schema class prefix/suffix validation (e.g., "Schema" prefix for Schema100, Schema200)
 - Fix class prefix/suffix validation (e.g., "Fix" suffix for PlayerNameFix)
 - Predefined patterns for snake_case, camelCase
 - Custom validators via `customTypeValidator()` and `customFieldValidator()`
 
 **Type Introspection (`schematools.introspection`):**
-- `TypeIntrospector` — Utility for analyzing type structures
-- `TypeStructure` — Normalized, comparable representation of a Type
-- `FieldInfo` — Field metadata (name, path, optionality, type)
-- `TypeKind` — Classification (PRIMITIVE, LIST, OPTIONAL, PRODUCT, SUM, FIELD, etc.)
+- `TypeIntrospector` - Utility for analyzing type structures
+- `TypeStructure` - Normalized, comparable representation of a Type
+- `FieldInfo` - Field metadata (name, path, optionality, type)
+- `TypeKind` - Classification (PRIMITIVE, LIST, OPTIONAL, PRODUCT, SUM, FIELD, etc.)
 - Recursive field extraction with hierarchical paths
 - Structural equality comparison
 
@@ -414,9 +516,9 @@ New module for schema analysis, validation, and migration coverage checking.
 New command-line interface for data migration without writing Java code.
 
 **Commands:**
-- `migrate` — Migrate data files from one schema version to another
-- `validate` — Check if files need migration without modifying them
-- `info` — Display version info, available formats, and bootstrap details
+- `migrate` - Migrate data files from one schema version to another
+- `validate` - Check if files need migration without modifying them
+- `info` - Display version info, available formats, and bootstrap details
 
 **Core Features:**
 - Batch processing of multiple files with shell glob expansion
@@ -430,21 +532,21 @@ New command-line interface for data migration without writing Java code.
 - CI/CD friendly exit codes (0=success, 1=error, 2=migration needed)
 
 **Format Handler System:**
-- `FormatHandler<T>` — SPI for pluggable serialization formats
-- `FormatRegistry` — ServiceLoader-based handler discovery
-- `json-gson` — JSON format using Google Gson (default)
-- `json-jackson` — JSON format using Jackson Databind
+- `FormatHandler<T>` - SPI for pluggable serialization formats
+- `FormatRegistry` - ServiceLoader-based handler discovery
+- `json-gson` - JSON format using Google Gson (default)
+- `json-jackson` - JSON format using Jackson Databind
 
 **Utilities:**
-- `BootstrapLoader` — Reflective loading of DataFixerBootstrap implementations
-- `VersionExtractor` — Extract version from nested JSON paths (dot notation)
-- `ReportFormatter` — Text and JSON migration report formatting
-- `TextReportFormatter` — Human-readable single-line reports
-- `JsonReportFormatter` — Machine-readable JSON reports
+- `BootstrapLoader` - Reflective loading of DataFixerBootstrap implementations
+- `VersionExtractor` - Extract version from nested JSON paths (dot notation)
+- `ReportFormatter` - Text and JSON migration report formatting
+- `TextReportFormatter` - Human-readable single-line reports
+- `JsonReportFormatter` - Machine-readable JSON reports
 
 **Exceptions:**
-- `BootstrapLoadException` — Bootstrap class loading failures
-- `FormatParseException` — Input parsing failures
+- `BootstrapLoadException` - Bootstrap class loading failures
+- `FormatParseException` - Input parsing failures
 
 ### Documentation
 
@@ -460,44 +562,44 @@ New command-line interface for data migration without writing Java code.
 ### Added
 
 #### Testkit Module (`aether-datafixers-testkit`)
-- **TestData** — Fluent builders for creating test data (`TestData.gson().object()...`)
-- **AetherAssertions** — Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed`
-- **DataFixTester** — Test harness for isolated DataFix testing with fluent API
-- **MigrationTester** — Test harness for full migration chain testing
-- **SchemaTester** — Test harness for schema validation
-- **QuickFix** — Factory methods for common fix patterns (rename, add, remove, transform)
-- **MockSchemas** — Mock schema utilities for testing
-- **RecordingContext** — Context that records warnings for test verification
+- **TestData** - Fluent builders for creating test data (`TestData.gson().object()...`)
+- **AetherAssertions** - Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed`
+- **DataFixTester** - Test harness for isolated DataFix testing with fluent API
+- **MigrationTester** - Test harness for full migration chain testing
+- **SchemaTester** - Test harness for schema validation
+- **QuickFix** - Factory methods for common fix patterns (rename, add, remove, transform)
+- **MockSchemas** - Mock schema utilities for testing
+- **RecordingContext** - Context that records warnings for test verification
 
 #### Migration Diagnostics
-- **DiagnosticContext** — Opt-in diagnostic context for capturing migration reports
-- **DiagnosticOptions** — Configurable options (snapshots, rule details, pretty print)
-- **MigrationReport** — Structured report with timing, applied fixes, and touched types
-- **FixExecution** — Per-fix execution details with before/after snapshots
-- **RuleApplication** — Per-rule application details
+- **DiagnosticContext** - Opt-in diagnostic context for capturing migration reports
+- **DiagnosticOptions** - Configurable options (snapshots, rule details, pretty print)
+- **MigrationReport** - Structured report with timing, applied fixes, and touched types
+- **FixExecution** - Per-fix execution details with before/after snapshots
+- **RuleApplication** - Per-rule application details
 
 #### Extended Rewrite Rules
-- `Rules.renameFields(ops, map)` — Batch rename multiple fields
-- `Rules.removeFields(ops, fields...)` — Batch remove multiple fields
-- `Rules.groupFields(ops, target, fields...)` — Group flat fields into nested object
-- `Rules.flattenField(ops, field)` — Flatten nested object to root level
-- `Rules.moveField(ops, source, target)` — Move field between paths
-- `Rules.copyField(ops, source, target)` — Copy field to new location
-- `Rules.transformFieldAt(ops, path, fn)` — Transform at nested path
-- `Rules.renameFieldAt(ops, path, newName)` — Rename at nested path
-- `Rules.removeFieldAt(ops, path)` — Remove at nested path
-- `Rules.addFieldAt(ops, path, value)` — Add at nested path
-- `Rules.ifFieldExists(ops, field, rule)` — Conditional on field existence
-- `Rules.ifFieldMissing(ops, field, rule)` — Conditional on field absence
-- `Rules.ifFieldEquals(ops, field, value, rule)` — Conditional on field value
+- `Rules.renameFields(ops, map)` - Batch rename multiple fields
+- `Rules.removeFields(ops, fields...)` - Batch remove multiple fields
+- `Rules.groupFields(ops, target, fields...)` - Group flat fields into nested object
+- `Rules.flattenField(ops, field)` - Flatten nested object to root level
+- `Rules.moveField(ops, source, target)` - Move field between paths
+- `Rules.copyField(ops, source, target)` - Copy field to new location
+- `Rules.transformFieldAt(ops, path, fn)` - Transform at nested path
+- `Rules.renameFieldAt(ops, path, newName)` - Rename at nested path
+- `Rules.removeFieldAt(ops, path)` - Remove at nested path
+- `Rules.addFieldAt(ops, path, value)` - Add at nested path
+- `Rules.ifFieldExists(ops, field, rule)` - Conditional on field existence
+- `Rules.ifFieldMissing(ops, field, rule)` - Conditional on field absence
+- `Rules.ifFieldEquals(ops, field, value, rule)` - Conditional on field value
 
 #### High-Performance APIs
-- **BatchTransform** — Builder for batching multiple field operations
-- `Rules.batch(ops, builder)` — Apply multiple operations in single encode/decode cycle
-- `Rules.conditionalTransform(ops, predicate, transform)` — Single-pass conditional transform
-- `Rules.ifFieldExists(ops, field, transform)` — Single-pass version (Function overload)
-- `Rules.ifFieldMissing(ops, field, transform)` — Single-pass version (Function overload)
-- `Rules.ifFieldEquals(ops, field, value, transform)` — Single-pass version (Function overload)
+- **BatchTransform** - Builder for batching multiple field operations
+- `Rules.batch(ops, builder)` - Apply multiple operations in single encode/decode cycle
+- `Rules.conditionalTransform(ops, predicate, transform)` - Single-pass conditional transform
+- `Rules.ifFieldExists(ops, field, transform)` - Single-pass version (Function overload)
+- `Rules.ifFieldMissing(ops, field, transform)` - Single-pass version (Function overload)
+- `Rules.ifFieldEquals(ops, field, value, transform)` - Single-pass version (Function overload)
 
 ### Changed
 

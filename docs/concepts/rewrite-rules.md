@@ -143,7 +143,7 @@ Rules.seq(
 )
 ```
 
-**Order matters** — later rules see the result of earlier rules:
+**Order matters** - later rules see the result of earlier rules:
 
 ```java
 // Correct: rename first, then transform
@@ -633,7 +633,7 @@ void testGameModeConversion() {
 
 ## Related
 
-- [DataFix System](datafix-system.md) — Where rules are used
-- [Dynamic System](dynamic-system.md) — Data manipulation
-- [Schema System](schema-system.md) — Input/output schemas
+- [DataFix System](datafix-system.md) - Where rules are used
+- [Dynamic System](dynamic-system.md) - Data manipulation
+- [Schema System](schema-system.md) - Input/output schemas
 

@@ -278,7 +278,7 @@ public class StatisticsCollector {
    log.debug("Data: {}", () -> serializeForLogging(data));
    ```
 
-4. **Consider log volume** — migrations may process millions of records
+4. **Consider log volume** - migrations may process millions of records
 
 ## Related
 

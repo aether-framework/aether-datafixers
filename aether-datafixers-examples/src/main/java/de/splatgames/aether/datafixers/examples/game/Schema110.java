@@ -78,12 +78,18 @@ public class Schema110 extends Schema {
         super(110, new Schema100());  // Extends from V1.0.0
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     protected TypeRegistry createTypeRegistry() {
         return new SimpleTypeRegistry();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void registerTypes() {
         // Register PLAYER type with passthrough codec

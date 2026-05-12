@@ -8,11 +8,11 @@ Practical examples demonstrating Aether Datafixers in real-world scenarios.
 
 A comprehensive example showing player data migration across multiple versions:
 
-- [TypeReferences Pattern](game-data-example/type-references.md) — Centralized type identifiers
-- [Schema Classes](game-data-example/schemas.md) — Version-specific type definitions
-- [DataFix Implementations](game-data-example/fixes.md) — Migration logic
-- [Bootstrap Creation](game-data-example/bootstrap.md) — Wiring it all together
-- [Complete Example](game-data-example/complete-example.md) — Full working code
+- [TypeReferences Pattern](game-data-example/type-references.md) - Centralized type identifiers
+- [Schema Classes](game-data-example/schemas.md) - Version-specific type definitions
+- [DataFix Implementations](game-data-example/fixes.md) - Migration logic
+- [Bootstrap Creation](game-data-example/bootstrap.md) - Wiring it all together
+- [Complete Example](game-data-example/complete-example.md) - Full working code
 
 ### 👤 [User Profile Example](user-profile-example.md)
 

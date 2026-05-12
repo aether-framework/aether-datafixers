@@ -349,7 +349,7 @@ Rules, codecs, and optics all support composition, enabling complex transformati
 
 ## Next Steps
 
-- [DataVersion](data-version.md) — Understanding version identifiers
-- [TypeReference](type-reference.md) — Type identification system
-- [Schema System](schema-system.md) — Defining data structures
+- [DataVersion](data-version.md) - Understanding version identifiers
+- [TypeReference](type-reference.md) - Type identification system
+- [Schema System](schema-system.md) - Defining data structures
 

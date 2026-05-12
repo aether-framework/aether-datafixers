@@ -20,8 +20,8 @@ public interface Traversal<S, A> extends Optic<S, A> {
 ```
 
 **Type Parameters:**
-- `S` — The source type (whole structure)
-- `A` — The focus type (each element)
+- `S` - The source type (whole structure)
+- `A` - The focus type (each element)
 
 ## Conceptual Model
 
@@ -335,8 +335,8 @@ assert result1.equals(result2);
 
 ## Related
 
-- [Lens](lens.md) — Single-focus access
-- [Affine](affine.md) — Optional access
-- [Finder](finder.md) — Dynamic data navigation
-- [Optics Overview](index.md) — Optic hierarchy
+- [Lens](lens.md) - Single-focus access
+- [Affine](affine.md) - Optional access
+- [Finder](finder.md) - Dynamic data navigation
+- [Optics Overview](index.md) - Optic hierarchy
 

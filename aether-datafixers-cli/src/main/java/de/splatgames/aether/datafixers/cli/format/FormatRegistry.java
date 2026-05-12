@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 /**
  * Central registry for {@link FormatHandler} implementations.
@@ -95,7 +96,7 @@ public final class FormatRegistry {
     /**
      * Set of built-in format IDs that should not be overridden by ServiceLoader.
      */
-    private static final java.util.Set<String> BUILTIN_FORMAT_IDS = java.util.Set.of(
+    private static final Set<String> BUILTIN_FORMAT_IDS = Set.of(
             "json-gson",
             "json-jackson",
             "yaml-snakeyaml",
@@ -158,10 +159,18 @@ public final class FormatRegistry {
      * @param handler the format handler to register, must not be {@code null}
      * @see FormatHandler#formatId()
      */
-    public static void register(@NotNull final FormatHandler<?> handler) {
+    public static synchronized void register(@NotNull final FormatHandler<?> handler) {
         Preconditions.checkNotNull(handler, "handler must not be null");
 
-        HANDLERS.put(handler.formatId(), handler);
+        final String id = handler.formatId();
+        Preconditions.checkArgument(!id.isEmpty(),
+                "formatId must not be null or empty");
+
+        final String[] extensions = handler.fileExtensions();
+        Preconditions.checkArgument(extensions != null && extensions.length > 0,
+                "fileExtensions must not be null or empty");
+
+        HANDLERS.put(id, handler);
     }
 
     /**

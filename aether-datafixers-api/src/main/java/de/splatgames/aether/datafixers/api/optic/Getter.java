@@ -31,7 +31,7 @@ import java.util.function.Function;
  * A getter is a read-only optic that extracts a value from a source without modification capability.
  *
  * <p>A {@code Getter} represents the most basic form of optic: a simple function from a
- * source type to a focus type. Unlike a {@link Lens}, a getter provides no way to modify the source—it is purely for
+ * source type to a focus type. Unlike a {@link Lens}, a getter provides no way to modify the source-it is purely for
  * extraction. This makes getters ideal when you want to explicitly communicate that a transformation is one-way and
  * read-only.</p>
  *
@@ -137,12 +137,23 @@ public interface Getter<S, A> {
     static <S, T, A, B> Getter<S, A> fromLens(@NotNull final Lens<S, T, A, B> lens) {
         Preconditions.checkNotNull(lens, "lens must not be null");
         return new Getter<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return lens.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A get(@NotNull final S source) {
@@ -188,12 +199,23 @@ public interface Getter<S, A> {
         Preconditions.checkNotNull(id, "id must not be null");
         Preconditions.checkNotNull(getter, "getter must not be null");
         return new Getter<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public A get(@NotNull final S source) {
@@ -268,12 +290,23 @@ public interface Getter<S, A> {
         Preconditions.checkNotNull(other, "other must not be null");
         final Getter<S, A> self = this;
         return new Getter<>() {
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public String id() {
                 return self.id() + "." + other.id();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @param source {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @NotNull
             @Override
             public B get(@NotNull final S source) {

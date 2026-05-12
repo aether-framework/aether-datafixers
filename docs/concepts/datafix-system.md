@@ -494,7 +494,7 @@ void testPlayerV1ToV2Migration() {
 
 ## Related
 
-- [Rewrite Rules](rewrite-rules.md) — Rule combinators in detail
-- [Schema System](schema-system.md) — Where types are defined
-- [Dynamic System](dynamic-system.md) — Data manipulation
+- [Rewrite Rules](rewrite-rules.md) - Rule combinators in detail
+- [Schema System](schema-system.md) - Where types are defined
+- [Dynamic System](dynamic-system.md) - Data manipulation
 

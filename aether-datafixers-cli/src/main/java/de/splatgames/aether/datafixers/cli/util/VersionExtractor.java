@@ -123,11 +123,9 @@ public final class VersionExtractor {
      *                                  not found, or the value is not a valid integer
      */
     @NotNull
-    public static <T> DataVersion extract(
-            @NotNull final T data,
-            @NotNull final DynamicOps<T> ops,
-            @NotNull final String fieldPath
-    ) {
+    public static <T> DataVersion extract(@NotNull final T data,
+                                          @NotNull final DynamicOps<T> ops,
+                                          @NotNull final String fieldPath) {
         Preconditions.checkNotNull(data, "data must not be null");
         Preconditions.checkNotNull(ops, "ops must not be null");
         Preconditions.checkNotNull(fieldPath, "fieldPath must not be null");
@@ -136,6 +134,35 @@ public final class VersionExtractor {
         if (fieldPath.isEmpty()) {
             throw new IllegalArgumentException("Field path cannot be empty");
         }
+        final Dynamic<T> finalDynamic = getDynamic(data, ops, fieldPath);
+        return finalDynamic.asInt()
+                .result()
+                .map(DataVersion::new)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Version field is not a valid integer: " + fieldPath
+                                + " (value: " + finalDynamic.value() + ")"));
+    }
+
+    /**
+     * Navigates through the data structure using the provided field path and returns
+     * the corresponding {@link Dynamic} value.
+     *
+     * <p>This method supports nested field paths using dot notation. It validates
+     * the field path format and traverses the data structure accordingly.</p>
+     *
+     * @param <T>       the underlying data representation type
+     * @param data      the raw data to wrap in a {@link Dynamic}, must not be {@code null}
+     * @param ops       the {@link DynamicOps} implementation for the data format,
+     *                  must not be {@code null}
+     * @param fieldPath the dot-separated field path to navigate, must not be {@code null}
+     * @return the {@link Dynamic} value at the specified field path, never {@code null}
+     * @throws IllegalArgumentException if the field path is invalid or if any segment
+     *                                  of the path is not found in the data structure
+     * @since 1.0.0
+     */
+    private static <T> @NotNull Dynamic<T> getDynamic(@NotNull final T data,
+                                                      @NotNull final DynamicOps<T> ops,
+                                                      @NotNull final String fieldPath) {
         if (fieldPath.startsWith(".") || fieldPath.endsWith(".") || fieldPath.contains("..")) {
             throw new IllegalArgumentException(
                     "Invalid field path format: " + fieldPath);
@@ -152,19 +179,13 @@ public final class VersionExtractor {
                         "Invalid field path format: " + fieldPath);
             }
             final Dynamic<T> next = dynamic.get(part);
-            if (next == null || next.value() == null) {
+            if (next == null) {
                 throw new IllegalArgumentException(
                         "Version field not found: " + fieldPath);
             }
             dynamic = next;
         }
 
-        final Dynamic<T> finalDynamic = dynamic;
-        return finalDynamic.asInt()
-                .result()
-                .map(DataVersion::new)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Version field is not a valid integer: " + fieldPath
-                                + " (value: " + finalDynamic.value() + ")"));
+        return dynamic;
     }
 }

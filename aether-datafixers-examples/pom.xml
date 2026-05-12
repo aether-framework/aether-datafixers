@@ -7,7 +7,7 @@
     <parent>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers</artifactId>
-        <version>0.5.0</version>
+        <version>1.0.0-rc.1</version>
     </parent>
 
     <artifactId>aether-datafixers-examples</artifactId>
@@ -56,7 +56,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.6.3</version>
                 <configuration>
                     <mainClass>de.splatgames.aether.datafixers.examples.game.GameExample</mainClass>
                 </configuration>
@@ -78,4 +78,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            Examples are outdated and intentionally excluded from the NullAway
+            profile. Skipping main compilation here keeps `mvn compile -Pnullability`
+            green without touching the default build.
+        -->
+        <profile>
+            <id>nullability</id>
+            <properties>
+                <maven.main.skip>true</maven.main.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

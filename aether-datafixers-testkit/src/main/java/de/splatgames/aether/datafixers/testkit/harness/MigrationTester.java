@@ -30,7 +30,11 @@ import de.splatgames.aether.datafixers.api.fix.DataFix;
 import de.splatgames.aether.datafixers.api.fix.DataFixer;
 import de.splatgames.aether.datafixers.core.fix.DataFixerBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -81,13 +85,44 @@ import java.util.function.Consumer;
  */
 public final class MigrationTester<T> {
 
+    /**
+     * The MigrationTester class provides a fluent API for testing data migrations using a DataFixer. It allows you to
+     * configure the type reference, input data, source and target versions, and expected output. You can then run the
+     * migration and verify the results.
+     */
+    @NotNull
     private final DataFixer fixer;
+    /**
+     * Configuration fields - set through the fluent API before migration
+     */
+    @Nullable
     private TypeReference typeReference;
+    /**
+     * The input data to be migrated
+     */
+    @Nullable
     private Dynamic<T> input;
+    /**
+     * The source version for the migration
+     */
+    @Nullable
     private DataVersion fromVersion;
+    /**
+     * The target version for the migration
+     */
+    @Nullable
     private DataVersion toVersion;
+    /**
+     * The expected output after migration, used for verification (optional)
+     */
+    @Nullable
     private Dynamic<T> expectedOutput;
 
+    /**
+     * Private constructor to enforce usage of static factory methods.
+     *
+     * @param fixer the DataFixer to test
+     */
     private MigrationTester(@NotNull final DataFixer fixer) {
         this.fixer = Preconditions.checkNotNull(fixer, "fixer must not be null");
     }
@@ -124,8 +159,6 @@ public final class MigrationTester<T> {
         final DataFixer fixer = fixerSetup.build();
         return new MigrationTester<>(fixer);
     }
-
-    // ==================== Configuration ====================
 
     /**
      * Sets the type reference for the migration.
@@ -229,8 +262,6 @@ public final class MigrationTester<T> {
         return this;
     }
 
-    // ==================== Execution ====================
-
     /**
      * Runs the migration and returns the result.
      *
@@ -241,10 +272,10 @@ public final class MigrationTester<T> {
     public Dynamic<T> migrate() {
         this.validateConfiguration();
         return this.fixer.update(
-                this.typeReference,
-                this.input,
-                this.fromVersion,
-                this.toVersion
+                Objects.requireNonNull(this.typeReference),
+                Objects.requireNonNull(this.input),
+                Objects.requireNonNull(this.fromVersion),
+                Objects.requireNonNull(this.toVersion)
         );
     }
 
@@ -263,8 +294,8 @@ public final class MigrationTester<T> {
             if (!Objects.equals(result.value(), this.expectedOutput.value())) {
                 throw new AssertionError(String.format(
                         "Migration from v%d to v%d did not produce expected output.%nExpected:%n  %s%nActual:%n  %s",
-                        this.fromVersion.getVersion(),
-                        this.toVersion.getVersion(),
+                        Objects.requireNonNull(this.fromVersion).getVersion(),
+                        Objects.requireNonNull(this.toVersion).getVersion(),
                         this.expectedOutput.value(),
                         result.value()
                 ));
@@ -274,8 +305,11 @@ public final class MigrationTester<T> {
         return this;
     }
 
-    // ==================== Validation ====================
-
+    /**
+     * Validates that all required configuration has been set before migration.
+     *
+     * @throws IllegalStateException if any required configuration is missing
+     */
     private void validateConfiguration() {
         if (this.typeReference == null) {
             throw new IllegalStateException("Type reference not set. Call forType() before migrate() or verify().");
@@ -291,19 +325,28 @@ public final class MigrationTester<T> {
         }
     }
 
-    // ==================== Fixer Setup Helper ====================
-
     /**
      * A helper class for setting up a DataFixer for testing.
      */
     public static final class FixerSetup {
 
-        private final DataFixerBuilder builder;
-        private int maxVersion = 1;
+        /**
+         * A list of pending fixes to be added to the DataFixerBuilder. Each entry consists of a TypeReference and its
+         * corresponding DataFix. This allows for flexible configuration of multiple fixes before building the final
+         * DataFixer.
+         */
+        private final List<Map.Entry<TypeReference, DataFix<?>>> pendingFixes = new ArrayList<>();
+        /**
+         * The maximum version number among the registered fixes. This is used to determine the target version of the
+         * DataFixer. It starts at 1 and is updated whenever a new fix is added.
+         */
+        private int maxVersion;
 
+        /**
+         * Private constructor to prevent direct instantiation. Use the withFixes() method of MigrationTester instead.
+         */
         FixerSetup() {
-            // Start with a placeholder version, will be updated
-            this.builder = new DataFixerBuilder(new DataVersion(Integer.MAX_VALUE));
+            throw new UnsupportedOperationException("This class is not meant to be instantiated directly. Use the withFixes() method of MigrationTester.");
         }
 
         /**
@@ -317,7 +360,7 @@ public final class MigrationTester<T> {
         public FixerSetup addFix(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
             Preconditions.checkNotNull(type, "type must not be null");
             Preconditions.checkNotNull(fix, "fix must not be null");
-            this.builder.addFix(type, fix);
+            this.pendingFixes.add(Map.entry(type, fix));
             this.maxVersion = Math.max(this.maxVersion, fix.toVersion().getVersion());
             return this;
         }
@@ -336,8 +379,18 @@ public final class MigrationTester<T> {
             return this.addFix(new TypeReference(typeId), fix);
         }
 
+        /**
+         * Builds the DataFixer with the registered fixes.
+         *
+         * @return the built DataFixer
+         */
+        @NotNull
         DataFixer build() {
-            return this.builder.build();
+            final DataFixerBuilder actualBuilder = new DataFixerBuilder(new DataVersion(this.maxVersion));
+            for (final Map.Entry<TypeReference, DataFix<?>> entry : this.pendingFixes) {
+                actualBuilder.addFix(entry.getKey(), entry.getValue());
+            }
+            return actualBuilder.build();
         }
     }
 }

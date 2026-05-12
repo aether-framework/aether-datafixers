@@ -163,13 +163,11 @@ public final class TypeStructure {
      * @param fields      the list of fields (for structured types), must not be {@code null}
      * @param children    the list of child structures, must not be {@code null}
      */
-    private TypeStructure(
-            @NotNull final TypeReference reference,
-            @NotNull final String description,
-            @NotNull final TypeKind kind,
-            @NotNull final List<FieldInfo> fields,
-            @NotNull final List<TypeStructure> children
-    ) {
+    private TypeStructure(@NotNull final TypeReference reference,
+                          @NotNull final String description,
+                          @NotNull final TypeKind kind,
+                          @NotNull final List<FieldInfo> fields,
+                          @NotNull final List<TypeStructure> children) {
         this.reference = Preconditions.checkNotNull(reference, "reference must not be null");
         this.description = Preconditions.checkNotNull(description, "description must not be null");
         this.kind = Preconditions.checkNotNull(kind, "kind must not be null");
@@ -310,7 +308,7 @@ public final class TypeStructure {
      * @see #structurallyEquals(TypeStructure)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -346,6 +344,7 @@ public final class TypeStructure {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "TypeStructure{" +
                 "reference=" + this.reference +

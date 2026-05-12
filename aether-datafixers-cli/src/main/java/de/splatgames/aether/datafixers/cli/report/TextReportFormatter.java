@@ -23,6 +23,10 @@
 package de.splatgames.aether.datafixers.cli.report;
 
 import com.google.common.base.Preconditions;
+import de.splatgames.aether.datafixers.api.diagnostic.FieldOperation;
+import de.splatgames.aether.datafixers.api.diagnostic.FixExecution;
+import de.splatgames.aether.datafixers.api.diagnostic.MigrationReport;
+import de.splatgames.aether.datafixers.api.diagnostic.RuleApplication;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -71,24 +75,98 @@ public class TextReportFormatter implements ReportFormatter {
      */
     @Override
     @NotNull
-    public String formatSimple(
-            @NotNull final String fileName,
-            @NotNull final String type,
-            final int fromVersion,
-            final int toVersion,
-            @NotNull final Duration duration
-    ) {
+    public String formatSimple(@NotNull final String fileName,
+                               @NotNull final String type,
+                               final int fromVersion,
+                               final int toVersion,
+                               @NotNull final Duration duration) {
         Preconditions.checkNotNull(fileName, "fileName must not be null");
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(duration, "duration must not be null");
 
-        return String.format(
-                "Migration: %s [%s] v%d -> v%d (%dms)",
-                fileName,
-                type,
-                fromVersion,
-                toVersion,
-                duration.toMillis()
-        );
+        return "Migration: " + fileName + " [" + type + "] v" + fromVersion
+                + " -> v" + toVersion + " (" + duration.toMillis() + "ms)";
+    }
+
+    /**
+     * Formats a diagnostic migration report as human-readable plain text.
+     *
+     * <p>The output includes a summary line followed by per-fix details with
+     * field-level operations. Example output:</p>
+     * <pre>
+     * Diagnostic Report: player.json [player] v100 -> v200 (42ms)
+     *   Fixes applied: 2, Rules: 3, Field operations: 5
+     *
+     *   Fix: PlayerV1ToV2Fix (v100 -> v150) 20ms
+     *     Rule: renameField [matched] 5ms
+     *       RENAME(oldName -> newName)
+     *     Rule: addField [matched] 3ms
+     *       ADD(health)
+     *
+     *   Fix: PlayerV2ToV3Fix (v150 -> v200) 22ms
+     *     Rule: seq [matched] 10ms
+     *       REMOVE(deprecated)
+     *       TRANSFORM(stats)
+     *       SET(version)
+     * </pre>
+     *
+     * @param fileName the name of the migrated file
+     * @param type     the type reference ID (e.g., "player", "world")
+     * @param report   the diagnostic migration report containing fix and field operation details
+     * @return a multi-line formatted diagnostic report string
+     * @since 1.0.0
+     */
+    @Override
+    @NotNull
+    public String formatDiagnostic(@NotNull final String fileName,
+                                   @NotNull final String type,
+                                   @NotNull final MigrationReport report) {
+        Preconditions.checkNotNull(fileName, "fileName must not be null");
+        Preconditions.checkNotNull(type, "type must not be null");
+        Preconditions.checkNotNull(report, "report must not be null");
+
+        final StringBuilder sb = new StringBuilder();
+
+        // Header
+        sb.append(String.format("Diagnostic Report: %s [%s] v%d -> v%d (%dms)%n",
+                fileName, type,
+                report.fromVersion().getVersion(),
+                report.toVersion().getVersion(),
+                report.totalDuration().toMillis()));
+
+        sb.append(String.format("  Fixes applied: %d, Rules: %d, Field operations: %d%n",
+                report.fixCount(),
+                report.ruleApplicationCount(),
+                report.totalFieldOperationCount()));
+
+        // Per-fix details
+        for (final FixExecution fix : report.fixExecutions()) {
+            sb.append(String.format("%n  Fix: %s (v%d -> v%d) %dms%n",
+                    fix.fixName(),
+                    fix.fromVersion().getVersion(),
+                    fix.toVersion().getVersion(),
+                    fix.durationMillis()));
+
+            for (final RuleApplication rule : fix.ruleApplications()) {
+                sb.append(String.format("    Rule: %s [%s] %dms%n",
+                        rule.ruleName(),
+                        rule.matched() ? "matched" : "skipped",
+                        rule.durationMillis()));
+
+                for (final FieldOperation fieldOp : rule.fieldOperations()) {
+                    sb.append("      ").append(fieldOp.toSummary()).append('\n');
+                }
+            }
+        }
+
+        // Warnings
+        if (report.hasWarnings()) {
+            sb.append("\n  Warnings:\n");
+            for (final String warning : report.warnings()) {
+                sb.append("    ! ").append(warning).append('\n');
+            }
+        }
+
+        return sb.toString();
     }
 }

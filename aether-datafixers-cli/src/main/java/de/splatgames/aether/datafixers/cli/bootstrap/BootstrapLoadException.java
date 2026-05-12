@@ -22,6 +22,10 @@
 
 package de.splatgames.aether.datafixers.cli.bootstrap;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.io.Serial;
+
 /**
  * Exception thrown when loading a {@link de.splatgames.aether.datafixers.api.bootstrap.DataFixerBootstrap}
  * implementation fails.
@@ -32,21 +36,27 @@ package de.splatgames.aether.datafixers.cli.bootstrap;
 public class BootstrapLoadException extends RuntimeException {
 
     /**
+     * Serial version UID for serialization compatibility.
+     */
+    @Serial
+    private static final long serialVersionUID = 7130468383300775438L;
+
+    /**
      * Constructs a new bootstrap load exception with the specified message.
      *
-     * @param message the detail message
+     * @param message the detail message, may be {@code null}
      */
-    public BootstrapLoadException(final String message) {
+    public BootstrapLoadException(@Nullable final String message) {
         super(message);
     }
 
     /**
      * Constructs a new bootstrap load exception with the specified message and cause.
      *
-     * @param message the detail message
-     * @param cause   the cause of this exception
+     * @param message the detail message, may be {@code null}
+     * @param cause   the cause of this exception, may be {@code null}
      */
-    public BootstrapLoadException(final String message, final Throwable cause) {
+    public BootstrapLoadException(@Nullable final String message, @Nullable final Throwable cause) {
         super(message, cause);
     }
 }

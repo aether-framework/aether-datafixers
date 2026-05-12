@@ -493,6 +493,6 @@ public class ExtendedMigrationMetrics extends MigrationMetrics {
 
 ## Related Documentation
 
-- [Configuration Reference](configuration.md) — Metrics property settings
-- [Actuator Integration](actuator.md) — Health checks and endpoints
-- [MigrationService API](migration-service.md) — Automatic metrics recording
+- [Configuration Reference](configuration.md) - Metrics property settings
+- [Actuator Integration](actuator.md) - Health checks and endpoints
+- [MigrationService API](migration-service.md) - Automatic metrics recording

@@ -73,21 +73,25 @@ public final class FieldDiff {
      * The name of the field being compared.
      * This is always non-null regardless of diff kind.
      */
+    @NotNull
     private final String fieldName;
 
     /**
      * The kind of difference detected (ADDED, REMOVED, MODIFIED, or UNCHANGED).
      */
+    @NotNull
     private final DiffKind kind;
 
     /**
      * The field from the source (older) schema, or {@code null} if the field was added.
      */
+    @Nullable
     private final FieldInfo sourceField;
 
     /**
      * The field from the target (newer) schema, or {@code null} if the field was removed.
      */
+    @Nullable
     private final FieldInfo targetField;
 
     /**
@@ -102,12 +106,10 @@ public final class FieldDiff {
      * @param sourceField the source field, may be {@code null} for ADDED diffs
      * @param targetField the target field, may be {@code null} for REMOVED diffs
      */
-    private FieldDiff(
-            @NotNull final String fieldName,
-            @NotNull final DiffKind kind,
-            @Nullable final FieldInfo sourceField,
-            @Nullable final FieldInfo targetField
-    ) {
+    private FieldDiff(@NotNull final String fieldName,
+                      @NotNull final DiffKind kind,
+                      @Nullable final FieldInfo sourceField,
+                      @Nullable final FieldInfo targetField) {
         this.fieldName = Preconditions.checkNotNull(fieldName, "fieldName must not be null");
         this.kind = Preconditions.checkNotNull(kind, "kind must not be null");
         this.sourceField = sourceField;
@@ -150,10 +152,8 @@ public final class FieldDiff {
      * @throws IllegalArgumentException if field names don't match
      */
     @NotNull
-    public static FieldDiff modified(
-            @NotNull final FieldInfo sourceField,
-            @NotNull final FieldInfo targetField
-    ) {
+    public static FieldDiff modified(@NotNull final FieldInfo sourceField,
+                                     @NotNull final FieldInfo targetField) {
         Preconditions.checkNotNull(sourceField, "sourceField must not be null");
         Preconditions.checkNotNull(targetField, "targetField must not be null");
         Preconditions.checkArgument(
@@ -174,10 +174,8 @@ public final class FieldDiff {
      * @throws IllegalArgumentException if field names don't match
      */
     @NotNull
-    public static FieldDiff unchanged(
-            @NotNull final FieldInfo sourceField,
-            @NotNull final FieldInfo targetField
-    ) {
+    public static FieldDiff unchanged(@NotNull final FieldInfo sourceField,
+                                      @NotNull final FieldInfo targetField) {
         Preconditions.checkNotNull(sourceField, "sourceField must not be null");
         Preconditions.checkNotNull(targetField, "targetField must not be null");
         Preconditions.checkArgument(
@@ -201,10 +199,8 @@ public final class FieldDiff {
      * @throws IllegalArgumentException if field names don't match
      */
     @NotNull
-    public static FieldDiff compare(
-            @NotNull final FieldInfo sourceField,
-            @NotNull final FieldInfo targetField
-    ) {
+    public static FieldDiff compare(@NotNull final FieldInfo sourceField,
+                                    @NotNull final FieldInfo targetField) {
         Preconditions.checkNotNull(sourceField, "sourceField must not be null");
         Preconditions.checkNotNull(targetField, "targetField must not be null");
         Preconditions.checkArgument(
@@ -288,7 +284,7 @@ public final class FieldDiff {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -328,12 +324,13 @@ public final class FieldDiff {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return switch (this.kind) {
-            case ADDED -> "+" + this.fieldName + ": " + this.targetField.fieldType().describe();
-            case REMOVED -> "-" + this.fieldName + ": " + this.sourceField.fieldType().describe();
-            case MODIFIED -> "~" + this.fieldName + ": " + this.sourceField.fieldType().describe()
-                    + " -> " + this.targetField.fieldType().describe();
+            case ADDED -> "+" + this.fieldName + ": " + Objects.requireNonNull(this.targetField, "ADDED has targetField").fieldType().describe();
+            case REMOVED -> "-" + this.fieldName + ": " + Objects.requireNonNull(this.sourceField, "REMOVED has sourceField").fieldType().describe();
+            case MODIFIED -> "~" + this.fieldName + ": " + Objects.requireNonNull(this.sourceField, "MODIFIED has sourceField").fieldType().describe()
+                    + " -> " + Objects.requireNonNull(this.targetField, "MODIFIED has targetField").fieldType().describe();
             case UNCHANGED -> "=" + this.fieldName;
         };
     }

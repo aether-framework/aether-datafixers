@@ -83,21 +83,21 @@ public class GameDataService {
 
 ### Getting Started
 
-- [Quick Start Guide](getting-started.md) — Add the starter to your project and run your first migration
+- [Quick Start Guide](getting-started.md) - Add the starter to your project and run your first migration
 
 ### Configuration
 
-- [Configuration Reference](configuration.md) — Complete reference for all `aether.datafixers.*` properties
+- [Configuration Reference](configuration.md) - Complete reference for all `aether.datafixers.*` properties
 
 ### Core Features
 
-- [MigrationService API](migration-service.md) — Fluent API for executing migrations
-- [Multi-Domain Setup](multi-domain.md) — Managing multiple independent DataFixer instances
+- [MigrationService API](migration-service.md) - Fluent API for executing migrations
+- [Multi-Domain Setup](multi-domain.md) - Managing multiple independent DataFixer instances
 
 ### Observability
 
-- [Actuator Integration](actuator.md) — Health indicators, info contributors, and custom endpoints
-- [Metrics Integration](metrics.md) — Micrometer metrics for migration observability
+- [Actuator Integration](actuator.md) - Health indicators, info contributors, and custom endpoints
+- [Metrics Integration](metrics.md) - Micrometer metrics for migration observability
 
 ---
 

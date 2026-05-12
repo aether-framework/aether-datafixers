@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 import de.splatgames.aether.datafixers.api.type.Type;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -87,12 +88,10 @@ public final class FieldInfo {
      * @param path      the full path to this field (e.g., "player.position.x"),
      *                  must not be {@code null}
      */
-    private FieldInfo(
-            @NotNull final String name,
-            final boolean optional,
-            @NotNull final Type<?> fieldType,
-            @NotNull final String path
-    ) {
+    private FieldInfo(@NotNull final String name,
+                      final boolean optional,
+                      @NotNull final Type<?> fieldType,
+                      @NotNull final String path) {
         this.name = Preconditions.checkNotNull(name, "name must not be null");
         this.optional = optional;
         this.fieldType = Preconditions.checkNotNull(fieldType, "fieldType must not be null");
@@ -126,10 +125,8 @@ public final class FieldInfo {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public static FieldInfo of(
-            @NotNull final Type.FieldType<?> fieldType,
-            @NotNull final String pathPrefix
-    ) {
+    public static FieldInfo of(@NotNull final Type.FieldType<?> fieldType,
+                               @NotNull final String pathPrefix) {
         Preconditions.checkNotNull(fieldType, "fieldType must not be null");
         Preconditions.checkNotNull(pathPrefix, "pathPrefix must not be null");
 
@@ -156,12 +153,10 @@ public final class FieldInfo {
      * @throws NullPointerException if any non-primitive argument is {@code null}
      */
     @NotNull
-    public static FieldInfo create(
-            @NotNull final String name,
-            final boolean optional,
-            @NotNull final Type<?> fieldType,
-            @NotNull final String path
-    ) {
+    public static FieldInfo create(@NotNull final String name,
+                                   final boolean optional,
+                                   @NotNull final Type<?> fieldType,
+                                   @NotNull final String path) {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(fieldType, "fieldType must not be null");
         Preconditions.checkNotNull(path, "path must not be null");
@@ -230,7 +225,7 @@ public final class FieldInfo {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -240,7 +235,8 @@ public final class FieldInfo {
         return this.optional == other.optional
                 && this.name.equals(other.name)
                 && this.path.equals(other.path)
-                && this.fieldType.reference().equals(other.fieldType.reference());
+                && this.fieldType.reference().equals(other.fieldType.reference())
+                && this.fieldType.codec().equals(other.fieldType.codec());
     }
 
     /**
@@ -269,6 +265,7 @@ public final class FieldInfo {
      * @return a human-readable string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return (this.optional ? "?" : "") + this.name + ": " + this.fieldType.describe()
                 + " (path: " + this.path + ")";

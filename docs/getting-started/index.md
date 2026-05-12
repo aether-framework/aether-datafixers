@@ -76,7 +76,7 @@ Ready to begin? Start with the [Installation Guide](installation.md).
 
 ## Additional Resources
 
-- [Concepts Overview](../concepts/index.md) — Deep dive into framework concepts
-- [Tutorials](../tutorials/index.md) — Step-by-step guides for common tasks
-- [Examples](../examples/index.md) — Complete working examples
-- [API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/) — Full API documentation
+- [Concepts Overview](../concepts/index.md) - Deep dive into framework concepts
+- [Tutorials](../tutorials/index.md) - Step-by-step guides for common tasks
+- [Examples](../examples/index.md) - Complete working examples
+- [API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/) - Full API documentation

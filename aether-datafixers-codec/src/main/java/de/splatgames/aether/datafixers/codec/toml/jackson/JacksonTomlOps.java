@@ -324,6 +324,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      *
      * @return the TOML mapper used by this instance; never {@code null}
      */
+    @NotNull
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP",
             justification = "TomlMapper exposure is intentional API design for serialization and parsing operations."
@@ -331,8 +332,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     public TomlMapper mapper() {
         return this.mapper;
     }
-
-    // ==================== Empty/Null Operations ====================
 
     /**
      * {@inheritDoc}
@@ -360,8 +359,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
     public JsonNode empty() {
         return NullNode.getInstance();
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -484,8 +481,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -707,8 +702,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         return DoubleNode.valueOf(value.doubleValue());
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -808,8 +801,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         }
         return DataResult.success(input.asBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -935,11 +926,15 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
             return DataResult.error("Not an array: " + list);
         }
         final ArrayNode result = list.isNull() ? this.nodeFactory.arrayNode() : ((ArrayNode) list).deepCopy();
+        // TOML requires homogeneous arrays — validate element type consistency
+        if (!result.isEmpty() && result.get(0).getNodeType() != value.getNodeType()) {
+            return DataResult.error(
+                    "TOML requires homogeneous arrays: expected "
+                            + result.get(0).getNodeType() + " but got " + value.getNodeType());
+        }
         result.add(value);
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1089,6 +1084,10 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         if (!key.isTextual()) {
             return DataResult.error("Key is not a string: " + key);
         }
+        // TOML does not support null values
+        if (value.isNull()) {
+            return DataResult.error("TOML does not support null values for key: " + key.asText());
+        }
         final ObjectNode result = map.isNull() ? this.nodeFactory.objectNode() : ((ObjectNode) map).deepCopy();
         result.set(key.asText(), value);
         return DataResult.success(result);
@@ -1221,7 +1220,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(newValue, "newValue must not be null");
         if (!input.isObject()) {
-            final ObjectNode result = nodeFactory.objectNode();
+            final ObjectNode result = this.nodeFactory.objectNode();
             result.set(key, newValue);
             return result;
         }
@@ -1294,8 +1293,6 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
         }
         return input.has(key);
     }
-
-    // ==================== Conversion Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1396,6 +1393,7 @@ public final class JacksonTomlOps implements DynamicOps<JsonNode> {
      * @return the string {@code "JacksonTomlOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "JacksonTomlOps";
     }

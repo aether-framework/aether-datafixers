@@ -330,10 +330,10 @@ Migrated to V3:
 
 ## Key Patterns Demonstrated
 
-1. **Optional nested objects** — Address may not exist
-2. **Field splitting** — fullName → firstName + lastName
-3. **Default values** — Preferences added with defaults
-4. **Chained migrations** — v1 → v2 → v3 automatic chain
+1. **Optional nested objects** - Address may not exist
+2. **Field splitting** - fullName → firstName + lastName
+3. **Default values** - Preferences added with defaults
+4. **Chained migrations** - v1 → v2 → v3 automatic chain
 
 ## Related
 

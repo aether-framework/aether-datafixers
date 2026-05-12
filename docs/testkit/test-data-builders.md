@@ -31,8 +31,6 @@ TestData.jacksonXml()...
 TestData.using(myCustomOps)...
 ```
 
-> **Deprecation Notice:** `TestData.jackson()` is deprecated since 0.5.0 and will be removed in 1.0.0. Use `TestData.jacksonJson()` instead for explicit format naming.
-
 ## Creating Primitives
 
 ```java
@@ -321,10 +319,10 @@ void testPlayerMigration() {
 
 ## Best Practices
 
-1. **Use descriptive variable names** — `oldPlayer`, `expectedResult` rather than `data1`, `data2`
-2. **Group related fields** — Use `putObject()` for logical groupings
-3. **Reuse common structures** — Extract common test data to helper methods
-4. **Match production structure** — Keep test data structure close to real data
+1. **Use descriptive variable names** - `oldPlayer`, `expectedResult` rather than `data1`, `data2`
+2. **Group related fields** - Use `putObject()` for logical groupings
+3. **Reuse common structures** - Extract common test data to helper methods
+4. **Match production structure** - Keep test data structure close to real data
 
 ## Related
 

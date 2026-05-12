@@ -53,17 +53,20 @@ import org.jetbrains.annotations.NotNull;
  * @param captureRuleDetails   whether to capture individual rule application details
  * @param maxSnapshotLength    maximum length for snapshot strings (0 for unlimited)
  * @param prettyPrintSnapshots whether to format snapshots for readability
+ * @param captureFieldDetails  whether to capture field-level operation metadata from
+ *                             {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule}
+ *                             implementations; requires {@code captureRuleDetails} to be
+ *                             {@code true} to have any effect (since 1.0.0)
  * @author Erik Pförtner
  * @see DiagnosticContext
  * @see MigrationReport
  * @since 0.2.0
  */
-public record DiagnosticOptions(
-        boolean captureSnapshots,
-        boolean captureRuleDetails,
-        int maxSnapshotLength,
-        boolean prettyPrintSnapshots
-) {
+public record DiagnosticOptions(boolean captureSnapshots,
+                                boolean captureRuleDetails,
+                                int maxSnapshotLength,
+                                boolean prettyPrintSnapshots,
+                                boolean captureFieldDetails) {
 
     /**
      * Default maximum snapshot length.
@@ -79,13 +82,14 @@ public record DiagnosticOptions(
      *   <li>{@code captureRuleDetails} = {@code true}</li>
      *   <li>{@code maxSnapshotLength} = {@code 10000}</li>
      *   <li>{@code prettyPrintSnapshots} = {@code true}</li>
+     *   <li>{@code captureFieldDetails} = {@code true}</li>
      * </ul>
      *
      * @return default diagnostic options
      */
     @NotNull
     public static DiagnosticOptions defaults() {
-        return new DiagnosticOptions(true, true, DEFAULT_MAX_SNAPSHOT_LENGTH, true);
+        return new DiagnosticOptions(true, true, DEFAULT_MAX_SNAPSHOT_LENGTH, true, true);
     }
 
     /**
@@ -97,13 +101,14 @@ public record DiagnosticOptions(
      *   <li>{@code captureRuleDetails} = {@code false}</li>
      *   <li>{@code maxSnapshotLength} = {@code 0}</li>
      *   <li>{@code prettyPrintSnapshots} = {@code false}</li>
+     *   <li>{@code captureFieldDetails} = {@code false}</li>
      * </ul>
      *
      * @return minimal diagnostic options
      */
     @NotNull
     public static DiagnosticOptions minimal() {
-        return new DiagnosticOptions(false, false, 0, false);
+        return new DiagnosticOptions(false, false, 0, false, false);
     }
 
     /**
@@ -122,12 +127,33 @@ public record DiagnosticOptions(
      * <p>All settings default to the values from {@link DiagnosticOptions#defaults()}.</p>
      */
     public static final class Builder {
-
+        /**
+         * Capture before/after data snapshots.
+         */
         private boolean captureSnapshots = true;
+        /**
+         * Capture individual rule application details.
+         */
         private boolean captureRuleDetails = true;
+        /**
+         * Maximum length for snapshot strings (0 for unlimited).
+         */
         private int maxSnapshotLength = DEFAULT_MAX_SNAPSHOT_LENGTH;
+        /**
+         * Format snapshots for readability.
+         */
         private boolean prettyPrintSnapshots = true;
+        /**
+         * Capture field-level operation metadata from {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule}
+         * implementations; requires {@code captureRuleDetails} to be {@code true} to have any effect.
+         *
+         * @since 1.0.0
+         */
+        private boolean captureFieldDetails = true;
 
+        /**
+         * Constructs a new <code>Builder</code> instance.
+         */
         private Builder() {
         }
 
@@ -198,6 +224,24 @@ public record DiagnosticOptions(
         }
 
         /**
+         * Sets whether to capture field-level operation metadata.
+         *
+         * <p>When enabled and {@code captureRuleDetails} is also enabled, the migration
+         * report will include structured metadata about which fields each rule affects.
+         * This information is extracted from rules that implement
+         * {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule}.</p>
+         *
+         * @param captureFieldDetails {@code true} to capture field-level details
+         * @return this builder
+         * @since 1.0.0
+         */
+        @NotNull
+        public Builder captureFieldDetails(final boolean captureFieldDetails) {
+            this.captureFieldDetails = captureFieldDetails;
+            return this;
+        }
+
+        /**
          * Builds the diagnostic options.
          *
          * @return the constructed diagnostic options
@@ -208,7 +252,8 @@ public record DiagnosticOptions(
                     this.captureSnapshots,
                     this.captureRuleDetails,
                     this.maxSnapshotLength,
-                    this.prettyPrintSnapshots
+                    this.prettyPrintSnapshots,
+                    this.captureFieldDetails
             );
         }
     }

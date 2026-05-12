@@ -21,68 +21,112 @@
  */
 
 /**
- * Migration diagnostics API for capturing detailed information about data migrations.
+ * Migration diagnostics API for capturing detailed information about data
+ * migrations.
  *
- * <p>This package provides interfaces and records for opt-in diagnostic capture
- * during data migration operations. When enabled, the diagnostic system collects comprehensive information
- * including:</p>
+ * <p>This package provides interfaces and records for opt-in diagnostic
+ * capture during data migration operations. When enabled, the diagnostic
+ * system collects comprehensive information including:</p>
  *
  * <ul>
- *   <li>Timing information for the overall migration and individual fixes</li>
- *   <li>Details about each applied {@link de.splatgames.aether.datafixers.api.fix.DataFix}</li>
- *   <li>Individual {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule} applications</li>
- *   <li>Before/after data snapshots for debugging</li>
- *   <li>Warnings and diagnostic messages</li>
+ *   <li>Timing information for the overall migration and each individual
+ *       fix.</li>
+ *   <li>Details about each applied
+ *       {@link de.splatgames.aether.datafixers.api.fix.DataFix}.</li>
+ *   <li>Per-rule
+ *       {@link de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule}
+ *       applications with match/skip status and duration.</li>
+ *   <li>Structured field-level operation metadata from
+ *       {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule}
+ *       implementations (new in 1.0.0).</li>
+ *   <li>Optional before/after data snapshots for debugging.</li>
+ *   <li>Warning messages emitted during migration.</li>
  * </ul>
  *
  * <h2>Key Components</h2>
  *
  * <dl>
  *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}</dt>
- *   <dd>The main entry point - an extended context that enables diagnostic capture</dd>
+ *   <dd>Entry point: a
+ *       {@link de.splatgames.aether.datafixers.api.fix.DataFixerContext}
+ *       extension that enables diagnostic capture when passed to
+ *       {@link de.splatgames.aether.datafixers.api.fix.DataFixer#update(de.splatgames.aether.datafixers.api.TypeReference, de.splatgames.aether.datafixers.api.dynamic.Dynamic, de.splatgames.aether.datafixers.api.DataVersion, de.splatgames.aether.datafixers.api.DataVersion, de.splatgames.aether.datafixers.api.fix.DataFixerContext) DataFixer.update}.</dd>
  *
  *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.MigrationReport}</dt>
- *   <dd>The complete diagnostic report produced after a migration</dd>
+ *   <dd>Immutable diagnostic report produced by a completed migration.</dd>
  *
  *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.FixExecution}</dt>
- *   <dd>Details about a single fix execution</dd>
+ *   <dd>Record capturing details about a single fix execution, including its
+ *       {@link de.splatgames.aether.datafixers.api.diagnostic.RuleApplication RuleApplication}s.</dd>
  *
  *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.RuleApplication}</dt>
- *   <dd>Details about a single rule application</dd>
+ *   <dd>Record capturing details about a single rule application inside a
+ *       fix.</dd>
  *
  *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions}</dt>
- *   <dd>Configuration for controlling what data is captured</dd>
+ *   <dd>Configuration record controlling what gets captured (snapshots, rule
+ *       details, field-level details, max snapshot length, pretty printing).</dd>
+ *
+ *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.FieldOperation}</dt>
+ *   <dd>Structured metadata about a single field-level operation within a
+ *       rule (since 1.0.0).</dd>
+ *
+ *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.FieldOperationType}</dt>
+ *   <dd>Enum classifying the kind of field-level operation (rename, remove,
+ *       add, transform, set, move, copy, group, flatten, conditional).</dd>
+ *
+ *   <dt>{@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContextFactory}</dt>
+ *   <dd>{@link java.util.ServiceLoader}-discovered factory for supplying a
+ *       {@code DiagnosticContext} implementation. The
+ *       {@code aether-datafixers-core} module registers one by default.</dd>
  * </dl>
  *
  * <h2>Usage Example</h2>
  * <pre>{@code
- * // Create a diagnostic context
+ * // Build a diagnostic context; use defaults() for full capture, minimal()
+ * // for timing-only, or the builder for fine-grained control.
  * DiagnosticContext context = DiagnosticContext.create(
  *     DiagnosticOptions.builder()
  *         .captureSnapshots(true)
  *         .captureRuleDetails(true)
- *         .build()
- * );
+ *         .captureFieldDetails(true)  // since 1.0.0
+ *         .build());
  *
- * // Run migration with diagnostics
+ * // Run the migration, passing the context as the DataFixerContext
  * Dynamic<?> result = fixer.update(type, input, fromVersion, toVersion, context);
  *
- * // Access the report
+ * // Inspect the completed report
  * MigrationReport report = context.getReport();
- * System.out.println("Migration took: " + report.totalDuration().toMillis() + "ms");
- * System.out.println("Fixes applied: " + report.fixCount());
+ * System.out.println(report.toSummary());
  *
  * for (FixExecution fix : report.fixExecutions()) {
  *     System.out.println("  " + fix.toSummary());
+ *     for (RuleApplication rule : fix.ruleApplications()) {
+ *         for (FieldOperation op : rule.fieldOperations()) {
+ *             System.out.println("    " + op.toSummary());
+ *         }
+ *     }
  * }
  * }</pre>
  *
  * <h2>Opt-in Design</h2>
- * <p>Diagnostics are completely opt-in. Normal migration operations using a
- * standard {@link de.splatgames.aether.datafixers.api.fix.DataFixerContext}
- * have zero overhead. Diagnostic data is only collected when a
+ * <p>Diagnostics are completely opt-in. A migration run with a standard
+ * {@link de.splatgames.aether.datafixers.api.fix.DataFixerContext} incurs no
+ * diagnostic overhead. Diagnostic data is only collected when a
  * {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticContext}
- * is explicitly passed to the data fixer.</p>
+ * is explicitly passed to
+ * {@link de.splatgames.aether.datafixers.api.fix.DataFixer#update DataFixer.update}.</p>
+ *
+ * <h2>Field-Level Capture (1.0.0)</h2>
+ * <p>Rules built with {@link de.splatgames.aether.datafixers.api.rewrite.Rules}
+ * implement {@link de.splatgames.aether.datafixers.api.rewrite.FieldAwareRule}
+ * and expose structured
+ * {@link de.splatgames.aether.datafixers.api.diagnostic.FieldOperation}
+ * metadata. With
+ * {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions#captureFieldDetails() captureFieldDetails}
+ * enabled (the default for
+ * {@link de.splatgames.aether.datafixers.api.diagnostic.DiagnosticOptions#defaults() defaults()}),
+ * the report attributes every field change to the exact rule that caused it.</p>
  *
  * @author Erik Pförtner
  * @since 0.2.0

@@ -30,8 +30,8 @@ import org.jetbrains.annotations.Nullable;
  * A no-operation implementation of {@link DataFixerContext}.
  *
  * <p>{@code NoOpDataFixerContext} silently discards all log messages. It is
- * useful in production environments where fix logging is not needed, or in
- * tests where log output should be suppressed.</p>
+ * useful in production environments where fix logging is not needed, or in tests where log output should be
+ * suppressed.</p>
  *
  * <h2>Usage</h2>
  * <pre>{@code
@@ -54,15 +54,30 @@ public final class NoOpDataFixerContext implements DataFixerContext {
      */
     public static final NoOpDataFixerContext INSTANCE = new NoOpDataFixerContext();
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private NoOpDataFixerContext() {
         // private constructor to prevent instantiation
     }
 
+    /**
+     * Logs an error message. This implementation does nothing.
+     *
+     * @param message the message to log
+     * @param args    optional arguments for the message
+     */
     @Override
     public void info(@NotNull final String message, @Nullable final Object... args) {
 
     }
 
+    /**
+     * Logs a warning message. This implementation does nothing.
+     *
+     * @param message the message to log
+     * @param args    optional arguments for the message
+     */
     @Override
     public void warn(@NotNull final String message, @Nullable final Object... args) {
 

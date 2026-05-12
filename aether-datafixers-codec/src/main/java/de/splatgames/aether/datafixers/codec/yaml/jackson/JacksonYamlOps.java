@@ -360,6 +360,7 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
      *
      * @return the YAML mapper used by this instance; never {@code null}
      */
+    @NotNull
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP",
             justification = "YAMLMapper exposure is intentional API design for serialization and parsing operations."
@@ -367,8 +368,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
     public YAMLMapper mapper() {
         return this.mapper;
     }
-
-    // ==================== Empty/Null Operations ====================
 
     /**
      * {@inheritDoc}
@@ -392,8 +391,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
     public JsonNode empty() {
         return NullNode.getInstance();
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -521,8 +518,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -727,8 +722,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         return DoubleNode.valueOf(value.doubleValue());
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -822,8 +815,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         }
         return DataResult.success(input.asBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -943,8 +934,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         result.add(value);
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1217,7 +1206,7 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(newValue, "newValue must not be null");
         if (!input.isObject()) {
-            final ObjectNode result = nodeFactory.objectNode();
+            final ObjectNode result = this.nodeFactory.objectNode();
             result.set(key, newValue);
             return result;
         }
@@ -1290,8 +1279,6 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
         }
         return input.has(key);
     }
-
-    // ==================== Conversion Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1392,6 +1379,7 @@ public final class JacksonYamlOps implements DynamicOps<JsonNode> {
      * @return the string {@code "JacksonYamlOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "JacksonYamlOps";
     }

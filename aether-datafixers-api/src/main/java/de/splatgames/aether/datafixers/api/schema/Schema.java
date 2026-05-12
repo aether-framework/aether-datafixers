@@ -36,65 +36,114 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A versioned collection of type definitions for a specific data version.
  *
- * <p>A {@code Schema} represents the structure of data at a specific {@link DataVersion}.
- * It pairs a version number with a {@link TypeRegistry} containing all type definitions valid for that version. Schemas
- * are used by the data fixing system to understand the expected structure of data at different points in time.</p>
+ * <p>A {@code Schema} pairs a {@link DataVersion} with a {@link TypeRegistry}
+ * containing all {@link Type} definitions valid at that version. Schemas tell
+ * the data fixing system what the shape of the data is at each point in time.</p>
  *
- * <h2>Schema Evolution</h2>
- * <p>Schemas can be extended to define versioned data structures. Each schema version
- * can inherit from a parent and override or add types:</p>
+ * <h2>Two Ways to Build a Schema</h2>
+ * <p>Applications can either construct a schema directly from a pre-populated
+ * registry, or subclass {@code Schema} to inherit and extend a parent schema:</p>
+ *
+ * <h3>Direct Construction</h3>
+ * <pre>{@code
+ * TypeRegistry types = new SimpleTypeRegistry();
+ * types.register(new SimpleType<>(TypeReferences.PLAYER, playerCodec));
+ * Schema schema = new Schema(new DataVersion(100), types);
+ * }</pre>
+ *
+ * <h3>Inheritance via Subclassing</h3>
+ * <p>Subclassing is the preferred approach for incremental schema evolution: a
+ * child schema inherits all types from its parent and only registers the types
+ * that changed. Override {@link #createTypeRegistry()} to choose a concrete
+ * registry implementation (typically {@code SimpleTypeRegistry} from the core
+ * module) and {@link #registerTypes()} to add types using either the
+ * {@link #registerType(Type)} overload (for pre-built {@link Type} instances)
+ * or the DSL-aware {@link #registerType(TypeReference, TypeTemplate)} overload:</p>
  * <pre>{@code
  * public class Schema100 extends Schema {
- *     public Schema100() {
- *         super(100, null);
+ *     public Schema100() { super(100, null); } // first version, no parent
+ *
+ *     @Override protected TypeRegistry createTypeRegistry() {
+ *         return new SimpleTypeRegistry();
  *     }
  *
- *     @Override
- *     protected void registerTypes() {
- *         registerType(new SimpleType<>(TypeReferences.PLAYER, playerCodec()));
+ *     @Override protected void registerTypes() {
+ *         registerType(TypeReferences.PLAYER, DSL.and(
+ *             DSL.field("name",   DSL.string()),
+ *             DSL.field("health", DSL.intType()),
+ *             DSL.remainder()));
  *     }
  * }
  *
  * public class Schema110 extends Schema {
- *     public Schema110() {
- *         super(110, new Schema100());
+ *     public Schema110(Schema parent) { super(110, parent); }
+ *
+ *     @Override protected TypeRegistry createTypeRegistry() {
+ *         return new SimpleTypeRegistry();
  *     }
  *
- *     @Override
- *     protected void registerTypes() {
- *         // Override player type with new structure
- *         registerType(new SimpleType<>(TypeReferences.PLAYER, updatedPlayerCodec()));
+ *     @Override protected void registerTypes() {
+ *         // Only re-register PLAYER; other types inherit from Schema100
+ *         registerType(TypeReferences.PLAYER, updatedPlayerTemplate());
  *     }
  * }
  * }</pre>
  *
- * <h2>Versioning Convention (SemVer-based)</h2>
+ * <h2>Versioning Convention (SemVer-encoded)</h2>
+ * <p>Any monotonic integer scheme works. The examples and tests in this
+ * project use a SemVer-like encoding for readability:</p>
  * <ul>
- *   <li>100 = Version 1.0.0</li>
- *   <li>110 = Version 1.1.0</li>
- *   <li>200 = Version 2.0.0</li>
+ *   <li>{@code 100} = version 1.0.0</li>
+ *   <li>{@code 110} = version 1.1.0</li>
+ *   <li>{@code 200} = version 2.0.0</li>
  * </ul>
  *
  * <h2>Type Lookup</h2>
- * <p>Use {@link #require(TypeReference)} to retrieve types from the schema:</p>
  * <pre>{@code
  * Type<?> playerType = schema.require(TypeReferences.PLAYER);
  * }</pre>
  *
+ * <h2>Lazy Initialisation</h2>
+ * <p>Subclass-built schemas initialise their type registry lazily on the
+ * first call to {@link #types()}. The initialisation is thread-safe; concurrent
+ * callers observe a fully populated registry.</p>
+ *
  * <h2>Thread Safety</h2>
- * <p>This class is immutable and thread-safe if the underlying {@link TypeRegistry}
- * is thread-safe.</p>
+ * <p>Once initialised, a {@code Schema} is effectively immutable and safe to
+ * share between threads, provided the underlying {@link TypeRegistry} is
+ * itself thread-safe (the stock {@code SimpleTypeRegistry} is).</p>
  *
  * @author Erik Pförtner
  * @see DataVersion
  * @see TypeRegistry
  * @see SchemaRegistry
+ * @see de.splatgames.aether.datafixers.api.dsl.DSL
  * @since 0.1.0
  */
 public class Schema {
+    /**
+     * The data version this schema represents.
+     */
+    @NotNull
     private final DataVersion version;
+    /**
+     * The parent schema to inherit types from, or null if this is the first version.
+     */
+    @Nullable
     private final Schema parent;
-    private TypeRegistry types;
+    /**
+     * The type registry containing all type definitions for this schema. This is built lazily on first access to allow
+     * subclasses to register types in the constructor. Once built, this field is immutable and thread-safe if the
+     * underlying TypeRegistry is thread-safe.
+     */
+    @Nullable
+    private volatile TypeRegistry types;
+    /**
+     * This field is used during the building of the type registry to allow registerType() to access it. It is only
+     * non-null during the execution of buildTypes(), which is single-threaded, so no synchronization is needed.
+     */
+    @Nullable
+    private TypeRegistry buildingTypes;
 
     /**
      * Creates a new schema for the specified version with the given types.
@@ -161,10 +210,17 @@ public class Schema {
      */
     @NotNull
     public TypeRegistry types() {
-        if (this.types == null) {
-            this.types = this.buildTypes();
+        TypeRegistry result = this.types;
+        if (result == null) {
+            synchronized (this) {
+                result = this.types;
+                if (result == null) {
+                    result = this.buildTypes();
+                    this.types = result;
+                }
+            }
         }
-        return this.types;
+        return result;
     }
 
     /**
@@ -178,18 +234,22 @@ public class Schema {
     @NotNull
     private TypeRegistry buildTypes() {
         final TypeRegistry registry = this.createTypeRegistry();
-        this.types = registry;
+        this.buildingTypes = registry;
 
         // Inherit types from parent if present
         if (this.parent != null) {
-            // Copy types from parent
-            this.parent.types();
-            // Parent types are already registered in parent's registry
-            // For now, we don't copy - subclass must re-register all types it needs
+            final TypeRegistry parentTypes = this.parent.types();
+            for (final TypeReference ref : parentTypes.references()) {
+                final Type<?> parentType = parentTypes.get(ref);
+                if (parentType != null) {
+                    registry.register(parentType);
+                }
+            }
         }
 
         // Let subclass register types
         this.registerTypes();
+        this.buildingTypes = null;
 
         return registry;
     }
@@ -232,8 +292,11 @@ public class Schema {
      */
     protected final void registerType(@NotNull final Type<?> type) {
         Preconditions.checkNotNull(type, "type must not be null");
-        Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
-        this.types.register(type);
+        final TypeRegistry registry = this.buildingTypes;
+        if (registry == null) {
+            throw new IllegalStateException("Cannot register types outside of registerTypes()");
+        }
+        registry.register(type);
     }
 
     /**
@@ -267,13 +330,15 @@ public class Schema {
                                       @NotNull final TypeTemplate template) {
         Preconditions.checkNotNull(reference, "reference must not be null");
         Preconditions.checkNotNull(template, "template must not be null");
-        Preconditions.checkState(this.types != null, "Cannot register types before types() is called");
+        final TypeRegistry registry = this.buildingTypes;
+        if (registry == null) {
+            throw new IllegalStateException("Cannot register types outside of registerTypes()");
+        }
 
-        // Apply the template with an empty family to get the concrete type
         final Type<?> templateType = template.apply(TypeFamily.empty());
 
         // Wrap the template type with the reference
-        this.types.register(new TemplateBasedType<>(reference, templateType));
+        registry.register(new TemplateBasedType<>(reference, templateType));
     }
 
     /**

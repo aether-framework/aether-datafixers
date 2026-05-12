@@ -132,6 +132,32 @@ Yaml yaml = new Yaml(new SafeConstructor(loaderOptions));
 Object data = yaml.load(untrustedYaml);
 ```
 
+## Security Considerations
+
+> **WARNING:** When loading YAML from untrusted sources, you **MUST** use `SafeConstructor`
+> to prevent arbitrary code execution attacks. The default `Yaml()` constructor allows
+> instantiation of arbitrary Java classes, which can lead to **Remote Code Execution (RCE)**.
+
+**Critical security measures for untrusted YAML:**
+
+1. **Always use `SafeConstructor`** - Prevents arbitrary class instantiation
+2. **Limit alias expansion** - Set `maxAliasesForCollections` to prevent Billion Laughs attacks
+3. **Limit nesting depth** - Set `nestingDepthLimit` to prevent stack overflow
+4. **Limit input size** - Set `codePointLimit` to prevent memory exhaustion
+
+```java
+// Secure configuration for untrusted YAML
+LoaderOptions options = new LoaderOptions();
+options.setMaxAliasesForCollections(50);
+options.setNestingDepthLimit(50);
+options.setCodePointLimit(3 * 1024 * 1024);
+options.setAllowDuplicateKeys(false);
+
+Yaml safeYaml = new Yaml(new SafeConstructor(options));
+```
+
+For detailed security guidance, see [SnakeYAML Security](../security/format-considerations/snakeyaml.md).
+
 ### Data Types
 
 SnakeYamlOps works with native Java types:

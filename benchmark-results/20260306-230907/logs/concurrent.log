@@ -1,0 +1,1818 @@
+# Detecting actual CPU count: 4 detected
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 0.00% complete, ETA 00:36:00
+# Fork: 1 of 3
+# Warmup Iteration   1: 1.280 ops/us
+# Warmup Iteration   2: 1.961 ops/us
+# Warmup Iteration   3: 1.967 ops/us
+# Warmup Iteration   4: 1.973 ops/us
+# Warmup Iteration   5: 1.960 ops/us
+Iteration   1: 2.016 ops/us
+Iteration   2: 1.947 ops/us
+Iteration   3: 1.989 ops/us
+Iteration   4: 2.004 ops/us
+Iteration   5: 1.969 ops/us
+Iteration   6: 1.960 ops/us
+Iteration   7: 1.957 ops/us
+Iteration   8: 1.980 ops/us
+Iteration   9: 1.957 ops/us
+Iteration  10: 1.943 ops/us
+
+# Run progress: 1.39% complete, ETA 00:36:22
+# Fork: 2 of 3
+# Warmup Iteration   1: 1.163 ops/us
+# Warmup Iteration   2: 1.785 ops/us
+# Warmup Iteration   3: 1.806 ops/us
+# Warmup Iteration   4: 1.811 ops/us
+# Warmup Iteration   5: 1.817 ops/us
+Iteration   1: 1.818 ops/us
+Iteration   2: 1.836 ops/us
+Iteration   3: 1.804 ops/us
+Iteration   4: 1.807 ops/us
+Iteration   5: 1.794 ops/us
+Iteration   6: 1.829 ops/us
+Iteration   7: 1.813 ops/us
+Iteration   8: 1.821 ops/us
+Iteration   9: 1.792 ops/us
+Iteration  10: 1.817 ops/us
+
+# Run progress: 2.78% complete, ETA 00:35:49
+# Fork: 3 of 3
+# Warmup Iteration   1: 1.636 ops/us
+# Warmup Iteration   2: 1.949 ops/us
+# Warmup Iteration   3: 2.007 ops/us
+# Warmup Iteration   4: 2.004 ops/us
+# Warmup Iteration   5: 1.964 ops/us
+Iteration   1: 1.981 ops/us
+Iteration   2: 2.018 ops/us
+Iteration   3: 1.981 ops/us
+Iteration   4: 1.966 ops/us
+Iteration   5: 1.966 ops/us
+Iteration   6: 1.972 ops/us
+Iteration   7: 1.949 ops/us
+Iteration   8: 1.933 ops/us
+Iteration   9: 1.939 ops/us
+Iteration  10: 1.884 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration":
+  1.915 ±(99.9%) 0.052 ops/us [Average]
+  (min, avg, max) = (1.792, 1.915, 2.018), stdev = 0.078
+  CI (99.9%): [1.863, 1.967] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 4.17% complete, ETA 00:35:17
+# Fork: 1 of 3
+# Warmup Iteration   1: 1.049 ops/us
+# Warmup Iteration   2: 1.682 ops/us
+# Warmup Iteration   3: 1.714 ops/us
+# Warmup Iteration   4: 1.688 ops/us
+# Warmup Iteration   5: 1.692 ops/us
+Iteration   1: 1.720 ops/us
+Iteration   2: 1.687 ops/us
+Iteration   3: 1.694 ops/us
+Iteration   4: 1.685 ops/us
+Iteration   5: 1.681 ops/us
+Iteration   6: 1.700 ops/us
+Iteration   7: 1.727 ops/us
+Iteration   8: 1.693 ops/us
+Iteration   9: 1.714 ops/us
+Iteration  10: 1.737 ops/us
+
+# Run progress: 5.56% complete, ETA 00:34:48
+# Fork: 2 of 3
+# Warmup Iteration   1: 1.403 ops/us
+# Warmup Iteration   2: 1.719 ops/us
+# Warmup Iteration   3: 1.733 ops/us
+# Warmup Iteration   4: 1.734 ops/us
+# Warmup Iteration   5: 1.740 ops/us
+Iteration   1: 1.710 ops/us
+Iteration   2: 1.724 ops/us
+Iteration   3: 1.724 ops/us
+Iteration   4: 1.757 ops/us
+Iteration   5: 1.759 ops/us
+Iteration   6: 1.763 ops/us
+Iteration   7: 1.770 ops/us
+Iteration   8: 1.745 ops/us
+Iteration   9: 1.719 ops/us
+Iteration  10: 1.675 ops/us
+
+# Run progress: 6.94% complete, ETA 00:34:18
+# Fork: 3 of 3
+# Warmup Iteration   1: 1.483 ops/us
+# Warmup Iteration   2: 1.854 ops/us
+# Warmup Iteration   3: 1.867 ops/us
+# Warmup Iteration   4: 1.841 ops/us
+# Warmup Iteration   5: 1.839 ops/us
+Iteration   1: 1.858 ops/us
+Iteration   2: 1.880 ops/us
+Iteration   3: 1.887 ops/us
+Iteration   4: 1.889 ops/us
+Iteration   5: 1.874 ops/us
+Iteration   6: 1.848 ops/us
+Iteration   7: 1.874 ops/us
+Iteration   8: 1.892 ops/us
+Iteration   9: 1.889 ops/us
+Iteration  10: 1.884 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration":
+  1.772 ±(99.9%) 0.053 ops/us [Average]
+  (min, avg, max) = (1.675, 1.772, 1.892), stdev = 0.080
+  CI (99.9%): [1.719, 1.825] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 8.33% complete, ETA 00:33:47
+# Fork: 1 of 3
+# Warmup Iteration   1: 497.243 ops/us
+# Warmup Iteration   2: 501.083 ops/us
+# Warmup Iteration   3: 488.396 ops/us
+# Warmup Iteration   4: 488.851 ops/us
+# Warmup Iteration   5: 491.184 ops/us
+Iteration   1: 488.094 ops/us
+Iteration   2: 497.150 ops/us
+Iteration   3: 477.221 ops/us
+Iteration   4: 461.348 ops/us
+Iteration   5: 474.364 ops/us
+Iteration   6: 492.325 ops/us
+Iteration   7: 482.600 ops/us
+Iteration   8: 479.916 ops/us
+Iteration   9: 476.126 ops/us
+Iteration  10: 482.319 ops/us
+
+# Run progress: 9.72% complete, ETA 00:33:16
+# Fork: 2 of 3
+# Warmup Iteration   1: 498.098 ops/us
+# Warmup Iteration   2: 496.876 ops/us
+# Warmup Iteration   3: 482.740 ops/us
+# Warmup Iteration   4: 486.594 ops/us
+# Warmup Iteration   5: 474.743 ops/us
+Iteration   1: 482.762 ops/us
+Iteration   2: 475.348 ops/us
+Iteration   3: 480.669 ops/us
+Iteration   4: 481.749 ops/us
+Iteration   5: 477.860 ops/us
+Iteration   6: 473.312 ops/us
+Iteration   7: 473.368 ops/us
+Iteration   8: 473.013 ops/us
+Iteration   9: 478.234 ops/us
+Iteration  10: 476.819 ops/us
+
+# Run progress: 11.11% complete, ETA 00:32:45
+# Fork: 3 of 3
+# Warmup Iteration   1: 502.261 ops/us
+# Warmup Iteration   2: 513.535 ops/us
+# Warmup Iteration   3: 493.449 ops/us
+# Warmup Iteration   4: 498.195 ops/us
+# Warmup Iteration   5: 488.590 ops/us
+Iteration   1: 489.132 ops/us
+Iteration   2: 487.158 ops/us
+Iteration   3: 485.371 ops/us
+Iteration   4: 492.382 ops/us
+Iteration   5: 484.886 ops/us
+Iteration   6: 487.478 ops/us
+Iteration   7: 489.377 ops/us
+Iteration   8: 485.615 ops/us
+Iteration   9: 479.363 ops/us
+Iteration  10: 490.235 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup":
+  481.853 ±(99.9%) 5.013 ops/us [Average]
+  (min, avg, max) = (461.348, 481.853, 497.150), stdev = 7.503
+  CI (99.9%): [476.841, 486.866] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 12.50% complete, ETA 00:32:14
+# Fork: 1 of 3
+# Warmup Iteration   1: 497.928 ops/us
+# Warmup Iteration   2: 501.540 ops/us
+# Warmup Iteration   3: 484.690 ops/us
+# Warmup Iteration   4: 483.499 ops/us
+# Warmup Iteration   5: 496.640 ops/us
+Iteration   1: 496.722 ops/us
+Iteration   2: 497.454 ops/us
+Iteration   3: 495.014 ops/us
+Iteration   4: 487.544 ops/us
+Iteration   5: 487.669 ops/us
+Iteration   6: 485.381 ops/us
+Iteration   7: 487.959 ops/us
+Iteration   8: 492.030 ops/us
+Iteration   9: 482.597 ops/us
+Iteration  10: 485.950 ops/us
+
+# Run progress: 13.89% complete, ETA 00:31:42
+# Fork: 2 of 3
+# Warmup Iteration   1: 497.730 ops/us
+# Warmup Iteration   2: 502.502 ops/us
+# Warmup Iteration   3: 492.898 ops/us
+# Warmup Iteration   4: 487.746 ops/us
+# Warmup Iteration   5: 495.449 ops/us
+Iteration   1: 491.616 ops/us
+Iteration   2: 489.107 ops/us
+Iteration   3: 487.877 ops/us
+Iteration   4: 492.196 ops/us
+Iteration   5: 498.916 ops/us
+Iteration   6: 495.321 ops/us
+Iteration   7: 492.154 ops/us
+Iteration   8: 484.936 ops/us
+Iteration   9: 481.782 ops/us
+Iteration  10: 493.231 ops/us
+
+# Run progress: 15.28% complete, ETA 00:31:12
+# Fork: 3 of 3
+# Warmup Iteration   1: 505.854 ops/us
+# Warmup Iteration   2: 511.273 ops/us
+# Warmup Iteration   3: 498.236 ops/us
+# Warmup Iteration   4: 487.248 ops/us
+# Warmup Iteration   5: 491.990 ops/us
+Iteration   1: 498.367 ops/us
+Iteration   2: 493.889 ops/us
+Iteration   3: 504.442 ops/us
+Iteration   4: 492.034 ops/us
+Iteration   5: 488.504 ops/us
+Iteration   6: 487.524 ops/us
+Iteration   7: 490.056 ops/us
+Iteration   8: 487.551 ops/us
+Iteration   9: 484.906 ops/us
+Iteration  10: 487.359 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup":
+  490.670 ±(99.9%) 3.506 ops/us [Average]
+  (min, avg, max) = (481.782, 490.670, 504.442), stdev = 5.248
+  CI (99.9%): [487.163, 494.176] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 16.67% complete, ETA 00:30:41
+# Fork: 1 of 3
+# Warmup Iteration   1: 115.317 ops/us
+# Warmup Iteration   2: 113.025 ops/us
+# Warmup Iteration   3: 110.275 ops/us
+# Warmup Iteration   4: 112.018 ops/us
+# Warmup Iteration   5: 110.678 ops/us
+Iteration   1: 110.486 ops/us
+Iteration   2: 113.038 ops/us
+Iteration   3: 111.145 ops/us
+Iteration   4: 112.169 ops/us
+Iteration   5: 112.179 ops/us
+Iteration   6: 110.619 ops/us
+Iteration   7: 112.853 ops/us
+Iteration   8: 106.979 ops/us
+Iteration   9: 112.213 ops/us
+Iteration  10: 112.022 ops/us
+
+# Run progress: 18.06% complete, ETA 00:30:10
+# Fork: 2 of 3
+# Warmup Iteration   1: 114.403 ops/us
+# Warmup Iteration   2: 117.509 ops/us
+# Warmup Iteration   3: 110.076 ops/us
+# Warmup Iteration   4: 109.563 ops/us
+# Warmup Iteration   5: 109.577 ops/us
+Iteration   1: 110.829 ops/us
+Iteration   2: 111.566 ops/us
+Iteration   3: 106.846 ops/us
+Iteration   4: 110.462 ops/us
+Iteration   5: 107.972 ops/us
+Iteration   6: 109.505 ops/us
+Iteration   7: 109.137 ops/us
+Iteration   8: 107.154 ops/us
+Iteration   9: 109.314 ops/us
+Iteration  10: 110.746 ops/us
+
+# Run progress: 19.44% complete, ETA 00:29:39
+# Fork: 3 of 3
+# Warmup Iteration   1: 111.960 ops/us
+# Warmup Iteration   2: 116.459 ops/us
+# Warmup Iteration   3: 108.581 ops/us
+# Warmup Iteration   4: 109.819 ops/us
+# Warmup Iteration   5: 108.211 ops/us
+Iteration   1: 111.586 ops/us
+Iteration   2: 114.151 ops/us
+Iteration   3: 111.511 ops/us
+Iteration   4: 113.161 ops/us
+Iteration   5: 113.698 ops/us
+Iteration   6: 112.772 ops/us
+Iteration   7: 113.982 ops/us
+Iteration   8: 109.418 ops/us
+Iteration   9: 111.998 ops/us
+Iteration  10: 112.424 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup":
+  111.064 ±(99.9%) 1.358 ops/us [Average]
+  (min, avg, max) = (106.846, 111.064, 114.151), stdev = 2.033
+  CI (99.9%): [109.706, 112.423] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 20.83% complete, ETA 00:29:09
+# Fork: 1 of 3
+# Warmup Iteration   1: 113.047 ops/us
+# Warmup Iteration   2: 115.332 ops/us
+# Warmup Iteration   3: 101.203 ops/us
+# Warmup Iteration   4: 108.614 ops/us
+# Warmup Iteration   5: 109.148 ops/us
+Iteration   1: 108.271 ops/us
+Iteration   2: 111.144 ops/us
+Iteration   3: 109.524 ops/us
+Iteration   4: 108.609 ops/us
+Iteration   5: 110.297 ops/us
+Iteration   6: 110.709 ops/us
+Iteration   7: 111.313 ops/us
+Iteration   8: 110.467 ops/us
+Iteration   9: 112.313 ops/us
+Iteration  10: 111.269 ops/us
+
+# Run progress: 22.22% complete, ETA 00:28:38
+# Fork: 2 of 3
+# Warmup Iteration   1: 113.555 ops/us
+# Warmup Iteration   2: 110.584 ops/us
+# Warmup Iteration   3: 114.906 ops/us
+# Warmup Iteration   4: 117.351 ops/us
+# Warmup Iteration   5: 111.907 ops/us
+Iteration   1: 111.156 ops/us
+Iteration   2: 113.403 ops/us
+Iteration   3: 111.780 ops/us
+Iteration   4: 112.398 ops/us
+Iteration   5: 111.666 ops/us
+Iteration   6: 111.581 ops/us
+Iteration   7: 108.357 ops/us
+Iteration   8: 112.204 ops/us
+Iteration   9: 113.116 ops/us
+Iteration  10: 113.370 ops/us
+
+# Run progress: 23.61% complete, ETA 00:28:08
+# Fork: 3 of 3
+# Warmup Iteration   1: 104.649 ops/us
+# Warmup Iteration   2: 114.510 ops/us
+# Warmup Iteration   3: 109.475 ops/us
+# Warmup Iteration   4: 112.968 ops/us
+# Warmup Iteration   5: 111.155 ops/us
+Iteration   1: 112.383 ops/us
+Iteration   2: 110.510 ops/us
+Iteration   3: 106.973 ops/us
+Iteration   4: 111.225 ops/us
+Iteration   5: 111.627 ops/us
+Iteration   6: 110.919 ops/us
+Iteration   7: 110.266 ops/us
+Iteration   8: 110.434 ops/us
+Iteration   9: 109.911 ops/us
+Iteration  10: 110.119 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup":
+  110.910 ±(99.9%) 1.017 ops/us [Average]
+  (min, avg, max) = (106.973, 110.910, 113.403), stdev = 1.522
+  CI (99.9%): [109.894, 111.927] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 25.00% complete, ETA 00:27:37
+# Fork: 1 of 3
+# Warmup Iteration   1: 10.844 ops/us
+# Warmup Iteration   2: 12.416 ops/us
+# Warmup Iteration   3: 12.473 ops/us
+# Warmup Iteration   4: 12.422 ops/us
+# Warmup Iteration   5: 12.324 ops/us
+Iteration   1: 12.263 ops/us
+Iteration   2: 12.670 ops/us
+Iteration   3: 12.325 ops/us
+Iteration   4: 12.224 ops/us
+Iteration   5: 12.118 ops/us
+Iteration   6: 12.293 ops/us
+Iteration   7: 12.086 ops/us
+Iteration   8: 12.426 ops/us
+Iteration   9: 12.425 ops/us
+Iteration  10: 12.412 ops/us
+
+# Run progress: 26.39% complete, ETA 00:27:06
+# Fork: 2 of 3
+# Warmup Iteration   1: 10.969 ops/us
+# Warmup Iteration   2: 12.016 ops/us
+# Warmup Iteration   3: 12.210 ops/us
+# Warmup Iteration   4: 12.369 ops/us
+# Warmup Iteration   5: 12.519 ops/us
+Iteration   1: 12.205 ops/us
+Iteration   2: 12.377 ops/us
+Iteration   3: 11.981 ops/us
+Iteration   4: 12.343 ops/us
+Iteration   5: 12.269 ops/us
+Iteration   6: 12.276 ops/us
+Iteration   7: 12.348 ops/us
+Iteration   8: 12.322 ops/us
+Iteration   9: 12.285 ops/us
+Iteration  10: 12.305 ops/us
+
+# Run progress: 27.78% complete, ETA 00:26:36
+# Fork: 3 of 3
+# Warmup Iteration   1: 10.852 ops/us
+# Warmup Iteration   2: 12.385 ops/us
+# Warmup Iteration   3: 12.282 ops/us
+# Warmup Iteration   4: 12.298 ops/us
+# Warmup Iteration   5: 12.224 ops/us
+Iteration   1: 12.323 ops/us
+Iteration   2: 12.323 ops/us
+Iteration   3: 12.304 ops/us
+Iteration   4: 12.452 ops/us
+Iteration   5: 12.501 ops/us
+Iteration   6: 12.040 ops/us
+Iteration   7: 12.455 ops/us
+Iteration   8: 12.282 ops/us
+Iteration   9: 12.439 ops/us
+Iteration  10: 12.578 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix":
+  12.322 ±(99.9%) 0.098 ops/us [Average]
+  (min, avg, max) = (11.981, 12.322, 12.670), stdev = 0.147
+  CI (99.9%): [12.223, 12.420] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 29.17% complete, ETA 00:26:05
+# Fork: 1 of 3
+# Warmup Iteration   1: 9.767 ops/us
+# Warmup Iteration   2: 11.619 ops/us
+# Warmup Iteration   3: 11.491 ops/us
+# Warmup Iteration   4: 11.468 ops/us
+# Warmup Iteration   5: 11.551 ops/us
+Iteration   1: 11.568 ops/us
+Iteration   2: 11.439 ops/us
+Iteration   3: 11.621 ops/us
+Iteration   4: 11.884 ops/us
+Iteration   5: 11.609 ops/us
+Iteration   6: 11.778 ops/us
+Iteration   7: 11.651 ops/us
+Iteration   8: 11.887 ops/us
+Iteration   9: 11.736 ops/us
+Iteration  10: 11.559 ops/us
+
+# Run progress: 30.56% complete, ETA 00:25:34
+# Fork: 2 of 3
+# Warmup Iteration   1: 10.554 ops/us
+# Warmup Iteration   2: 11.550 ops/us
+# Warmup Iteration   3: 11.417 ops/us
+# Warmup Iteration   4: 11.394 ops/us
+# Warmup Iteration   5: 11.637 ops/us
+Iteration   1: 11.645 ops/us
+Iteration   2: 11.610 ops/us
+Iteration   3: 11.573 ops/us
+Iteration   4: 11.733 ops/us
+Iteration   5: 11.508 ops/us
+Iteration   6: 11.247 ops/us
+Iteration   7: 11.667 ops/us
+Iteration   8: 11.536 ops/us
+Iteration   9: 11.579 ops/us
+Iteration  10: 11.564 ops/us
+
+# Run progress: 31.94% complete, ETA 00:25:04
+# Fork: 3 of 3
+# Warmup Iteration   1: 9.485 ops/us
+# Warmup Iteration   2: 11.241 ops/us
+# Warmup Iteration   3: 11.558 ops/us
+# Warmup Iteration   4: 11.385 ops/us
+# Warmup Iteration   5: 11.324 ops/us
+Iteration   1: 11.366 ops/us
+Iteration   2: 11.645 ops/us
+Iteration   3: 11.525 ops/us
+Iteration   4: 11.319 ops/us
+Iteration   5: 11.238 ops/us
+Iteration   6: 11.255 ops/us
+Iteration   7: 11.257 ops/us
+Iteration   8: 11.514 ops/us
+Iteration   9: 11.545 ops/us
+Iteration  10: 11.215 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix":
+  11.542 ±(99.9%) 0.123 ops/us [Average]
+  (min, avg, max) = (11.215, 11.542, 11.887), stdev = 0.183
+  CI (99.9%): [11.420, 11.665] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 8 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 33.33% complete, ETA 00:24:33
+# Fork: 1 of 3
+# Warmup Iteration   1: 9.982 ops/us
+# Warmup Iteration   2: 12.245 ops/us
+# Warmup Iteration   3: 12.537 ops/us
+# Warmup Iteration   4: 12.185 ops/us
+# Warmup Iteration   5: 12.237 ops/us
+Iteration   1: 12.234 ops/us
+Iteration   2: 12.443 ops/us
+Iteration   3: 12.663 ops/us
+Iteration   4: 12.367 ops/us
+Iteration   5: 12.106 ops/us
+Iteration   6: 12.283 ops/us
+Iteration   7: 12.206 ops/us
+Iteration   8: 12.321 ops/us
+Iteration   9: 12.225 ops/us
+Iteration  10: 12.342 ops/us
+
+# Run progress: 34.72% complete, ETA 00:24:03
+# Fork: 2 of 3
+# Warmup Iteration   1: 9.643 ops/us
+# Warmup Iteration   2: 12.560 ops/us
+# Warmup Iteration   3: 12.790 ops/us
+# Warmup Iteration   4: 12.973 ops/us
+# Warmup Iteration   5: 12.733 ops/us
+Iteration   1: 12.764 ops/us
+Iteration   2: 12.751 ops/us
+Iteration   3: 12.769 ops/us
+Iteration   4: 13.004 ops/us
+Iteration   5: 12.773 ops/us
+Iteration   6: 12.918 ops/us
+Iteration   7: 12.938 ops/us
+Iteration   8: 12.878 ops/us
+Iteration   9: 12.868 ops/us
+Iteration  10: 12.887 ops/us
+
+# Run progress: 36.11% complete, ETA 00:23:33
+# Fork: 3 of 3
+# Warmup Iteration   1: 10.067 ops/us
+# Warmup Iteration   2: 12.203 ops/us
+# Warmup Iteration   3: 12.274 ops/us
+# Warmup Iteration   4: 12.470 ops/us
+# Warmup Iteration   5: 12.499 ops/us
+Iteration   1: 12.353 ops/us
+Iteration   2: 12.477 ops/us
+Iteration   3: 12.375 ops/us
+Iteration   4: 12.217 ops/us
+Iteration   5: 12.564 ops/us
+Iteration   6: 12.541 ops/us
+Iteration   7: 12.455 ops/us
+Iteration   8: 12.442 ops/us
+Iteration   9: 12.511 ops/us
+Iteration  10: 12.672 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration":
+  12.545 ±(99.9%) 0.174 ops/us [Average]
+  (min, avg, max) = (12.106, 12.545, 13.004), stdev = 0.260
+  CI (99.9%): [12.371, 12.719] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 8 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 37.50% complete, ETA 00:23:03
+# Fork: 1 of 3
+# Warmup Iteration   1: 9.826 ops/us
+# Warmup Iteration   2: 11.106 ops/us
+# Warmup Iteration   3: 11.486 ops/us
+# Warmup Iteration   4: 11.492 ops/us
+# Warmup Iteration   5: 11.748 ops/us
+Iteration   1: 11.925 ops/us
+Iteration   2: 11.548 ops/us
+Iteration   3: 11.743 ops/us
+Iteration   4: 11.654 ops/us
+Iteration   5: 11.697 ops/us
+Iteration   6: 11.730 ops/us
+Iteration   7: 11.577 ops/us
+Iteration   8: 11.737 ops/us
+Iteration   9: 11.857 ops/us
+Iteration  10: 11.798 ops/us
+
+# Run progress: 38.89% complete, ETA 00:22:33
+# Fork: 2 of 3
+# Warmup Iteration   1: 9.626 ops/us
+# Warmup Iteration   2: 11.281 ops/us
+# Warmup Iteration   3: 11.434 ops/us
+# Warmup Iteration   4: 11.445 ops/us
+# Warmup Iteration   5: 11.409 ops/us
+Iteration   1: 11.621 ops/us
+Iteration   2: 11.328 ops/us
+Iteration   3: 11.009 ops/us
+Iteration   4: 11.418 ops/us
+Iteration   5: 11.300 ops/us
+Iteration   6: 11.474 ops/us
+Iteration   7: 11.325 ops/us
+Iteration   8: 11.463 ops/us
+Iteration   9: 11.454 ops/us
+Iteration  10: 11.350 ops/us
+
+# Run progress: 40.28% complete, ETA 00:22:03
+# Fork: 3 of 3
+# Warmup Iteration   1: 7.125 ops/us
+# Warmup Iteration   2: 11.236 ops/us
+# Warmup Iteration   3: 11.080 ops/us
+# Warmup Iteration   4: 11.186 ops/us
+# Warmup Iteration   5: 11.321 ops/us
+Iteration   1: 11.312 ops/us
+Iteration   2: 11.282 ops/us
+Iteration   3: 11.460 ops/us
+Iteration   4: 11.438 ops/us
+Iteration   5: 11.246 ops/us
+Iteration   6: 11.316 ops/us
+Iteration   7: 11.154 ops/us
+Iteration   8: 11.269 ops/us
+Iteration   9: 11.179 ops/us
+Iteration  10: 11.365 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration":
+  11.468 ±(99.9%) 0.151 ops/us [Average]
+  (min, avg, max) = (11.009, 11.468, 11.925), stdev = 0.225
+  CI (99.9%): [11.317, 11.618] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 41.67% complete, ETA 00:21:33
+# Fork: 1 of 3
+# Warmup Iteration   1: 11.005 ops/us
+# Warmup Iteration   2: 12.547 ops/us
+# Warmup Iteration   3: 12.636 ops/us
+# Warmup Iteration   4: 12.217 ops/us
+# Warmup Iteration   5: 12.342 ops/us
+Iteration   1: 12.077 ops/us
+Iteration   2: 12.072 ops/us
+Iteration   3: 12.140 ops/us
+Iteration   4: 12.229 ops/us
+Iteration   5: 12.383 ops/us
+Iteration   6: 12.290 ops/us
+Iteration   7: 12.210 ops/us
+Iteration   8: 12.229 ops/us
+Iteration   9: 12.022 ops/us
+Iteration  10: 12.265 ops/us
+
+# Run progress: 43.06% complete, ETA 00:21:02
+# Fork: 2 of 3
+# Warmup Iteration   1: 10.981 ops/us
+# Warmup Iteration   2: 12.180 ops/us
+# Warmup Iteration   3: 12.344 ops/us
+# Warmup Iteration   4: 12.335 ops/us
+# Warmup Iteration   5: 12.105 ops/us
+Iteration   1: 12.306 ops/us
+Iteration   2: 12.524 ops/us
+Iteration   3: 12.475 ops/us
+Iteration   4: 12.577 ops/us
+Iteration   5: 12.327 ops/us
+Iteration   6: 12.463 ops/us
+Iteration   7: 12.633 ops/us
+Iteration   8: 12.467 ops/us
+Iteration   9: 12.515 ops/us
+Iteration  10: 12.344 ops/us
+
+# Run progress: 44.44% complete, ETA 00:20:31
+# Fork: 3 of 3
+# Warmup Iteration   1: 10.665 ops/us
+# Warmup Iteration   2: 12.188 ops/us
+# Warmup Iteration   3: 12.281 ops/us
+# Warmup Iteration   4: 12.413 ops/us
+# Warmup Iteration   5: 12.275 ops/us
+Iteration   1: 12.300 ops/us
+Iteration   2: 11.970 ops/us
+Iteration   3: 12.363 ops/us
+Iteration   4: 12.580 ops/us
+Iteration   5: 12.230 ops/us
+Iteration   6: 11.881 ops/us
+Iteration   7: 12.431 ops/us
+Iteration   8: 12.407 ops/us
+Iteration   9: 12.614 ops/us
+Iteration  10: 12.307 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration":
+  12.321 ±(99.9%) 0.129 ops/us [Average]
+  (min, avg, max) = (11.881, 12.321, 12.633), stdev = 0.194
+  CI (99.9%): [12.192, 12.451] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 45.83% complete, ETA 00:20:00
+# Fork: 1 of 3
+# Warmup Iteration   1: 9.695 ops/us
+# Warmup Iteration   2: 11.037 ops/us
+# Warmup Iteration   3: 11.280 ops/us
+# Warmup Iteration   4: 11.342 ops/us
+# Warmup Iteration   5: 11.401 ops/us
+Iteration   1: 11.502 ops/us
+Iteration   2: 11.386 ops/us
+Iteration   3: 11.425 ops/us
+Iteration   4: 11.417 ops/us
+Iteration   5: 11.352 ops/us
+Iteration   6: 11.406 ops/us
+Iteration   7: 11.634 ops/us
+Iteration   8: 11.497 ops/us
+Iteration   9: 11.494 ops/us
+Iteration  10: 11.299 ops/us
+
+# Run progress: 47.22% complete, ETA 00:19:29
+# Fork: 2 of 3
+# Warmup Iteration   1: 10.216 ops/us
+# Warmup Iteration   2: 11.405 ops/us
+# Warmup Iteration   3: 11.463 ops/us
+# Warmup Iteration   4: 11.567 ops/us
+# Warmup Iteration   5: 11.479 ops/us
+Iteration   1: 11.415 ops/us
+Iteration   2: 11.416 ops/us
+Iteration   3: 11.501 ops/us
+Iteration   4: 11.502 ops/us
+Iteration   5: 11.450 ops/us
+Iteration   6: 11.652 ops/us
+Iteration   7: 11.752 ops/us
+Iteration   8: 11.694 ops/us
+Iteration   9: 11.485 ops/us
+Iteration  10: 11.535 ops/us
+
+# Run progress: 48.61% complete, ETA 00:18:58
+# Fork: 3 of 3
+# Warmup Iteration   1: 9.770 ops/us
+# Warmup Iteration   2: 11.545 ops/us
+# Warmup Iteration   3: 11.771 ops/us
+# Warmup Iteration   4: 11.363 ops/us
+# Warmup Iteration   5: 11.421 ops/us
+Iteration   1: 11.613 ops/us
+Iteration   2: 11.520 ops/us
+Iteration   3: 11.478 ops/us
+Iteration   4: 11.479 ops/us
+Iteration   5: 11.359 ops/us
+Iteration   6: 11.469 ops/us
+Iteration   7: 11.416 ops/us
+Iteration   8: 11.416 ops/us
+Iteration   9: 11.474 ops/us
+Iteration  10: 11.572 ops/us
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration":
+  11.487 ±(99.9%) 0.069 ops/us [Average]
+  (min, avg, max) = (11.299, 11.487, 11.752), stdev = 0.103
+  CI (99.9%): [11.418, 11.556] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 50.00% complete, ETA 00:18:27
+# Fork: 1 of 3
+# Warmup Iteration   1: 2.655 ±(99.9%) 0.118 us/op
+# Warmup Iteration   2: 2.050 ±(99.9%) 0.073 us/op
+# Warmup Iteration   3: 2.017 ±(99.9%) 0.029 us/op
+# Warmup Iteration   4: 2.041 ±(99.9%) 0.024 us/op
+# Warmup Iteration   5: 2.041 ±(99.9%) 0.032 us/op
+Iteration   1: 2.094 ±(99.9%) 0.070 us/op
+Iteration   2: 2.021 ±(99.9%) 0.094 us/op
+Iteration   3: 2.048 ±(99.9%) 0.099 us/op
+Iteration   4: 2.036 ±(99.9%) 0.068 us/op
+Iteration   5: 2.017 ±(99.9%) 0.190 us/op
+Iteration   6: 1.995 ±(99.9%) 0.101 us/op
+Iteration   7: 2.040 ±(99.9%) 0.161 us/op
+Iteration   8: 2.055 ±(99.9%) 0.073 us/op
+Iteration   9: 2.057 ±(99.9%) 0.053 us/op
+Iteration  10: 2.090 ±(99.9%) 0.074 us/op
+
+# Run progress: 51.39% complete, ETA 00:17:57
+# Fork: 2 of 3
+# Warmup Iteration   1: 2.799 ±(99.9%) 0.329 us/op
+# Warmup Iteration   2: 2.079 ±(99.9%) 0.019 us/op
+# Warmup Iteration   3: 2.048 ±(99.9%) 0.027 us/op
+# Warmup Iteration   4: 2.022 ±(99.9%) 0.061 us/op
+# Warmup Iteration   5: 2.047 ±(99.9%) 0.042 us/op
+Iteration   1: 2.070 ±(99.9%) 0.112 us/op
+Iteration   2: 2.060 ±(99.9%) 0.056 us/op
+Iteration   3: 2.063 ±(99.9%) 0.049 us/op
+Iteration   4: 2.032 ±(99.9%) 0.100 us/op
+Iteration   5: 2.027 ±(99.9%) 0.026 us/op
+Iteration   6: 2.051 ±(99.9%) 0.037 us/op
+Iteration   7: 2.048 ±(99.9%) 0.041 us/op
+Iteration   8: 2.058 ±(99.9%) 0.095 us/op
+Iteration   9: 2.065 ±(99.9%) 0.056 us/op
+Iteration  10: 2.047 ±(99.9%) 0.073 us/op
+
+# Run progress: 52.78% complete, ETA 00:17:26
+# Fork: 3 of 3
+# Warmup Iteration   1: 2.733 ±(99.9%) 0.369 us/op
+# Warmup Iteration   2: 2.062 ±(99.9%) 0.148 us/op
+# Warmup Iteration   3: 2.043 ±(99.9%) 0.132 us/op
+# Warmup Iteration   4: 2.058 ±(99.9%) 0.079 us/op
+# Warmup Iteration   5: 2.069 ±(99.9%) 0.046 us/op
+Iteration   1: 2.140 ±(99.9%) 0.235 us/op
+Iteration   2: 2.067 ±(99.9%) 0.093 us/op
+Iteration   3: 2.085 ±(99.9%) 0.013 us/op
+Iteration   4: 2.087 ±(99.9%) 0.065 us/op
+Iteration   5: 2.054 ±(99.9%) 0.086 us/op
+Iteration   6: 2.076 ±(99.9%) 0.127 us/op
+Iteration   7: 2.071 ±(99.9%) 0.076 us/op
+Iteration   8: 2.099 ±(99.9%) 0.061 us/op
+Iteration   9: 2.109 ±(99.9%) 0.110 us/op
+Iteration  10: 2.089 ±(99.9%) 0.048 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration":
+  2.062 ±(99.9%) 0.020 us/op [Average]
+  (min, avg, max) = (1.995, 2.062, 2.140), stdev = 0.030
+  CI (99.9%): [2.042, 2.082] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 54.17% complete, ETA 00:16:55
+# Fork: 1 of 3
+# Warmup Iteration   1: 3.037 ±(99.9%) 0.115 us/op
+# Warmup Iteration   2: 2.287 ±(99.9%) 0.126 us/op
+# Warmup Iteration   3: 2.315 ±(99.9%) 0.079 us/op
+# Warmup Iteration   4: 2.307 ±(99.9%) 0.185 us/op
+# Warmup Iteration   5: 2.303 ±(99.9%) 0.095 us/op
+Iteration   1: 2.300 ±(99.9%) 0.073 us/op
+Iteration   2: 2.289 ±(99.9%) 0.080 us/op
+Iteration   3: 2.277 ±(99.9%) 0.115 us/op
+Iteration   4: 2.311 ±(99.9%) 0.232 us/op
+Iteration   5: 2.293 ±(99.9%) 0.023 us/op
+Iteration   6: 2.304 ±(99.9%) 0.043 us/op
+Iteration   7: 2.300 ±(99.9%) 0.069 us/op
+Iteration   8: 2.291 ±(99.9%) 0.166 us/op
+Iteration   9: 2.300 ±(99.9%) 0.090 us/op
+Iteration  10: 2.327 ±(99.9%) 0.175 us/op
+
+# Run progress: 55.56% complete, ETA 00:16:24
+# Fork: 2 of 3
+# Warmup Iteration   1: 2.857 ±(99.9%) 0.241 us/op
+# Warmup Iteration   2: 2.312 ±(99.9%) 0.064 us/op
+# Warmup Iteration   3: 2.253 ±(99.9%) 0.101 us/op
+# Warmup Iteration   4: 2.262 ±(99.9%) 0.088 us/op
+# Warmup Iteration   5: 2.359 ±(99.9%) 0.154 us/op
+Iteration   1: 2.297 ±(99.9%) 0.148 us/op
+Iteration   2: 2.294 ±(99.9%) 0.096 us/op
+Iteration   3: 2.309 ±(99.9%) 0.185 us/op
+Iteration   4: 2.270 ±(99.9%) 0.131 us/op
+Iteration   5: 2.290 ±(99.9%) 0.058 us/op
+Iteration   6: 2.298 ±(99.9%) 0.070 us/op
+Iteration   7: 2.306 ±(99.9%) 0.077 us/op
+Iteration   8: 2.281 ±(99.9%) 0.047 us/op
+Iteration   9: 2.327 ±(99.9%) 0.027 us/op
+Iteration  10: 2.310 ±(99.9%) 0.166 us/op
+
+# Run progress: 56.94% complete, ETA 00:15:53
+# Fork: 3 of 3
+# Warmup Iteration   1: 3.146 ±(99.9%) 0.489 us/op
+# Warmup Iteration   2: 2.334 ±(99.9%) 0.122 us/op
+# Warmup Iteration   3: 2.248 ±(99.9%) 0.056 us/op
+# Warmup Iteration   4: 2.246 ±(99.9%) 0.055 us/op
+# Warmup Iteration   5: 2.258 ±(99.9%) 0.065 us/op
+Iteration   1: 2.231 ±(99.9%) 0.084 us/op
+Iteration   2: 2.239 ±(99.9%) 0.103 us/op
+Iteration   3: 2.313 ±(99.9%) 0.149 us/op
+Iteration   4: 2.278 ±(99.9%) 0.101 us/op
+Iteration   5: 2.288 ±(99.9%) 0.051 us/op
+Iteration   6: 2.261 ±(99.9%) 0.094 us/op
+Iteration   7: 2.293 ±(99.9%) 0.100 us/op
+Iteration   8: 2.312 ±(99.9%) 0.049 us/op
+Iteration   9: 2.268 ±(99.9%) 0.127 us/op
+Iteration  10: 2.271 ±(99.9%) 0.102 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentChainMigration":
+  2.291 ±(99.9%) 0.015 us/op [Average]
+  (min, avg, max) = (2.231, 2.291, 2.327), stdev = 0.022
+  CI (99.9%): [2.276, 2.306] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 58.33% complete, ETA 00:15:22
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.009 ±(99.9%) 0.001 us/op
+Iteration   1: 0.009 ±(99.9%) 0.001 us/op
+Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   6: 0.008 ±(99.9%) 0.001 us/op
+Iteration   7: 0.008 ±(99.9%) 0.001 us/op
+Iteration   8: 0.008 ±(99.9%) 0.001 us/op
+Iteration   9: 0.008 ±(99.9%) 0.001 us/op
+Iteration  10: 0.008 ±(99.9%) 0.001 us/op
+
+# Run progress: 59.72% complete, ETA 00:14:52
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   6: 0.008 ±(99.9%) 0.001 us/op
+Iteration   7: 0.008 ±(99.9%) 0.001 us/op
+Iteration   8: 0.008 ±(99.9%) 0.001 us/op
+Iteration   9: 0.008 ±(99.9%) 0.001 us/op
+Iteration  10: 0.008 ±(99.9%) 0.001 us/op
+
+# Run progress: 61.11% complete, ETA 00:14:21
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   6: 0.008 ±(99.9%) 0.001 us/op
+Iteration   7: 0.008 ±(99.9%) 0.001 us/op
+Iteration   8: 0.008 ±(99.9%) 0.001 us/op
+Iteration   9: 0.008 ±(99.9%) 0.001 us/op
+Iteration  10: 0.008 ±(99.9%) 0.001 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup":
+  0.008 ±(99.9%) 0.001 us/op [Average]
+  (min, avg, max) = (0.008, 0.008, 0.009), stdev = 0.001
+  CI (99.9%): [0.008, 0.008] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 62.50% complete, ETA 00:13:50
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   6: 0.008 ±(99.9%) 0.001 us/op
+Iteration   7: 0.008 ±(99.9%) 0.001 us/op
+Iteration   8: 0.008 ±(99.9%) 0.001 us/op
+Iteration   9: 0.008 ±(99.9%) 0.001 us/op
+Iteration  10: 0.008 ±(99.9%) 0.001 us/op
+
+# Run progress: 63.89% complete, ETA 00:13:19
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.008 ±(99.9%) 0.002 us/op
+# Warmup Iteration   4: 0.008 ±(99.9%) 0.002 us/op
+# Warmup Iteration   5: 0.008 ±(99.9%) 0.002 us/op
+Iteration   1: 0.008 ±(99.9%) 0.002 us/op
+Iteration   2: 0.008 ±(99.9%) 0.002 us/op
+Iteration   3: 0.008 ±(99.9%) 0.002 us/op
+Iteration   4: 0.008 ±(99.9%) 0.002 us/op
+Iteration   5: 0.008 ±(99.9%) 0.002 us/op
+Iteration   6: 0.008 ±(99.9%) 0.002 us/op
+Iteration   7: 0.008 ±(99.9%) 0.002 us/op
+Iteration   8: 0.008 ±(99.9%) 0.002 us/op
+Iteration   9: 0.008 ±(99.9%) 0.002 us/op
+Iteration  10: 0.008 ±(99.9%) 0.002 us/op
+
+# Run progress: 65.28% complete, ETA 00:12:48
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   1: 0.008 ±(99.9%) 0.001 us/op
+Iteration   2: 0.008 ±(99.9%) 0.001 us/op
+Iteration   3: 0.008 ±(99.9%) 0.001 us/op
+Iteration   4: 0.008 ±(99.9%) 0.001 us/op
+Iteration   5: 0.008 ±(99.9%) 0.001 us/op
+Iteration   6: 0.008 ±(99.9%) 0.001 us/op
+Iteration   7: 0.008 ±(99.9%) 0.001 us/op
+Iteration   8: 0.008 ±(99.9%) 0.001 us/op
+Iteration   9: 0.008 ±(99.9%) 0.001 us/op
+Iteration  10: 0.008 ±(99.9%) 0.001 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentLatestLookup":
+  0.008 ±(99.9%) 0.001 us/op [Average]
+  (min, avg, max) = (0.008, 0.008, 0.008), stdev = 0.001
+  CI (99.9%): [0.008, 0.008] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 66.67% complete, ETA 00:12:17
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.035 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.035 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.037 ±(99.9%) 0.002 us/op
+# Warmup Iteration   4: 0.037 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.037 ±(99.9%) 0.002 us/op
+Iteration   1: 0.036 ±(99.9%) 0.003 us/op
+Iteration   2: 0.036 ±(99.9%) 0.001 us/op
+Iteration   3: 0.036 ±(99.9%) 0.001 us/op
+Iteration   4: 0.036 ±(99.9%) 0.001 us/op
+Iteration   5: 0.036 ±(99.9%) 0.001 us/op
+Iteration   6: 0.036 ±(99.9%) 0.001 us/op
+Iteration   7: 0.035 ±(99.9%) 0.001 us/op
+Iteration   8: 0.036 ±(99.9%) 0.001 us/op
+Iteration   9: 0.037 ±(99.9%) 0.001 us/op
+Iteration  10: 0.036 ±(99.9%) 0.001 us/op
+
+# Run progress: 68.06% complete, ETA 00:11:47
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.035 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.035 ±(99.9%) 0.002 us/op
+# Warmup Iteration   3: 0.036 ±(99.9%) 0.002 us/op
+# Warmup Iteration   4: 0.036 ±(99.9%) 0.003 us/op
+# Warmup Iteration   5: 0.037 ±(99.9%) 0.002 us/op
+Iteration   1: 0.037 ±(99.9%) 0.002 us/op
+Iteration   2: 0.036 ±(99.9%) 0.004 us/op
+Iteration   3: 0.037 ±(99.9%) 0.001 us/op
+Iteration   4: 0.036 ±(99.9%) 0.001 us/op
+Iteration   5: 0.036 ±(99.9%) 0.001 us/op
+Iteration   6: 0.036 ±(99.9%) 0.001 us/op
+Iteration   7: 0.036 ±(99.9%) 0.001 us/op
+Iteration   8: 0.037 ±(99.9%) 0.001 us/op
+Iteration   9: 0.036 ±(99.9%) 0.001 us/op
+Iteration  10: 0.036 ±(99.9%) 0.001 us/op
+
+# Run progress: 69.44% complete, ETA 00:11:16
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.036 ±(99.9%) 0.006 us/op
+# Warmup Iteration   2: 0.038 ±(99.9%) 0.014 us/op
+# Warmup Iteration   3: 0.037 ±(99.9%) 0.002 us/op
+# Warmup Iteration   4: 0.037 ±(99.9%) 0.004 us/op
+# Warmup Iteration   5: 0.036 ±(99.9%) 0.001 us/op
+Iteration   1: 0.036 ±(99.9%) 0.001 us/op
+Iteration   2: 0.035 ±(99.9%) 0.001 us/op
+Iteration   3: 0.036 ±(99.9%) 0.001 us/op
+Iteration   4: 0.036 ±(99.9%) 0.001 us/op
+Iteration   5: 0.036 ±(99.9%) 0.002 us/op
+Iteration   6: 0.036 ±(99.9%) 0.001 us/op
+Iteration   7: 0.035 ±(99.9%) 0.001 us/op
+Iteration   8: 0.036 ±(99.9%) 0.001 us/op
+Iteration   9: 0.036 ±(99.9%) 0.001 us/op
+Iteration  10: 0.035 ±(99.9%) 0.001 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup":
+  0.036 ±(99.9%) 0.001 us/op [Average]
+  (min, avg, max) = (0.035, 0.036, 0.037), stdev = 0.001
+  CI (99.9%): [0.036, 0.036] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 70.83% complete, ETA 00:10:45
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.035 ±(99.9%) 0.002 us/op
+# Warmup Iteration   2: 0.036 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.035 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.036 ±(99.9%) 0.001 us/op
+# Warmup Iteration   5: 0.036 ±(99.9%) 0.001 us/op
+Iteration   1: 0.036 ±(99.9%) 0.001 us/op
+Iteration   2: 0.035 ±(99.9%) 0.001 us/op
+Iteration   3: 0.036 ±(99.9%) 0.001 us/op
+Iteration   4: 0.036 ±(99.9%) 0.002 us/op
+Iteration   5: 0.035 ±(99.9%) 0.002 us/op
+Iteration   6: 0.035 ±(99.9%) 0.001 us/op
+Iteration   7: 0.036 ±(99.9%) 0.001 us/op
+Iteration   8: 0.036 ±(99.9%) 0.001 us/op
+Iteration   9: 0.036 ±(99.9%) 0.001 us/op
+Iteration  10: 0.036 ±(99.9%) 0.001 us/op
+
+# Run progress: 72.22% complete, ETA 00:10:14
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.035 ±(99.9%) 0.001 us/op
+# Warmup Iteration   2: 0.036 ±(99.9%) 0.003 us/op
+# Warmup Iteration   3: 0.037 ±(99.9%) 0.001 us/op
+# Warmup Iteration   4: 0.036 ±(99.9%) 0.002 us/op
+# Warmup Iteration   5: 0.036 ±(99.9%) 0.003 us/op
+Iteration   1: 0.036 ±(99.9%) 0.001 us/op
+Iteration   2: 0.043 ±(99.9%) 0.007 us/op
+Iteration   3: 0.050 ±(99.9%) 0.014 us/op
+Iteration   4: 0.049 ±(99.9%) 0.014 us/op
+Iteration   5: 0.051 ±(99.9%) 0.015 us/op
+Iteration   6: 0.050 ±(99.9%) 0.014 us/op
+Iteration   7: 0.049 ±(99.9%) 0.013 us/op
+Iteration   8: 0.050 ±(99.9%) 0.015 us/op
+Iteration   9: 0.050 ±(99.9%) 0.015 us/op
+Iteration  10: 0.049 ±(99.9%) 0.016 us/op
+
+# Run progress: 73.61% complete, ETA 00:09:44
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.036 ±(99.9%) 0.002 us/op
+# Warmup Iteration   2: 0.035 ±(99.9%) 0.001 us/op
+# Warmup Iteration   3: 0.037 ±(99.9%) 0.002 us/op
+# Warmup Iteration   4: 0.036 ±(99.9%) 0.002 us/op
+# Warmup Iteration   5: 0.037 ±(99.9%) 0.003 us/op
+Iteration   1: 0.037 ±(99.9%) 0.001 us/op
+Iteration   2: 0.036 ±(99.9%) 0.001 us/op
+Iteration   3: 0.037 ±(99.9%) 0.002 us/op
+Iteration   4: 0.036 ±(99.9%) 0.002 us/op
+Iteration   5: 0.036 ±(99.9%) 0.002 us/op
+Iteration   6: 0.036 ±(99.9%) 0.002 us/op
+Iteration   7: 0.036 ±(99.9%) 0.002 us/op
+Iteration   8: 0.037 ±(99.9%) 0.002 us/op
+Iteration   9: 0.036 ±(99.9%) 0.002 us/op
+Iteration  10: 0.036 ±(99.9%) 0.003 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentRegistryLookup":
+  0.040 ±(99.9%) 0.004 us/op [Average]
+  (min, avg, max) = (0.035, 0.040, 0.051), stdev = 0.006
+  CI (99.9%): [0.036, 0.044] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 75.00% complete, ETA 00:09:13
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.390 ±(99.9%) 0.048 us/op
+# Warmup Iteration   2: 0.336 ±(99.9%) 0.017 us/op
+# Warmup Iteration   3: 0.321 ±(99.9%) 0.011 us/op
+# Warmup Iteration   4: 0.321 ±(99.9%) 0.019 us/op
+# Warmup Iteration   5: 0.323 ±(99.9%) 0.019 us/op
+Iteration   1: 0.323 ±(99.9%) 0.022 us/op
+Iteration   2: 0.320 ±(99.9%) 0.018 us/op
+Iteration   3: 0.322 ±(99.9%) 0.016 us/op
+Iteration   4: 0.324 ±(99.9%) 0.019 us/op
+Iteration   5: 0.324 ±(99.9%) 0.019 us/op
+Iteration   6: 0.319 ±(99.9%) 0.011 us/op
+Iteration   7: 0.322 ±(99.9%) 0.018 us/op
+Iteration   8: 0.313 ±(99.9%) 0.010 us/op
+Iteration   9: 0.313 ±(99.9%) 0.007 us/op
+Iteration  10: 0.320 ±(99.9%) 0.005 us/op
+
+# Run progress: 76.39% complete, ETA 00:08:42
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.382 ±(99.9%) 0.035 us/op
+# Warmup Iteration   2: 0.324 ±(99.9%) 0.007 us/op
+# Warmup Iteration   3: 0.321 ±(99.9%) 0.005 us/op
+# Warmup Iteration   4: 0.320 ±(99.9%) 0.022 us/op
+# Warmup Iteration   5: 0.317 ±(99.9%) 0.008 us/op
+Iteration   1: 0.320 ±(99.9%) 0.019 us/op
+Iteration   2: 0.319 ±(99.9%) 0.011 us/op
+Iteration   3: 0.322 ±(99.9%) 0.035 us/op
+Iteration   4: 0.323 ±(99.9%) 0.024 us/op
+Iteration   5: 0.323 ±(99.9%) 0.004 us/op
+Iteration   6: 0.318 ±(99.9%) 0.009 us/op
+Iteration   7: 0.319 ±(99.9%) 0.012 us/op
+Iteration   8: 0.320 ±(99.9%) 0.009 us/op
+Iteration   9: 0.320 ±(99.9%) 0.013 us/op
+Iteration  10: 0.319 ±(99.9%) 0.011 us/op
+
+# Run progress: 77.78% complete, ETA 00:08:11
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.351 ±(99.9%) 0.006 us/op
+# Warmup Iteration   2: 0.334 ±(99.9%) 0.006 us/op
+# Warmup Iteration   3: 0.320 ±(99.9%) 0.010 us/op
+# Warmup Iteration   4: 0.314 ±(99.9%) 0.012 us/op
+# Warmup Iteration   5: 0.317 ±(99.9%) 0.017 us/op
+Iteration   1: 0.320 ±(99.9%) 0.018 us/op
+Iteration   2: 0.320 ±(99.9%) 0.025 us/op
+Iteration   3: 0.316 ±(99.9%) 0.015 us/op
+Iteration   4: 0.315 ±(99.9%) 0.009 us/op
+Iteration   5: 0.322 ±(99.9%) 0.022 us/op
+Iteration   6: 0.320 ±(99.9%) 0.011 us/op
+Iteration   7: 0.321 ±(99.9%) 0.028 us/op
+Iteration   8: 0.316 ±(99.9%) 0.015 us/op
+Iteration   9: 0.313 ±(99.9%) 0.019 us/op
+Iteration  10: 0.317 ±(99.9%) 0.018 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix":
+  0.319 ±(99.9%) 0.002 us/op [Average]
+  (min, avg, max) = (0.313, 0.319, 0.324), stdev = 0.003
+  CI (99.9%): [0.317, 0.322] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 79.17% complete, ETA 00:07:41
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.399 ±(99.9%) 0.034 us/op
+# Warmup Iteration   2: 0.347 ±(99.9%) 0.008 us/op
+# Warmup Iteration   3: 0.346 ±(99.9%) 0.012 us/op
+# Warmup Iteration   4: 0.351 ±(99.9%) 0.021 us/op
+# Warmup Iteration   5: 0.353 ±(99.9%) 0.018 us/op
+Iteration   1: 0.350 ±(99.9%) 0.020 us/op
+Iteration   2: 0.354 ±(99.9%) 0.026 us/op
+Iteration   3: 0.352 ±(99.9%) 0.013 us/op
+Iteration   4: 0.352 ±(99.9%) 0.008 us/op
+Iteration   5: 0.357 ±(99.9%) 0.009 us/op
+Iteration   6: 0.353 ±(99.9%) 0.008 us/op
+Iteration   7: 0.342 ±(99.9%) 0.007 us/op
+Iteration   8: 0.346 ±(99.9%) 0.009 us/op
+Iteration   9: 0.352 ±(99.9%) 0.011 us/op
+Iteration  10: 0.355 ±(99.9%) 0.010 us/op
+
+# Run progress: 80.56% complete, ETA 00:07:10
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.412 ±(99.9%) 0.041 us/op
+# Warmup Iteration   2: 0.354 ±(99.9%) 0.028 us/op
+# Warmup Iteration   3: 0.350 ±(99.9%) 0.016 us/op
+# Warmup Iteration   4: 0.349 ±(99.9%) 0.014 us/op
+# Warmup Iteration   5: 0.351 ±(99.9%) 0.015 us/op
+Iteration   1: 0.349 ±(99.9%) 0.013 us/op
+Iteration   2: 0.345 ±(99.9%) 0.013 us/op
+Iteration   3: 0.342 ±(99.9%) 0.007 us/op
+Iteration   4: 0.339 ±(99.9%) 0.005 us/op
+Iteration   5: 0.342 ±(99.9%) 0.003 us/op
+Iteration   6: 0.349 ±(99.9%) 0.012 us/op
+Iteration   7: 0.347 ±(99.9%) 0.014 us/op
+Iteration   8: 0.351 ±(99.9%) 0.013 us/op
+Iteration   9: 0.349 ±(99.9%) 0.020 us/op
+Iteration  10: 0.351 ±(99.9%) 0.018 us/op
+
+# Run progress: 81.94% complete, ETA 00:06:39
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.408 ±(99.9%) 0.033 us/op
+# Warmup Iteration   2: 0.352 ±(99.9%) 0.015 us/op
+# Warmup Iteration   3: 0.354 ±(99.9%) 0.014 us/op
+# Warmup Iteration   4: 0.355 ±(99.9%) 0.011 us/op
+# Warmup Iteration   5: 0.351 ±(99.9%) 0.008 us/op
+Iteration   1: 0.352 ±(99.9%) 0.023 us/op
+Iteration   2: 0.348 ±(99.9%) 0.003 us/op
+Iteration   3: 0.348 ±(99.9%) 0.017 us/op
+Iteration   4: 0.350 ±(99.9%) 0.016 us/op
+Iteration   5: 0.353 ±(99.9%) 0.027 us/op
+Iteration   6: 0.354 ±(99.9%) 0.011 us/op
+Iteration   7: 0.353 ±(99.9%) 0.005 us/op
+Iteration   8: 0.353 ±(99.9%) 0.010 us/op
+Iteration   9: 0.354 ±(99.9%) 0.021 us/op
+Iteration  10: 0.355 ±(99.9%) 0.035 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.concurrentSingleFix":
+  0.350 ±(99.9%) 0.003 us/op [Average]
+  (min, avg, max) = (0.339, 0.350, 0.357), stdev = 0.004
+  CI (99.9%): [0.347, 0.353] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 8 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 83.33% complete, ETA 00:06:08
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.787 ±(99.9%) 0.062 us/op
+# Warmup Iteration   2: 0.648 ±(99.9%) 0.070 us/op
+# Warmup Iteration   3: 0.639 ±(99.9%) 0.010 us/op
+# Warmup Iteration   4: 0.653 ±(99.9%) 0.044 us/op
+# Warmup Iteration   5: 0.646 ±(99.9%) 0.064 us/op
+Iteration   1: 0.631 ±(99.9%) 0.034 us/op
+Iteration   2: 0.635 ±(99.9%) 0.048 us/op
+Iteration   3: 0.626 ±(99.9%) 0.025 us/op
+Iteration   4: 0.634 ±(99.9%) 0.036 us/op
+Iteration   5: 0.641 ±(99.9%) 0.032 us/op
+Iteration   6: 0.631 ±(99.9%) 0.015 us/op
+Iteration   7: 0.643 ±(99.9%) 0.045 us/op
+Iteration   8: 0.646 ±(99.9%) 0.023 us/op
+Iteration   9: 0.642 ±(99.9%) 0.030 us/op
+Iteration  10: 0.643 ±(99.9%) 0.039 us/op
+
+# Run progress: 84.72% complete, ETA 00:05:38
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.765 ±(99.9%) 0.045 us/op
+# Warmup Iteration   2: 0.657 ±(99.9%) 0.016 us/op
+# Warmup Iteration   3: 0.651 ±(99.9%) 0.025 us/op
+# Warmup Iteration   4: 0.662 ±(99.9%) 0.067 us/op
+# Warmup Iteration   5: 0.654 ±(99.9%) 0.045 us/op
+Iteration   1: 0.644 ±(99.9%) 0.032 us/op
+Iteration   2: 0.656 ±(99.9%) 0.027 us/op
+Iteration   3: 0.655 ±(99.9%) 0.014 us/op
+Iteration   4: 0.651 ±(99.9%) 0.014 us/op
+Iteration   5: 0.655 ±(99.9%) 0.022 us/op
+Iteration   6: 0.654 ±(99.9%) 0.032 us/op
+Iteration   7: 0.657 ±(99.9%) 0.011 us/op
+Iteration   8: 0.660 ±(99.9%) 0.043 us/op
+Iteration   9: 0.660 ±(99.9%) 0.047 us/op
+Iteration  10: 0.688 ±(99.9%) 0.109 us/op
+
+# Run progress: 86.11% complete, ETA 00:05:07
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.822 ±(99.9%) 0.109 us/op
+# Warmup Iteration   2: 0.649 ±(99.9%) 0.039 us/op
+# Warmup Iteration   3: 0.646 ±(99.9%) 0.033 us/op
+# Warmup Iteration   4: 0.644 ±(99.9%) 0.020 us/op
+# Warmup Iteration   5: 0.638 ±(99.9%) 0.033 us/op
+Iteration   1: 0.646 ±(99.9%) 0.055 us/op
+Iteration   2: 0.633 ±(99.9%) 0.009 us/op
+Iteration   3: 0.646 ±(99.9%) 0.037 us/op
+Iteration   4: 0.641 ±(99.9%) 0.033 us/op
+Iteration   5: 0.635 ±(99.9%) 0.039 us/op
+Iteration   6: 0.629 ±(99.9%) 0.052 us/op
+Iteration   7: 0.632 ±(99.9%) 0.036 us/op
+Iteration   8: 0.641 ±(99.9%) 0.009 us/op
+Iteration   9: 0.641 ±(99.9%) 0.032 us/op
+Iteration  10: 0.636 ±(99.9%) 0.073 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration":
+  0.644 ±(99.9%) 0.008 us/op [Average]
+  (min, avg, max) = (0.626, 0.644, 0.688), stdev = 0.013
+  CI (99.9%): [0.636, 0.653] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 8 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 87.50% complete, ETA 00:04:36
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.857 ±(99.9%) 0.027 us/op
+# Warmup Iteration   2: 0.705 ±(99.9%) 0.025 us/op
+# Warmup Iteration   3: 0.706 ±(99.9%) 0.049 us/op
+# Warmup Iteration   4: 0.703 ±(99.9%) 0.022 us/op
+# Warmup Iteration   5: 0.701 ±(99.9%) 0.057 us/op
+Iteration   1: 0.695 ±(99.9%) 0.045 us/op
+Iteration   2: 0.704 ±(99.9%) 0.042 us/op
+Iteration   3: 0.699 ±(99.9%) 0.070 us/op
+Iteration   4: 0.688 ±(99.9%) 0.079 us/op
+Iteration   5: 0.688 ±(99.9%) 0.010 us/op
+Iteration   6: 0.705 ±(99.9%) 0.017 us/op
+Iteration   7: 0.705 ±(99.9%) 0.039 us/op
+Iteration   8: 0.712 ±(99.9%) 0.026 us/op
+Iteration   9: 0.723 ±(99.9%) 0.032 us/op
+Iteration  10: 0.709 ±(99.9%) 0.067 us/op
+
+# Run progress: 88.89% complete, ETA 00:04:06
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.847 ±(99.9%) 0.052 us/op
+# Warmup Iteration   2: 0.702 ±(99.9%) 0.046 us/op
+# Warmup Iteration   3: 0.714 ±(99.9%) 0.038 us/op
+# Warmup Iteration   4: 0.717 ±(99.9%) 0.048 us/op
+# Warmup Iteration   5: 0.697 ±(99.9%) 0.031 us/op
+Iteration   1: 0.686 ±(99.9%) 0.057 us/op
+Iteration   2: 0.700 ±(99.9%) 0.027 us/op
+Iteration   3: 0.703 ±(99.9%) 0.102 us/op
+Iteration   4: 0.681 ±(99.9%) 0.034 us/op
+Iteration   5: 0.689 ±(99.9%) 0.007 us/op
+Iteration   6: 0.695 ±(99.9%) 0.049 us/op
+Iteration   7: 0.727 ±(99.9%) 0.090 us/op
+Iteration   8: 0.702 ±(99.9%) 0.044 us/op
+Iteration   9: 0.706 ±(99.9%) 0.066 us/op
+Iteration  10: 0.688 ±(99.9%) 0.034 us/op
+
+# Run progress: 90.28% complete, ETA 00:03:35
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.809 ±(99.9%) 0.048 us/op
+# Warmup Iteration   2: 0.710 ±(99.9%) 0.013 us/op
+# Warmup Iteration   3: 0.712 ±(99.9%) 0.053 us/op
+# Warmup Iteration   4: 0.713 ±(99.9%) 0.063 us/op
+# Warmup Iteration   5: 0.711 ±(99.9%) 0.067 us/op
+Iteration   1: 0.719 ±(99.9%) 0.049 us/op
+Iteration   2: 0.722 ±(99.9%) 0.062 us/op
+Iteration   3: 0.711 ±(99.9%) 0.016 us/op
+Iteration   4: 0.711 ±(99.9%) 0.057 us/op
+Iteration   5: 0.707 ±(99.9%) 0.037 us/op
+Iteration   6: 0.708 ±(99.9%) 0.038 us/op
+Iteration   7: 0.707 ±(99.9%) 0.025 us/op
+Iteration   8: 0.739 ±(99.9%) 0.061 us/op
+Iteration   9: 0.708 ±(99.9%) 0.013 us/op
+Iteration  10: 0.709 ±(99.9%) 0.038 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.eightThreadMigration":
+  0.705 ±(99.9%) 0.009 us/op [Average]
+  (min, avg, max) = (0.681, 0.705, 0.739), stdev = 0.013
+  CI (99.9%): [0.696, 0.714] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration
+# Parameters: (payloadSize = SMALL)
+
+# Run progress: 91.67% complete, ETA 00:03:04
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.374 ±(99.9%) 0.039 us/op
+# Warmup Iteration   2: 0.323 ±(99.9%) 0.013 us/op
+# Warmup Iteration   3: 0.321 ±(99.9%) 0.014 us/op
+# Warmup Iteration   4: 0.320 ±(99.9%) 0.013 us/op
+# Warmup Iteration   5: 0.321 ±(99.9%) 0.014 us/op
+Iteration   1: 0.320 ±(99.9%) 0.014 us/op
+Iteration   2: 0.322 ±(99.9%) 0.015 us/op
+Iteration   3: 0.320 ±(99.9%) 0.013 us/op
+Iteration   4: 0.320 ±(99.9%) 0.031 us/op
+Iteration   5: 0.316 ±(99.9%) 0.014 us/op
+Iteration   6: 0.316 ±(99.9%) 0.006 us/op
+Iteration   7: 0.313 ±(99.9%) 0.009 us/op
+Iteration   8: 0.314 ±(99.9%) 0.021 us/op
+Iteration   9: 0.314 ±(99.9%) 0.019 us/op
+Iteration  10: 0.314 ±(99.9%) 0.022 us/op
+
+# Run progress: 93.06% complete, ETA 00:02:33
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.391 ±(99.9%) 0.032 us/op
+# Warmup Iteration   2: 0.327 ±(99.9%) 0.011 us/op
+# Warmup Iteration   3: 0.325 ±(99.9%) 0.012 us/op
+# Warmup Iteration   4: 0.324 ±(99.9%) 0.011 us/op
+# Warmup Iteration   5: 0.327 ±(99.9%) 0.013 us/op
+Iteration   1: 0.329 ±(99.9%) 0.018 us/op
+Iteration   2: 0.317 ±(99.9%) 0.006 us/op
+Iteration   3: 0.323 ±(99.9%) 0.003 us/op
+Iteration   4: 0.326 ±(99.9%) 0.008 us/op
+Iteration   5: 0.327 ±(99.9%) 0.010 us/op
+Iteration   6: 0.323 ±(99.9%) 0.012 us/op
+Iteration   7: 0.328 ±(99.9%) 0.009 us/op
+Iteration   8: 0.325 ±(99.9%) 0.008 us/op
+Iteration   9: 0.322 ±(99.9%) 0.009 us/op
+Iteration  10: 0.326 ±(99.9%) 0.014 us/op
+
+# Run progress: 94.44% complete, ETA 00:02:03
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.352 ±(99.9%) 0.007 us/op
+# Warmup Iteration   2: 0.323 ±(99.9%) 0.006 us/op
+# Warmup Iteration   3: 0.322 ±(99.9%) 0.005 us/op
+# Warmup Iteration   4: 0.320 ±(99.9%) 0.011 us/op
+# Warmup Iteration   5: 0.325 ±(99.9%) 0.020 us/op
+Iteration   1: 0.323 ±(99.9%) 0.009 us/op
+Iteration   2: 0.321 ±(99.9%) 0.012 us/op
+Iteration   3: 0.316 ±(99.9%) 0.010 us/op
+Iteration   4: 0.317 ±(99.9%) 0.008 us/op
+Iteration   5: 0.317 ±(99.9%) 0.012 us/op
+Iteration   6: 0.314 ±(99.9%) 0.002 us/op
+Iteration   7: 0.312 ±(99.9%) 0.010 us/op
+Iteration   8: 0.312 ±(99.9%) 0.017 us/op
+Iteration   9: 0.308 ±(99.9%) 0.010 us/op
+Iteration  10: 0.315 ±(99.9%) 0.017 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration":
+  0.319 ±(99.9%) 0.004 us/op [Average]
+  (min, avg, max) = (0.308, 0.319, 0.329), stdev = 0.005
+  CI (99.9%): [0.315, 0.323] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8-Ubuntu-122.04.1
+# VM invoker: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+# VM options: -Xms4G -Xmx4G -XX:+UseG1GC -XX:+AlwaysPreTouch
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 2 s each
+# Measurement: 10 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 4 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration
+# Parameters: (payloadSize = MEDIUM)
+
+# Run progress: 95.83% complete, ETA 00:01:32
+# Fork: 1 of 3
+# Warmup Iteration   1: 0.450 ±(99.9%) 0.040 us/op
+# Warmup Iteration   2: 0.364 ±(99.9%) 0.008 us/op
+# Warmup Iteration   3: 0.361 ±(99.9%) 0.011 us/op
+# Warmup Iteration   4: 0.367 ±(99.9%) 0.032 us/op
+# Warmup Iteration   5: 0.363 ±(99.9%) 0.010 us/op
+Iteration   1: 0.356 ±(99.9%) 0.016 us/op
+Iteration   2: 0.354 ±(99.9%) 0.019 us/op
+Iteration   3: 0.353 ±(99.9%) 0.022 us/op
+Iteration   4: 0.359 ±(99.9%) 0.011 us/op
+Iteration   5: 0.358 ±(99.9%) 0.027 us/op
+Iteration   6: 0.358 ±(99.9%) 0.006 us/op
+Iteration   7: 0.368 ±(99.9%) 0.019 us/op
+Iteration   8: 0.356 ±(99.9%) 0.008 us/op
+Iteration   9: 0.364 ±(99.9%) 0.017 us/op
+Iteration  10: 0.364 ±(99.9%) 0.023 us/op
+
+# Run progress: 97.22% complete, ETA 00:01:01
+# Fork: 2 of 3
+# Warmup Iteration   1: 0.410 ±(99.9%) 0.046 us/op
+# Warmup Iteration   2: 0.353 ±(99.9%) 0.024 us/op
+# Warmup Iteration   3: 0.348 ±(99.9%) 0.013 us/op
+# Warmup Iteration   4: 0.341 ±(99.9%) 0.013 us/op
+# Warmup Iteration   5: 0.352 ±(99.9%) 0.017 us/op
+Iteration   1: 0.346 ±(99.9%) 0.012 us/op
+Iteration   2: 0.344 ±(99.9%) 0.007 us/op
+Iteration   3: 0.350 ±(99.9%) 0.015 us/op
+Iteration   4: 0.349 ±(99.9%) 0.010 us/op
+Iteration   5: 0.356 ±(99.9%) 0.019 us/op
+Iteration   6: 0.349 ±(99.9%) 0.013 us/op
+Iteration   7: 0.351 ±(99.9%) 0.011 us/op
+Iteration   8: 0.350 ±(99.9%) 0.018 us/op
+Iteration   9: 0.353 ±(99.9%) 0.018 us/op
+Iteration  10: 0.355 ±(99.9%) 0.028 us/op
+
+# Run progress: 98.61% complete, ETA 00:00:30
+# Fork: 3 of 3
+# Warmup Iteration   1: 0.402 ±(99.9%) 0.021 us/op
+# Warmup Iteration   2: 0.353 ±(99.9%) 0.007 us/op
+# Warmup Iteration   3: 0.346 ±(99.9%) 0.023 us/op
+# Warmup Iteration   4: 0.347 ±(99.9%) 0.022 us/op
+# Warmup Iteration   5: 0.357 ±(99.9%) 0.014 us/op
+Iteration   1: 0.350 ±(99.9%) 0.007 us/op
+Iteration   2: 0.351 ±(99.9%) 0.007 us/op
+Iteration   3: 0.352 ±(99.9%) 0.015 us/op
+Iteration   4: 0.351 ±(99.9%) 0.012 us/op
+Iteration   5: 0.354 ±(99.9%) 0.016 us/op
+Iteration   6: 0.355 ±(99.9%) 0.021 us/op
+Iteration   7: 0.359 ±(99.9%) 0.012 us/op
+Iteration   8: 0.352 ±(99.9%) 0.010 us/op
+Iteration   9: 0.351 ±(99.9%) 0.006 us/op
+Iteration  10: 0.354 ±(99.9%) 0.011 us/op
+
+
+Result "de.splatgames.aether.datafixers.benchmarks.concurrent.ConcurrentMigrationBenchmark.fourThreadMigration":
+  0.354 ±(99.9%) 0.004 us/op [Average]
+  (min, avg, max) = (0.344, 0.354, 0.368), stdev = 0.005
+  CI (99.9%): [0.351, 0.358] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:36:55
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                              (payloadSize)   Mode  Cnt    Score    Error   Units
+ConcurrentMigrationBenchmark.concurrentChainMigration          SMALL  thrpt   30    1.915 ±  0.052  ops/us
+ConcurrentMigrationBenchmark.concurrentChainMigration         MEDIUM  thrpt   30    1.772 ±  0.053  ops/us
+ConcurrentMigrationBenchmark.concurrentLatestLookup            SMALL  thrpt   30  481.853 ±  5.013  ops/us
+ConcurrentMigrationBenchmark.concurrentLatestLookup           MEDIUM  thrpt   30  490.670 ±  3.506  ops/us
+ConcurrentMigrationBenchmark.concurrentRegistryLookup          SMALL  thrpt   30  111.064 ±  1.358  ops/us
+ConcurrentMigrationBenchmark.concurrentRegistryLookup         MEDIUM  thrpt   30  110.910 ±  1.017  ops/us
+ConcurrentMigrationBenchmark.concurrentSingleFix               SMALL  thrpt   30   12.322 ±  0.098  ops/us
+ConcurrentMigrationBenchmark.concurrentSingleFix              MEDIUM  thrpt   30   11.542 ±  0.123  ops/us
+ConcurrentMigrationBenchmark.eightThreadMigration              SMALL  thrpt   30   12.545 ±  0.174  ops/us
+ConcurrentMigrationBenchmark.eightThreadMigration             MEDIUM  thrpt   30   11.468 ±  0.151  ops/us
+ConcurrentMigrationBenchmark.fourThreadMigration               SMALL  thrpt   30   12.321 ±  0.129  ops/us
+ConcurrentMigrationBenchmark.fourThreadMigration              MEDIUM  thrpt   30   11.487 ±  0.069  ops/us
+ConcurrentMigrationBenchmark.concurrentChainMigration          SMALL   avgt   30    2.062 ±  0.020   us/op
+ConcurrentMigrationBenchmark.concurrentChainMigration         MEDIUM   avgt   30    2.291 ±  0.015   us/op
+ConcurrentMigrationBenchmark.concurrentLatestLookup            SMALL   avgt   30    0.008 ±  0.001   us/op
+ConcurrentMigrationBenchmark.concurrentLatestLookup           MEDIUM   avgt   30    0.008 ±  0.001   us/op
+ConcurrentMigrationBenchmark.concurrentRegistryLookup          SMALL   avgt   30    0.036 ±  0.001   us/op
+ConcurrentMigrationBenchmark.concurrentRegistryLookup         MEDIUM   avgt   30    0.040 ±  0.004   us/op
+ConcurrentMigrationBenchmark.concurrentSingleFix               SMALL   avgt   30    0.319 ±  0.002   us/op
+ConcurrentMigrationBenchmark.concurrentSingleFix              MEDIUM   avgt   30    0.350 ±  0.003   us/op
+ConcurrentMigrationBenchmark.eightThreadMigration              SMALL   avgt   30    0.644 ±  0.008   us/op
+ConcurrentMigrationBenchmark.eightThreadMigration             MEDIUM   avgt   30    0.705 ±  0.009   us/op
+ConcurrentMigrationBenchmark.fourThreadMigration               SMALL   avgt   30    0.319 ±  0.004   us/op
+ConcurrentMigrationBenchmark.fourThreadMigration              MEDIUM   avgt   30    0.354 ±  0.004   us/op
+
+Benchmark result is saved to benchmark-results/20260306-230907/concurrent.json

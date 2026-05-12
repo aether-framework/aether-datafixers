@@ -39,8 +39,7 @@ import java.util.stream.Collectors;
  * A fluent test harness for validating {@link Schema} implementations.
  *
  * <p>{@code SchemaTester} provides a clean API for testing schema configurations,
- * including version validation, type registration verification, and inheritance
- * chain validation.</p>
+ * including version validation, type registration verification, and inheritance chain validation.</p>
  *
  * <h2>Basic Usage</h2>
  * <pre>{@code
@@ -92,9 +91,27 @@ import java.util.stream.Collectors;
  */
 public final class SchemaTester {
 
+    /**
+     * Internal state for configured expectations. These are set by the fluent API methods and then validated when
+     * verify() is called.
+     */
+    @NotNull
     private final Schema schema;
+    /**
+     * Expected version number, if hasVersion() was called.
+     */
+    @Nullable
     private Integer expectedVersion;
+    /**
+     * Expected parent schema, if inheritsFrom() was called.
+     */
+    @Nullable
     private Schema expectedParent;
+    /**
+     * Whether a parent is expected (<code>true</code>), not expected (<code>false</code>), or not specified (default)
+     * (<code>null</code>).
+     */
+    @Nullable
     private Boolean expectHasParent;
 
     private SchemaTester(@NotNull final Schema schema) {
@@ -112,8 +129,6 @@ public final class SchemaTester {
     public static SchemaTester forSchema(@NotNull final Schema schema) {
         return new SchemaTester(schema);
     }
-
-    // ==================== Version Validation ====================
 
     /**
      * Asserts that the schema has the specified version.
@@ -140,8 +155,6 @@ public final class SchemaTester {
         this.expectedVersion = version.getVersion();
         return this;
     }
-
-    // ==================== Type Validation ====================
 
     /**
      * Asserts that the schema contains a type for the given reference.
@@ -252,10 +265,8 @@ public final class SchemaTester {
      * @throws NullPointerException if {@code type} or {@code validator} is null
      */
     @NotNull
-    public SchemaTester typeForReference(
-            @NotNull final TypeReference type,
-            @NotNull final TypeValidator validator
-    ) {
+    public SchemaTester typeForReference(@NotNull final TypeReference type,
+                                         @NotNull final TypeValidator validator) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(validator, "validator must not be null");
 
@@ -271,8 +282,6 @@ public final class SchemaTester {
         validator.validate(schemaType);
         return this;
     }
-
-    // ==================== Parent/Inheritance Validation ====================
 
     /**
      * Asserts that the schema has a parent.
@@ -292,6 +301,10 @@ public final class SchemaTester {
      */
     @NotNull
     public SchemaTester hasNoParent() {
+        if (this.expectedParent != null) {
+            throw new IllegalStateException(
+                    "Contradictory configuration: hasNoParent() called after inheritsFrom()");
+        }
         this.expectHasParent = false;
         return this;
     }
@@ -306,6 +319,10 @@ public final class SchemaTester {
     @NotNull
     public SchemaTester inheritsFrom(@NotNull final Schema parent) {
         Preconditions.checkNotNull(parent, "parent must not be null");
+        if (Boolean.FALSE.equals(this.expectHasParent)) {
+            throw new IllegalStateException(
+                    "Contradictory configuration: inheritsFrom() called after hasNoParent()");
+        }
         this.expectedParent = parent;
         this.expectHasParent = true;
         return this;
@@ -341,8 +358,6 @@ public final class SchemaTester {
         return this;
     }
 
-    // ==================== Execution ====================
-
     /**
      * Runs all configured validations.
      *
@@ -369,18 +384,18 @@ public final class SchemaTester {
 
         // Validate parent existence
         if (this.expectHasParent != null) {
-            final boolean hasParent = this.schema.parent() != null;
-            if (this.expectHasParent && !hasParent) {
+            final Schema actualParentRef = this.schema.parent();
+            if (this.expectHasParent && actualParentRef == null) {
                 throw new AssertionError(String.format(
                         "Schema v%d has no parent, but one was expected",
                         this.schema.version().getVersion()
                 ));
             }
-            if (!this.expectHasParent && hasParent) {
+            if (!this.expectHasParent && actualParentRef != null) {
                 throw new AssertionError(String.format(
                         "Schema v%d has a parent (v%d), but none was expected",
                         this.schema.version().getVersion(),
-                        this.schema.parent().version().getVersion()
+                        actualParentRef.version().getVersion()
                 ));
             }
         }
@@ -418,8 +433,6 @@ public final class SchemaTester {
         return this.schema;
     }
 
-    // ==================== Type Validator ====================
-
     /**
      * Functional interface for custom type validation.
      */
@@ -432,6 +445,6 @@ public final class SchemaTester {
          * @param type the type to validate
          * @throws AssertionError if validation fails
          */
-        void validate(@Nullable Type<?> type);
+        void validate(@Nullable final Type<?> type);
     }
 }

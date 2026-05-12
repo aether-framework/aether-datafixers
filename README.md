@@ -1,90 +1,123 @@
-![License](https://img.shields.io/badge/license-MIT-red)
-![Maven Central](https://img.shields.io/maven-central/v/de.splatgames.aether.datafixers/aether-datafixers)
-![Version](https://img.shields.io/badge/version-0.5.0-orange)
+<div align="center">
 
-# Aether Datafixers 🔧
+<h1>Aether Datafixers</h1>
 
-**Aether Datafixers** is a lightweight **data migration framework** for the JVM.
-It enables **forward patching** of serialized data through schema definitions and versioned fixers —
-inspired by Minecraft's DataFixer Upper (DFU), with a focus on **simplicity**, **clarity**, and **ease of use**.
+<p><strong>A lightweight, format-agnostic data migration framework for the JVM.</strong></p>
 
----
+<p>
+  <a href="https://central.sonatype.com/artifact/de.splatgames.aether.datafixers/aether-datafixers"><img src="https://img.shields.io/maven-central/v/de.splatgames.aether.datafixers/aether-datafixers" alt="Maven Central"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://openjdk.org/projects/jdk/17/"><img src="https://img.shields.io/badge/Java-17%2B-orange" alt="Java 17+"></a>
+  <a href="https://github.com/aether-framework/aether-datafixers/actions/workflows/ci-push.yml"><img src="https://github.com/aether-framework/aether-datafixers/actions/workflows/ci-push.yml/badge.svg" alt="CI"></a>
+  <img src="https://sonarqube.splatgames.de/api/project_badges/measure?project=aether-framework_aether-datafixers_b5e07f1f-da6c-4600-8649-09a35a5d42d5&metric=alert_status&token=sqb_c8b086b266abfba4ae3dbf364edc22af3d650bea" alt="Code Quality">
+  <img src="https://img.shields.io/badge/coverage-75%25%2B-brightgreen" alt="Coverage">
+</p>
 
-## ✨ Features (v0.5.0)
+</div>
 
-- ✅ **Schema-Based Versioning** — Define data types per version with `Schema` and `TypeRegistry`
-- ✅ **Forward Patching** — Apply `DataFix` instances sequentially to migrate data across versions
-- ✅ **Format-Agnostic** — Work with any serialization format via `Dynamic<T>` and `DynamicOps<T>`
-- ✅ **Multi-Format Support** — JSON (Gson, Jackson), YAML (SnakeYAML, Jackson), TOML, and XML
-- ✅ **Codec System** — Bidirectional transformation between typed Java objects and dynamic representations
-- ✅ **Type Safety** — Strong typing with `TypeReference` identifiers for data routing
-- ✅ **Testkit** — Fluent test data builders, custom assertions, and test harnesses for DataFix testing
-- ✅ **CLI Tool** — Migrate and validate data files from the command line with batch processing
-- ✅ **Schema Tools** — Schema diffing, validation, migration analysis, and type introspection
-- ✅ **Spring Boot 3.x** — Auto-configuration, MigrationService with fluent API, Actuator integration
-- ✅ **Migration Diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
-- ✅ **Extended Rewrite Rules** — Batch operations, path-based transforms, conditional rules
-- ✅ **High-Performance APIs** — `Rules.batch()` for single-pass multi-operation transforms
-- ✅ **Fix Coverage Validation** — Detect schema changes without corresponding DataFixes
-- ✅ **Extended Codec Support** — Multi-format DynamicOps for CLI and Testkit modules
-- ✅ **JDK 17+** — Built and tested on modern LTS JVMs
+## Overview
 
----
+Aether Datafixers is a data migration framework that enables **forward patching** of serialized data through versioned schema definitions and composable fixers. It is inspired by Minecraft's [DataFixer Upper (DFU)](docs/appendix/comparison-with-dfu.md) but designed from the ground up for **simplicity**, **clarity**, and **ease of use**.
 
-## 📦 Modules
+The framework is **format-agnostic** - it works with JSON, YAML, TOML, XML, or any custom serialization format through the `Dynamic<T>` and `DynamicOps<T>` abstraction layer. All core types are **immutable and thread-safe**, making Aether Datafixers suitable for concurrent, high-throughput environments. The modular architecture lets you pick exactly what you need: just the core, or add the CLI, Spring Boot integration, testkit, schema analysis tools, and more.
 
-- **aether-datafixers-api** — Core interfaces and API contracts (no implementation logic)
-- **aether-datafixers-core** — Default implementations of the API interfaces
-- **aether-datafixers-codec** — Codec implementations for serialization formats
-- **aether-datafixers-testkit** — Testing utilities for DataFix, Schema, and migration testing
-- **aether-datafixers-cli** — Command-line interface for data migration and validation
-- **aether-datafixers-schema-tools** — Schema analysis, validation, diffing, and introspection
-- **aether-datafixers-spring-boot-starter** — Spring Boot 3.x auto-configuration with Actuator support
-- **aether-datafixers-examples** — Practical examples demonstrating real-world usage
-- **aether-datafixers-functional-tests** — End-to-end and integration tests
-- **aether-datafixers-bom** — Bill of Materials for coordinated dependency management
+## 📋 Table of Contents
 
----
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Key Concepts](#-key-concepts)
+- [Modules](#-modules)
+- [Data Flow](#-data-flow)
+- [Code Examples](#-code-examples)
+- [Spring Boot Integration](#-spring-boot-integration)
+- [CLI Tool](#-cli-tool)
+- [Testing with Testkit](#-testing-with-testkit)
+- [Schema Tools](#-schema-tools)
+- [Optics](#-optics)
+- [Documentation](#-documentation)
+- [Building from Source](#-building-from-source)
+- [Contributing](#-contributing)
+- [Security](#-security)
+- [License](#-license)
 
-## 🚀 Quickstart
+## 🚀 Quick Start
 
-### 1) Define a Bootstrap
+### 1. Add the dependency
+
+```xml
+<dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-core</artifactId>
+    <version>1.0.0-rc.1</version>
+</dependency>
+```
+
+<details>
+<summary>Gradle (Groovy / Kotlin)</summary>
+
+```groovy
+// Groovy
+implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1'
+```
+
+```kotlin
+// Kotlin
+implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1")
+```
+
+</details>
+
+### 2. Define a Bootstrap
+
+Register your schemas and fixes in a `DataFixerBootstrap`:
 
 ```java
-public class MyBootstrap implements DataFixerBootstrap {
+public class GameDataBootstrap implements DataFixerBootstrap {
+
+    public static final DataVersion CURRENT_VERSION = new DataVersion(200);
+
+    private SchemaRegistry schemas;
+
     @Override
     public void registerSchemas(SchemaRegistry schemas) {
-        // Register schema for each version
+        this.schemas = schemas;
+        schemas.register(new Schema100());
+        schemas.register(new Schema110());
+        schemas.register(new Schema200());
     }
 
     @Override
     public void registerFixes(FixRegistrar fixes) {
-        // Register DataFix instances for type migrations
+        fixes.register(TypeReferences.PLAYER, new PlayerV1ToV2Fix(schemas));
+        fixes.register(TypeReferences.PLAYER, new PlayerV2ToV3Fix(schemas));
     }
 }
 ```
 
-### 2) Create the DataFixer
+### 3. Create the DataFixer
 
 ```java
 AetherDataFixer fixer = new DataFixerRuntimeFactory()
-    .create(currentVersion, new MyBootstrap());
+    .create(GameDataBootstrap.CURRENT_VERSION, new GameDataBootstrap());
 ```
 
-### 3) Apply Migrations
+### 4. Apply Migrations
 
 ```java
-Dynamic<?> updated = fixer.update(
-    new TypeReference("player"),
-    inputDynamic,
-    fromVersion,
-    toVersion
-);
+// Wrap input data in a TaggedDynamic
+Dynamic<JsonElement> input = new Dynamic<>(GsonOps.INSTANCE, oldJsonData);
+TaggedDynamic tagged = new TaggedDynamic(TypeReferences.PLAYER, input);
+
+// Migrate from version 100 to the current version
+TaggedDynamic result = fixer.update(tagged, new DataVersion(100), fixer.currentVersion());
+
+// Extract the migrated data
+Dynamic<?> migrated = result.value();
 ```
 
----
+> For a complete walkthrough, see the [Getting Started Guide](docs/getting-started/quick-start.md).
 
-## 📚 Installation
+## 📦 Installation
 
 **Maven**
 
@@ -92,33 +125,28 @@ Dynamic<?> updated = fixer.update(
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>0.5.0</version>
+    <version>1.0.0-rc.1</version>
 </dependency>
 ```
 
-**Gradle (Groovy)**
+<details>
+<summary>Gradle (Groovy / Kotlin)</summary>
 
 ```groovy
-dependencies {
-    implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:0.5.0'
-}
+// Groovy
+implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1'
 ```
-
-**Gradle (Kotlin)**
 
 ```kotlin
-dependencies {
-    implementation("de.splatgames.aether.datafixers:aether-datafixers-core:0.5.0")
-}
+// Kotlin
+implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1")
 ```
 
-> Use the **BOM** for coordinated version management across all modules.
+</details>
 
----
+### Using the BOM
 
-## 📋 Using the BOM
-
-The Bill of Materials (BOM) ensures consistent versions across all Aether Datafixers modules.
+The Bill of Materials ensures consistent versions across all Aether Datafixers modules.
 
 **Maven**
 
@@ -128,7 +156,7 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
         <dependency>
             <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>0.5.0</version>
+            <version>1.0.0-rc.1</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -148,186 +176,264 @@ The Bill of Materials (BOM) ensures consistent versions across all Aether Datafi
 </dependencies>
 ```
 
-**Gradle (Groovy)**
+<details>
+<summary>Gradle (Groovy / Kotlin)</summary>
 
 ```groovy
+// Groovy
 dependencies {
-    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:0.5.0')
-
-    // No version needed
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0-rc.1')
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec'
 }
 ```
 
-**Gradle (Kotlin)**
-
 ```kotlin
+// Kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:0.5.0"))
-
-    // No version needed
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0-rc.1"))
     implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
     implementation("de.splatgames.aether.datafixers:aether-datafixers-codec")
 }
 ```
 
----
+</details>
 
 ## 🔑 Key Concepts
 
-| Concept           | Description                                                                              |
-|-------------------|------------------------------------------------------------------------------------------|
-| **DataVersion**   | Integer-based version identifier for data schemas                                        |
-| **TypeReference** | String-based identifier for data types (e.g., `"player"`, `"entity"`)                    |
-| **Schema**        | Associates a `DataVersion` with a `TypeRegistry`                                         |
-| **DataFix**       | Migration that transforms data from one version to another                               |
-| **Dynamic**       | Format-agnostic data wrapper enabling manipulation without knowing the underlying format |
-| **DynamicOps**    | Operations interface for a specific format (JSON, DAT, etc.)                             |
-| **Codec**         | Bidirectional transformation between typed objects and `Dynamic` representations         |
-| **Type**          | Combines a `TypeReference` with a `Codec`                                                |
-| **Optic**         | Composable accessor for nested data structures (e.g., `Lens`, `Prism`, `Adapter`)        |
-| **DSL**           | Domain-specific language for defining type templates and optic compositions              |
+| Concept             | Description                                                                           |
+|---------------------|---------------------------------------------------------------------------------------|
+| **DataVersion**     | Integer-based version identifier for schema snapshots                                 |
+| **TypeReference**   | String-based key for routing data to the correct fixes (e.g., `"player"`, `"entity"`) |
+| **Schema**          | Associates a `DataVersion` with a `TypeRegistry` defining the types at that version   |
+| **DataFix**         | A transformation that migrates data from one version to another                       |
+| **Dynamic\<T\>**    | Format-agnostic data wrapper - manipulate data without knowing the underlying format  |
+| **DynamicOps\<T\>** | Operations interface for a specific format (Gson, Jackson, SnakeYAML, etc.)           |
+| **Codec**           | Bidirectional transformation between typed Java objects and `Dynamic` representations |
+| **TypeRewriteRule** | Composable rule defining how data is rewritten during a fix                           |
 
----
+> For a complete concept reference, see [Concepts](docs/concepts/index.md) and the [Glossary](docs/appendix/glossary.md).
 
-## 🔍 Optics
+## 📦 Modules
 
-Optics provide composable, type-safe accessors for nested data structures. They are central to the data fixer system, enabling transformations without manual traversal code.
-
-### Optic Hierarchy
-
-| Optic         | Focus             | Description                                                   |
-|---------------|-------------------|---------------------------------------------------------------|
-| **Iso**       | 1 ↔ 1             | Reversible 1-to-1 transformation between two types            |
-| **Lens**      | 1 → 1             | Focus on exactly one part of a product type (always succeeds) |
-| **Prism**     | 1 → 0..1          | Focus on one case of a sum type (may not match)               |
-| **Affine**    | 1 → 0..1          | Combines lens and prism capabilities                          |
-| **Traversal** | 1 → 0..n          | Focus on zero or more parts                                   |
-| **Getter**    | 1 → 1 (read-only) | Read-only focus (no modification)                             |
-| **Finder**    | Type → Optic      | Locates nested types within a schema                          |
-
-### Lens Example
-
-A `Lens` focuses on exactly one field of a structure:
-
-```java
-record Address(String street, String city) {}
-record Person(String name, Address address) {}
-
-// Create a lens for Person -> Address
-Lens<Person, Person, Address, Address> addressLens = Lens.of(
-    "person.address",
-    Person::address,
-    (person, newAddress) -> new Person(person.name(), newAddress)
-);
-
-// Create a lens for Address -> City
-Lens<Address, Address, String, String> cityLens = Lens.of(
-    "address.city",
-    Address::city,
-    (address, newCity) -> new Address(address.street(), newCity)
-);
-
-// Compose lenses: Person -> Address -> City
-Lens<Person, Person, String, String> personCityLens = addressLens.compose(cityLens);
-
-// Use the composed lens
-Person alice = new Person("Alice", new Address("Main St", "Boston"));
-String city = personCityLens.get(alice);              // "Boston"
-Person moved = personCityLens.set(alice, "Seattle");  // Alice now in Seattle
-```
-
-### Prism Example
-
-A `Prism` focuses on one variant of a sum type:
-
-```java
-sealed interface JsonValue permits JsonString, JsonNumber, JsonNull {}
-record JsonString(String value) implements JsonValue {}
-record JsonNumber(double value) implements JsonValue {}
-record JsonNull() implements JsonValue {}
-
-// Create a prism for JsonValue -> JsonString
-Prism<JsonValue, JsonValue, String, String> stringPrism = Prism.of(
-    "json.string",
-    json -> json instanceof JsonString js ? Optional.of(js.value()) : Optional.empty(),
-    value -> new JsonString(value)
-);
-
-// Use the prism
-JsonValue text = new JsonString("hello");
-JsonValue number = new JsonNumber(42.0);
-
-stringPrism.getOption(text);    // Optional.of("hello")
-stringPrism.getOption(number);  // Optional.empty()
-
-stringPrism.modify(text, String::toUpperCase);   // JsonString("HELLO")
-stringPrism.modify(number, String::toUpperCase); // JsonNumber(42.0) - unchanged
-```
-
----
+| Module                                                                             | Description                                                                                             |
+|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| [**aether-datafixers-api**](aether-datafixers-api)                                 | Core interfaces and API contracts                                                                       |
+| [**aether-datafixers-core**](aether-datafixers-core)                               | Default implementations of the API interfaces                                                           |
+| [**aether-datafixers-codec**](aether-datafixers-codec)                             | Multi-format DynamicOps - JSON (Gson, Jackson), YAML (SnakeYAML, Jackson), TOML, XML                    |
+| [**aether-datafixers-testkit**](aether-datafixers-testkit)                         | Fluent test builders, AssertJ assertions, DataFix test harnesses - [docs](docs/testkit/index.md)        |
+| [**aether-datafixers-cli**](aether-datafixers-cli)                                 | Command-line migration and validation tool - [docs](docs/cli/index.md)                                  |
+| [**aether-datafixers-schema-tools**](aether-datafixers-schema-tools)               | Schema diffing, validation, migration analysis - [docs](docs/schema-tools/index.md)                     |
+| [**aether-datafixers-spring-boot-starter**](aether-datafixers-spring-boot-starter) | Spring Boot 3.x auto-config, MigrationService, Actuator, Micrometer - [docs](docs/spring-boot/index.md) |
+| [**aether-datafixers-examples**](aether-datafixers-examples)                       | Runnable usage examples demonstrating real-world patterns                                               |
+| [**aether-datafixers-bom**](aether-datafixers-bom)                                 | Bill of Materials for coordinated version management                                                    |
+| [**aether-datafixers-benchmarks**](aether-datafixers-benchmarks)                   | JMH microbenchmarks for performance validation                                                          |
+| [**aether-datafixers-functional-tests**](aether-datafixers-functional-tests)       | E2E, integration, stress, and chaos tests                                                               |
 
 ## 📊 Data Flow
 
 ```
-Input Data (e.g., JSON)
-    ↓
-DynamicOps parses to Dynamic<T>
-    ↓
-DataFixer.update() applies relevant DataFixes in version order
-    ↓
-Type.codec().decode() produces typed Java object
+Input Data (JSON, YAML, TOML, XML, ...)
+       │
+       ▼
+DynamicOps<T> wraps raw data as Dynamic<T>
+       │
+       ▼
+DataFixer.update() selects and applies DataFixes in version order
+       │
+       ▼
+Each DataFix transforms Dynamic<T> using composable TypeRewriteRules
+       │
+       ▼
+Output: migrated Dynamic<T> at the target version
 ```
 
----
+The framework handles version ordering, type routing, and rule composition automatically. You define schemas and fixes - Aether Datafixers handles the rest.
 
-## 🔧 Extending SchemaDataFix
+## 💡 Code Examples
 
-For fixes that need schema access, extend `SchemaDataFix`:
+### Schema-Based Fix with Rules
+
+For production use, extend `SchemaDataFix` and compose rules declaratively:
 
 ```java
-public class MyFix extends SchemaDataFix {
+public class PlayerV1ToV2Fix extends SchemaDataFix {
+
+    public PlayerV1ToV2Fix(SchemaRegistry schemas) {
+        super("player_v100_to_v110", new DataVersion(100), new DataVersion(110), schemas);
+    }
+
     @Override
     protected TypeRewriteRule makeRule(Schema inputSchema, Schema outputSchema) {
-        // Return a rule that transforms typed data
+        return Rules.seq(
+            Rules.renameField(GsonOps.INSTANCE, "playerName", "name"),
+            Rules.renameField(GsonOps.INSTANCE, "xp", "experience"),
+            Rules.transformField(GsonOps.INSTANCE, "gameMode",
+                PlayerV1ToV2Fix::gameModeIntToString),
+            Rules.addField(GsonOps.INSTANCE, "level",
+                dynamic -> dynamic.createInt(1))
+        );
+    }
+
+    private static Dynamic<?> gameModeIntToString(Dynamic<?> dynamic) {
+        int mode = dynamic.asInt().result().orElse(0);
+        String name = switch (mode) {
+            case 1 -> "creative";
+            case 2 -> "adventure";
+            case 3 -> "spectator";
+            default -> "survival";
+        };
+        return dynamic.createString(name);
     }
 }
 ```
 
----
+### Batch Operations
+
+Use `Rules.batch()` to apply multiple field operations in a single pass for optimal performance:
+
+```java
+TypeRewriteRule rule = Rules.batch(GsonOps.INSTANCE, batch -> batch
+    .rename("playerName", "name")
+    .rename("xp", "experience")
+    .remove("deprecated_field")
+    .add("level", dynamic -> dynamic.createInt(1))
+);
+```
+
+### Multi-Format Support
+
+The same fix works transparently across all serialization formats:
+
+```java
+// JSON via Gson
+Dynamic<JsonElement> gsonData = new Dynamic<>(GsonOps.INSTANCE, jsonElement);
+
+// JSON via Jackson
+Dynamic<JsonNode> jacksonData = new Dynamic<>(JacksonJsonOps.INSTANCE, jsonNode);
+
+// YAML via SnakeYAML
+Dynamic<Object> yamlData = new Dynamic<>(SnakeYamlOps.INSTANCE, yamlMap);
+
+// TOML via Jackson
+Dynamic<JsonNode> tomlData = new Dynamic<>(JacksonTomlOps.INSTANCE, tomlNode);
+```
+
+All migrations work identically regardless of the underlying format.
+
+> See the [examples module](aether-datafixers-examples) and [tutorials](docs/tutorials/index.md) for complete runnable examples.
+
+## 🍃 Spring Boot Integration
+
+Add the starter dependency to get auto-configuration, a fluent MigrationService, and Actuator support out of the box.
+
+```xml
+<dependency>
+    <groupId>de.splatgames.aether.datafixers</groupId>
+    <artifactId>aether-datafixers-spring-boot-starter</artifactId>
+</dependency>
+```
+
+Register your bootstrap as a Spring bean:
+
+```java
+@Configuration
+public class DataFixerConfig {
+    @Bean
+    public DataFixerBootstrap gameBootstrap() {
+        return new GameDataBootstrap();
+    }
+}
+```
+
+Inject and use the `MigrationService` with its fluent API:
+
+```java
+@Service
+public class GameService {
+
+    private final MigrationService migrationService;
+
+    public GameService(MigrationService migrationService) {
+        this.migrationService = migrationService;
+    }
+
+    public Dynamic<?> migratePlayerData(TaggedDynamic data, int fromVersion) {
+        MigrationResult result = migrationService
+            .migrate(data)
+            .from(fromVersion)
+            .toLatest()
+            .execute();
+
+        return result.getData().value();
+    }
+}
+```
+
+### Actuator Endpoints
+
+| Endpoint               | Description                                           |
+|------------------------|-------------------------------------------------------|
+| `/actuator/health`     | Health indicator showing DataFixer operational status |
+| `/actuator/info`       | Schema version information                            |
+| `/actuator/datafixers` | Detailed domain and version info                      |
+
+### Micrometer Metrics
+
+| Metric                                      | Type         | Description              |
+|---------------------------------------------|--------------|--------------------------|
+| `aether.datafixers.migrations.success`      | Counter      | Successful migrations    |
+| `aether.datafixers.migrations.failure`      | Counter      | Failed migrations        |
+| `aether.datafixers.migrations.duration`     | Timer        | Migration execution time |
+| `aether.datafixers.migrations.version.span` | Distribution | Version span statistics  |
+
+The starter also supports **multi-domain setups** with `@Qualifier` annotations, async execution via `executeAsync()`, and custom `DynamicOps` via `withOps()`.
+
+> For configuration properties, multi-domain setup, and metrics integration, see the [Spring Boot documentation](docs/spring-boot/index.md).
+
+## 💻 CLI Tool
+
+Migrate and validate data files from the command line without writing Java code.
+
+```bash
+# Migrate a JSON file from version 100 to 200
+aether-cli migrate --from 100 --to 200 --type player \
+  --bootstrap com.example.GameDataBootstrap input.json
+
+# Validate files without modifying them
+aether-cli validate --to 200 --type player \
+  --bootstrap com.example.GameDataBootstrap *.json
+
+# Show available formats and bootstrap info
+aether-cli info --formats
+```
+
+**Supported formats:** `json-gson`, `json-jackson`, `yaml-snakeyaml`, `yaml-jackson`, `toml-jackson`, `xml-jackson`
+
+Features include batch processing, auto-version detection, in-place migration with backups, migration reports (text/JSON), and CI/CD-friendly exit codes.
+
+> For complete usage and format handler details, see the [CLI documentation](docs/cli/index.md).
 
 ## 🧪 Testing with Testkit
 
-The `aether-datafixers-testkit` module provides utilities for testing your migrations:
+The testkit module provides fluent builders, custom assertions, and test harnesses for comprehensive migration testing.
 
 ```java
-import de.splatgames.aether.datafixers.testkit.TestData;
-import de.splatgames.aether.datafixers.testkit.factory.QuickFix;
-import de.splatgames.aether.datafixers.testkit.harness.DataFixTester;
-import static de.splatgames.aether.datafixers.testkit.assertion.AetherAssertions.assertThat;
-
 @Test
-void testFieldRename() {
-    // Create a quick fix for testing
+void playerNameRenamed() {
     var fix = QuickFix.renameField(
-        GsonOps.INSTANCE, "rename_player_name", 1, 2,
-        "playerName", "name"
-    );
+        GsonOps.INSTANCE, "rename_name", 1, 2, "playerName", "name");
 
-    // Create test data fluently
     Dynamic<JsonElement> input = TestData.gson().object()
         .put("playerName", "Alice")
         .put("level", 10)
         .build();
 
-    // Apply and verify
     Dynamic<JsonElement> result = DataFixTester.forFix(fix)
         .withInput(input)
         .forType("player")
         .apply();
 
-    // Use custom assertions
     assertThat(result)
         .hasStringField("name", "Alice")
         .hasIntField("level", 10)
@@ -335,17 +441,7 @@ void testFieldRename() {
 }
 ```
 
-### Testkit Features
-
-| Component            | Description                                                              |
-|----------------------|--------------------------------------------------------------------------|
-| **TestData**         | Fluent builders for creating test data (`TestData.gson().object()...`)   |
-| **AetherAssertions** | Custom AssertJ assertions for `Dynamic`, `DataResult`, `Typed`           |
-| **DataFixTester**    | Test harness for isolated DataFix testing                                |
-| **QuickFix**         | Factory methods for common fix patterns (rename, add, remove, transform) |
-| **MockSchemas**      | Mock schema utilities for testing                                        |
-
-Add to your project:
+**Components:** `TestData` (fluent builders for all formats), `AetherAssertions` (AssertJ assertions for `Dynamic`, `DataResult`, `Typed`), `DataFixTester` / `MigrationTester` (test harnesses), `QuickFix` (inline fix factories), `MockSchemas` (mock schema utilities).
 
 ```xml
 <dependency>
@@ -355,180 +451,76 @@ Add to your project:
 </dependency>
 ```
 
----
+> For all builders, assertions, and harness patterns, see the [Testkit documentation](docs/testkit/index.md).
 
-## 🍃 Spring Boot Integration
+## 🔍 Schema Tools
 
-The `aether-datafixers-spring-boot-starter` provides comprehensive Spring Boot 3.x integration.
-
-### Installation
-
-**Maven**
-
-```xml
-<dependency>
-    <groupId>de.splatgames.aether.datafixers</groupId>
-    <artifactId>aether-datafixers-spring-boot-starter</artifactId>
-    <version>0.5.0</version>
-</dependency>
-```
-
-**Gradle (Kotlin)**
-
-```kotlin
-implementation("de.splatgames.aether.datafixers:aether-datafixers-spring-boot-starter:0.5.0")
-```
-
-### Quick Start
-
-1. **Create a DataFixerBootstrap bean:**
+Analyze, validate, and diff your schemas to catch issues before they reach production.
 
 ```java
-@Configuration
-public class DataFixerConfig {
-    @Bean
-    public DataFixerBootstrap gameBootstrap() {
-        return new GameDataBootstrap();
-    }
-}
+// Compare schemas between versions
+SchemaDiff diff = SchemaDiffer.compare(schemaV1, schemaV2)
+    .includeFieldLevel(true)
+    .diff();
+
+// Detect missing DataFixes for schema changes
+FixCoverage coverage = MigrationAnalyzer.forBootstrap(bootstrap)
+    .from(100).to(200)
+    .analyzeCoverage();
+
+// Validate schema structure and naming conventions
+ValidationResult result = SchemaValidator.forBootstrap(bootstrap)
+    .validateStructure()
+    .validateConventions()
+    .validate();
 ```
 
-2. **Inject and use MigrationService:**
+> For diffing details, coverage gap analysis, and convention rules, see the [Schema Tools documentation](docs/schema-tools/index.md).
+
+## 🔭 Optics
+
+Optics provide composable, type-safe accessors for nested data structures. They are central to the data fixer system, enabling transformations without manual traversal code.
+
+| Optic         | Focus        | Description                                                   |
+|---------------|--------------|---------------------------------------------------------------|
+| **Iso**       | 1 ↔ 1        | Reversible 1-to-1 transformation between two types            |
+| **Lens**      | 1 → 1        | Focus on exactly one part of a product type (always succeeds) |
+| **Prism**     | 1 → 0..1     | Focus on one case of a sum type (may not match)               |
+| **Affine**    | 1 → 0..1     | Combines lens and prism capabilities                          |
+| **Traversal** | 1 → 0..n     | Focus on zero or more parts                                   |
+| **Getter**    | 1 → 1        | Read-only focus (no modification)                             |
+| **Finder**    | Type → Optic | Locates nested types within a schema                          |
 
 ```java
-@Service
-public class GameService {
-    private final MigrationService migrationService;
+// Compose lenses for nested access: Person -> Address -> City
+Lens<Person, Person, String, String> cityLens = addressLens.compose(cityLens);
 
-    public GameService(MigrationService migrationService) {
-        this.migrationService = migrationService;
-    }
-
-    public Dynamic<?> migratePlayerData(Dynamic<?> data, int fromVersion) {
-        MigrationResult result = migrationService
-            .migrate(data)
-            .from(fromVersion)
-            .toLatest()
-            .execute();
-
-        if (result.isSuccess()) {
-            return result.getData();
-        }
-        throw new MigrationException(result.getErrorMessage());
-    }
-}
+String city = cityLens.get(alice);              // "Boston"
+Person moved = cityLens.set(alice, "Seattle");  // Alice now in Seattle
 ```
 
-### Configuration Properties
+> For detailed examples with Prism, Iso, Traversal, and Finder, see the [Optics documentation](docs/concepts/optics/index.md).
 
-```yaml
-aether:
-  datafixers:
-    enabled: true                    # Enable/disable auto-config
-    default-format: gson             # gson | jackson
-    default-current-version: 200     # Fallback version
-    domains:
-      game:
-        current-version: 200
-        primary: true
-      user:
-        current-version: 150
-    actuator:
-      include-schema-details: true
-      include-fix-details: true
-    metrics:
-      timing: true
-      counting: true
-```
+## 📚 Documentation
 
-### Multi-Domain Support
+| Category                                          | Description                                                                         |
+|---------------------------------------------------|-------------------------------------------------------------------------------------|
+| [Getting Started](docs/getting-started/index.md)  | Installation, quick start, first migration                                          |
+| [Concepts](docs/concepts/index.md)                | Architecture, schemas, codecs, optics, type system, thread safety                   |
+| [Tutorials](docs/tutorials/index.md)              | Step-by-step guides for common scenarios                                            |
+| [How-To Guides](docs/how-to/index.md)             | Focused guides for specific operations (rename, add, remove, transform, batch, ...) |
+| [Advanced Topics](docs/advanced/custom-optics.md) | Custom optics, concurrent migrations, recursive types, traversal strategies         |
+| [Codec Formats](docs/codec/index.md)              | JSON, YAML, TOML, XML - format comparison and usage                                 |
+| [CLI](docs/cli/index.md)                          | Commands, format handlers, usage examples                                           |
+| [Schema Tools](docs/schema-tools/index.md)        | Diffing, migration analysis, validation, introspection                              |
+| [Spring Boot](docs/spring-boot/index.md)          | Auto-configuration, MigrationService, Actuator, Metrics                             |
+| [Testkit](docs/testkit/index.md)                  | Test builders, assertions, harnesses                                                |
+| [Troubleshooting](docs/troubleshooting/faq.md)    | FAQ, common errors, debugging tips                                                  |
+| [Appendix](docs/appendix/glossary.md)             | Glossary, DFU comparison, type theory primer                                        |
 
-Support multiple DataFixers with `@Qualifier`:
+## 🔨 Building from Source
 
-```java
-@Configuration
-public class DataFixerConfig {
-    @Bean
-    @Qualifier("game")
-    public DataFixerBootstrap gameBootstrap() {
-        return new GameDataBootstrap();
-    }
-
-    @Bean
-    @Qualifier("user")
-    public DataFixerBootstrap userBootstrap() {
-        return new UserDataBootstrap();
-    }
-}
-
-// Usage
-MigrationResult result = migrationService
-    .migrate(data)
-    .usingDomain("game")  // Select domain
-    .from(100)
-    .toLatest()
-    .execute();
-```
-
-### Actuator Endpoints
-
-| Endpoint               | Description                               |
-|------------------------|-------------------------------------------|
-| `/actuator/health`     | Health indicator showing DataFixer status |
-| `/actuator/info`       | Schema version information                |
-| `/actuator/datafixers` | Detailed domain and version info          |
-
-### Micrometer Metrics
-
-| Metric                                      | Type         | Description             |
-|---------------------------------------------|--------------|-------------------------|
-| `aether.datafixers.migrations.success`      | Counter      | Successful migrations   |
-| `aether.datafixers.migrations.failure`      | Counter      | Failed migrations       |
-| `aether.datafixers.migrations.duration`     | Timer        | Migration duration      |
-| `aether.datafixers.migrations.version.span` | Distribution | Version span statistics |
-
----
-
-## 📖 Examples
-
-The `aether-datafixers-examples` module provides a complete, runnable example demonstrating real-world usage patterns.
-
-### Game Data Migration Example
-
-A practical example showing how to migrate game save data through multiple versions:
-
-```
-TypeReferences.java     → Type IDs for routing (PLAYER, WORLD, etc.)
-        ↓
-Schema100/110/200.java  → Schema definitions for each version
-        ↓
-PlayerV1ToV2Fix.java    → Migration: V1.0.0 → V1.1.0
-PlayerV2ToV3Fix.java    → Migration: V1.1.0 → V2.0.0
-        ↓
-GameDataBootstrap.java  → Registers schemas and fixes
-        ↓
-GameExample.java        → Main: demonstrates encode/update/decode workflow
-```
-
-### Migration Chain
-
-| Version | ID  | Changes                                              |
-|---------|-----|------------------------------------------------------|
-| V1.0.0  | 100 | Initial flat structure (`playerName`, `x`, `y`, `z`) |
-| V1.1.0  | 110 | Restructured with nested `position` object           |
-| V2.0.0  | 200 | Extended with `health`, `maxHealth`, `level`         |
-
-### Running the Example
-
-```bash
-mvn exec:java -pl aether-datafixers-examples
-```
-
-This will demonstrate the complete workflow: loading V1.0.0 data, applying fixes, and outputting V2.0.0 data.
-
----
-
-## 🛠️ Building
+**Requirements:** Java 17+, Maven 3.9.5+
 
 ```bash
 # Build all modules
@@ -537,63 +529,33 @@ mvn clean install
 # Build without tests
 mvn clean install -DskipTests
 
-# Run tests
+# Run unit tests
 mvn test
+
+# Run integration & E2E tests
+mvn verify -Pit
+
+# Run stress & chaos tests
+mvn verify -Pstress -pl aether-datafixers-functional-tests
+
+# Run JMH benchmarks
+java -jar aether-datafixers-benchmarks/target/benchmarks.jar
 ```
-
----
-
-## 🗺️ Roadmap
-
-- **v0.1.0**
-  - Core API and default implementations
-  - Schema-based versioning with TypeRegistry
-  - DataFix forward patching system
-  - Dynamic/DynamicOps format abstraction
-  - Basic codec infrastructure
-
-- **v0.2.0**
-  - **Testkit module** — Fluent test data builders, custom AssertJ assertions, test harnesses
-  - **Migration diagnostics** — Opt-in structured reports with timing, applied fixes, and snapshots
-  - **Extended rewrite rules** — Batch operations, path-based transforms, conditional rules
-  - **High-performance APIs** — `Rules.batch()` and single-pass conditional transforms
-  - **Performance optimizations** — Path caching, optimized fix registry, reduced allocations
-
-- **v0.3.0**
-  - **CLI module** — Migrate files from the command line with batch processing and reports
-  - **Schema Tools module** — Schema diffing, migration analysis, validation, and introspection
-  - **Fix coverage analysis** — Detect schema changes without corresponding DataFixes
-  - **Convention checking** — Enforce naming conventions for types, fields, and classes
-
-- **v0.4.0**
-  - **Spring Boot Starter** — Auto-configuration, MigrationService with fluent API
-  - **Actuator integration** — Health indicator, info contributor, custom endpoint, Micrometer metrics
-  - **Multi-domain support** — Multiple DataFixers with @Qualifier annotations
-  - **DynamicOps auto-configuration** — Conditional beans for all supported formats
-  - **Multi-format DynamicOps** — YAML (SnakeYAML, Jackson), TOML (Jackson), XML (Jackson)
-  - **Package restructuring** — Format-first package organization (`codec.json.gson`, `codec.yaml.jackson`, etc.)
-
-- **v0.5.0** (current, API freeze)
-  - **API Freeze** — Public API stabilized, no breaking changes expected before v1.0.0
-  - **Extended Codec Support** — Multi-format DynamicOps integration for CLI, Testkit and Spring Boot modules
-  - **SchemaValidator integration** — Full `MigrationAnalyzer` integration for fix coverage validation
-  - **MigrationService.withOps()** — Custom `DynamicOps` support for format conversion during migrations
-  - **Functional Tests module** — Comprehensive E2E and integration tests
-  - **Comprehensive documentation** — Complete documentation suite covering all modules
-
-- **v1.0.0** (next)
-  - Stable API surface with semantic versioning guarantees
-  - Performance benchmarks
-  - Production-ready release
-
----
 
 ## 🤝 Contributing
 
-Contributions welcome! Please open issues/PRs with clear repros or targeted patches.
+We welcome contributions of all kinds - bug fixes, features, documentation improvements, and discussions.
 
----
+Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a pull request. This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). For AI-assisted contributions, please review our [AI Usage Guidelines](AI_USAGE.md).
+
+## 🔒 Security
+
+All release artifacts are **GPG-signed** and published to Maven Central. The project uses automated security scanning via **CodeQL**, **OWASP Dependency-Check**, and **Dependabot**.
+
+To report a vulnerability, see our [Security Policy](SECURITY.md).
 
 ## 📄 License
 
-MIT © Splatgames.de Software and Contributors
+This project is licensed under the [MIT License](LICENSE).
+
+Copyright (c) 2025-2026 [Splatgames.de Software](https://software.splatgames.de) and Contributors.

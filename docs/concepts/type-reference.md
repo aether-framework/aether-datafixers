@@ -323,7 +323,7 @@ public static final TypeReference OBJECT = new TypeReference("object");
 
 ## Related
 
-- [DataVersion](data-version.md) — Version identifiers for schemas
-- [Schema System](schema-system.md) — Registering types per version
-- [Dynamic System](dynamic-system.md) — TaggedDynamic for typed data
+- [DataVersion](data-version.md) - Version identifiers for schemas
+- [Schema System](schema-system.md) - Registering types per version
+- [Dynamic System](dynamic-system.md) - TaggedDynamic for typed data
 

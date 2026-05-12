@@ -179,7 +179,7 @@ public interface TypeFamily {
      * structures.</p>
      *
      * <p><strong>Important:</strong> The self-reference family must not be accessed
-     * during the definition function's initial call—it's only valid after the definition returns. Accessing index 0
+     * during the definition function's initial call-it's only valid after the definition returns. Accessing index 0
      * before initialization throws an exception.</p>
      *
      * <h4>Example</h4>

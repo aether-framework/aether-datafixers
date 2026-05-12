@@ -87,6 +87,8 @@ public final class SimpleType<A> implements Type<A> {
 
     /**
      * {@inheritDoc}
+     *
+     * @return the type reference for this simple type, never {@code null}
      */
     @Override
     @NotNull
@@ -96,6 +98,8 @@ public final class SimpleType<A> implements Type<A> {
 
     /**
      * {@inheritDoc}
+     *
+     * @return the codec for this simple type, never {@code null}
      */
     @Override
     @NotNull

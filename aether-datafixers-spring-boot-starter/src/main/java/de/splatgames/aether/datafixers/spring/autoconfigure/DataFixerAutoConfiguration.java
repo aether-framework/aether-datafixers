@@ -212,6 +212,7 @@ public class DataFixerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @NotNull
     public DataFixerRegistry dataFixerRegistry() {
         return new DataFixerRegistry();
     }
@@ -238,11 +239,10 @@ public class DataFixerAutoConfiguration {
     @Primary
     @ConditionalOnSingleCandidate(DataFixerBootstrap.class)
     @ConditionalOnMissingBean(AetherDataFixer.class)
-    public AetherDataFixer aetherDataFixer(
-            final DataFixerBootstrap bootstrap,
-            final AetherDataFixersProperties properties,
-            final DataFixerRegistry registry
-    ) {
+    @NotNull
+    public AetherDataFixer aetherDataFixer(@NotNull final DataFixerBootstrap bootstrap,
+                                           @NotNull final AetherDataFixersProperties properties,
+                                           @NotNull final DataFixerRegistry registry) {
         LOG.info("Creating primary AetherDataFixer from bootstrap: {}",
                 bootstrap.getClass().getName());
 
@@ -287,12 +287,10 @@ public class DataFixerAutoConfiguration {
      * @throws IllegalStateException if the version cannot be determined for the domain
      */
     @NotNull
-    public static AetherDataFixer createQualifiedFixer(
-            @NotNull final DataFixerBootstrap bootstrap,
-            @NotNull final String qualifier,
-            @NotNull final AetherDataFixersProperties properties,
-            @NotNull final DataFixerRegistry registry
-    ) {
+    public static AetherDataFixer createQualifiedFixer(@NotNull final DataFixerBootstrap bootstrap,
+                                                       @NotNull final String qualifier,
+                                                       @NotNull final AetherDataFixersProperties properties,
+                                                       @NotNull final DataFixerRegistry registry) {
         LOG.info("Creating AetherDataFixer for domain '{}' from bootstrap: {}",
                 qualifier, bootstrap.getClass().getName());
 
@@ -317,10 +315,8 @@ public class DataFixerAutoConfiguration {
      * @return a fully initialized AetherDataFixer instance
      */
     @NotNull
-    private static AetherDataFixer createFixer(
-            @NotNull final DataVersion version,
-            @NotNull final DataFixerBootstrap bootstrap
-    ) {
+    private static AetherDataFixer createFixer(@NotNull final DataVersion version,
+                                               @NotNull final DataFixerBootstrap bootstrap) {
         return new DataFixerRuntimeFactory().create(version, bootstrap);
     }
 
@@ -353,14 +349,12 @@ public class DataFixerAutoConfiguration {
      */
     @SuppressFBWarnings(
             value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification = "Null check for getCurrentVersion() is performed before access on line 363."
+            justification = "Null check for Field.get() result is performed before access via isAssignableFrom check."
     )
     @NotNull
-    private static DataVersion resolveVersion(
-            @NotNull final DataFixerBootstrap bootstrap,
-            @NotNull final AetherDataFixersProperties properties,
-            @NotNull final String domain
-    ) {
+    private static DataVersion resolveVersion(@NotNull final DataFixerBootstrap bootstrap,
+                                              @NotNull final AetherDataFixersProperties properties,
+                                              @NotNull final String domain) {
         // 1. Check domain-specific properties
         final Map<String, DataFixerDomainProperties> domains = properties.getDomains();
         final DataFixerDomainProperties domainProps = domains.get(domain);

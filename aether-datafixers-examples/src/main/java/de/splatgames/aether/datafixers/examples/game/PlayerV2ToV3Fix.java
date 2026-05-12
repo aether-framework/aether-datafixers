@@ -125,6 +125,13 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param inputSchema {@inheritDoc}
+     * @param outputSchema {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     protected TypeRewriteRule makeRule(@NotNull final Schema inputSchema,
@@ -202,6 +209,7 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
      * @param dynamic the dynamic data to read from
      * @return a string describing the position
      */
+    @NotNull
     @SuppressWarnings("unused")
     private static String describePosition(@NotNull final Dynamic<?> dynamic) {
         final double x = POSITION_X_FINDER.getOptional(dynamic)
@@ -225,11 +233,16 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
      * @return a TypeRewriteRule that applies the transformation
      */
     @NotNull
-    private static TypeRewriteRule dynamicTransform(
-            @NotNull final String name,
-            @NotNull final Function<Dynamic<?>, Dynamic<?>> transform
-    ) {
+    private static TypeRewriteRule dynamicTransform(@NotNull final String name,
+                                                    @NotNull final Function<Dynamic<?>, Dynamic<?>> transform) {
         return new TypeRewriteRule() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param type {@inheritDoc}
+             * @param input {@inheritDoc}
+             * @return {@inheritDoc}
+             */
             @Override
             @NotNull
             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -242,7 +255,13 @@ public final class PlayerV2ToV3Fix extends SchemaDataFix {
                 }).map(value -> new Typed<>((Type) input.type(), value)).result();
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@inheritDoc}
+             */
             @Override
+            @NotNull
             public String toString() {
                 return name;
             }

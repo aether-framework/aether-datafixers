@@ -349,10 +349,10 @@ DataFix<JsonElement> fix = QuickFix.simple(
 
 ## Best Practices
 
-1. **Use descriptive fix names** — Names appear in error messages and logs
-2. **Keep fixes focused** — One fix should do one thing
-3. **Use compose() sparingly** — Prefer individual fixes for clarity in tests
-4. **Match production patterns** — Use QuickFix patterns that mirror your production code
+1. **Use descriptive fix names** - Names appear in error messages and logs
+2. **Keep fixes focused** - One fix should do one thing
+3. **Use compose() sparingly** - Prefer individual fixes for clarity in tests
+4. **Match production patterns** - Use QuickFix patterns that mirror your production code
 
 ## Related
 

@@ -7,7 +7,7 @@
     <parent>
         <groupId>de.splatgames.aether.datafixers</groupId>
         <artifactId>aether-datafixers</artifactId>
-        <version>0.5.0</version>
+        <version>1.0.0-rc.1</version>
     </parent>
 
     <artifactId>aether-datafixers-cli</artifactId>
@@ -121,7 +121,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <annotationProcessorPaths>
+                    <annotationProcessorPaths combine.children="append">
                         <path>
                             <groupId>info.picocli</groupId>
                             <artifactId>picocli-codegen</artifactId>
@@ -180,7 +180,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.6.3</version>
                 <configuration>
                     <mainClass>${main.class}</mainClass>
                 </configuration>

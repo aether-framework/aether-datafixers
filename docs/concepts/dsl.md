@@ -468,7 +468,7 @@ DSL.taggedChoice("type", DSL.string(), variants)
 
 ## Related
 
-- [Schema System](schema-system.md) — Where DSL is used
-- [Type System](type-system.md) — Templates become Types
-- [Codec System](codec-system.md) — Encoding/decoding
+- [Schema System](schema-system.md) - Where DSL is used
+- [Type System](type-system.md) - Templates become Types
+- [Codec System](codec-system.md) - Encoding/decoding
 

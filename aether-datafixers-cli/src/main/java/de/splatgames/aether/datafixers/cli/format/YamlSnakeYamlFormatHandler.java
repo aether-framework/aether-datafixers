@@ -28,6 +28,7 @@ import de.splatgames.aether.datafixers.codec.yaml.snakeyaml.SnakeYamlOps;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * Format handler for YAML using the SnakeYAML library.
@@ -71,18 +72,18 @@ public class YamlSnakeYamlFormatHandler implements FormatHandler<Object> {
     private final Yaml yaml;
 
     /**
-     * DumperOptions for compact YAML serialization.
+     * Yaml instance for compact serialization.
      *
      * <p>Uses flow style for compact output.</p>
      */
-    private final DumperOptions compactOptions;
+    private final Yaml compactYaml;
 
     /**
-     * DumperOptions for pretty-printed YAML serialization.
+     * Yaml instance for pretty-printed serialization.
      *
      * <p>Uses block style with indentation for human-readable output.</p>
      */
-    private final DumperOptions prettyOptions;
+    private final Yaml prettyYaml;
 
     /**
      * Creates a new SnakeYAML format handler with default configuration.
@@ -90,13 +91,15 @@ public class YamlSnakeYamlFormatHandler implements FormatHandler<Object> {
     public YamlSnakeYamlFormatHandler() {
         this.yaml = new Yaml();
 
-        this.compactOptions = new DumperOptions();
-        this.compactOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
+        final DumperOptions compactOptions = new DumperOptions();
+        compactOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
+        this.compactYaml = new Yaml(compactOptions);
 
-        this.prettyOptions = new DumperOptions();
-        this.prettyOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        this.prettyOptions.setIndent(2);
-        this.prettyOptions.setPrettyFlow(true);
+        final DumperOptions prettyOptions = new DumperOptions();
+        prettyOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        prettyOptions.setIndent(2);
+        prettyOptions.setPrettyFlow(true);
+        this.prettyYaml = new Yaml(prettyOptions);
     }
 
     /**
@@ -172,7 +175,7 @@ public class YamlSnakeYamlFormatHandler implements FormatHandler<Object> {
                 throw new FormatParseException("YAML parsed to null");
             }
             return result;
-        } catch (final Exception e) {
+        } catch (final YAMLException | ClassCastException e) {
             throw new FormatParseException("Failed to parse YAML: " + e.getMessage(), e);
         }
     }
@@ -190,8 +193,7 @@ public class YamlSnakeYamlFormatHandler implements FormatHandler<Object> {
     public String serialize(@NotNull final Object data) {
         Preconditions.checkNotNull(data, "data must not be null");
 
-        final Yaml compactYaml = new Yaml(this.compactOptions);
-        return compactYaml.dump(data);
+        return this.compactYaml.dump(data);
     }
 
     /**
@@ -207,7 +209,6 @@ public class YamlSnakeYamlFormatHandler implements FormatHandler<Object> {
     public String serializePretty(@NotNull final Object data) {
         Preconditions.checkNotNull(data, "data must not be null");
 
-        final Yaml prettyYaml = new Yaml(this.prettyOptions);
-        return prettyYaml.dump(data);
+        return this.prettyYaml.dump(data);
     }
 }

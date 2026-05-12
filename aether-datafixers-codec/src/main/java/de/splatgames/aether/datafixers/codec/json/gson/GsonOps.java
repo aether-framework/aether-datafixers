@@ -62,8 +62,9 @@ import java.util.stream.StreamSupport;
  * // Encode a value to JSON using a codec
  * DataResult<JsonElement> encoded = playerCodec.encodeStart(GsonOps.INSTANCE, player);
  *
- * // Decode JSON to a typed value
- * DataResult<Player> decoded = playerCodec.decode(GsonOps.INSTANCE, jsonElement);
+ * // Decode JSON to a typed value. Use parse() when you only want the value;
+ * // decode() additionally returns the unconsumed remainder of the input.
+ * DataResult<Player> decoded = playerCodec.parse(GsonOps.INSTANCE, jsonElement);
  * }</pre>
  *
  * <h3>Creating Dynamic Wrappers</h3>
@@ -177,8 +178,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         // Singleton - use INSTANCE
     }
 
-    // ==================== Empty/Null Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -197,8 +196,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
     public JsonElement empty() {
         return JsonNull.INSTANCE;
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -285,8 +282,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isJsonPrimitive() && value.getAsJsonPrimitive().isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -462,8 +457,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return new JsonPrimitive(value);
     }
 
-    // ==================== Primitive Reading Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -575,8 +568,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         }
         return DataResult.success(primitive.getAsBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -691,8 +682,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return DataResult.success(result);
     }
 
-    // ==================== Map Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -784,7 +773,7 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return DataResult.success(
                 object.entrySet().stream()
                         .map(entry -> Pair.of(
-                                (JsonElement) new JsonPrimitive(entry.getKey()),
+                                new JsonPrimitive(entry.getKey()),
                                 entry.getValue()
                         ))
         );
@@ -821,10 +810,9 @@ public final class GsonOps implements DynamicOps<JsonElement> {
      */
     @NotNull
     @Override
-    public DataResult<JsonElement> mergeToMap(
-            @NotNull final JsonElement map,
-            @NotNull final JsonElement key,
-            @NotNull final JsonElement value) {
+    public DataResult<JsonElement> mergeToMap(@NotNull final JsonElement map,
+                                              @NotNull final JsonElement key,
+                                              @NotNull final JsonElement value) {
         Preconditions.checkNotNull(map, "map must not be null");
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(value, "value must not be null");
@@ -1032,8 +1020,6 @@ public final class GsonOps implements DynamicOps<JsonElement> {
         return input.getAsJsonObject().has(key);
     }
 
-    // ==================== Conversion Operations ====================
-
     /**
      * {@inheritDoc}
      *
@@ -1133,6 +1119,7 @@ public final class GsonOps implements DynamicOps<JsonElement> {
      * @return the string {@code "GsonOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "GsonOps";
     }

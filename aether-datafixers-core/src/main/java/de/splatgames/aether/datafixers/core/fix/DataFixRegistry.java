@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -60,8 +61,13 @@ import java.util.TreeMap;
  * @since 0.1.0
  */
 public final class DataFixRegistry {
-
+    /**
+     * The main storage map: TypeReference -> (DataVersion -> List<DataFix>)
+     */
     private Map<TypeReference, NavigableMap<DataVersion, List<DataFix<?>>>> fixesByType = new HashMap<>();
+    /**
+     * Indicates whether this registry is frozen (immutable). Once frozen, no further modifications are allowed.
+     */
     private volatile boolean frozen = false;
 
     /**
@@ -133,11 +139,9 @@ public final class DataFixRegistry {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NotNull
-    public List<DataFix<?>> getFixes(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion fromInclusive,
-            @NotNull final DataVersion toInclusive
-    ) {
+    public List<DataFix<?>> getFixes(@NotNull final TypeReference type,
+                                     @NotNull final DataVersion fromInclusive,
+                                     @NotNull final DataVersion toInclusive) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fromInclusive, "fromInclusive must not be null");
         Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");
@@ -191,11 +195,9 @@ public final class DataFixRegistry {
      * @return {@code true} if fixes exist in the range, {@code false} otherwise
      * @throws NullPointerException if any argument is {@code null}
      */
-    public boolean hasFixesInRange(
-            @NotNull final TypeReference type,
-            @NotNull final DataVersion fromExclusive,
-            @NotNull final DataVersion toInclusive
-    ) {
+    public boolean hasFixesInRange(@NotNull final TypeReference type,
+                                   @NotNull final DataVersion fromExclusive,
+                                   @NotNull final DataVersion toInclusive) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fromExclusive, "fromExclusive must not be null");
         Preconditions.checkNotNull(toInclusive, "toInclusive must not be null");
@@ -209,6 +211,22 @@ public final class DataFixRegistry {
     }
 
     /**
+     * Returns the set of all type references that have at least one registered fix.
+     *
+     * <p>This method enables enumeration of all types known to the registry,
+     * which is useful for analyzers that need to walk every fix regardless of
+     * schema changes (e.g. the field-level diagnostic analyzers in the
+     * {@code aether-datafixers-schema-tools} module).</p>
+     *
+     * @return an unmodifiable snapshot of the registered type references, never {@code null}
+     * @since 1.0.0
+     */
+    @NotNull
+    public Set<TypeReference> registeredTypes() {
+        return Set.copyOf(this.fixesByType.keySet());
+    }
+
+    /**
      * Freezes this registry, making it immutable.
      *
      * <p>After freezing, any attempt to modify the registry via {@link #register(TypeReference, DataFix)}
@@ -216,7 +234,7 @@ public final class DataFixRegistry {
      *
      * <p>This method is idempotent - calling it multiple times has no effect after the first call.</p>
      */
-    public void freeze() {
+    public synchronized void freeze() {
         if (!this.frozen) {
             // Create an immutable deep copy
             final Map<TypeReference, NavigableMap<DataVersion, List<DataFix<?>>>> immutableCopy = new HashMap<>();

@@ -23,19 +23,22 @@
 /**
  * Game data migration example demonstrating the proper DFU-style pattern.
  *
- * <p>This package provides a clean, real-world example of how to use Aether Datafixers
- * for game save data migration. It follows the same patterns as Minecraft's DataFixer Upper.</p>
+ * <p>This package provides a clean, real-world example of how to use Aether
+ * Datafixers for game save data migration. It follows the same patterns as
+ * Minecraft's DataFixer Upper and uses a SemVer-style integer encoding for
+ * the {@link de.splatgames.aether.datafixers.api.DataVersion}s (e.g.
+ * {@code 100} = v1.0.0, {@code 110} = v1.1.0, {@code 200} = v2.0.0).</p>
  *
  * <h2>Architecture Overview</h2>
  * <pre>
  * TypeReferences.java     - Type IDs for routing (PLAYER, WORLD, etc.)
  *        |
- * Schema100.java          - Schema for Version 1
- * Schema110.java          - Schema for Version 2
- * Schema200.java          - Schema for Version 3
+ * Schema100.java          - Schema for v1.0.0
+ * Schema110.java          - Schema for v1.1.0
+ * Schema200.java          - Schema for v2.0.0
  *        |
- * PlayerV1ToV2Fix.java    - Migration V1 -> V2
- * PlayerV2ToV3Fix.java    - Migration V2 -> V3
+ * PlayerV1ToV2Fix.java    - Migration v1.0.0 -&gt; v1.1.0
+ * PlayerV2ToV3Fix.java    - Migration v1.1.0 -&gt; v2.0.0
  *        |
  * GameDataBootstrap.java  - Registers schemas and fixes
  *        |
@@ -45,10 +48,10 @@
  * <h2>Version History</h2>
  * <table border="1">
  *   <caption>Version History</caption>
- *   <tr><th>Version</th><th>Player Data Structure</th></tr>
- *   <tr><td>1 (100)</td><td>playerName, xp, x/y/z, gameMode (int)</td></tr>
- *   <tr><td>2 (200)</td><td>name, experience, position{x,y,z}, gameMode (string)</td></tr>
- *   <tr><td>3 (300)</td><td>+ level, health, maxHealth</td></tr>
+ *   <tr><th>DataVersion (SemVer)</th><th>Player Data Structure</th></tr>
+ *   <tr><td>100 (v1.0.0)</td><td>playerName, xp, x/y/z, gameMode (int)</td></tr>
+ *   <tr><td>110 (v1.1.0)</td><td>name, experience, position&#x7B;x,y,z&#x7D;, gameMode (string)</td></tr>
+ *   <tr><td>200 (v2.0.0)</td><td>+ level, health, maxHealth</td></tr>
  * </table>
  *
  * <h2>Key Classes</h2>

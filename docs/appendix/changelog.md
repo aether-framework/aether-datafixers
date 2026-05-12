@@ -20,7 +20,7 @@ The `SchemaValidator.validateFixCoverage()` method now performs actual coverage 
 - Reports issues as `ValidationIssue` warnings with location and context
 
 Updated documentation:
-- [Schema Validation](../schema-tools/schema-validation.md) — Updated with fix coverage validation examples
+- [Schema Validation](../schema-tools/schema-validation.md) - Updated with fix coverage validation examples
 
 ### MigrationService.withOps() Support
 
@@ -31,7 +31,7 @@ The Spring Boot `MigrationService` now fully supports custom `DynamicOps`:
 - Supports all DynamicOps implementations (Gson, Jackson, YAML, TOML, XML)
 
 Updated documentation:
-- [MigrationService API](../spring-boot/migration-service.md) — Added withOps() usage examples
+- [MigrationService API](../spring-boot/migration-service.md) - Added withOps() usage examples
 
 ### Functional Tests Module
 
@@ -45,13 +45,13 @@ New `aether-datafixers-functional-tests` module with comprehensive E2E and integ
 
 Extended the CLI with four new format handlers for YAML, TOML, and XML support:
 
-- **yaml-snakeyaml** — YAML support using SnakeYAML with native Java types
-- **yaml-jackson** — YAML support using Jackson YAML with JsonNode
-- **toml-jackson** — TOML support using Jackson TOML with JsonNode
-- **xml-jackson** — XML support using Jackson XML with JsonNode
+- **yaml-snakeyaml** - YAML support using SnakeYAML with native Java types
+- **yaml-jackson** - YAML support using Jackson YAML with JsonNode
+- **toml-jackson** - TOML support using Jackson TOML with JsonNode
+- **xml-jackson** - XML support using Jackson XML with JsonNode
 
 Updated documentation:
-- [Format Handlers](../cli/format-handlers.md) — Added sections for all new handlers, updated output examples
+- [Format Handlers](../cli/format-handlers.md) - Added sections for all new handlers, updated output examples
 
 ### Testkit: New Factory Methods
 
@@ -66,12 +66,12 @@ Added new format-specific factory methods to `TestData`:
 | `jacksonXml()`  | XML          | `JsonNode`  |
 
 Updated documentation:
-- [Test Data Builders](../testkit/test-data-builders.md) — Added new factory methods and format examples
+- [Test Data Builders](../testkit/test-data-builders.md) - Added new factory methods and format examples
 
 ### Deprecations
 
-- **`TestData.jackson()`** — Deprecated since 0.5.0, use `jacksonJson()` instead. Will be removed in 1.0.0.
-- **`JacksonOps`** — Already deprecated in 0.4.0, use `JacksonJsonOps` instead. Will be removed in 1.0.0.
+- **`TestData.jackson()`** - Deprecated since 0.5.0, use `jacksonJson()` instead. Will be removed in 1.0.0.
+- **`JacksonOps`** - Already deprecated in 0.4.0, use `JacksonJsonOps` instead. Will be removed in 1.0.0.
 
 ---
 
@@ -81,11 +81,11 @@ Updated documentation:
 
 Added comprehensive documentation for all DynamicOps implementations in the codec module:
 
-- [Codec Overview](../codec/index.md) — Introduction, format comparison, package structure
-- [JSON Support](../codec/json.md) — GsonOps and JacksonJsonOps documentation
-- [YAML Support](../codec/yaml.md) — SnakeYamlOps and JacksonYamlOps documentation
-- [TOML Support](../codec/toml.md) — JacksonTomlOps documentation
-- [XML Support](../codec/xml.md) — JacksonXmlOps documentation
+- [Codec Overview](../codec/index.md) - Introduction, format comparison, package structure
+- [JSON Support](../codec/json.md) - GsonOps and JacksonJsonOps documentation
+- [YAML Support](../codec/yaml.md) - SnakeYamlOps and JacksonYamlOps documentation
+- [TOML Support](../codec/toml.md) - JacksonTomlOps documentation
+- [XML Support](../codec/xml.md) - JacksonXmlOps documentation
 
 ### Key Codec Features Documented
 
@@ -112,13 +112,13 @@ Added comprehensive documentation for all DynamicOps implementations in the code
 
 Added comprehensive documentation for the Spring Boot Starter module:
 
-- [Spring Boot Overview](../spring-boot/index.md) — Introduction, architecture diagram, auto-configuration classes
-- [Quick Start Guide](../spring-boot/getting-started.md) — Step-by-step tutorial with complete code examples
-- [Configuration Reference](../spring-boot/configuration.md) — Complete property reference (YAML and properties format)
-- [MigrationService API](../spring-boot/migration-service.md) — Fluent API documentation, sync/async patterns, error handling
-- [Multi-Domain Setup](../spring-boot/multi-domain.md) — Managing multiple DataFixer instances with `@Qualifier`
-- [Actuator Integration](../spring-boot/actuator.md) — Health indicators, info contributors, custom endpoints, security
-- [Metrics Integration](../spring-boot/metrics.md) — Micrometer metrics, PromQL queries, Grafana dashboard, alerting rules
+- [Spring Boot Overview](../spring-boot/index.md) - Introduction, architecture diagram, auto-configuration classes
+- [Quick Start Guide](../spring-boot/getting-started.md) - Step-by-step tutorial with complete code examples
+- [Configuration Reference](../spring-boot/configuration.md) - Complete property reference (YAML and properties format)
+- [MigrationService API](../spring-boot/migration-service.md) - Fluent API documentation, sync/async patterns, error handling
+- [Multi-Domain Setup](../spring-boot/multi-domain.md) - Managing multiple DataFixer instances with `@Qualifier`
+- [Actuator Integration](../spring-boot/actuator.md) - Health indicators, info contributors, custom endpoints, security
+- [Metrics Integration](../spring-boot/metrics.md) - Micrometer metrics, PromQL queries, Grafana dashboard, alerting rules
 
 ### Key Features Documented
 
@@ -131,12 +131,12 @@ Added comprehensive documentation for the Spring Boot Starter module:
 
 ### Updated Pages
 
-- [Main README](../README.md) — Added Codec Formats and Spring Boot Integration sections, updated module table
-- [Codec System](../concepts/codec-system.md) — Added links to format-specific documentation
-- [Dynamic System](../concepts/dynamic-system.md) — Added table of all DynamicOps implementations
-- [How-To Index](../how-to/index.md) — Added Format Integration section
-- [Custom DynamicOps Tutorial](../tutorials/custom-dynamicops.md) — Added reference to built-in implementations
-- [Installation Guide](../getting-started/installation.md) — Added Spring Boot module to overview and installation section
+- [Main README](../README.md) - Added Codec Formats and Spring Boot Integration sections, updated module table
+- [Codec System](../concepts/codec-system.md) - Added links to format-specific documentation
+- [Dynamic System](../concepts/dynamic-system.md) - Added table of all DynamicOps implementations
+- [How-To Index](../how-to/index.md) - Added Format Integration section
+- [Custom DynamicOps Tutorial](../tutorials/custom-dynamicops.md) - Added reference to built-in implementations
+- [Installation Guide](../getting-started/installation.md) - Added Spring Boot module to overview and installation section
 
 ---
 
@@ -146,26 +146,26 @@ Added comprehensive documentation for the Spring Boot Starter module:
 
 Added complete documentation for the new schema tools module:
 
-- [Schema Tools Overview](../schema-tools/index.md) — Introduction, use cases, and quick start
-- [Schema Diffing](../schema-tools/schema-diffing.md) — Compare schemas and detect type/field changes
-- [Migration Analysis](../schema-tools/migration-analysis.md) — Analyze migration paths and fix coverage
-- [Schema Validation](../schema-tools/schema-validation.md) — Validate structure and naming conventions
-- [Type Introspection](../schema-tools/type-introspection.md) — Inspect type structures and extract field metadata
+- [Schema Tools Overview](../schema-tools/index.md) - Introduction, use cases, and quick start
+- [Schema Diffing](../schema-tools/schema-diffing.md) - Compare schemas and detect type/field changes
+- [Migration Analysis](../schema-tools/migration-analysis.md) - Analyze migration paths and fix coverage
+- [Schema Validation](../schema-tools/schema-validation.md) - Validate structure and naming conventions
+- [Type Introspection](../schema-tools/type-introspection.md) - Inspect type structures and extract field metadata
 
 ### New Section: CLI Module
 
 Added complete documentation for the new CLI module:
 
-- [CLI Overview](../cli/index.md) — Introduction, quick start, and workflow diagram
-- [Installation](../cli/installation.md) — Build instructions, aliases, classpath setup
-- [Command Reference](../cli/commands.md) — Detailed options for migrate, validate, info
-- [Format Handlers](../cli/format-handlers.md) — Custom format handler development guide
-- [Examples](../cli/examples.md) — 11 practical usage scenarios (CI/CD, Docker, scripting)
+- [CLI Overview](../cli/index.md) - Introduction, quick start, and workflow diagram
+- [Installation](../cli/installation.md) - Build instructions, aliases, classpath setup
+- [Command Reference](../cli/commands.md) - Detailed options for migrate, validate, info
+- [Format Handlers](../cli/format-handlers.md) - Custom format handler development guide
+- [Examples](../cli/examples.md) - 11 practical usage scenarios (CI/CD, Docker, scripting)
 
 ### Updated Pages
 
-- [Main README](../README.md) — Added CLI and Schema Tools to navigation and module table
-- [Installation Guide](../getting-started/installation.md) — Added CLI module to overview table
+- [Main README](../README.md) - Added CLI and Schema Tools to navigation and module table
+- [Installation Guide](../getting-started/installation.md) - Added CLI module to overview table
 
 ---
 
@@ -175,27 +175,27 @@ Added complete documentation for the new CLI module:
 
 Added complete documentation for the testkit module:
 
-- [Testkit Overview](../testkit/index.md) — Introduction to testing utilities
-- [Test Data Builders](../testkit/test-data-builders.md) — Fluent API for test data
-- [Custom Assertions](../testkit/assertions.md) — AssertJ assertions for Dynamic, DataResult, Typed
-- [DataFixTester](../testkit/datafix-tester.md) — Test harness for isolated DataFix testing
-- [QuickFix Factories](../testkit/quick-fix.md) — Factory methods for common fix patterns
-- [Mock Schemas](../testkit/mock-schemas.md) — Mock schema utilities
+- [Testkit Overview](../testkit/index.md) - Introduction to testing utilities
+- [Test Data Builders](../testkit/test-data-builders.md) - Fluent API for test data
+- [Custom Assertions](../testkit/assertions.md) - AssertJ assertions for Dynamic, DataResult, Typed
+- [DataFixTester](../testkit/datafix-tester.md) - Test harness for isolated DataFix testing
+- [QuickFix Factories](../testkit/quick-fix.md) - Factory methods for common fix patterns
+- [Mock Schemas](../testkit/mock-schemas.md) - Mock schema utilities
 
 ### New How-To Guides
 
-- [Batch Operations](../how-to/batch-operations.md) — Rename/remove multiple fields
-- [Group Fields](../how-to/group-fields.md) — Grouping and flattening structures
-- [Conditional Rules](../how-to/conditional-rules.md) — Conditional rule application
-- [Use Diagnostics](../how-to/use-diagnostics.md) — Migration diagnostics guide
-- [Test Migrations](../how-to/test-migrations.md) — Testing migrations with testkit
+- [Batch Operations](../how-to/batch-operations.md) - Rename/remove multiple fields
+- [Group Fields](../how-to/group-fields.md) - Grouping and flattening structures
+- [Conditional Rules](../how-to/conditional-rules.md) - Conditional rule application
+- [Use Diagnostics](../how-to/use-diagnostics.md) - Migration diagnostics guide
+- [Test Migrations](../how-to/test-migrations.md) - Testing migrations with testkit
 
 ### Updated Pages
 
-- [Rewrite Rules](../concepts/rewrite-rules.md) — Extended rules section
-- [Concepts Index](../concepts/index.md) — Extended rules examples
-- [How-To Index](../how-to/index.md) — Links to new guides
-- [Glossary](glossary.md) — Testkit terminology
+- [Rewrite Rules](../concepts/rewrite-rules.md) - Extended rules section
+- [Concepts Index](../concepts/index.md) - Extended rules examples
+- [How-To Index](../how-to/index.md) - Links to new guides
+- [Glossary](glossary.md) - Testkit terminology
 
 ---
 

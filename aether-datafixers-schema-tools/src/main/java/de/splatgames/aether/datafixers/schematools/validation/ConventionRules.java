@@ -24,6 +24,7 @@ package de.splatgames.aether.datafixers.schematools.validation;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -32,8 +33,7 @@ import java.util.regex.Pattern;
  * Configurable rules for schema convention checking.
  *
  * <p>Convention rules define naming patterns and constraints that schemas
- * should follow. This class provides predefined rule sets as well as a
- * builder for custom configurations.</p>
+ * should follow. This class provides predefined rule sets as well as a builder for custom configurations.</p>
  *
  * <h2>Predefined Rule Sets</h2>
  * <ul>
@@ -80,8 +80,8 @@ public final class ConventionRules {
      * </ul>
      */
     public static final ConventionRules STRICT = builder()
-            .typeNamePattern(Pattern.compile("^[a-z][a-z0-9_]*$"))
-            .fieldNamePattern(Pattern.compile("^[a-z][a-z0-9_]*$"))
+            .typeNamePattern(Pattern.compile("^[a-z_][a-z0-9_]*$"))
+            .fieldNamePattern(Pattern.compile("^[a-z_][a-z0-9_]*$"))
             .schemaClassPrefix("Schema")
             .fixClassSuffix("Fix")
             .treatViolationsAsErrors(true)
@@ -116,36 +116,43 @@ public final class ConventionRules {
     /**
      * Regex pattern that type names must match, or {@code null} to skip pattern check.
      */
+    @Nullable
     private final Pattern typeNamePattern;
 
     /**
      * Regex pattern that field names must match, or {@code null} to skip pattern check.
      */
+    @Nullable
     private final Pattern fieldNamePattern;
 
     /**
      * Required prefix for type names, or {@code null} if no prefix required.
      */
+    @Nullable
     private final String typeNamePrefix;
 
     /**
      * Expected prefix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
+    @Nullable
     private final String schemaClassPrefix;
 
     /**
      * Expected suffix for schema class names (e.g., "Schema"), or {@code null} to skip.
      */
+    @Nullable
     private final String schemaClassSuffix;
 
     /**
      * Expected prefix for fix class names, or {@code null} to skip.
      */
+    @Nullable
     private final String fixClassPrefix;
 
     /**
      * Expected suffix for fix class names (e.g., "Fix"), or {@code null} to skip.
      */
+    @Nullable
     private final String fixClassSuffix;
 
     /**
@@ -156,11 +163,13 @@ public final class ConventionRules {
     /**
      * Custom validation predicate for type names, or {@code null} if not used.
      */
+    @Nullable
     private final Predicate<String> customTypeValidator;
 
     /**
      * Custom validation predicate for field names, or {@code null} if not used.
      */
+    @Nullable
     private final Predicate<String> customFieldValidator;
 
     /**
@@ -180,19 +189,17 @@ public final class ConventionRules {
      * @param customTypeValidator     custom type name validator
      * @param customFieldValidator    custom field name validator
      */
-    private ConventionRules(
-            final boolean enabled,
-            final Pattern typeNamePattern,
-            final Pattern fieldNamePattern,
-            final String typeNamePrefix,
-            final String schemaClassPrefix,
-            final String schemaClassSuffix,
-            final String fixClassPrefix,
-            final String fixClassSuffix,
-            final boolean treatViolationsAsErrors,
-            final Predicate<String> customTypeValidator,
-            final Predicate<String> customFieldValidator
-    ) {
+    private ConventionRules(final boolean enabled,
+                            @Nullable final Pattern typeNamePattern,
+                            @Nullable final Pattern fieldNamePattern,
+                            @Nullable final String typeNamePrefix,
+                            @Nullable final String schemaClassPrefix,
+                            @Nullable final String schemaClassSuffix,
+                            @Nullable final String fixClassPrefix,
+                            @Nullable final String fixClassSuffix,
+                            final boolean treatViolationsAsErrors,
+                            @Nullable final Predicate<String> customTypeValidator,
+                            @Nullable final Predicate<String> customFieldValidator) {
         this.enabled = enabled;
         this.typeNamePattern = typeNamePattern;
         this.fieldNamePattern = fieldNamePattern;
@@ -249,11 +256,7 @@ public final class ConventionRules {
         }
 
         // Check custom validator
-        if (this.customTypeValidator != null && !this.customTypeValidator.test(typeName)) {
-            return false;
-        }
-
-        return true;
+        return this.customTypeValidator == null || this.customTypeValidator.test(typeName);
     }
 
     /**
@@ -275,11 +278,7 @@ public final class ConventionRules {
         }
 
         // Check custom validator
-        if (this.customFieldValidator != null && !this.customFieldValidator.test(fieldName)) {
-            return false;
-        }
-
-        return true;
+        return this.customFieldValidator == null || this.customFieldValidator.test(fieldName);
     }
 
     /**
@@ -304,11 +303,7 @@ public final class ConventionRules {
         }
 
         // Check suffix
-        if (this.schemaClassSuffix != null && !className.endsWith(this.schemaClassSuffix)) {
-            return false;
-        }
-
-        return true;
+        return this.schemaClassSuffix == null || className.endsWith(this.schemaClassSuffix);
     }
 
     /**
@@ -333,11 +328,7 @@ public final class ConventionRules {
         }
 
         // Check suffix
-        if (this.fixClassSuffix != null && !className.endsWith(this.fixClassSuffix)) {
-            return false;
-        }
-
-        return true;
+        return this.fixClassSuffix == null || className.endsWith(this.fixClassSuffix);
     }
 
     /**
@@ -345,6 +336,7 @@ public final class ConventionRules {
      *
      * @return the pattern, or {@code null} if not set
      */
+    @Nullable
     public Pattern typeNamePattern() {
         return this.typeNamePattern;
     }
@@ -354,6 +346,7 @@ public final class ConventionRules {
      *
      * @return the pattern, or {@code null} if not set
      */
+    @Nullable
     public Pattern fieldNamePattern() {
         return this.fieldNamePattern;
     }
@@ -363,6 +356,7 @@ public final class ConventionRules {
      *
      * @return the prefix, or {@code null} if not required
      */
+    @Nullable
     public String typeNamePrefix() {
         return this.typeNamePrefix;
     }
@@ -372,6 +366,7 @@ public final class ConventionRules {
      *
      * @return the prefix, or {@code null} if not required
      */
+    @Nullable
     public String schemaClassPrefix() {
         return this.schemaClassPrefix;
     }
@@ -381,6 +376,7 @@ public final class ConventionRules {
      *
      * @return the suffix, or {@code null} if not required
      */
+    @Nullable
     public String schemaClassSuffix() {
         return this.schemaClassSuffix;
     }
@@ -390,6 +386,7 @@ public final class ConventionRules {
      *
      * @return the prefix, or {@code null} if not required
      */
+    @Nullable
     public String fixClassPrefix() {
         return this.fixClassPrefix;
     }
@@ -399,6 +396,7 @@ public final class ConventionRules {
      *
      * @return the suffix, or {@code null} if not required
      */
+    @Nullable
     public String fixClassSuffix() {
         return this.fixClassSuffix;
     }
@@ -413,22 +411,81 @@ public final class ConventionRules {
     }
 
     /**
-     * Builder for creating custom {@link ConventionRules}.
+     * Builder for creating custom ConventionRules instances.
+     * <p>
+     * This builder allows you to configure various aspects of convention checking, such as:
+     *     <ul>
+     *         <li>Enabling/disabling convention checks</li>
+     *         <li>Setting regex patterns for type and field names</li>
+     *         <li>Requiring specific prefixes/suffixes for type, schema, and
+     *         fix class names</li>
+     *         <li>Choosing whether violations are treated as errors or warnings</li>
+     *         <li>Providing custom validation predicates for type and field names</li>
+     *   </ul>
+     *   This builder is used to create immutable ConventionRules instances that can be applied during schema validation.
+     * </p>
+     *
+     * @see ConventionRules
      */
     public static final class Builder {
 
+        /**
+         * Builder fields with default values. All fields are nullable except 'enabled'.
+         */
         private boolean enabled = true;
+        /**
+         * Regex pattern for type names. If null, no pattern check is performed.
+         */
+        @Nullable
         private Pattern typeNamePattern;
+        /**
+         * Regex pattern for field names. If null, no pattern check is performed.
+         */
+        @Nullable
         private Pattern fieldNamePattern;
+        /**
+         * Prefix for type names. If null, no prefix is required.
+         */
+        @Nullable
         private String typeNamePrefix;
+        /**
+         * Expected prefix for schema class names. If null, no prefix check is performed.
+         */
+        @Nullable
         private String schemaClassPrefix;
+        /**
+         * Expected suffix for schema class names. If null, no suffix check is performed.
+         */
+        @Nullable
         private String schemaClassSuffix;
+        /**
+         * Expected prefix for fix class names. If null, no prefix check is performed.
+         */
+        @Nullable
         private String fixClassPrefix;
+        /**
+         * Expected suffix for fix class names. If null, no suffix check is performed.
+         */
+        @Nullable
         private String fixClassSuffix;
+        /**
+         * Flag indicating whether violations should be treated as errors (true) or warnings (false).
+         */
         private boolean treatViolationsAsErrors = false;
+        /**
+         * Custom validation predicate for type names. If null, no custom validation is performed.
+         */
+        @Nullable
         private Predicate<String> customTypeValidator;
+        /**
+         * Custom validation predicate for field names. If null, no custom validation is performed.
+         */
+        @Nullable
         private Predicate<String> customFieldValidator;
 
+        /**
+         * Private constructor to prevent direct instantiation. Use {@link ConventionRules#builder()} instead.
+         */
         private Builder() {
         }
 
@@ -451,7 +508,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder typeNamePattern(final Pattern pattern) {
+        public Builder typeNamePattern(@Nullable final Pattern pattern) {
             this.typeNamePattern = pattern;
             return this;
         }
@@ -463,7 +520,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fieldNamePattern(final Pattern pattern) {
+        public Builder fieldNamePattern(@Nullable final Pattern pattern) {
             this.fieldNamePattern = pattern;
             return this;
         }
@@ -475,7 +532,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder requireTypePrefix(final String prefix) {
+        public Builder requireTypePrefix(@Nullable final String prefix) {
             this.typeNamePrefix = prefix;
             return this;
         }
@@ -490,7 +547,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder schemaClassPrefix(final String prefix) {
+        public Builder schemaClassPrefix(@Nullable final String prefix) {
             this.schemaClassPrefix = prefix;
             return this;
         }
@@ -502,7 +559,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder schemaClassSuffix(final String suffix) {
+        public Builder schemaClassSuffix(@Nullable final String suffix) {
             this.schemaClassSuffix = suffix;
             return this;
         }
@@ -514,7 +571,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fixClassPrefix(final String prefix) {
+        public Builder fixClassPrefix(@Nullable final String prefix) {
             this.fixClassPrefix = prefix;
             return this;
         }
@@ -529,7 +586,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder fixClassSuffix(final String suffix) {
+        public Builder fixClassSuffix(@Nullable final String suffix) {
             this.fixClassSuffix = suffix;
             return this;
         }
@@ -553,7 +610,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder customTypeValidator(final Predicate<String> validator) {
+        public Builder customTypeValidator(@Nullable final Predicate<String> validator) {
             this.customTypeValidator = validator;
             return this;
         }
@@ -565,7 +622,7 @@ public final class ConventionRules {
          * @return this builder for chaining
          */
         @NotNull
-        public Builder customFieldValidator(final Predicate<String> validator) {
+        public Builder customFieldValidator(@Nullable final Predicate<String> validator) {
             this.customFieldValidator = validator;
             return this;
         }

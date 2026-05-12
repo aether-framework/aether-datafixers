@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit tests for {@link Finder}.
@@ -166,6 +167,14 @@ class FinderTest {
             final Finder<?> finder = Finder.index(3);
 
             assertThat(finder.id()).isEqualTo("index[3]");
+        }
+
+        @Test
+        @DisplayName("index() rejects negative index")
+        void indexRejectsNegativeIndex() {
+            assertThatThrownBy(() -> Finder.index(-1))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("must not be negative");
         }
     }
 

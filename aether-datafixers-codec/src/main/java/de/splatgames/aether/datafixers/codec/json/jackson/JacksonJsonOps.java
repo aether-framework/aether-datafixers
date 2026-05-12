@@ -25,7 +25,9 @@ package de.splatgames.aether.datafixers.codec.json.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
@@ -43,6 +45,8 @@ import de.splatgames.aether.datafixers.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Spliterator;
@@ -361,6 +365,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      *
      * @return the object mapper used by this instance; never {@code null}
      */
+    @NotNull
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP",
             justification = "ObjectMapper exposure is intentional API design for serialization and parsing operations."
@@ -368,8 +373,6 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
     public ObjectMapper mapper() {
         return this.mapper;
     }
-
-    // ==================== Empty/Null Operations ====================
 
     /**
      * {@inheritDoc}
@@ -392,8 +395,6 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
     public JsonNode empty() {
         return NullNode.getInstance();
     }
-
-    // ==================== Type Check Operations ====================
 
     /**
      * {@inheritDoc}
@@ -486,8 +487,6 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(value, "value must not be null");
         return value.isBoolean();
     }
-
-    // ==================== Primitive Creation Operations ====================
 
     /**
      * {@inheritDoc}
@@ -689,10 +688,14 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         if (value instanceof Byte) {
             return ShortNode.valueOf(value.byteValue());
         }
+        if (value instanceof BigDecimal bd) {
+            return DecimalNode.valueOf(bd);
+        }
+        if (value instanceof BigInteger bi) {
+            return BigIntegerNode.valueOf(bi);
+        }
         return DoubleNode.valueOf(value.doubleValue());
     }
-
-    // ==================== Primitive Reading Operations ====================
 
     /**
      * {@inheritDoc}
@@ -790,8 +793,6 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         }
         return DataResult.success(input.asBoolean());
     }
-
-    // ==================== List Operations ====================
 
     /**
      * {@inheritDoc}
@@ -914,8 +915,6 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         result.add(value);
         return DataResult.success(result);
     }
-
-    // ==================== Map Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1185,7 +1184,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         Preconditions.checkNotNull(key, "key must not be null");
         Preconditions.checkNotNull(newValue, "newValue must not be null");
         if (!input.isObject()) {
-            final ObjectNode result = nodeFactory.objectNode();
+            final ObjectNode result = this.nodeFactory.objectNode();
             result.set(key, newValue);
             return result;
         }
@@ -1258,8 +1257,6 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
         }
         return input.has(key);
     }
-
-    // ==================== Conversion Operations ====================
 
     /**
      * {@inheritDoc}
@@ -1361,6 +1358,7 @@ public final class JacksonJsonOps implements DynamicOps<JsonNode> {
      * @return the string {@code "JacksonJsonOps"}; never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         return "JacksonJsonOps";
     }

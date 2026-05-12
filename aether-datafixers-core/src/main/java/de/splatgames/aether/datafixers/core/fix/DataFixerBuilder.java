@@ -71,9 +71,17 @@ import java.util.List;
  * @since 0.1.0
  */
 public final class DataFixerBuilder implements FixRegistrar {
-
+    /**
+     * The current (latest) data version. This is used to determine the target version for fixes.
+     */
     private final DataVersion currentVersion;
+    /**
+     * The registry that holds all registered fixes. This is mutable during building and becomes immutable after build().
+     */
     private final DataFixRegistry registry;
+    /**
+     * The default context for logging and diagnostics. This is used when building the fixer.
+     */
     private DataFixerContext defaultContext;
 
     /**
@@ -155,11 +163,7 @@ public final class DataFixerBuilder implements FixRegistrar {
     public DataFixerBuilder addFix(@NotNull final TypeReference type, @NotNull final DataFix<?> fix) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fix, "fix must not be null");
-        Preconditions.checkArgument(
-                fix.fromVersion().compareTo(fix.toVersion()) <= 0,
-                "fix.fromVersion must be <= fix.toVersion"
-        );
-
+        // Version ordering validation is performed by DataFixRegistry.register()
         this.registry.register(type, fix);
         return this;
     }
@@ -177,10 +181,8 @@ public final class DataFixerBuilder implements FixRegistrar {
      * @throws NullPointerException if type or fixes is {@code null}
      */
     @NotNull
-    public DataFixerBuilder addFixes(
-            @NotNull final TypeReference type,
-            @NotNull final List<? extends DataFix<?>> fixes
-    ) {
+    public DataFixerBuilder addFixes(@NotNull final TypeReference type,
+                                     @NotNull final List<? extends DataFix<?>> fixes) {
         Preconditions.checkNotNull(type, "type must not be null");
         Preconditions.checkNotNull(fixes, "fixes must not be null");
 

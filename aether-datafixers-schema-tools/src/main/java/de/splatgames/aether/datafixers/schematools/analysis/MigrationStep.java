@@ -30,7 +30,10 @@ import de.splatgames.aether.datafixers.schematools.diff.SchemaDiff;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -74,27 +77,32 @@ public final class MigrationStep {
     /**
      * The version from which this migration step starts.
      */
+    @NotNull
     private final DataVersion sourceVersion;
 
     /**
      * The version to which this migration step migrates data.
      */
+    @NotNull
     private final DataVersion targetVersion;
 
     /**
-     * The DataFix applied in this step, or {@code null} if no fix applies.
+     * The DataFixes applied in this step. Empty if no fixes apply.
      */
-    private final DataFix<?> fix;
+    @NotNull
+    private final List<DataFix<?>> fixes;
 
     /**
      * The schema diff between source and target versions, or {@code null} if not computed.
      */
+    @Nullable
     private final SchemaDiff schemaDiff;
 
     /**
      * The set of type references affected by this migration step.
      * This is an immutable copy of the provided set.
      */
+    @NotNull
     private final Set<TypeReference> affectedTypes;
 
     /**
@@ -105,20 +113,18 @@ public final class MigrationStep {
      *
      * @param sourceVersion the source version, must not be {@code null}
      * @param targetVersion the target version, must not be {@code null}
-     * @param fix           the DataFix for this step, may be {@code null}
+     * @param fixes         the DataFixes for this step, must not be {@code null}
      * @param schemaDiff    the schema diff, may be {@code null}
      * @param affectedTypes the affected types, must not be {@code null}
      */
-    private MigrationStep(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @Nullable final DataFix<?> fix,
-            @Nullable final SchemaDiff schemaDiff,
-            @NotNull final Set<TypeReference> affectedTypes
-    ) {
+    private MigrationStep(@NotNull final DataVersion sourceVersion,
+                          @NotNull final DataVersion targetVersion,
+                          @NotNull final List<DataFix<?>> fixes,
+                          @Nullable final SchemaDiff schemaDiff,
+                          @NotNull final Set<TypeReference> affectedTypes) {
         this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
-        this.fix = fix;
+        this.fixes = List.copyOf(Preconditions.checkNotNull(fixes, "fixes must not be null"));
         this.schemaDiff = schemaDiff;
         this.affectedTypes = Set.copyOf(Preconditions.checkNotNull(affectedTypes, "affectedTypes must not be null"));
     }
@@ -133,17 +139,15 @@ public final class MigrationStep {
      * @return a new migration step, never {@code null}
      */
     @NotNull
-    public static MigrationStep withFix(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @NotNull final DataFix<?> fix,
-            @NotNull final Set<TypeReference> affectedTypes
-    ) {
+    public static MigrationStep withFix(@NotNull final DataVersion sourceVersion,
+                                        @NotNull final DataVersion targetVersion,
+                                        @NotNull final DataFix<?> fix,
+                                        @NotNull final Set<TypeReference> affectedTypes) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(fix, "fix must not be null");
         Preconditions.checkNotNull(affectedTypes, "affectedTypes must not be null");
-        return new MigrationStep(sourceVersion, targetVersion, fix, null, affectedTypes);
+        return new MigrationStep(sourceVersion, targetVersion, List.of(fix), null, affectedTypes);
     }
 
     /**
@@ -156,16 +160,14 @@ public final class MigrationStep {
      * @return a new migration step, never {@code null}
      */
     @NotNull
-    public static MigrationStep withoutFix(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion,
-            @Nullable final SchemaDiff schemaDiff,
-            @NotNull final Set<TypeReference> affectedTypes
-    ) {
+    public static MigrationStep withoutFix(@NotNull final DataVersion sourceVersion,
+                                           @NotNull final DataVersion targetVersion,
+                                           @Nullable final SchemaDiff schemaDiff,
+                                           @NotNull final Set<TypeReference> affectedTypes) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         Preconditions.checkNotNull(affectedTypes, "affectedTypes must not be null");
-        return new MigrationStep(sourceVersion, targetVersion, null, schemaDiff, affectedTypes);
+        return new MigrationStep(sourceVersion, targetVersion, List.of(), schemaDiff, affectedTypes);
     }
 
     /**
@@ -176,10 +178,8 @@ public final class MigrationStep {
      * @return a new builder, never {@code null}
      */
     @NotNull
-    public static Builder builder(
-            @NotNull final DataVersion sourceVersion,
-            @NotNull final DataVersion targetVersion
-    ) {
+    public static Builder builder(@NotNull final DataVersion sourceVersion,
+                                  @NotNull final DataVersion targetVersion) {
         Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
         Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         return new Builder(sourceVersion, targetVersion);
@@ -212,7 +212,17 @@ public final class MigrationStep {
      */
     @NotNull
     public Optional<DataFix<?>> fix() {
-        return Optional.ofNullable(this.fix);
+        return this.fixes.isEmpty() ? Optional.empty() : Optional.of(this.fixes.get(0));
+    }
+
+    /**
+     * Returns all DataFixes applied in this step.
+     *
+     * @return an unmodifiable list of fixes, never {@code null}
+     */
+    @NotNull
+    public List<DataFix<?>> fixes() {
+        return this.fixes;
     }
 
     /**
@@ -241,7 +251,7 @@ public final class MigrationStep {
      * @return {@code true} if a fix is present
      */
     public boolean hasFix() {
-        return this.fix != null;
+        return !this.fixes.isEmpty();
     }
 
     /**
@@ -275,7 +285,7 @@ public final class MigrationStep {
      * @return {@code true} if the objects are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -284,7 +294,7 @@ public final class MigrationStep {
         }
         return this.sourceVersion.equals(other.sourceVersion)
                 && this.targetVersion.equals(other.targetVersion)
-                && Objects.equals(this.fix, other.fix)
+                && Objects.equals(this.fixes, other.fixes)
                 && this.affectedTypes.equals(other.affectedTypes);
     }
 
@@ -298,7 +308,7 @@ public final class MigrationStep {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.sourceVersion, this.targetVersion, this.fix, this.affectedTypes);
+        return Objects.hash(this.sourceVersion, this.targetVersion, this.fixes, this.affectedTypes);
     }
 
     /**
@@ -311,12 +321,13 @@ public final class MigrationStep {
      * @return a formatted string representation, never {@code null}
      */
     @Override
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("MigrationStep[");
         sb.append(this.sourceVersion.getVersion()).append(" -> ").append(this.targetVersion.getVersion());
-        if (this.fix != null) {
-            sb.append(", fix=").append(this.fix.getClass().getSimpleName());
+        if (!this.fixes.isEmpty()) {
+            sb.append(", fixes=").append(this.fixes.size());
         }
         sb.append(", affected=").append(this.affectedTypes.size()).append(" types");
         sb.append("]");
@@ -347,26 +358,31 @@ public final class MigrationStep {
         /**
          * The required source version.
          */
+        @NotNull
         private final DataVersion sourceVersion;
 
         /**
          * The required target version.
          */
+        @NotNull
         private final DataVersion targetVersion;
 
         /**
-         * The optional DataFix; defaults to {@code null}.
+         * The list of DataFixes; defaults to empty.
          */
-        private DataFix<?> fix;
+        @NotNull
+        private final List<DataFix<?>> fixes = new ArrayList<>();
 
         /**
          * The optional schema diff; defaults to {@code null}.
          */
+        @Nullable
         private SchemaDiff schemaDiff;
 
         /**
          * The affected types; defaults to empty set.
          */
+        @NotNull
         private Set<TypeReference> affectedTypes = Set.of();
 
         /**
@@ -376,10 +392,8 @@ public final class MigrationStep {
          * @param targetVersion the target version, must not be {@code null}
          * @throws NullPointerException if any argument is {@code null}
          */
-        private Builder(
-                @NotNull final DataVersion sourceVersion,
-                @NotNull final DataVersion targetVersion
-        ) {
+        private Builder(@NotNull final DataVersion sourceVersion,
+                        @NotNull final DataVersion targetVersion) {
             this.sourceVersion = Preconditions.checkNotNull(sourceVersion, "sourceVersion must not be null");
             this.targetVersion = Preconditions.checkNotNull(targetVersion, "targetVersion must not be null");
         }
@@ -392,7 +406,22 @@ public final class MigrationStep {
          */
         @NotNull
         public Builder fix(@Nullable final DataFix<?> fix) {
-            this.fix = fix;
+            if (fix != null) {
+                this.fixes.add(fix);
+            }
+            return this;
+        }
+
+        /**
+         * Adds all fixes for this step.
+         *
+         * @param fixes the fixes to add, must not be {@code null}
+         * @return this builder for chaining
+         */
+        @NotNull
+        public Builder fixes(@NotNull final List<DataFix<?>> fixes) {
+            Preconditions.checkNotNull(fixes, "fixes must not be null");
+            this.fixes.addAll(fixes);
             return this;
         }
 
@@ -434,7 +463,7 @@ public final class MigrationStep {
             return new MigrationStep(
                     this.sourceVersion,
                     this.targetVersion,
-                    this.fix,
+                    this.fixes,
                     this.schemaDiff,
                     this.affectedTypes
             );

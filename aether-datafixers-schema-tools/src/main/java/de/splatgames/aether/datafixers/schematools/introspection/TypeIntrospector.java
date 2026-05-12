@@ -128,6 +128,12 @@ public final class TypeIntrospector {
      *   <li>Primitive: Returns an empty list</li>
      * </ul>
      *
+     * <p><b>Recursive behavior:</b> Fields are extracted recursively from nested types.
+     * The result includes both parent fields and their nested children using dot-notation
+     * paths. For example, a type with field "player" containing nested field "position"
+     * with sub-field "x" produces entries: {@code ["player", "player.position",
+     * "player.position.x"]}.</p>
+     *
      * @param type the type to extract fields from, must not be {@code null}
      * @return a list of fields found in the type, never {@code null}
      * @throws NullPointerException if {@code type} is {@code null}
@@ -180,6 +186,7 @@ public final class TypeIntrospector {
 
         // Check reference ID for other types
         final String refId = type.reference().getId();
+        final String description = type.describe();
 
         // Primitive types
         if (PRIMITIVE_TYPE_IDS.contains(refId)) {
@@ -187,7 +194,7 @@ public final class TypeIntrospector {
         }
 
         // Passthrough
-        if ("passthrough".equals(refId) || "...".equals(type.describe())) {
+        if ("passthrough".equals(refId) || "...".equals(description)) {
             return TypeKind.PASSTHROUGH;
         }
 
@@ -212,7 +219,7 @@ public final class TypeIntrospector {
         }
 
         // Named type (has "=" in description)
-        if (type.describe().contains("=")) {
+        if (description.contains("=")) {
             return TypeKind.NAMED;
         }
 
@@ -229,8 +236,6 @@ public final class TypeIntrospector {
         return TypeKind.UNKNOWN;
     }
 
-    // ==================== Internal Methods ====================
-
     /**
      * Internal introspection method with hierarchical path tracking.
      *
@@ -244,10 +249,8 @@ public final class TypeIntrospector {
      * @return the structural representation of the type, never {@code null}
      */
     @NotNull
-    private static TypeStructure introspectInternal(
-            @NotNull final Type<?> type,
-            @NotNull final String pathPrefix
-    ) {
+    private static TypeStructure introspectInternal(@NotNull final Type<?> type,
+                                                    @NotNull final String pathPrefix) {
         final TypeKind kind = determineKind(type);
         final List<FieldInfo> fields = extractFieldsInternal(type, pathPrefix);
 
@@ -283,10 +286,8 @@ public final class TypeIntrospector {
      * @return a mutable list of extracted fields, never {@code null}
      */
     @NotNull
-    private static List<FieldInfo> extractFieldsInternal(
-            @NotNull final Type<?> type,
-            @NotNull final String pathPrefix
-    ) {
+    private static List<FieldInfo> extractFieldsInternal(@NotNull final Type<?> type,
+                                                         @NotNull final String pathPrefix) {
         final List<FieldInfo> result = new ArrayList<>();
 
         // Direct FieldType
@@ -332,11 +333,9 @@ public final class TypeIntrospector {
      * @return the computed child path, never {@code null}
      */
     @NotNull
-    private static String computeChildPath(
-            @NotNull final Type<?> parent,
-            @NotNull final Type<?> child,
-            @NotNull final String parentPath
-    ) {
+    private static String computeChildPath(@NotNull final Type<?> parent,
+                                           @NotNull final Type<?> child,
+                                           @NotNull final String parentPath) {
         if (parent instanceof Type.FieldType<?> fieldType) {
             return parentPath.isEmpty()
                     ? fieldType.name()

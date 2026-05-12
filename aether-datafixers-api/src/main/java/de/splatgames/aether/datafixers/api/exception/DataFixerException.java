@@ -25,6 +25,8 @@ package de.splatgames.aether.datafixers.api.exception;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
+
 /**
  * Base exception class for all data fixer related errors.
  *
@@ -74,6 +76,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public class DataFixerException extends RuntimeException {
 
+    /**
+     * Serial version UID for serialization compatibility.
+     */
+    @Serial
+    private static final long serialVersionUID = 2074356976574888083L;
+
+    /**
+     * Optional context information about where the error occurred (e.g., field path, type name).
+     */
     @Nullable
     private final String context;
 
@@ -144,10 +155,12 @@ public class DataFixerException extends RuntimeException {
      * @return the message with context, or just the message if no context
      */
     @Override
+    @NotNull
     public String toString() {
+        final String base = getClass().getSimpleName() + ": " + getMessage();
         if (this.context != null) {
-            return super.toString() + " [context: " + this.context + "]";
+            return base + " [context: " + this.context + "]";
         }
-        return super.toString();
+        return base;
     }
 }

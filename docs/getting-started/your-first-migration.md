@@ -6,7 +6,7 @@ This tutorial walks you through creating a complete data migration system with s
 
 You're building a game that saves player data. Over time, the data format evolves:
 
-**Version 1.0.0 (ID: 100)** — Initial release
+**Version 1.0.0 (ID: 100)** - Initial release
 ```json
 {
   "playerName": "Steve",
@@ -18,7 +18,7 @@ You're building a game that saves player data. Over time, the data format evolve
 }
 ```
 
-**Version 1.1.0 (ID: 110)** — Restructured
+**Version 1.1.0 (ID: 110)** - Restructured
 ```json
 {
   "name": "Steve",
@@ -69,9 +69,10 @@ Define the data structure at version 100:
 ```java
 package com.example.game.schema;
 
-import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.dsl.DSL;
 import de.splatgames.aether.datafixers.api.schema.Schema;
+import de.splatgames.aether.datafixers.api.type.TypeRegistry;
+import de.splatgames.aether.datafixers.api.type.template.TypeTemplate;
 import de.splatgames.aether.datafixers.core.type.SimpleTypeRegistry;
 import com.example.game.TypeReferences;
 
@@ -87,12 +88,22 @@ import com.example.game.TypeReferences;
 public class Schema100 extends Schema {
 
     public Schema100() {
-        super(new DataVersion(100), null, SimpleTypeRegistry::new);
+        super(100, null);  // No parent - this is the first version
+    }
+
+    @Override
+    protected TypeRegistry createTypeRegistry() {
+        return new SimpleTypeRegistry();
     }
 
     @Override
     protected void registerTypes() {
-        registerType(TypeReferences.PLAYER, DSL.and(
+        registerType(TypeReferences.PLAYER, player());
+    }
+
+    /** Player type template for v1.0.0 */
+    public static TypeTemplate player() {
+        return DSL.and(
             DSL.field("playerName", DSL.string()),
             DSL.field("xp", DSL.intType()),
             DSL.field("x", DSL.doubleType()),
@@ -100,7 +111,7 @@ public class Schema100 extends Schema {
             DSL.field("z", DSL.doubleType()),
             DSL.field("gameMode", DSL.intType()),
             DSL.remainder()
-        ));
+        );
     }
 }
 ```
@@ -114,9 +125,10 @@ Define the updated structure:
 ```java
 package com.example.game.schema;
 
-import de.splatgames.aether.datafixers.api.DataVersion;
 import de.splatgames.aether.datafixers.api.dsl.DSL;
 import de.splatgames.aether.datafixers.api.schema.Schema;
+import de.splatgames.aether.datafixers.api.type.TypeRegistry;
+import de.splatgames.aether.datafixers.api.type.template.TypeTemplate;
 import de.splatgames.aether.datafixers.core.type.SimpleTypeRegistry;
 import com.example.game.TypeReferences;
 
@@ -131,23 +143,33 @@ import com.example.game.TypeReferences;
  */
 public class Schema110 extends Schema {
 
-    public Schema110(Schema parent) {
-        super(new DataVersion(110), parent, SimpleTypeRegistry::new);
+    public Schema110() {
+        super(110, new Schema100());  // Extends from v1.0.0
+    }
+
+    @Override
+    protected TypeRegistry createTypeRegistry() {
+        return new SimpleTypeRegistry();
     }
 
     @Override
     protected void registerTypes() {
-        registerType(TypeReferences.PLAYER, DSL.and(
+        registerType(TypeReferences.PLAYER, player());
+    }
+
+    /** Player type template for v1.1.0 */
+    public static TypeTemplate player() {
+        return DSL.and(
             DSL.field("name", DSL.string()),
             DSL.field("experience", DSL.intType()),
             DSL.field("position", position()),
             DSL.field("gameMode", DSL.string()),
             DSL.remainder()
-        ));
+        );
     }
 
     /** Position type template */
-    public static DSL.TypeTemplate position() {
+    public static TypeTemplate position() {
         return DSL.and(
             DSL.field("x", DSL.doubleType()),
             DSL.field("y", DSL.doubleType()),
@@ -172,17 +194,18 @@ import de.splatgames.aether.datafixers.api.rewrite.Rules;
 import de.splatgames.aether.datafixers.api.rewrite.TypeRewriteRule;
 import de.splatgames.aether.datafixers.api.schema.Schema;
 import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
+import de.splatgames.aether.datafixers.codec.json.gson.GsonOps;
 import de.splatgames.aether.datafixers.core.fix.SchemaDataFix;
-import com.example.game.TypeReferences;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Migrates player data from v1.0.0 (100) to v1.1.0 (110).
  */
-public class PlayerV1ToV2Fix extends SchemaDataFix {
+public class PlayerV100ToV110Fix extends SchemaDataFix {
 
-    public PlayerV1ToV2Fix(SchemaRegistry schemas) {
+    public PlayerV100ToV110Fix(SchemaRegistry schemas) {
         super(
-            "player_v1_to_v2",
+            "player_v100_to_v110",
             new DataVersion(100),
             new DataVersion(110),
             schemas
@@ -190,22 +213,26 @@ public class PlayerV1ToV2Fix extends SchemaDataFix {
     }
 
     @Override
-    protected TypeRewriteRule makeRule(Schema inputSchema, Schema outputSchema) {
+    @NotNull
+    protected TypeRewriteRule makeRule(@NotNull Schema inputSchema,
+                                       @NotNull Schema outputSchema) {
         return Rules.seq(
             // 1. Rename fields
-            Rules.renameField(TypeReferences.PLAYER, "playerName", "name"),
-            Rules.renameField(TypeReferences.PLAYER, "xp", "experience"),
+            Rules.renameField(GsonOps.INSTANCE, "playerName", "name"),
+            Rules.renameField(GsonOps.INSTANCE, "xp", "experience"),
 
             // 2. Transform gameMode from int to string
-            Rules.transformField(TypeReferences.PLAYER, "gameMode", this::gameModeToString),
+            Rules.transformField(GsonOps.INSTANCE, "gameMode",
+                PlayerV100ToV110Fix::gameModeToString),
 
             // 3. Group coordinates into position object
-            Rules.transform(TypeReferences.PLAYER, this::groupPosition)
+            Rules.groupFields(GsonOps.INSTANCE, "position", "x", "y", "z")
         );
     }
 
-    private Dynamic<?> gameModeToString(Dynamic<?> value) {
-        int mode = value.asInt().orElse(0);
+    @NotNull
+    private static Dynamic<?> gameModeToString(@NotNull Dynamic<?> value) {
+        int mode = value.asInt().result().orElse(0);
         String modeName = switch (mode) {
             case 0 -> "survival";
             case 1 -> "creative";
@@ -214,26 +241,6 @@ public class PlayerV1ToV2Fix extends SchemaDataFix {
             default -> "survival";
         };
         return value.createString(modeName);
-    }
-
-    private Dynamic<?> groupPosition(Dynamic<?> player) {
-        // Extract coordinates
-        double x = player.get("x").asDouble().orElse(0.0);
-        double y = player.get("y").asDouble().orElse(0.0);
-        double z = player.get("z").asDouble().orElse(0.0);
-
-        // Create position object
-        Dynamic<?> position = player.emptyMap()
-            .set("x", player.createDouble(x))
-            .set("y", player.createDouble(y))
-            .set("z", player.createDouble(z));
-
-        // Remove old fields and add position
-        return player
-            .remove("x")
-            .remove("y")
-            .remove("z")
-            .set("position", position);
     }
 }
 ```
@@ -254,6 +261,7 @@ import de.splatgames.aether.datafixers.api.schema.SchemaRegistry;
 import com.example.game.fix.PlayerV1ToV2Fix;
 import com.example.game.schema.Schema100;
 import com.example.game.schema.Schema110;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Bootstrap for the game data fixer.
@@ -266,21 +274,18 @@ public class GameDataBootstrap implements DataFixerBootstrap {
     private SchemaRegistry schemas;
 
     @Override
-    public void registerSchemas(SchemaRegistry schemas) {
+    public void registerSchemas(@NotNull SchemaRegistry schemas) {
         this.schemas = schemas;
 
         // Register schemas in version order
-        Schema100 v100 = new Schema100();
-        Schema110 v110 = new Schema110(v100);
-
-        schemas.register(v100);
-        schemas.register(v110);
+        schemas.register(new Schema100());
+        schemas.register(new Schema110());
     }
 
     @Override
-    public void registerFixes(FixRegistrar fixes) {
+    public void registerFixes(@NotNull FixRegistrar fixes) {
         // Register fixes
-        fixes.register(TypeReferences.PLAYER, new PlayerV1ToV2Fix(schemas));
+        fixes.register(TypeReferences.PLAYER, new PlayerV100ToV110Fix(schemas));
     }
 }
 ```
@@ -337,7 +342,6 @@ public class GameExample {
 
         // 5. Print result
         System.out.println("\n=== Migrated Data (v1.1.0) ===");
-        @SuppressWarnings("unchecked")
         Dynamic<JsonElement> result = (Dynamic<JsonElement>) migrated.value();
         System.out.println(GSON.toJson(result.value()));
     }
@@ -398,7 +402,7 @@ Define all type references in one class for easy discovery.
 
 ### 4. Use Parent Schemas
 
-Chain schemas: `Schema110(v100)` inherits from `Schema100`.
+Each schema creates its own parent internally: `Schema110` extends `Schema100` via `super(110, new Schema100())`.
 
 ### 5. Test Your Fixes
 
@@ -412,7 +416,7 @@ Congratulations! You've built your first complete migration system.
 
 Continue learning:
 
-- [Schema System](../concepts/schema-system.md) — Deep dive into schemas
-- [DataFix System](../concepts/datafix-system.md) — Understanding fixes
-- [Rewrite Rules](../concepts/rewrite-rules.md) — Rule combinators
-- [Multi-Version Migration](../tutorials/multi-version-migration.md) — Chain multiple fixes
+- [Schema System](../concepts/schema-system.md) - Deep dive into schemas
+- [DataFix System](../concepts/datafix-system.md) - Understanding fixes
+- [Rewrite Rules](../concepts/rewrite-rules.md) - Rule combinators
+- [Multi-Version Migration](../tutorials/multi-version-migration.md) - Chain multiple fixes

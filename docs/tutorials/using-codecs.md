@@ -390,7 +390,7 @@ Invalid (-5): Optional[Must be positive]
 
 ## Next Steps
 
-- **[RecordCodecBuilder](record-codec-builder.md)** — Build codecs for complex records
-- **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** — Full API documentation
-- **[DataResult](../concepts/data-result.md)** — Error handling patterns
+- **[RecordCodecBuilder](record-codec-builder.md)** - Build codecs for complex records
+- **[API Reference](https://software.splatgames.de/docs/aether/aether-datafixers/)** - Full API documentation
+- **[DataResult](../concepts/data-result.md)** - Error handling patterns
 

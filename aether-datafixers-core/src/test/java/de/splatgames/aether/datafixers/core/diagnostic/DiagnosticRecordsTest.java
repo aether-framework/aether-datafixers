@@ -58,7 +58,8 @@ class DiagnosticRecordsTest {
                     now,
                     duration,
                     true,
-                    "Renamed playerName to name"
+                    "Renamed playerName to name",
+                    List.of()
             );
 
             assertThat(rule.ruleName()).isEqualTo("rename_field");
@@ -94,7 +95,7 @@ class DiagnosticRecordsTest {
         @DisplayName("descriptionOpt() returns Optional with description")
         void descriptionOptReturnsOptionalWithDescription() {
             RuleApplication rule = new RuleApplication(
-                    "rule", "type", Instant.now(), Duration.ZERO, true, "desc"
+                    "rule", "type", Instant.now(), Duration.ZERO, true, "desc", List.of()
             );
 
             assertThat(rule.descriptionOpt()).contains("desc");
@@ -127,13 +128,13 @@ class DiagnosticRecordsTest {
         @Test
         @DisplayName("throws NullPointerException for null required fields")
         void throwsNullPointerExceptionForNullRequiredFields() {
-            assertThatThrownBy(() -> new RuleApplication(null, "type", Instant.now(), Duration.ZERO, true, null))
+            assertThatThrownBy(() -> new RuleApplication(null, "type", Instant.now(), Duration.ZERO, true, null, List.of()))
                     .isInstanceOf(NullPointerException.class);
-            assertThatThrownBy(() -> new RuleApplication("rule", null, Instant.now(), Duration.ZERO, true, null))
+            assertThatThrownBy(() -> new RuleApplication("rule", null, Instant.now(), Duration.ZERO, true, null, List.of()))
                     .isInstanceOf(NullPointerException.class);
-            assertThatThrownBy(() -> new RuleApplication("rule", "type", null, Duration.ZERO, true, null))
+            assertThatThrownBy(() -> new RuleApplication("rule", "type", null, Duration.ZERO, true, null, List.of()))
                     .isInstanceOf(NullPointerException.class);
-            assertThatThrownBy(() -> new RuleApplication("rule", "type", Instant.now(), null, true, null))
+            assertThatThrownBy(() -> new RuleApplication("rule", "type", Instant.now(), null, true, null, List.of()))
                     .isInstanceOf(NullPointerException.class);
         }
     }

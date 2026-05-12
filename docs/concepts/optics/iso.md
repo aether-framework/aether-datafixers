@@ -20,8 +20,8 @@ public interface Iso<S, A> extends Optic<S, A> {
 ```
 
 **Type Parameters:**
-- `S` — The source type
-- `A` — The target type
+- `S` - The source type
+- `A` - The target type
 
 ## Conceptual Model
 
@@ -317,7 +317,7 @@ Iso<String, String> identity = Iso.of(
 
 ## Related
 
-- [Lens](lens.md) — For field access
-- [Prism](prism.md) — For partial conversion
-- [Optics Overview](index.md) — Optic hierarchy
+- [Lens](lens.md) - For field access
+- [Prism](prism.md) - For partial conversion
+- [Optics Overview](index.md) - Optic hierarchy
 
