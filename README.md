@@ -48,7 +48,7 @@ The framework is **format-agnostic** - it works with JSON, YAML, TOML, XML, or a
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-rc.1</version>
 </dependency>
 ```
 
@@ -57,12 +57,12 @@ The framework is **format-agnostic** - it works with JSON, YAML, TOML, XML, or a
 
 ```groovy
 // Groovy
-implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0'
+implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1'
 ```
 
 ```kotlin
 // Kotlin
-implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0")
+implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1")
 ```
 
 </details>
@@ -125,7 +125,7 @@ Dynamic<?> migrated = result.value();
 <dependency>
     <groupId>de.splatgames.aether.datafixers</groupId>
     <artifactId>aether-datafixers-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-rc.1</version>
 </dependency>
 ```
 
@@ -134,12 +134,12 @@ Dynamic<?> migrated = result.value();
 
 ```groovy
 // Groovy
-implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0'
+implementation 'de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1'
 ```
 
 ```kotlin
 // Kotlin
-implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0")
+implementation("de.splatgames.aether.datafixers:aether-datafixers-core:1.0.0-rc.1")
 ```
 
 </details>
@@ -156,7 +156,7 @@ The Bill of Materials ensures consistent versions across all Aether Datafixers m
         <dependency>
             <groupId>de.splatgames.aether.datafixers</groupId>
             <artifactId>aether-datafixers-bom</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-rc.1</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -182,7 +182,7 @@ The Bill of Materials ensures consistent versions across all Aether Datafixers m
 ```groovy
 // Groovy
 dependencies {
-    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0')
+    implementation platform('de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0-rc.1')
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-core'
     implementation 'de.splatgames.aether.datafixers:aether-datafixers-codec'
 }
@@ -191,7 +191,7 @@ dependencies {
 ```kotlin
 // Kotlin
 dependencies {
-    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0"))
+    implementation(platform("de.splatgames.aether.datafixers:aether-datafixers-bom:1.0.0-rc.1"))
     implementation("de.splatgames.aether.datafixers:aether-datafixers-core")
     implementation("de.splatgames.aether.datafixers:aether-datafixers-codec")
 }
