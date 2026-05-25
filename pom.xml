@@ -39,7 +39,7 @@
         <!-- definition of versions for dependencies -->
         <jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
         <gson.version>2.13.2</gson.version>
-        <jackson.version>2.21.0</jackson.version>
+        <jackson.version>2.21.3</jackson.version>
         <guava.version>33.5.0-jre</guava.version>
         <junit.jupiter.version>5.13.4</junit.jupiter.version>
         <assertj.version>3.27.7</assertj.version>
