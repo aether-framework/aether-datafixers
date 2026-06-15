@@ -44,7 +44,7 @@
         <junit.jupiter.version>5.13.4</junit.jupiter.version>
         <assertj.version>3.27.7</assertj.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <spotbugs.version>4.9.8</spotbugs.version>
+        <spotbugs.version>4.10.2</spotbugs.version>
 
         <!-- definition of versions for plugins -->
         <plugin.compiler.version>3.14.1</plugin.compiler.version>
@@ -58,10 +58,10 @@
         <plugin.shade.version>3.6.1</plugin.shade.version>
 
         <!-- QA plugin versions -->
-        <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
-        <plugin.spotbugs.version>4.9.8.2</plugin.spotbugs.version>
+        <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
+        <plugin.spotbugs.version>4.10.2.0</plugin.spotbugs.version>
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-        <plugin.owasp.version>12.2.0</plugin.owasp.version>
+        <plugin.owasp.version>12.2.2</plugin.owasp.version>
         <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
 
         <!-- Nullability enforcement (NullAway via Error Prone) -->
