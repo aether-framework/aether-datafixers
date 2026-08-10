@@ -61,7 +61,7 @@
         <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
         <plugin.spotbugs.version>4.10.3.0</plugin.spotbugs.version>
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-        <plugin.owasp.version>12.2.2</plugin.owasp.version>
+        <plugin.owasp.version>13.0.0</plugin.owasp.version>
         <plugin.cyclonedx.version>2.9.3</plugin.cyclonedx.version>
 
         <!-- Nullability enforcement (NullAway via Error Prone) -->
