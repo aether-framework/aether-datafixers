@@ -87,7 +87,7 @@
         <picocli.version>4.7.7</picocli.version>
 
         <!-- Extra Ops dependencies -->
-        <snakeyaml.version>2.5</snakeyaml.version>
+        <snakeyaml.version>2.7</snakeyaml.version>
 
         <!-- JMH Benchmark dependencies -->
         <jmh.version>1.37</jmh.version>
